@@ -1,0 +1,238 @@
+.loading-demo {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 28px;
+  background:
+    radial-gradient(circle at 16% 20%, color-mix(in srgb, var(--purple) 22%, transparent), transparent 34%),
+    radial-gradient(circle at 84% 82%, color-mix(in srgb, var(--purple-bright) 16%, transparent), transparent 30%),
+    var(--paper);
+  isolation: isolate;
+}
+
+.global-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity .55s cubic-bezier(.4, 0, .2, 1);
+  will-change: opacity;
+}
+
+.global-loader .loading-demo__card {
+  width: min(660px, 100%);
+  padding: clamp(30px, 5.5vw, 58px);
+  animation: global-loader-arrive .55s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.global-loader .loading-demo__art,
+.global-loader .loading-demo__progress {
+  width: min(440px, 100%);
+}
+
+.global-loader .loading-demo__copy {
+  margin-top: 28px;
+}
+
+.global-loader .loading-demo__copy h1 {
+  font-size: clamp(23px, 3.4vw, 34px);
+}
+
+.global-loader--fading {
+  opacity: 0;
+}
+
+.global-loader--fading .loading-demo__card {
+  transform: translateY(-8px) scale(.985);
+  transition: transform .55s cubic-bezier(.4, 0, .2, 1);
+}
+
+body:has(.global-loader) {
+  overflow: hidden;
+}
+
+.loading-demo__glow {
+  position: absolute;
+  z-index: -1;
+  border-radius: 999px;
+  filter: blur(2px);
+  opacity: .42;
+  animation: loading-demo-float 7s ease-in-out infinite alternate;
+}
+
+.loading-demo__glow--one {
+  width: min(34vw, 420px);
+  aspect-ratio: 1;
+  top: -15%;
+  right: -7%;
+  background: color-mix(in srgb, var(--purple-soft) 82%, transparent);
+}
+
+.loading-demo__glow--two {
+  width: min(28vw, 340px);
+  aspect-ratio: 1;
+  bottom: -16%;
+  left: -5%;
+  background: color-mix(in srgb, var(--purple) 26%, transparent);
+  animation-delay: -2.5s;
+}
+
+.loading-demo__card {
+  width: min(760px, 100%);
+  padding: clamp(34px, 7vw, 72px);
+  border: 1px solid color-mix(in srgb, var(--purple-bright) 24%, transparent);
+  border-radius: 48px 48px 18px 48px;
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+  box-shadow:
+    0 30px 90px color-mix(in srgb, black 38%, transparent),
+    inset 0 1px color-mix(in srgb, white 10%, transparent);
+  backdrop-filter: blur(26px) saturate(135%);
+  -webkit-backdrop-filter: blur(26px) saturate(135%);
+}
+
+.loading-demo__eyebrow {
+  margin: 0 0 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--purple-bright);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.loading-demo__eyebrow span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--purple-bright);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--purple-bright) 15%, transparent);
+  animation: loading-demo-pulse 1.4s ease-in-out infinite;
+}
+
+.loading-demo__art {
+  position: relative;
+  width: min(500px, 100%);
+  aspect-ratio: 500 / 87;
+  margin-inline: auto;
+}
+
+.loading-demo__symbols {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  -webkit-mask: url("/loading.webp") center / contain no-repeat;
+  mask: url("/loading.webp") center / contain no-repeat;
+}
+
+.loading-demo__symbols--base {
+  color: color-mix(in srgb, var(--purple-bright) 20%, transparent);
+  filter: drop-shadow(0 10px 22px color-mix(in srgb, var(--purple) 25%, transparent));
+}
+
+.loading-demo__symbols--sweep {
+  color: transparent;
+  background: linear-gradient(
+    90deg,
+    var(--purple) 0%,
+    var(--purple-bright) 42%,
+    #eaffef 52%,
+    var(--purple-bright) 62%,
+    var(--purple) 100%
+  );
+  clip-path: inset(0 100% 0 0 round 4px);
+  filter: drop-shadow(0 0 15px color-mix(in srgb, var(--purple-bright) 55%, transparent));
+  animation: loading-demo-reveal 2.35s cubic-bezier(.65, 0, .35, 1) infinite;
+}
+
+.loading-demo__progress {
+  width: min(500px, 100%);
+  height: 3px;
+  margin: 26px auto 0;
+  overflow: hidden;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--purple-bright) 13%, transparent);
+}
+
+.loading-demo__progress span {
+  display: block;
+  width: 38%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, var(--purple-bright), #eaffef);
+  box-shadow: 0 0 14px var(--purple-bright);
+  animation: loading-demo-slide 2.35s cubic-bezier(.65, 0, .35, 1) infinite;
+}
+
+.loading-demo__copy {
+  margin-top: 34px;
+  text-align: center;
+}
+
+.loading-demo__copy h1 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(25px, 4vw, 38px);
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+
+.loading-demo__copy p {
+  margin: 11px 0 0;
+  color: var(--ink-soft);
+  font-family: Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+}
+
+@keyframes loading-demo-reveal {
+  0% { clip-path: inset(0 100% 0 0 round 4px); opacity: .6; }
+  62% { clip-path: inset(0 0 0 0 round 4px); opacity: 1; }
+  86%, 100% { clip-path: inset(0 0 0 100% round 4px); opacity: .5; }
+}
+
+@keyframes loading-demo-slide {
+  0% { transform: translateX(-110%); }
+  72%, 100% { transform: translateX(275%); }
+}
+
+@keyframes loading-demo-pulse {
+  50% { opacity: .45; transform: scale(.72); }
+}
+
+@keyframes loading-demo-float {
+  to { transform: translate3d(18px, 24px, 0) scale(1.06); }
+}
+
+@keyframes global-loader-arrive {
+  from { opacity: 0; transform: translateY(12px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 600px) {
+  .loading-demo { padding: 16px; }
+  .loading-demo__card {
+    padding: 40px 22px;
+    border-radius: 36px 36px 14px 36px;
+  }
+  .loading-demo__eyebrow { margin-bottom: 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-demo__glow,
+  .loading-demo__eyebrow span,
+  .loading-demo__symbols--sweep,
+  .loading-demo__progress span,
+  .global-loader .loading-demo__card {
+    animation: none;
+  }
+
+  .loading-demo__symbols--sweep { clip-path: none; }
+  .loading-demo__progress span { width: 100%; }
+  .global-loader,
+  .global-loader--fading .loading-demo__card { transition: none; }
+}

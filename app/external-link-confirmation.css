@@ -1,0 +1,90 @@
+.external-confirmation {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: color-mix(in srgb, var(--paper) 38%, transparent);
+  backdrop-filter: blur(18px) saturate(125%);
+  animation: external-backdrop-in .24s ease both;
+}
+
+.external-confirmation__modal {
+  width: min(440px, 100%);
+  padding: 30px;
+  border: 1px solid color-mix(in srgb, var(--purple-bright) 28%, var(--line));
+  border-radius: 24px 24px 10px 24px;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 12%, transparent), 0 28px 80px color-mix(in srgb, var(--shadow) 90%, transparent);
+  backdrop-filter: blur(30px) saturate(145%);
+  animation: external-modal-in .34s var(--ease) both;
+}
+
+.external-confirmation__icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px 15px 6px 15px;
+  color: var(--paper);
+  background: linear-gradient(145deg, var(--purple-bright), var(--purple));
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--purple) 28%, transparent);
+  font-size: 23px;
+  font-weight: 900;
+}
+
+.external-confirmation__eyebrow {
+  margin: 24px 0 8px;
+  color: var(--purple-bright);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.external-confirmation__modal h2 {
+  margin: 0;
+  font-size: clamp(29px, 6vw, 38px);
+  line-height: 1;
+  letter-spacing: -1.6px;
+}
+
+.external-confirmation__modal > p:not(.external-confirmation__eyebrow) {
+  margin: 15px 0 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.external-confirmation__destination {
+  margin-top: 22px;
+  padding: 13px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid color-mix(in srgb, var(--purple-bright) 20%, var(--line));
+  border-radius: 14px 14px 6px 14px;
+  background: color-mix(in srgb, var(--purple-soft) 30%, transparent);
+}
+
+.external-confirmation__destination span { color: var(--ink-soft); font-size: 9px; text-transform: uppercase; letter-spacing: .7px; }
+.external-confirmation__destination strong { min-width: 0; font-size: 11px; line-height: 1.45; text-align: right; overflow-wrap: anywhere; }
+
+.external-confirmation__actions { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.external-confirmation__actions button { min-height: 48px; border-radius: 14px; font-size: 11px; font-weight: 900; cursor: pointer; transition: transform .22s var(--ease), background .2s; }
+.external-confirmation__cancel { border: 1px solid var(--line); color: var(--ink); background: color-mix(in srgb, var(--surface) 62%, transparent); }
+.external-confirmation__continue { display: flex; align-items: center; justify-content: center; gap: 9px; border: 0; color: var(--paper); background: var(--purple); }
+.external-confirmation__actions button:hover { transform: translateY(-2px); }
+.external-confirmation__cancel:hover { background: var(--paper-deep); }
+.external-confirmation__continue:hover { background: var(--purple-bright); }
+
+@keyframes external-backdrop-in { from { opacity: 0; } }
+@keyframes external-modal-in { from { opacity: 0; transform: translateY(16px) scale(.96); } }
+
+@media (max-width: 480px) {
+  .external-confirmation__modal { padding: 24px; border-radius: 20px 20px 8px 20px; }
+  .external-confirmation__actions { grid-template-columns: 1fr; }
+}
