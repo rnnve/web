@@ -1,8 +1,10 @@
 # Ryn's personal site
 
-Design by Me and With the helping of Codex for coding.
+## Design by Me and With the helping of Codex for coding.
 
-A personal site built with Next.js, React, and Tailwind CSS.
+### You can find older versions of my site source here, https://git.rynni.cc/rinne/site-archived
+
+# A personal site built with Next.js, React, and Tailwind CSS.
 
 ## Local development
 
