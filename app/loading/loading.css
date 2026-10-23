@@ -34,15 +34,13 @@
 .global-loader .loading-demo__glow { animation-play-state: paused; }
 .global-loader .loading-demo__symbols { filter: none; }
 
-.global-loader .loading-demo__symbols--sweep,
-.global-loader .loading-demo__progress span {
+.global-loader .loading-demo__symbols--sweep {
   animation-duration: 1.1s;
   animation-iteration-count: 1;
   animation-fill-mode: both;
 }
 
-.global-loader .loading-demo__art,
-.global-loader .loading-demo__progress {
+.global-loader .loading-demo__art {
   width: min(440px, 100%);
 }
 
@@ -155,25 +153,6 @@ body:has(.global-loader) {
   animation: loading-demo-reveal 2.35s cubic-bezier(.65, 0, .35, 1) infinite;
 }
 
-.loading-demo__progress {
-  width: min(500px, 100%);
-  height: 3px;
-  margin: 26px auto 0;
-  overflow: hidden;
-  border-radius: 99px;
-  background: color-mix(in srgb, var(--purple-bright) 13%, transparent);
-}
-
-.loading-demo__progress span {
-  display: block;
-  width: 38%;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, transparent, var(--purple-bright), #ffffff);
-  box-shadow: 0 0 14px var(--purple-bright);
-  animation: loading-demo-slide 2.35s cubic-bezier(.65, 0, .35, 1) infinite;
-}
-
 .loading-demo__copy {
   margin-top: 34px;
   text-align: center;
@@ -198,11 +177,6 @@ body:has(.global-loader) {
 @keyframes loading-demo-reveal {
   from { clip-path: inset(0 100% 0 0); }
   to { clip-path: inset(0 0 0 0); }
-}
-
-@keyframes loading-demo-slide {
-  0% { transform: translateX(-110%); }
-  72%, 100% { transform: translateX(275%); }
 }
 
 @keyframes loading-demo-pulse {
@@ -231,13 +205,11 @@ body:has(.global-loader) {
   .loading-demo__glow,
   .loading-demo__eyebrow span,
   .loading-demo__symbols--sweep,
-  .loading-demo__progress span,
   .global-loader .loading-demo__card {
     animation: none;
   }
 
   .loading-demo__symbols--sweep { clip-path: none; }
-  .loading-demo__progress span { width: 100%; }
   .global-loader,
   .global-loader--fading .loading-demo__card { transition: none; }
 }

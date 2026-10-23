@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import NameRandomization from "./name-randomization";
 import useRandomProfileImage from "./use-random-profile-image";
 
 export default function PortfolioNavbar() {
@@ -28,7 +27,7 @@ export default function PortfolioNavbar() {
 
   return (
     <header className={`site-header ${collapsed ? "site-header--collapsed" : ""}`}>
-      <Link className="wordmark" href="/#top" aria-label="Home"><span className={`wordmark__shape ${profileImage ? "wordmark__shape--image" : ""}`} style={profileImage ? { backgroundImage: `url(${profileImage})` } : undefined}>{!profileImage && "R"}</span><span><NameRandomization /><span className="wordmark__dot">.</span></span></Link>
+      <Link className="wordmark" href="/#top" aria-label="Home"><span className={`wordmark__shape ${profileImage ? "wordmark__shape--image" : ""}`} style={profileImage ? { backgroundImage: `url(${profileImage})` } : undefined}>{!profileImage && "R"}</span><span>Rynnie<span className="wordmark__dot">.</span></span></Link>
       <a className="site-header__socials" href="https://haunt.gg/rnn" target="_blank" rel="noreferrer">Socials <span aria-hidden="true">↗</span></a>
     </header>
   );

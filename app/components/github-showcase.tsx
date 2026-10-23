@@ -46,8 +46,8 @@ function activityCells(value: unknown) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const start = new Date(today);
-  start.setDate(start.getDate() - today.getDay() - 15 * 7);
-  return Array.from({ length: 16 * 7 }, (_, index) => {
+  start.setDate(start.getDate() - today.getDay() - 41 * 7);
+  return Array.from({ length: 42 * 7 }, (_, index) => {
     const date = new Date(start);
     date.setDate(start.getDate() + index);
     const key = date.toISOString().slice(0, 10);
@@ -62,19 +62,19 @@ export default function GitHubShowcase({ repos: rawRepos, events, loading = fals
   const cells = activityCells(events);
   const totalActivity = cells.reduce((total, cell) => total + cell.count, 0);
   return (
-    <section id="more" className="github-showcase" aria-labelledby="github-showcase-title">
+    <section id="more" className="github-showcase" aria-labelledby="github-showcase-title" data-reveal>
       <div className="github-showcase__heading"><p>Github</p></div>
       <div className="github-showcase__grid">
         <article className="github-activity-card">
           <div className="github-activity-card__top"><div><span>GitHub activity</span><strong>{totalActivity} public contributions</strong></div><a href="https://github.com/rnnve" target="_blank" rel="noreferrer" aria-label="Open GitHub profile">↗</a></div>
-          <div className="github-activity-graph" aria-label={`${totalActivity} public GitHub contributions during the last sixteen weeks`}>
+          <div className="github-activity-graph" aria-label={`${totalActivity} public GitHub contributions during the last forty-two weeks`}>
             {cells.map((cell) => (
               <span key={cell.key} data-level={cell.level} tabIndex={0} aria-label={`${cell.count} contributions on ${cell.key}`}>
                 <span role="tooltip"><strong>{cell.count}</strong> contribution{cell.count === 1 ? "" : "s"}<small>{new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${cell.key}T00:00:00Z`))}</small></span>
               </span>
             ))}
           </div>
-          <div className="github-activity-card__legend"><span>16 weeks of public activity</span><span>Less <i/><i/><i/><i/><i/> More</span></div>
+          <div className="github-activity-card__legend"><span>42 weeks of public activity</span><span>Less <i/><i/><i/><i/><i/> More</span></div>
         </article>
         <div className="github-repo-grid" aria-label="Recently updated repositories">
           {loading ? Array.from({ length: 4 }, (_, index) => <div className="github-repo-card github-repo-card--loading" key={index} />) : Array.from({ length: 4 }, (_, index) => {

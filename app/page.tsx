@@ -2,13 +2,14 @@
 
 import { CSSProperties, useCallback, useEffect, useState } from "react";
 import AgeCalculator from "./components/age-calculator";
+import DeveloperTools from "./components/developer-tools";
 import GitHubShowcase from "./components/github-showcase";
-import { useRandomizedName } from "./components/name-randomization";
 import PortfolioNavbar from "./components/portfolio-navbar";
+import SectionRevealController from "./components/section-reveal-controller";
 import SiteFooter from "./components/site-footer";
 import useRandomProfileImage from "./components/use-random-profile-image";
-import { DiscordWidget, SpotifyWidget, StatusIcon, type DiscordProfile, type SpotifyView } from "./test/status-widgets";
-import "./test/test.css";
+import { DiscordWidget, SpotifyWidget, StatusIcon, type DiscordProfile, type SpotifyView } from "./components/status-widgets";
+import "./home.css";
 
 const BIRTH_DATE = "2006-01-01T00:00:00+07:00";
 
@@ -60,31 +61,6 @@ function normalizeSpotify(value: unknown): SpotifyView {
     duration: readNumber(track, "durationMs", "duration_ms", "duration") || readNumber(root, "durationMs", "duration_ms", "duration"),
     url: readString(external, "spotify") || readString(root, "url", "spotifyUrl", "externalUrl"),
   };
-}
-
-function TypewriterText({ message }: { message: string }) {
-  const [visibleCharacters, setVisibleCharacters] = useState(0);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setVisibleCharacters((current) => {
-        if (current >= message.length) {
-          window.clearInterval(timer);
-          return current;
-        }
-        return current + 1;
-      });
-    }, 72);
-    return () => window.clearInterval(timer);
-  }, [message]);
-
-  return <p className={styles.typewriter} aria-label={message}><span aria-hidden="true">{message.slice(0, visibleCharacters)}</span><i aria-hidden="true" /></p>;
-}
-
-function TypewriterGreeting() {
-  const profileName = useRandomizedName();
-  const message = `Hey, I’m ${profileName}`;
-  return <TypewriterText key={profileName} message={message} />;
 }
 
 export default function Home() {
@@ -151,13 +127,35 @@ export default function Home() {
   }, [rememberSpotify]);
 
   useEffect(() => {
-    const initialRequest = window.setTimeout(() => void loadStatus(), 0);
-    const statusInterval = window.setInterval(() => void loadStatus(), 15_000);
-    const spotifyInterval = window.setInterval(() => void loadSpotify(), 1_000);
+    let statusInterval: number | undefined;
+    let spotifyInterval: number | undefined;
+
+    const stopPolling = () => {
+      if (statusInterval !== undefined) window.clearInterval(statusInterval);
+      if (spotifyInterval !== undefined) window.clearInterval(spotifyInterval);
+      statusInterval = undefined;
+      spotifyInterval = undefined;
+    };
+
+    const startPolling = () => {
+      stopPolling();
+      if (document.hidden) return;
+      void loadStatus();
+      statusInterval = window.setInterval(() => void loadStatus(), 15_000);
+      spotifyInterval = window.setInterval(() => void loadSpotify(), 1_000);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) stopPolling();
+      else startPolling();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    startPolling();
+
     return () => {
-      window.clearTimeout(initialRequest);
-      window.clearInterval(statusInterval);
-      window.clearInterval(spotifyInterval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      stopPolling();
     };
   }, [loadSpotify, loadStatus]);
 
@@ -169,12 +167,13 @@ export default function Home() {
 
   return (
     <main className="root-empty" aria-label="Home">
+      <SectionRevealController />
       <PortfolioNavbar />
-      <section id="top" className={styles.homeHero} style={{ "--profile-accent": discord?.accentColor || "#ff76b8" } as CSSProperties}>
+      <section id="top" className={styles.homeHero} style={{ "--profile-accent": discord?.accentColor || "#ff76b8" } as CSSProperties} data-reveal>
         <div className={styles.homeHeroGrid}>
           <div className={styles.homeIdentity}>
             <div className={styles.homeAvatar} style={profileImage ? { backgroundImage: `url(${profileImage})` } : undefined}>{!profileImage && <span>R</span>}</div>
-            <TypewriterGreeting />
+            <p>Hey, I’m Rynnie</p>
           </div>
           <article className={`${styles.glassCard} ${styles.aboutCard}`}>
             <p>
@@ -191,7 +190,8 @@ export default function Home() {
         <a className={styles.scrollCue} href="#more"><span>Scroll for more</span><StatusIcon name="arrow" size={19}/></a>
       </section>
       <GitHubShowcase repos={payload?.githubRepos} events={payload?.githubEvents} loading={loading} />
-      {/* <SiteFooter /> */}
+      <DeveloperTools />
+      <SiteFooter />
     </main>
   );
 }

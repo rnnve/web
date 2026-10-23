@@ -10,9 +10,12 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <Link className="site-footer__brand" href="/#top" aria-label="Ryn home">
         <span style={profileImage ? { backgroundImage: `url(${profileImage})` } : undefined}>{!profileImage && "R"}</span>
-        <strong>Ryn<span>.</span></strong>
+        <strong>Rynnie<span>.</span></strong>
       </Link>
-      <p>&copy; 2026 Ryn</p>
+      <p>&copy; 2026 Rynnie</p>
+      <nav aria-label="Footer navigation">
+        <a href="https://github.com/rnnve" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+      </nav>
     </footer>
   );
 }

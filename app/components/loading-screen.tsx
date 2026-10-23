@@ -17,7 +17,6 @@ export default function LoadingScreen({ overlay = false, fading = false }: Loadi
           <span className="loading-demo__symbols loading-demo__symbols--base" />
           <span className="loading-demo__symbols loading-demo__symbols--sweep" />
         </div>
-        <div className="loading-demo__progress" aria-hidden="true"><span /></div>
         <div className="loading-demo__copy">
           <h1>Loading into My Sekai</h1>
           <LoadingMessage />
