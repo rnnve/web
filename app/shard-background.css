@@ -15,6 +15,8 @@
   z-index: 1;
 }
 
+html[data-page-loading="true"] .shard-background__shape { animation-play-state: paused; }
+
 .shard-background__track {
   position: absolute;
   display: block;

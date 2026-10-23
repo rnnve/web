@@ -38,25 +38,32 @@
 .homeHero { --glass: color-mix(in srgb, var(--surface) 62%, transparent); --glass-strong: color-mix(in srgb, var(--surface) 78%, transparent); --glass-line: color-mix(in srgb, var(--purple-bright) 24%, transparent); --muted: var(--ink-soft); height: 100svh; min-height: 650px; position: relative; padding: 120px max(24px, calc((100vw - 760px) / 2)) 72px; color: var(--ink); }
 .homeHeroGrid { height: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto; align-content: center; align-items: center; column-gap: clamp(36px, 7vw, 76px); row-gap: 12px; }
 .homeIdentity { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; }
-.homeAvatar { width: 62px; aspect-ratio: 1; flex: 0 0 auto; display: grid; place-items: center; border: 3px solid color-mix(in srgb, var(--purple-bright) 34%, var(--surface)); border-radius: 50%; background: linear-gradient(145deg, var(--purple-bright), var(--purple)); background-position: center; background-size: cover; box-shadow: 0 12px 28px var(--shadow); color: var(--paper); font-family: Georgia, serif; font-size: 25px; font-style: italic; }
+.homeAvatar { width: 62px; aspect-ratio: 1; flex: 0 0 auto; display: grid; place-items: center; border: 3px solid color-mix(in srgb, var(--purple-bright) 34%, var(--surface)); border-radius: 50%; background: linear-gradient(145deg, var(--purple-bright), var(--purple)); background-position: center; background-size: cover; box-shadow: 0 12px 28px var(--shadow); color: var(--paper); font-family: var(--font-site); font-size: 25px; font-style: italic; }
 .homeIdentity p { margin: 0; font-size: clamp(19px, 2vw, 26px); letter-spacing: -.8px; }
 .homeIdentity strong { color: var(--purple-bright); font-weight: 850; }
 .animatedDot { display: inline-block; color: var(--purple-bright); animation: home-dot 1.3s ease-in-out infinite; }
 .typewriter { min-height: 1.25em; }.typewriter i { width: 2px; height: .9em; margin-left: 3px; display: inline-block; background: var(--purple-bright); vertical-align: -.08em; animation: typewriter-caret .72s steps(1) infinite; }
-.age-calculator { position: relative; width: 2ch; min-width: 0; margin: 0; display: inline-block; font-family: var(--font-geist-mono), monospace; font-variant-numeric: tabular-nums; vertical-align: baseline; cursor: help; outline: none; }
+.age-calculator { position: relative; width: 2ch; min-width: 0; margin: 0; display: inline-block; font-family: var(--font-site); font-variant-numeric: tabular-nums; vertical-align: baseline; cursor: help; outline: none; }
 .age-calculator__integer { width: 100%; min-width: 0; display: inline-block; text-align: right; }
 .age-calculator__tooltip { position: absolute; z-index: 20; left: 50%; bottom: calc(100% + 9px); width: max-content; padding: 7px 9px; border: 1px solid color-mix(in srgb, var(--purple-bright) 30%, var(--line)); border-radius: 8px; background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--ink); box-shadow: 0 9px 24px var(--shadow); backdrop-filter: blur(14px); font-size: 10px; line-height: 1; letter-spacing: .15px; opacity: 0; pointer-events: none; transform: translate(-50%, 5px) scale(.96); transform-origin: bottom center; transition: opacity .16s ease, transform .2s var(--ease); }
 .age-calculator__tooltip::after { content: ""; position: absolute; left: 50%; top: 100%; width: 7px; height: 7px; border-right: 1px solid color-mix(in srgb, var(--purple-bright) 30%, var(--line)); border-bottom: 1px solid color-mix(in srgb, var(--purple-bright) 30%, var(--line)); background: color-mix(in srgb, var(--surface) 88%, transparent); transform: translate(-50%, -4px) rotate(45deg); }
 .age-calculator:hover .age-calculator__tooltip, .age-calculator:focus-visible .age-calculator__tooltip { opacity: 1; transform: translate(-50%, 0) scale(1); }
 .age-calculator:focus-visible { border-radius: 4px; outline: 2px solid color-mix(in srgb, var(--purple-bright) 55%, transparent); outline-offset: 3px; }
-.aboutCard { grid-column: 1 / -1; min-height: 150px; padding: 30px; display: flex; flex-direction: column; justify-content: center; border-radius: 20px; }
+.aboutCard { grid-column: 1 / -1; min-height: 120px; padding: 24px 30px; display: flex; flex-direction: column; justify-content: center; border-radius: 20px; }
 .aboutCard h1 { max-width: 440px; margin: 8px 0 12px; font-size: clamp(27px, 3vw, 40px); line-height: 1.02; letter-spacing: -1.7px; }
-.aboutCard > p:last-child { max-width: 440px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.aboutCard > p:last-child { width: 100%; max-width: none; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.aboutCard strong, .aboutCard a { color: #fff; font-weight: 650; }
+.aboutCard a { text-decoration-color: color-mix(in srgb, #fff 45%, transparent); text-underline-offset: 3px; transition: text-decoration-color .2s ease; }
+.aboutCard a:hover { text-decoration-color: #fff; }
 .homeStatusColumn { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(36px, 7vw, 76px); }
 .compactStatusCard { min-height: 104px; padding: 12px; display: grid; grid-template-columns: 76px minmax(0, 1fr); align-items: center; gap: 14px; border-radius: 20px; }
 .compactStatusArtwork { position: relative; width: 76px; aspect-ratio: 1; display: grid; place-items: center; border: 3px solid color-mix(in srgb, var(--purple-bright) 22%, var(--surface)); border-radius: 50%; color: var(--purple-bright); background: linear-gradient(145deg, var(--purple-soft), var(--paper-deep)); background-position: center; background-size: cover; box-shadow: 0 10px 24px var(--shadow); }
 .compactStatusArtwork .statusDot { position: absolute; right: 2px; bottom: 3px; width: 13px; height: 13px; border: 3px solid var(--surface); }
 .compactStatusCopy { min-width: 0; }.compactStatusCopy h2 { margin: 0; overflow: hidden; font-size: clamp(16px, 1.65vw, 20px); line-height: 1.15; letter-spacing: -.6px; white-space: nowrap; text-overflow: ellipsis; }.compactStatusCopy > p { margin: 5px 0 0; overflow: hidden; color: var(--muted); font-size: 12px; white-space: nowrap; }.compactScrollingText span { width: max-content; min-width: 100%; display: block; }.compactScrollingText:hover span { animation: compact-text-scroll 5s linear infinite alternate; }.compactStatusError { margin-top: 5px; display: block; color: var(--coral); font-size: 7px; }
+.compactSpotifyCard .compactStatusCopy h2 { font-size: clamp(14px, 1.35vw, 17px); letter-spacing: -.35px; }
+.compactSpotifyProgress { height: 3px; margin-top: 8px; overflow: hidden; border-radius: 3px; background: color-mix(in srgb, var(--purple-bright) 18%, transparent); }
+.compactSpotifyProgress span { height: 100%; display: block; border-radius: inherit; background: var(--purple-bright); transition: width .9s linear; }
+.compactSpotifyTimes { margin-top: 3px; display: flex; justify-content: space-between; color: var(--muted); font-size: 7px; font-variant-numeric: tabular-nums; }
 .homeStatusColumn .discordCard { min-height: 0; border-radius: 20px; }
 .homeStatusColumn .discordBanner { height: 62px; }
 .homeStatusColumn .platformBadge { top: 12px; right: 12px; }
@@ -78,6 +85,59 @@
 .scrollCue { position: absolute; left: 50%; bottom: 18px; display: grid; justify-items: center; gap: 5px; color: var(--ink-soft); font-size: 10px; font-weight: 750; text-decoration: none; transform: translateX(-50%); }
 .scrollCue svg { rotate: 90deg; animation: scroll-cue 1.5s ease-in-out infinite; }
 .homeMore { position: absolute; top: 100%; }
+
+.github-showcase {
+  width: min(1180px, calc(100% - 48px));
+  min-height: 100svh;
+  margin-inline: auto;
+  padding: 126px 0 92px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.github-showcase__heading { margin-bottom: 30px; display: flex; align-items: end; justify-content: space-between; gap: 30px; }
+.github-showcase__heading p { margin: 0 0 7px; color: var(--purple-bright); font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+.github-showcase__heading h2 { margin: 0; font-size: clamp(32px, 4vw, 50px); line-height: .95; letter-spacing: -2px; }
+.github-showcase__heading h2 span { color: var(--purple-bright); }
+.github-showcase__grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(390px, 1fr); gap: 20px; }
+.github-activity-card,
+.github-repo-card { border: 1px solid color-mix(in srgb, var(--purple-bright) 25%, var(--line)); color: var(--ink); background: linear-gradient(145deg, color-mix(in srgb, var(--surface) 88%, transparent), color-mix(in srgb, var(--purple-soft) 58%, transparent)); box-shadow: inset 0 1px 0 color-mix(in srgb, white 9%, transparent), 0 24px 55px var(--shadow); text-decoration: none; backdrop-filter: blur(22px); transition: transform .28s var(--ease), border-color .2s, background .2s; }
+.github-activity-card:hover,
+.github-repo-card:hover { border-color: color-mix(in srgb, var(--purple-bright) 62%, var(--line)); background: linear-gradient(145deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--purple-soft) 78%, transparent)); transform: translateY(-4px); }
+.github-activity-card { min-height: 340px; padding: clamp(24px, 4vw, 42px); display: flex; flex-direction: column; justify-content: space-between; border-radius: 22px 22px 8px 22px; }
+.github-activity-card__top { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
+.github-activity-card__top div span,
+.github-activity-card__top div strong { display: block; }
+.github-activity-card__top div span { color: var(--purple-bright); font-size: 10px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; }
+.github-activity-card__top div strong { margin-top: 8px; font-size: clamp(18px, 2vw, 25px); letter-spacing: -.7px; }
+.github-activity-card__top > a { color: var(--purple-bright); font-size: 24px; line-height: 1; text-decoration: none; }
+.github-activity-graph { width: 100%; margin: 36px 0 26px; display: grid; grid-template-rows: repeat(7, 1fr); grid-auto-flow: column; grid-auto-columns: 1fr; gap: clamp(3px, .45vw, 6px); }
+.github-activity-graph > span { position: relative; aspect-ratio: 1; min-width: 0; border-radius: 3px; background: color-mix(in srgb, var(--ink-soft) 10%, transparent); cursor: help; outline: none; }
+.github-activity-graph > span[data-level="1"] { background: color-mix(in srgb, var(--purple) 32%, var(--surface)); }
+.github-activity-graph > span[data-level="2"] { background: color-mix(in srgb, var(--purple) 55%, var(--surface)); }
+.github-activity-graph > span[data-level="3"] { background: color-mix(in srgb, var(--purple-bright) 76%, var(--surface)); }
+.github-activity-graph > span[data-level="4"] { background: var(--purple-bright); box-shadow: 0 0 10px color-mix(in srgb, var(--purple-bright) 32%, transparent); }
+.github-activity-graph > span:hover,
+.github-activity-graph > span:focus-visible { z-index: 5; outline: 2px solid var(--ink); outline-offset: 2px; }
+.github-activity-graph > span > span { position: absolute; z-index: 20; left: 50%; bottom: calc(100% + 9px); width: max-content; max-width: 170px; padding: 8px 10px; border: 1px solid color-mix(in srgb, var(--purple-bright) 38%, var(--line)); border-radius: 9px; color: var(--ink); background: color-mix(in srgb, var(--surface) 94%, var(--paper)); box-shadow: 0 12px 28px var(--shadow); font-size: 10px; font-style: normal; line-height: 1.1; opacity: 0; pointer-events: none; transform: translate(-50%, 5px) scale(.96); transition: opacity .14s ease, transform .16s var(--ease); }
+.github-activity-graph > span > span::after { content: ""; position: absolute; left: 50%; top: 100%; width: 7px; height: 7px; border-right: 1px solid color-mix(in srgb, var(--purple-bright) 38%, var(--line)); border-bottom: 1px solid color-mix(in srgb, var(--purple-bright) 38%, var(--line)); background: color-mix(in srgb, var(--surface) 94%, var(--paper)); transform: translate(-50%, -4px) rotate(45deg); }
+.github-activity-graph > span > span strong { color: var(--purple-bright); font-size: 12px; }
+.github-activity-graph > span > span small { margin-top: 4px; display: block; color: var(--ink-soft); font-size: 8px; }
+.github-activity-graph > span:hover > span,
+.github-activity-graph > span:focus-visible > span { opacity: 1; transform: translate(-50%, 0) scale(1); }
+.github-activity-card__legend { display: flex; justify-content: space-between; gap: 20px; color: var(--ink-soft); font-size: 9px; }
+.github-activity-card__legend > span:last-child { display: flex; align-items: center; gap: 4px; }
+.github-activity-card__legend i { width: 8px; height: 8px; border-radius: 2px; background: color-mix(in srgb, var(--ink-soft) 10%, transparent); }
+.github-activity-card__legend i:nth-of-type(2) { background: color-mix(in srgb, var(--purple) 32%, var(--surface)); }.github-activity-card__legend i:nth-of-type(3) { background: color-mix(in srgb, var(--purple) 55%, var(--surface)); }.github-activity-card__legend i:nth-of-type(4) { background: color-mix(in srgb, var(--purple-bright) 76%, var(--surface)); }.github-activity-card__legend i:nth-of-type(5) { background: var(--purple-bright); }
+.github-repo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.github-repo-card { min-height: 160px; padding: 21px; display: flex; flex-direction: column; overflow: hidden; border-radius: 18px 18px 7px 18px; }
+.github-repo-card > div { display: flex; justify-content: space-between; gap: 12px; color: var(--purple-bright); font-size: 8px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
+.github-repo-card > div b { font-size: 15px; }
+.github-repo-card h3 { margin: 16px 0 6px; overflow: hidden; font-size: 17px; letter-spacing: -.45px; white-space: nowrap; text-overflow: ellipsis; }
+.github-repo-card p { margin: 0; display: -webkit-box; overflow: hidden; color: var(--ink-soft); font-size: 10px; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.github-repo-card footer { margin-top: auto; padding-top: 13px; display: flex; justify-content: space-between; color: var(--ink-soft); font-size: 8px; }
+.github-repo-card--empty { justify-content: center; }.github-repo-card--empty > span { color: var(--purple-bright); font-size: 8px; text-transform: uppercase; }.github-repo-card--empty h3 { white-space: normal; }
+.github-repo-card--loading { background: linear-gradient(110deg, color-mix(in srgb, var(--surface) 70%, transparent) 20%, color-mix(in srgb, var(--purple-soft) 90%, transparent) 38%, color-mix(in srgb, var(--surface) 70%, transparent) 56%); background-size: 250% 100%; animation: shimmer 1.5s linear infinite; }
 
 .aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; filter: blur(18px); }
 .aurora span { position: absolute; display: block; border-radius: 50%; animation: drift 14s ease-in-out infinite alternate; }
@@ -103,7 +163,7 @@
 }
 
 .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
-.brand > span { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50% 45% 35% 62% / 52% 38% 64% 48%; color: var(--paper); background: linear-gradient(145deg, var(--purple-bright), var(--purple)); font-family: Georgia, serif; font-size: 20px; font-style: italic; transform: rotate(-7deg); }
+.brand > span { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50% 45% 35% 62% / 52% 38% 64% 48%; color: var(--paper); background: linear-gradient(145deg, var(--purple-bright), var(--purple)); font-family: var(--font-site); font-size: 20px; font-style: italic; transform: rotate(-7deg); }
 .brand strong { font-size: 20px; letter-spacing: -.6px; }.brand strong span { color: var(--purple-bright); }
 .liveBadge { margin: 0 auto; padding: 8px 13px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--glass-line); border-radius: 15px; color: var(--muted); background: color-mix(in srgb, var(--surface) 42%, transparent); font-size: 10px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
 .liveBadge i { width: 7px; height: 7px; border-radius: 50%; background: #75e6a7; box-shadow: 0 0 0 4px rgba(117,230,167,.1), 0 0 12px rgba(117,230,167,.75); animation: pulse 2s ease-in-out infinite; }
@@ -116,7 +176,7 @@
 .shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 82px 0 32px; }
 .intro { margin-bottom: 36px; display: grid; grid-template-columns: 1fr 430px; align-items: end; gap: 50px; }
 .kicker { margin: 0 0 10px; color: var(--purple); font-size: 10px; font-weight: 900; letter-spacing: 1.8px; text-transform: uppercase; }
-.intro h1 { margin: 0; font-size: clamp(48px, 6vw, 76px); line-height: .93; letter-spacing: -4px; }.intro h1 em { color: var(--purple-bright); font-family: Georgia, serif; font-weight: 400; }
+.intro h1 { margin: 0; font-size: clamp(48px, 6vw, 76px); line-height: .93; letter-spacing: -4px; }.intro h1 em { color: var(--purple-bright); font-family: var(--font-site); font-weight: 400; }
 .intro > p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
 
 .dashboard { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(330px, .88fr); gap: 18px; }
@@ -141,7 +201,7 @@
 .cardTop { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 11px; }.platformIcon { width: 42px; height: 42px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 50% 50% 36% 64% / 55% 38% 62% 45%; }.spotifyIcon { color: var(--paper); background: linear-gradient(145deg, var(--purple-bright), var(--purple)); }.cardTop > div p, .cardTop > div span { margin: 0; display: block; }.cardTop > div p { font-size: 12px; font-weight: 900; }.cardTop > div span { margin-top: 3px; color: var(--muted); font-size: 8px; text-transform: uppercase; letter-spacing: .8px; }.cardTop > i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }.cardTop > i.pulse { background: var(--purple-bright); box-shadow: 0 0 0 5px color-mix(in srgb, var(--purple-bright) 12%, transparent); animation: pulse 1.5s ease-in-out infinite; }
 .albumArt { position: relative; width: 100%; aspect-ratio: 1.45; margin-top: 24px; overflow: hidden; border-radius: 30px 30px 9px 30px; background-size: cover; background-position: center; box-shadow: 0 18px 35px var(--shadow); }.albumFallback { display: grid; place-items: center; color: var(--purple-bright); background: radial-gradient(circle at 68% 28%, color-mix(in srgb, var(--purple-bright) 24%, transparent), transparent 15%), linear-gradient(135deg, var(--purple-soft), var(--paper-deep) 55%, var(--surface)); }.albumFallback::before, .albumFallback::after { content: ""; position: absolute; border: 1px solid var(--glass-line); border-radius: 50%; }.albumFallback::before { width: 190px; height: 190px; }.albumFallback::after { width: 125px; height: 125px; }
 .equalizer { position: absolute; right: 14px; bottom: 14px; height: 36px; padding: 8px 10px; display: flex; align-items: end; gap: 3px; border-radius: 14px 14px 5px 14px; background: color-mix(in srgb, var(--paper) 66%, transparent); backdrop-filter: blur(10px); }.equalizer i { width: 3px; height: 45%; border-radius: 3px; background: var(--purple-bright); animation: equalize .7s ease-in-out infinite alternate; }.equalizer i:nth-child(2) { height: 100%; animation-delay: -.2s; }.equalizer i:nth-child(3) { height: 70%; animation-delay: -.45s; }.equalizer i:nth-child(4) { height: 35%; animation-delay: -.1s; }
-.trackInfo { margin-top: 22px; }.trackInfo p { margin: 0 0 6px; color: var(--purple-bright); font-size: 8px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }.trackInfo h2 { margin: 0; overflow: hidden; font-size: 24px; letter-spacing: -.8px; white-space: nowrap; text-overflow: ellipsis; }.trackInfo > span { display: block; margin-top: 5px; overflow: hidden; color: var(--muted); font-size: 11px; white-space: nowrap; text-overflow: ellipsis; }
+.trackInfo { margin-top: 22px; }.trackInfo p { margin: 0 0 6px; color: var(--purple-bright); font-size: 8px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }.trackInfo h2 { margin: 0; overflow: hidden; font-size: 20px; letter-spacing: -.55px; white-space: nowrap; text-overflow: ellipsis; }.trackInfo > span { display: block; margin-top: 5px; overflow: hidden; color: var(--muted); font-size: 11px; white-space: nowrap; text-overflow: ellipsis; }
 .progress { margin-top: 21px; }.progress > div { height: 4px; overflow: hidden; border-radius: 3px; background: color-mix(in srgb, var(--purple-bright) 14%, transparent); }.progress > div span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--purple), var(--purple-bright)); }.progress p { margin: 6px 0 0; display: flex; justify-content: space-between; color: var(--muted); font-size: 8px; }
 .spotifyLink { min-height: 42px; margin-top: 18px; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--glass-line); border-radius: 18px 18px 7px 18px; color: var(--ink); background: color-mix(in srgb, var(--surface) 48%, transparent); font-size: 10px; font-weight: 900; text-decoration: none; }.spotifyLink:hover { background: color-mix(in srgb, var(--purple-soft) 62%, transparent); }
 .idleMessage { min-height: 42px; margin-top: 18px; padding: 0 14px; display: flex; align-items: center; gap: 9px; border: 1px dashed var(--glass-line); border-radius: 18px 18px 7px 18px; color: var(--muted); font-size: 9px; }.idleMessage > span { color: var(--purple-bright); font-size: 16px; }
@@ -169,17 +229,22 @@
 @keyframes typewriter-caret { 50% { opacity: 0; } }
 @keyframes compact-text-scroll { to { transform: translateX(-42%); } }
 
+@media (min-width: 761px) {
+  .aboutCard > p:last-child { font-size: 14px; }
+}
+
 @media (max-width: 760px) {
   .homeHero { height: auto; min-height: 100svh; padding: 116px 18px 80px; }.homeHeroGrid { height: auto; grid-template-columns: 1fr; grid-template-rows: auto; gap: 28px; }.homeIdentity, .aboutCard, .homeStatusColumn { grid-column: auto; }.homeStatusColumn, .homeLoading { width: 100%; grid-template-columns: 1fr; gap: 12px; }.scrollCue { position: relative; left: auto; bottom: auto; width: max-content; margin: 40px auto 0; transform: none; }
   .header { width: calc(100% - 20px); margin-top: 10px; }.liveBadge { display: none; }.headerActions { margin-left: auto; }.homeButton span { display: none; }.homeButton { width: 44px; padding: 0; justify-content: center; border-radius: 50%; }
   .shell { width: calc(100% - 24px); padding-top: 58px; }.intro { grid-template-columns: 1fr; gap: 17px; margin-bottom: 27px; }.intro h1 { font-size: 52px; }.intro > p { max-width: 480px; }
   .dashboard, .loadingGrid { grid-template-columns: 1fr; }.discordCard { min-height: auto; }.discordBanner { height: 180px; }.discordBody { padding-inline: 20px; }.spotifyCard { padding: 20px; }.profileMeta { gap: 8px; }.githubCard { grid-column: auto; padding: 22px; grid-template-columns: 1fr; grid-template-rows: auto; gap: 22px; }.githubContent { padding: 19px 0 0; border-top: 1px solid var(--glass-line); border-left: 0; }.githubStats { width: 100%; }.githubLink { grid-column: auto; }.githubCard > .errorText { grid-column: auto; }.loadingGrid div:nth-child(3) { grid-column: auto; }.footer { padding-bottom: 22px; }
+  .github-showcase { width: calc(100% - 28px); min-height: auto; padding: 100px 0 64px; }.github-showcase__heading { align-items: start; }.github-showcase__grid { grid-template-columns: 1fr; }.github-activity-card { min-height: 300px; }.github-repo-grid { gap: 12px; }.github-repo-card { min-height: 150px; padding: 17px; }
 }
 
 @media (min-width: 761px) and (max-height: 650px) {
   .homeHero { min-height: 0; padding-top: 98px; padding-bottom: 44px; }
   .homeHeroGrid { align-content: center; }
-  .aboutCard { min-height: 110px; padding: 22px 30px; }
+  .aboutCard { min-height: 96px; padding: 18px 30px; }
   .compactStatusCard, .homeLoading div, .homeLoading div:last-child { min-height: 92px; }
   .compactStatusArtwork { width: 68px; }
   .compactStatusCard { grid-template-columns: 68px minmax(0, 1fr); }
@@ -189,6 +254,7 @@
 
 @media (max-width: 420px) {
   .intro h1 { font-size: 46px; }.intro > p { font-size: 12px; }.avatar { left: 20px; width: 102px; height: 102px; }.identity { display: block; }.deviceRow { margin-top: 13px; justify-content: flex-start; }.profileMeta { grid-template-columns: 1fr 1fr; }.profileMeta > div:last-child { display: none; }.githubAvatar { width: 72px; height: 72px; }.githubIdentity h2 { font-size: 24px; }.githubStats div { min-width: 0; padding-inline: 8px; }.githubStats span { font-size: 6px; }.footer { flex-direction: column; gap: 7px; }.albumArt { aspect-ratio: 1.3; }
+  .github-showcase__heading h2 { font-size: 36px; }.github-repo-grid { grid-template-columns: 1fr; }.github-activity-card { min-height: 260px; padding: 21px; }.github-activity-card__legend > span:last-child { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

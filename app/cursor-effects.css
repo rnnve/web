@@ -7,6 +7,8 @@
   pointer-events: none;
 }
 
+html[data-page-loading="true"] .cursor-effects { display: none; }
+
 .cursor-glow {
   position: fixed;
   left: -18px;
@@ -38,7 +40,7 @@
   display: grid;
   place-items: center;
   color: var(--purple-bright);
-  font-family: Georgia, serif;
+  font-family: var(--font-site);
   font-size: 10px;
   line-height: 1;
   opacity: 0;

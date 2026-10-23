@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/generate-pfp-manifest.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/generate-pfp-manifest.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@fontsource-variable/google-sans-flex": "^5.3.2",
     "geist": "^1.8.2",
     "next": "16.4.2",
     "react": "19.3.0",

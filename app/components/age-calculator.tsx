@@ -22,19 +22,19 @@ function calculateAge(birthDate: Date, now: Date) {
 }
 
 export default function AgeCalculator({ birthDate, className = "" }: AgeCalculatorProps) {
-  const [age, setAge] = useState("0.000000000");
+  const [age, setAge] = useState("0.0000000");
   const tooltipId = useId();
 
   useEffect(() => {
     const parsedBirthDate = birthDate instanceof Date ? new Date(birthDate.getTime()) : new Date(birthDate);
     if (Number.isNaN(parsedBirthDate.getTime())) {
-      const invalidFrame = window.requestAnimationFrame(() => setAge("0.000000000"));
+      const invalidFrame = window.requestAnimationFrame(() => setAge("0.0000000"));
       return () => window.cancelAnimationFrame(invalidFrame);
     }
 
     let frame = 0;
     const tick = () => {
-      setAge(calculateAge(parsedBirthDate, new Date()).toFixed(9));
+      setAge(calculateAge(parsedBirthDate, new Date()).toFixed(7));
       frame = window.requestAnimationFrame(tick);
     };
     frame = window.requestAnimationFrame(tick);

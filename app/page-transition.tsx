@@ -1,40 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import LoadingScreen from "./components/loading-screen";
 
-function LoadingOverlay() {
-  const [fading, setFading] = useState(false);
-  const [mounted, setMounted] = useState(true);
+function TransitionFrame({ children }: { children: React.ReactNode }) {
+  const [phase, setPhase] = useState<"visible" | "fading" | "hidden">("visible");
 
-  useEffect(() => {
-    const fadeTimer = window.setTimeout(() => setFading(true), 1_200);
-    const removeTimer = window.setTimeout(() => setMounted(false), 1_750);
-
+  useLayoutEffect(() => {
+    document.documentElement.dataset.pageLoading = "true";
+    const fadeTimer = window.setTimeout(() => setPhase("fading"), 1_200);
+    const removeTimer = window.setTimeout(() => {
+      setPhase("hidden");
+      delete document.documentElement.dataset.pageLoading;
+    }, 1_650);
     return () => {
       window.clearTimeout(fadeTimer);
       window.clearTimeout(removeTimer);
+      delete document.documentElement.dataset.pageLoading;
     };
   }, []);
 
-  if (!mounted) return null;
-
-  return <LoadingScreen overlay fading={fading} />;
-}
-
-function TransitionFrame({ children }: { children: React.ReactNode }) {
-  const [timedBlocked, setTimedBlocked] = useState(true);
-
-  useEffect(() => {
-    const unblockTimer = window.setTimeout(() => setTimedBlocked(false), 1_750);
-    return () => window.clearTimeout(unblockTimer);
-  }, []);
-
+  const blocked = phase !== "hidden";
   return (
     <>
-      <LoadingOverlay />
-      <div className="page-transition-content" inert={timedBlocked ? true : undefined} aria-hidden={timedBlocked || undefined}>
+      {blocked && <LoadingScreen overlay fading={phase === "fading"} />}
+      <div className="page-transition-content" inert={blocked ? true : undefined} aria-hidden={blocked || undefined}>
         {children}
       </div>
     </>

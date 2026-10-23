@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
+import "@fontsource-variable/google-sans-flex";
 import PageTransition from "./page-transition";
 import CursorEffects from "./components/cursor-effects";
 import ExternalLinkConfirmation from "./components/external-link-confirmation";
@@ -13,12 +12,12 @@ import "./external-link-confirmation.css";
 import "./shard-background.css";
 
 export const metadata: Metadata = {
-  title: "Ryn — Product designer & creative developer",
-  description: "Independent product designer and creative developer shaping useful ideas into expressive digital experiences.",
+  title: "rynnie",
+  description: "Ryn's personal site.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#08130e",
+  themeColor: "#0d050a",
   width: "device-width",
   initialScale: 1,
   maximumScale: 2,
@@ -34,9 +33,9 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="dark"
-      className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
-      <body className={GeistSans.className}>
+      <head><link rel="preload" as="image" href="/loading.webp" /></head>
+      <body>
         <CursorEffects />
         <ExternalLinkConfirmation />
         <ShardBackground />

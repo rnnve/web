@@ -53,9 +53,9 @@ export function SpotifyWidget({ spotify, error, compact = false }: { spotify: Sp
   const progress = spotify.duration ? Math.min(100, Math.max(0, spotify.progress / spotify.duration * 100)) : 0;
 
   if (compact) {
-    return <section className={`${styles.glassCard} ${styles.compactStatusCard}`} aria-labelledby="compact-spotify-title">
+    return <section className={`${styles.glassCard} ${styles.compactStatusCard} ${styles.compactSpotifyCard}`} aria-labelledby="compact-spotify-title">
       <div className={`${styles.compactStatusArtwork} ${styles.compactSpotifyArtwork}`} style={spotify.artwork ? { backgroundImage: `url(${spotify.artwork})` } : undefined}>{!spotify.artwork && <StatusIcon name="spotify" size={32}/>}</div>
-      <div className={styles.compactStatusCopy}><h2 id="compact-spotify-title">{spotify.isPlaying ? spotify.title : "Not Playing"}</h2><p className={styles.compactScrollingText}><span>{spotify.isPlaying ? spotify.artist : "Spotify is quiet right now"}</span></p>{error && <span className={styles.compactStatusError}>{error}</span>}</div>
+      <div className={styles.compactStatusCopy}><h2 id="compact-spotify-title">{spotify.title}</h2><p className={styles.compactScrollingText}><span>{spotify.isPlaying ? spotify.artist : spotify.title === "Nothing playing" ? "Spotify is quiet right now" : `Last played · ${spotify.artist}`}</span></p><div className={styles.compactSpotifyProgress} aria-label={`${Math.round(progress)}% played`}><span style={{ width: `${progress}%` }}/></div><div className={styles.compactSpotifyTimes}><span>{formatTime(spotify.progress)}</span><span>{formatTime(spotify.duration)}</span></div>{error && <span className={styles.compactStatusError}>{error}</span>}</div>
     </section>;
   }
 

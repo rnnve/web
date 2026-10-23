@@ -43,6 +43,10 @@ export default function CursorEffects() {
     };
 
     const handleMove = (event: PointerEvent) => {
+      if (document.documentElement.dataset.pageLoading === "true") {
+        return;
+      }
+
       glow.style.opacity = "1";
       glow.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
 

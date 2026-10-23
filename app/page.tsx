@@ -2,16 +2,25 @@
 
 import { CSSProperties, useCallback, useEffect, useState } from "react";
 import AgeCalculator from "./components/age-calculator";
+import GitHubShowcase from "./components/github-showcase";
+import { useRandomizedName } from "./components/name-randomization";
 import PortfolioNavbar from "./components/portfolio-navbar";
+import SiteFooter from "./components/site-footer";
+import useRandomProfileImage from "./components/use-random-profile-image";
 import { DiscordWidget, SpotifyWidget, StatusIcon, type DiscordProfile, type SpotifyView } from "./test/status-widgets";
 import "./test/test.css";
 
-const PROFILE_NAME = "Ryn";
-const PROFILE_IMAGE: string | null = null; // Set this to "/your-image.webp" after adding it to /public.
 const BIRTH_DATE = "2006-01-01T00:00:00+07:00";
 
 type JsonRecord = Record<string, unknown>;
-type StatusPayload = { discord: unknown; spotify: unknown; errors?: { discord?: string | null; spotify?: string | null } };
+type StatusPayload = {
+  discord: unknown;
+  spotify: unknown;
+  githubRepos?: unknown;
+  githubEvents?: unknown;
+  errors?: { discord?: string | null; spotify?: string | null; githubRepos?: string | null; githubEvents?: string | null };
+};
+type SpotifyPayload = { spotify: unknown; error?: string | null };
 const styles = new Proxy({} as Record<string, string>, { get: (_target, property) => String(property) });
 const isRecord = (value: unknown): value is JsonRecord => typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -53,8 +62,7 @@ function normalizeSpotify(value: unknown): SpotifyView {
   };
 }
 
-function TypewriterGreeting() {
-  const message = `Hey, I’m ${PROFILE_NAME}`;
+function TypewriterText({ message }: { message: string }) {
   const [visibleCharacters, setVisibleCharacters] = useState(0);
 
   useEffect(() => {
@@ -68,51 +76,110 @@ function TypewriterGreeting() {
       });
     }, 72);
     return () => window.clearInterval(timer);
-  }, [message.length]);
+  }, [message]);
 
   return <p className={styles.typewriter} aria-label={message}><span aria-hidden="true">{message.slice(0, visibleCharacters)}</span><i aria-hidden="true" /></p>;
 }
 
+function TypewriterGreeting() {
+  const profileName = useRandomizedName();
+  const message = `Hey, I’m ${profileName}`;
+  return <TypewriterText key={profileName} message={message} />;
+}
+
 export default function Home() {
+  const profileImage = useRandomProfileImage();
   const [payload, setPayload] = useState<StatusPayload | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastSpotify, setLastSpotify] = useState<SpotifyView | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const saved = JSON.parse(window.localStorage.getItem("ryn:last-spotify") ?? "null") as unknown;
+      return isRecord(saved) && typeof saved.title === "string" ? saved as SpotifyView : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const rememberSpotify = useCallback((value: unknown) => {
+    const nextSpotify = normalizeSpotify(value);
+    if (!nextSpotify.isPlaying || nextSpotify.title === "Nothing playing") return;
+    setLastSpotify(nextSpotify);
+    try {
+      window.localStorage.setItem("ryn:last-spotify", JSON.stringify(nextSpotify));
+    } catch {
+      // The live widget still works when local storage is unavailable.
+    }
+  }, []);
 
   const loadStatus = useCallback(async () => {
     try {
       const response = await fetch("/api/status", { cache: "no-store" });
       if (!response.ok) throw new Error("Status request failed");
-      setPayload(await response.json() as StatusPayload);
+      const next = await response.json() as StatusPayload;
+      rememberSpotify(next.spotify);
+      setPayload(next);
     } catch {
-      setPayload({ discord: null, spotify: null, errors: { discord: "Could not load Discord", spotify: "Could not load Spotify" } });
+      setPayload({ discord: null, spotify: null, githubRepos: [], githubEvents: [], errors: { discord: "Could not load Discord", spotify: "Could not load Spotify", githubRepos: "Could not load GitHub repositories", githubEvents: "Could not load GitHub activity" } });
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [rememberSpotify]);
+
+  const loadSpotify = useCallback(async () => {
+    try {
+      const response = await fetch("/api/status/spotify", { cache: "no-store" });
+      if (!response.ok) throw new Error("Spotify request failed");
+      const next = await response.json() as SpotifyPayload;
+      rememberSpotify(next.spotify);
+      setPayload((current) => ({
+        discord: current?.discord ?? null,
+        spotify: next.spotify,
+        githubRepos: current?.githubRepos,
+        githubEvents: current?.githubEvents,
+        errors: { ...current?.errors, spotify: next.error ?? null },
+      }));
+    } catch {
+      setPayload((current) => ({
+        discord: current?.discord ?? null,
+        spotify: current?.spotify ?? null,
+        githubRepos: current?.githubRepos,
+        githubEvents: current?.githubEvents,
+        errors: { ...current?.errors, spotify: "Could not load Spotify" },
+      }));
+    }
+  }, [rememberSpotify]);
 
   useEffect(() => {
     const initialRequest = window.setTimeout(() => void loadStatus(), 0);
-    const interval = window.setInterval(() => void loadStatus(), 15_000);
+    const statusInterval = window.setInterval(() => void loadStatus(), 15_000);
+    const spotifyInterval = window.setInterval(() => void loadSpotify(), 1_000);
     return () => {
       window.clearTimeout(initialRequest);
-      window.clearInterval(interval);
+      window.clearInterval(statusInterval);
+      window.clearInterval(spotifyInterval);
     };
-  }, [loadStatus]);
+  }, [loadSpotify, loadStatus]);
 
   const rawDiscord = payload?.discord;
   const discord = isRecord(rawDiscord) ? (isRecord(rawDiscord.data) ? rawDiscord.data : rawDiscord) as DiscordProfile : null;
-  const spotify = normalizeSpotify(payload?.spotify);
+  const liveSpotify = normalizeSpotify(payload?.spotify);
+
+  const spotify = liveSpotify.isPlaying ? liveSpotify : lastSpotify ? { ...lastSpotify, isPlaying: false } : liveSpotify;
 
   return (
     <main className="root-empty" aria-label="Home">
       <PortfolioNavbar />
-      <section className={styles.homeHero} style={{ "--profile-accent": discord?.accentColor || "#a8f0ba" } as CSSProperties}>
+      <section id="top" className={styles.homeHero} style={{ "--profile-accent": discord?.accentColor || "#ff76b8" } as CSSProperties}>
         <div className={styles.homeHeroGrid}>
           <div className={styles.homeIdentity}>
-            <div className={styles.homeAvatar} style={PROFILE_IMAGE ? { backgroundImage: `url(${PROFILE_IMAGE})` } : undefined}>{!PROFILE_IMAGE && <span>R</span>}</div>
+            <div className={styles.homeAvatar} style={profileImage ? { backgroundImage: `url(${profileImage})` } : undefined}>{!profileImage && <span>R</span>}</div>
             <TypewriterGreeting />
           </div>
           <article className={`${styles.glassCard} ${styles.aboutCard}`}>
-            <p>I&apos;m <AgeCalculator birthDate={BIRTH_DATE} /> years old—a personal space for what I&apos;m building, listening to, and exploring.</p>
+            <p>
+              I&apos;m a <strong><AgeCalculator birthDate={BIRTH_DATE} /> years old Semi-Full Stack Developer</strong>. I mostly works on <strong>Discord bots and Web</strong>, I also can design a little bit. My projects are mostly on my <a href="https://github.com/rnnve" target="_blank" rel="noreferrer">Github profile</a>.
+            </p>
           </article>
           <div className={styles.homeStatusColumn} aria-label="Live status">
             {loading ? <div className={styles.homeLoading}><div/><div/></div> : <>
@@ -122,8 +189,9 @@ export default function Home() {
           </div>
         </div>
         <a className={styles.scrollCue} href="#more"><span>Scroll for more</span><StatusIcon name="arrow" size={19}/></a>
-        <div id="more" className={styles.homeMore} aria-hidden="true" />
       </section>
+      <GitHubShowcase repos={payload?.githubRepos} events={payload?.githubEvents} loading={loading} />
+      {/* <SiteFooter /> */}
     </main>
   );
 }
