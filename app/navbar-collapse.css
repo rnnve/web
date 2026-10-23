@@ -94,7 +94,7 @@
   }
 
   .site-header--collapsed {
-    width: 138px;
+    width: 163px;
     border-radius: 16px;
     background: color-mix(in srgb, var(--paper) 76%, transparent);
     box-shadow: 0 10px 28px color-mix(in srgb, var(--shadow) 72%, transparent);

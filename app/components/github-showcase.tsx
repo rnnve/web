@@ -63,7 +63,7 @@ export default function GitHubShowcase({ repos: rawRepos, events, loading = fals
   const totalActivity = cells.reduce((total, cell) => total + cell.count, 0);
   return (
     <section id="more" className="github-showcase" aria-labelledby="github-showcase-title">
-      <div className="github-showcase__heading"><p>Selected work</p><h2 id="github-showcase-title">Building in public<span>.</span></h2></div>
+      <div className="github-showcase__heading"><p>Github</p></div>
       <div className="github-showcase__grid">
         <article className="github-activity-card">
           <div className="github-activity-card__top"><div><span>GitHub activity</span><strong>{totalActivity} public contributions</strong></div><a href="https://github.com/rnnve" target="_blank" rel="noreferrer" aria-label="Open GitHub profile">↗</a></div>
