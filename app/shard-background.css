@@ -29,9 +29,8 @@ html[data-page-loading="true"] .shard-background__shape { animation-play-state: 
   height: 100%;
   display: block;
   border: 1px solid color-mix(in srgb, var(--purple-bright) 26%, transparent);
-  background: linear-gradient(145deg, color-mix(in srgb, var(--purple-bright) 18%, transparent), color-mix(in srgb, var(--purple-soft) 8%, transparent));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 10%, transparent), 0 16px 45px color-mix(in srgb, var(--purple) 10%, transparent);
-  backdrop-filter: blur(2px);
+  background: transparent;
+  box-shadow: none;
   animation: shard-drift 9s ease-in-out infinite alternate;
 }
 

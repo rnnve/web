@@ -10,6 +10,7 @@ import "./loading/loading.css";
 import "./cursor-effects.css";
 import "./external-link-confirmation.css";
 import "./shard-background.css";
+import "./material-theme.css";
 
 export const metadata: Metadata = {
   title: "rynnie",

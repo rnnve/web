@@ -2,38 +2,47 @@
 
 :root {
   --font-site: "Google Sans Flex Variable", "Segoe UI", sans-serif;
-  --ink: #fff4fa;
-  --ink-soft: #d7a9c2;
-  --paper: #0d050a;
-  --paper-deep: #160a12;
-  --surface: #24101d;
-  --line: #553047;
-  --purple: #ff6db5;
-  --purple-bright: #ff9dce;
-  --purple-soft: #3b172c;
-  --coral: #ff82bd;
-  --coral-soft: #451a32;
-  --lime: #f5b0d4;
-  --blue: #d783b1;
+  --md-sys-color-primary: #ffafd5;
+  --md-sys-color-on-primary: #5f1038;
+  --md-sys-color-primary-container: #7b2851;
+  --md-sys-color-on-primary-container: #ffd8e9;
+  --md-sys-color-secondary: #e1bdcc;
+  --md-sys-color-secondary-container: #513441;
+  --md-sys-color-on-secondary-container: #ffdae9;
+  --md-sys-color-tertiary: #f3b7bd;
+  --md-sys-color-tertiary-container: #5d3035;
+  --md-sys-color-on-tertiary-container: #ffdadc;
+  --md-sys-color-surface: #171216;
+  --md-sys-color-surface-dim: #120d11;
+  --md-sys-color-surface-bright: #3f373c;
+  --md-sys-color-surface-container-lowest: #0d080c;
+  --md-sys-color-surface-container-low: #20191d;
+  --md-sys-color-surface-container: #241d21;
+  --md-sys-color-surface-container-high: #2f272c;
+  --md-sys-color-surface-container-highest: #3a3237;
+  --md-sys-color-on-surface: #eee1e7;
+  --md-sys-color-on-surface-variant: #d3c2c9;
+  --md-sys-color-outline: #9d8c93;
+  --md-sys-color-outline-variant: #504349;
+  --ink: var(--md-sys-color-on-surface);
+  --ink-soft: var(--md-sys-color-on-surface-variant);
+  --paper: var(--md-sys-color-surface);
+  --paper-deep: var(--md-sys-color-surface-container-low);
+  --surface: var(--md-sys-color-surface-container);
+  --line: var(--md-sys-color-outline-variant);
+  --purple: var(--md-sys-color-primary);
+  --purple-bright: var(--md-sys-color-primary);
+  --purple-soft: var(--md-sys-color-primary-container);
+  --coral: var(--md-sys-color-tertiary);
+  --coral-soft: var(--md-sys-color-tertiary-container);
+  --lime: var(--md-sys-color-secondary);
+  --blue: var(--md-sys-color-tertiary);
   --shadow: rgba(0, 0, 0, .38);
   --max-width: 1240px;
   --ease: cubic-bezier(.2, .8, .2, 1.15);
 }
 
 [data-theme="dark"] {
-  --ink: #fff4fa;
-  --ink-soft: #d7a9c2;
-  --paper: #0d050a;
-  --paper-deep: #160a12;
-  --surface: #24101d;
-  --line: #553047;
-  --purple: #ff6db5;
-  --purple-bright: #ff9dce;
-  --purple-soft: #3b172c;
-  --coral: #ff82bd;
-  --coral-soft: #451a32;
-  --lime: #f5b0d4;
-  --blue: #d783b1;
   --shadow: rgba(0, 0, 0, .38);
 }
 
@@ -52,7 +61,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, va
 .eyebrow { display: flex; align-items: center; gap: 9px; margin: 0; color: var(--purple); font-size: 12px; font-weight: 900; letter-spacing: 1.4px; text-transform: uppercase; }
 .eyebrow > span { color: var(--ink-soft); }
 
-.site-header { position: fixed; z-index: 50; top: 18px; left: 50%; width: min(calc(var(--max-width) - 15px), calc(100% - 51px)); height: 68px; padding: 8px 10px 8px 16px; display: flex; align-items: center; border: 1px solid color-mix(in srgb, var(--line) 78%, transparent); border-radius: 34px 34px 34px 17px; background: color-mix(in srgb, var(--paper) 86%, transparent); backdrop-filter: blur(18px); box-shadow: 0 12px 35px color-mix(in srgb, var(--shadow) 65%, transparent); transform: translateX(-50%); }
+.site-header { position: fixed; z-index: 50; top: 18px; left: 20px; width: min(calc(var(--max-width) - 15px), calc(100% - 51px)); height: 68px; padding: 8px 10px 8px 16px; display: flex; align-items: center; border: 1px solid color-mix(in srgb, var(--line) 78%, transparent); border-radius: 34px 34px 34px 17px; background: color-mix(in srgb, var(--paper) 86%, transparent); backdrop-filter: blur(18px); box-shadow: 0 12px 35px color-mix(in srgb, var(--shadow) 65%, transparent); transform: none; }
 .age-calculator { position: relative; width: 2ch; min-width: 0; margin: 0; display: inline-block; font-family: var(--font-site); font-variant-numeric: tabular-nums; vertical-align: baseline; cursor: help; outline: none; }
 .age-calculator__integer { width: 100%; min-width: 0; display: inline-block; text-align: right; }
 .age-calculator__tooltip { position: absolute; z-index: 20; left: 50%; bottom: calc(100% + 9px); width: max-content; padding: 7px 9px; border: 1px solid color-mix(in srgb, var(--purple-bright) 30%, var(--line)); border-radius: 8px; background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--ink); box-shadow: 0 9px 24px var(--shadow); backdrop-filter: blur(14px); font-size: 10px; line-height: 1; letter-spacing: .15px; opacity: 0; pointer-events: none; transform: translate(-50%, 5px) scale(.96); transform-origin: bottom center; transition: opacity .16s ease, transform .2s var(--ease); }

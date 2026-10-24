@@ -11,7 +11,7 @@ import useRandomProfileImage from "./components/use-random-profile-image";
 import { DiscordWidget, SpotifyWidget, StatusIcon, type DiscordProfile, type SpotifyView } from "./components/status-widgets";
 import "./home.css";
 
-const BIRTH_DATE = "2006-01-01T00:00:00+07:00";
+const BIRTH_DATE = "2010-12-31T13:12:00+07:00";
 
 type JsonRecord = Record<string, unknown>;
 type StatusPayload = {
@@ -173,7 +173,9 @@ export default function Home() {
         <div className={styles.homeHeroGrid}>
           <div className={styles.homeIdentity}>
             <div className={styles.homeAvatar} style={profileImage ? { backgroundImage: `url(${profileImage})` } : undefined}>{!profileImage && <span>R</span>}</div>
-            <p>Hey, I’m Rynnie</p>
+            <div className={styles.homeIdentityCopy}>
+              <h1>Hey, I’m Rynnie<span aria-hidden="true">.</span></h1>
+            </div>
           </div>
           <article className={`${styles.glassCard} ${styles.aboutCard}`}>
             <p>

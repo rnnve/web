@@ -1,0 +1,932 @@
+/* Material 3 dark theme overrides. The legacy variables resolve to the
+   semantic roles declared in globals.css so profile-derived color stays global. */
+:root {
+  --md-sys-color-primary: #ffafd5;
+  --md-sys-color-on-primary: #5f1038;
+  --md-sys-color-primary-container: #7b2851;
+  --md-sys-color-on-primary-container: #ffd8e9;
+  --md-sys-color-secondary: #e1bdcc;
+  --md-sys-color-secondary-container: #513441;
+  --md-sys-color-on-secondary-container: #ffdae9;
+  --md-sys-color-tertiary: #f3b7bd;
+  --md-sys-color-tertiary-container: #5d3035;
+  --md-sys-color-on-tertiary-container: #ffdadc;
+  --md-sys-color-surface: #171216;
+  --md-sys-color-surface-dim: #120d11;
+  --md-sys-color-surface-bright: #3f373c;
+  --md-sys-color-surface-container-lowest: #0d080c;
+  --md-sys-color-surface-container-low: #20191d;
+  --md-sys-color-surface-container: #241d21;
+  --md-sys-color-surface-container-high: #2f272c;
+  --md-sys-color-surface-container-highest: #3a3237;
+  --md-sys-color-on-surface: #eee1e7;
+  --md-sys-color-on-surface-variant: #d3c2c9;
+  --md-sys-color-outline: #9d8c93;
+  --md-sys-color-outline-variant: #504349;
+  --md-shape-extra-small: 8px;
+  --md-shape-small: 12px;
+  --md-shape-medium: 16px;
+  --md-shape-large: 24px;
+  --md-shape-extra-large: 28px;
+  --md-motion-emphasized: cubic-bezier(.2, 0, 0, 1);
+  --md-motion-standard: cubic-bezier(.2, 0, 0, 1);
+  --md-elevation-1: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .18);
+  --md-elevation-2: 0 2px 6px rgba(0, 0, 0, .28), 0 8px 24px rgba(0, 0, 0, .2);
+}
+
+html,
+body {
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+}
+
+body,
+.root-empty,
+.page-transition-content {
+  min-height: 100svh;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 3px;
+}
+
+/* Top app bar */
+.site-header {
+  height: 64px;
+  padding: 8px 10px 8px 12px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-shape-extra-large);
+  background: var(--md-sys-color-surface-container);
+  box-shadow: var(--md-elevation-2);
+  backdrop-filter: none;
+}
+
+.site-header .wordmark {
+  gap: 11px;
+  color: var(--md-sys-color-on-surface);
+  font-size: 18px;
+  font-weight: 680;
+  letter-spacing: -.25px;
+}
+
+.site-header .wordmark__shape {
+  width: 44px;
+  height: 44px;
+  flex-basis: 44px;
+  border: 2px solid var(--md-sys-color-primary);
+  border-radius: 50%;
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  transform: none;
+}
+
+.site-header__socials {
+  min-height: 40px;
+  padding-inline: 18px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font-size: 12px;
+  font-weight: 650;
+  box-shadow: none;
+}
+
+.site-header__socials:hover {
+  color: var(--md-sys-color-on-secondary-container);
+  background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 10%, var(--md-sys-color-secondary-container));
+  transform: none;
+}
+
+@media (min-width: 761px) {
+  .site-header--collapsed {
+    border-radius: var(--md-shape-large);
+    background: var(--md-sys-color-surface-container);
+    box-shadow: var(--md-elevation-1);
+  }
+
+  .site-header--collapsed:hover,
+  .site-header--collapsed:focus-within {
+    border-radius: var(--md-shape-extra-large);
+    background: var(--md-sys-color-surface-container-high);
+    box-shadow: var(--md-elevation-2);
+  }
+}
+
+/* Hero moment */
+.homeHero {
+  width: min(960px, calc(100% - 48px));
+  min-height: 700px;
+  margin-inline: auto;
+  padding: 120px 0 64px;
+  color: var(--md-sys-color-on-surface);
+}
+
+.homeHeroGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+  row-gap: 16px;
+}
+
+.homeIdentity {
+  min-height: 136px;
+  padding: 12px 0;
+  gap: 20px;
+  color: var(--md-sys-color-on-surface);
+}
+
+.homeAvatar {
+  width: 76px;
+  border: 3px solid var(--md-sys-color-primary);
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  box-shadow: none;
+  color: var(--md-sys-color-on-primary);
+}
+
+.homeIdentityCopy {
+  min-width: 0;
+}
+
+.homeIdentityCopy > span {
+  display: block;
+  margin-bottom: 4px;
+  color: color-mix(in srgb, var(--md-sys-color-on-primary-container) 76%, transparent);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .2px;
+}
+
+.homeIdentityCopy h1 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.homeIdentityCopy h1 span {
+  color: var(--md-sys-color-primary);
+}
+
+.aboutCard,
+.compactStatusCard,
+.glassCard {
+  border: 0;
+  border-radius: var(--md-shape-extra-large);
+  background: var(--md-sys-color-surface-container);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.aboutCard {
+  min-height: 132px;
+  padding: 28px;
+}
+
+.aboutCard > p:last-child {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.aboutCard strong,
+.aboutCard a {
+  color: var(--md-sys-color-on-surface);
+}
+
+.aboutCard a {
+  text-decoration-color: var(--md-sys-color-primary);
+  text-decoration-thickness: 2px;
+}
+
+.homeStatusColumn {
+  gap: 16px;
+}
+
+.compactStatusCard {
+  min-height: 112px;
+  padding: 16px;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 16px;
+  background: var(--md-sys-color-surface-container-high);
+  transition: background-color .25s ease, transform .4s var(--md-motion-emphasized), box-shadow .25s ease;
+}
+
+.compactStatusCard:hover {
+  background: var(--md-sys-color-surface-container-highest);
+  box-shadow: var(--md-elevation-1);
+  transform: translateY(-2px);
+}
+
+.compactStatusArtwork {
+  width: 72px;
+  border: 0;
+  border-radius: var(--md-shape-large);
+  background-color: var(--md-sys-color-primary-container);
+  background-image: none;
+  color: var(--md-sys-color-on-primary-container);
+  box-shadow: none;
+}
+
+.compactDiscordArtwork {
+  border-radius: 50%;
+}
+
+.compactStatusCopy h2 {
+  color: var(--md-sys-color-on-surface);
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -.25px;
+}
+
+.compactStatusCopy > p,
+.compactSpotifyTimes {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.compactSpotifyProgress {
+  position: relative;
+  height: 8px;
+  margin-top: 10px;
+  overflow: visible;
+  border-radius: 0;
+  background: transparent;
+}
+
+.compactSpotifyProgress::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  right: 2px;
+  top: 50%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--md-sys-color-outline-variant);
+  transform: translateY(-50%);
+}
+
+.compactSpotifyProgress::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  transform: translateY(-50%);
+}
+
+.compactSpotifyProgress span {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 50%;
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--md-sys-color-primary);
+  transform: translateY(-50%);
+  transition: width .9s linear;
+}
+
+.homeLoading {
+  gap: 16px;
+}
+
+.homeLoading div,
+.homeLoading div:last-child {
+  min-height: 112px;
+  border: 0;
+  border-radius: var(--md-shape-extra-large);
+  background: linear-gradient(105deg, var(--md-sys-color-surface-container) 25%, var(--md-sys-color-surface-container-high) 40%, var(--md-sys-color-surface-container) 55%);
+  background-size: 240% 100%;
+}
+
+.scrollCue {
+  bottom: 20px;
+  min-height: 40px;
+  padding: 0 16px;
+  grid-auto-flow: column;
+  place-items: center;
+  gap: 8px;
+  border-radius: 20px;
+  color: var(--md-sys-color-on-secondary-container);
+  background: var(--md-sys-color-secondary-container);
+  font-size: 11px;
+}
+
+/* GitHub section */
+.github-showcase,
+.developer-tools {
+  width: min(960px, calc(100% - 48px));
+  padding-block: 112px 84px;
+}
+
+.github-showcase__heading {
+  margin-bottom: 28px;
+  align-items: end;
+}
+
+.github-showcase__heading p,
+.developer-tools__heading > p:first-child {
+  margin-bottom: 8px;
+  color: var(--md-sys-color-primary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  text-transform: none;
+}
+
+.github-showcase__heading h2,
+.developer-tools__heading h2 {
+  color: var(--md-sys-color-on-surface);
+  font-size: clamp(38px, 6vw, 64px);
+  font-weight: 620;
+  line-height: 1;
+  letter-spacing: -2.6px;
+}
+
+.github-showcase__heading h2 span,
+.developer-tools__heading h2 span {
+  color: var(--md-sys-color-primary);
+}
+
+.github-showcase__heading > span {
+  max-width: 230px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: right;
+}
+
+.github-showcase__grid {
+  gap: 16px;
+}
+
+.github-activity-card,
+.github-repo-card {
+  border: 0;
+  border-radius: var(--md-shape-extra-large);
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface-container);
+  box-shadow: none;
+  backdrop-filter: none;
+  transition: background-color .2s ease, transform .4s var(--md-motion-emphasized), box-shadow .2s ease;
+}
+
+.github-activity-card:hover,
+.github-repo-card:hover {
+  border-color: transparent;
+  background: var(--md-sys-color-surface-container-high);
+  box-shadow: var(--md-elevation-1);
+  transform: translateY(-3px);
+}
+
+.github-activity-card {
+  min-height: 220px;
+  padding: 28px;
+}
+
+.github-activity-card__top div span,
+.github-activity-card__top > a,
+.github-repo-card > div,
+.github-repo-card--empty > span {
+  color: var(--md-sys-color-primary);
+}
+
+.github-activity-card__top div span,
+.github-repo-card > div,
+.github-repo-card--empty > span {
+  text-transform: none;
+  letter-spacing: .2px;
+}
+
+.github-activity-card__top div strong {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 620;
+}
+
+.github-activity-graph > span {
+  border-radius: 3px;
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.github-activity-graph > span[data-level="1"] { background: color-mix(in srgb, var(--md-sys-color-primary) 30%, var(--md-sys-color-surface-container)); }
+.github-activity-graph > span[data-level="2"] { background: color-mix(in srgb, var(--md-sys-color-primary) 50%, var(--md-sys-color-surface-container)); }
+.github-activity-graph > span[data-level="3"] { background: color-mix(in srgb, var(--md-sys-color-primary) 72%, var(--md-sys-color-surface-container)); }
+.github-activity-graph > span[data-level="4"] { background: var(--md-sys-color-primary); box-shadow: none; }
+
+.github-activity-graph > span > span {
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-shape-small);
+  background: var(--md-sys-color-surface-container-highest);
+  box-shadow: var(--md-elevation-2);
+}
+
+.github-repo-grid {
+  gap: 16px;
+}
+
+.github-repo-card {
+  min-height: 132px;
+  padding: 18px;
+  background: var(--md-sys-color-surface-container-low);
+}
+
+.github-repo-card h3 {
+  margin-top: 12px;
+  font-size: 17px;
+  font-weight: 620;
+}
+
+/* Developer tools */
+.developer-tools__heading {
+  max-width: 680px;
+  margin-bottom: 40px;
+}
+
+.developer-tools__heading > p:last-child {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 14px;
+}
+
+.developer-tools__grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.developer-tool {
+  min-height: 156px;
+  padding: 20px;
+  border: 0;
+  border-radius: var(--md-shape-extra-large);
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface-container);
+  box-shadow: none;
+  backdrop-filter: none;
+  transition: background-color .2s ease, transform .4s var(--md-motion-emphasized), box-shadow .2s ease;
+}
+
+.developer-tool:hover {
+  border-color: transparent;
+  background: var(--md-sys-color-surface-container-high);
+  box-shadow: var(--md-elevation-1);
+  transform: translateY(-3px);
+}
+
+.developer-tool__logo {
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+  border-radius: var(--md-shape-medium);
+  color: var(--tool-color);
+  background: var(--md-sys-color-surface-container-highest);
+  filter: none;
+}
+
+.developer-tool strong {
+  font-size: 16px;
+  font-weight: 620;
+}
+
+.developer-tool > span:last-child {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Footer, modal, and loading surfaces */
+.site-footer {
+  width: min(960px, calc(100% - 48px));
+  min-height: 72px;
+  margin-block: 24px;
+  padding: 14px 18px;
+  border: 0;
+  border-radius: var(--md-shape-extra-large);
+  background: var(--md-sys-color-surface-container-low);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.site-footer__brand > span {
+  border-radius: 50%;
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.site-footer nav a {
+  min-height: 40px;
+  padding-inline: 16px;
+  border-radius: 20px;
+  color: var(--md-sys-color-on-secondary-container);
+  background: var(--md-sys-color-secondary-container);
+  font-size: 11px;
+}
+
+.external-confirmation {
+  background: color-mix(in srgb, var(--md-sys-color-surface) 88%, transparent);
+  backdrop-filter: none;
+}
+
+.external-confirmation__modal,
+.loading-demo__card {
+  border: 0;
+  border-radius: var(--md-shape-extra-large);
+  background: var(--md-sys-color-surface-container-high);
+  box-shadow: var(--md-elevation-2);
+  backdrop-filter: none;
+}
+
+.external-confirmation__icon,
+.external-confirmation__destination,
+.external-confirmation__actions button {
+  border-radius: var(--md-shape-medium);
+}
+
+.external-confirmation__icon {
+  color: var(--md-sys-color-on-primary-container);
+  background: var(--md-sys-color-primary-container);
+  box-shadow: none;
+}
+
+.external-confirmation__eyebrow {
+  color: var(--md-sys-color-primary);
+  letter-spacing: .2px;
+  text-transform: none;
+}
+
+.external-confirmation__destination {
+  border-color: var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.external-confirmation__cancel {
+  border-color: var(--md-sys-color-outline);
+  background: transparent;
+}
+
+.external-confirmation__continue {
+  color: var(--md-sys-color-on-primary);
+  background: var(--md-sys-color-primary);
+}
+
+.loading-demo,
+.global-loader.loading-demo {
+  background: var(--md-sys-color-surface);
+}
+
+.loading-demo__eyebrow,
+.loading-demo__copy h1 {
+  color: var(--md-sys-color-on-surface);
+}
+
+.loading-demo__symbols--base {
+  color: var(--md-sys-color-surface-container-highest);
+}
+
+.loading-demo__symbols--sweep {
+  background: linear-gradient(90deg, var(--md-sys-color-primary), var(--md-sys-color-on-surface));
+}
+
+/* Opaque Material surfaces: no frosted glass or backdrop blurring. */
+.glassCard,
+.site-header,
+.site-footer,
+.github-activity-card,
+.github-repo-card,
+.developer-tool,
+.age-calculator__tooltip,
+.external-confirmation,
+.external-confirmation__modal,
+.loading-demo__card,
+.platformBadge,
+.equalizer {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.age-calculator__tooltip,
+.age-calculator__tooltip::after {
+  border-color: var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.platformBadge,
+.equalizer {
+  background: var(--md-sys-color-surface-container-high);
+}
+
+@media (max-width: 760px) {
+  .homeHero,
+  .github-showcase,
+  .developer-tools {
+    width: calc(100% - 28px);
+  }
+
+  .homeHero {
+    padding: 104px 0 64px;
+  }
+
+  .homeHeroGrid {
+    gap: 14px;
+  }
+
+  .homeIdentity {
+    min-height: 120px;
+    padding: 20px;
+  }
+
+  .homeAvatar {
+    width: 64px;
+  }
+
+  .homeIdentityCopy h1 {
+    font-size: clamp(30px, 10vw, 42px);
+    letter-spacing: -1.4px;
+  }
+
+  .aboutCard {
+    padding: 24px;
+  }
+
+  .github-showcase__heading {
+    display: block;
+  }
+
+  .github-showcase__heading > span {
+    display: block;
+    margin-top: 12px;
+    text-align: left;
+  }
+
+  .developer-tools__grid,
+  .github-repo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-footer {
+    width: calc(100% - 28px);
+  }
+}
+
+@media (max-width: 440px) {
+  .homeIdentity {
+    align-items: center;
+    gap: 14px;
+  }
+
+  .homeIdentityCopy > span {
+    font-size: 10px;
+  }
+
+  .homeIdentityCopy h1 {
+    font-size: 29px;
+  }
+
+  .developer-tools__grid,
+  .github-repo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .developer-tool {
+    min-height: 116px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .compactStatusCard,
+  .github-activity-card,
+  .github-repo-card,
+  .developer-tool {
+    transform: none !important;
+  }
+
+}
+
+/* Page CSS is emitted as a route chunk after layout CSS in Next.js. These
+   scoped rules intentionally carry one extra class of specificity so the
+   Material surface system always wins over the legacy route styles. */
+.root-empty .glassCard,
+.root-empty .aboutCard,
+.root-empty .compactStatusCard {
+  border: 0;
+  border-radius: var(--md-shape-extra-large);
+  background: var(--md-sys-color-surface-container);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.root-empty .homeHero {
+  width: min(960px, calc(100% - 48px));
+  min-height: 700px;
+  margin-inline: auto;
+  padding: 120px 0 64px;
+}
+
+.root-empty .homeHeroGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+  row-gap: 16px;
+}
+
+.root-empty .homeIdentity {
+  min-height: 136px;
+  padding: 12px 0;
+  gap: 20px;
+  border-radius: 0;
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  box-shadow: none;
+}
+
+.root-empty .homeAvatar {
+  width: 76px;
+  border-color: var(--md-sys-color-primary);
+  background-color: var(--md-sys-color-primary);
+  box-shadow: none;
+}
+
+.root-empty .aboutCard {
+  min-height: 132px;
+  padding: 28px;
+}
+
+.root-empty .aboutCard > p:last-child {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 14px;
+}
+
+.root-empty .homeStatusColumn,
+.root-empty .homeLoading {
+  gap: 16px;
+}
+
+.root-empty .compactStatusCard {
+  min-height: 112px;
+  padding: 16px;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.root-empty .compactStatusArtwork {
+  width: 72px;
+  border: 0;
+  border-radius: var(--md-shape-large);
+  color: var(--md-sys-color-on-primary-container);
+  background-color: var(--md-sys-color-primary-container);
+  box-shadow: none;
+}
+
+.root-empty .compactDiscordArtwork {
+  border-radius: 50%;
+}
+
+.root-empty .compactSpotifyProgress {
+  position: relative;
+  height: 8px;
+  margin-top: 10px;
+  overflow: visible;
+  border-radius: 0;
+  background: transparent;
+}
+
+.root-empty .compactSpotifyProgress span {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--md-sys-color-primary);
+  transform: translateY(-50%);
+}
+
+
+.root-empty .homeLoading div,
+.root-empty .homeLoading div:last-child {
+  min-height: 112px;
+  border: 0;
+  border-radius: var(--md-shape-extra-large);
+  background: linear-gradient(105deg, var(--md-sys-color-surface-container) 25%, var(--md-sys-color-surface-container-high) 40%, var(--md-sys-color-surface-container) 55%);
+  background-size: 240% 100%;
+}
+
+.root-empty .compactStatusCard {
+  background: var(--md-sys-color-surface-container-high);
+}
+
+.root-empty .compactStatusCard:hover {
+  background: var(--md-sys-color-surface-container-highest);
+  box-shadow: var(--md-elevation-1);
+}
+
+.root-empty .github-showcase,
+.root-empty .developer-tools {
+  width: min(960px, calc(100% - 48px));
+  padding-block: 112px 84px;
+}
+
+.root-empty .github-showcase__grid {
+  gap: 16px;
+}
+
+.root-empty .github-showcase__heading p,
+.root-empty .developer-tools__heading > p:first-child {
+  color: var(--md-sys-color-primary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  text-transform: none;
+}
+
+.root-empty .github-showcase__heading h2,
+.root-empty .developer-tools__heading h2 {
+  color: var(--md-sys-color-on-surface);
+  font-size: clamp(38px, 6vw, 64px);
+  font-weight: 620;
+  line-height: 1;
+  letter-spacing: -2.6px;
+}
+
+.root-empty .github-activity-card,
+.root-empty .github-repo-card,
+.root-empty .developer-tool {
+  border: 0;
+  border-radius: var(--md-shape-extra-large);
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface-container);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.root-empty .github-repo-card {
+  min-height: 132px;
+  padding: 18px;
+  background: var(--md-sys-color-surface-container-low);
+}
+
+.root-empty .github-activity-card {
+  min-height: 220px;
+  padding: 28px;
+}
+
+.root-empty .github-activity-graph > span {
+  background: var(--md-sys-color-surface-container-highest);
+  box-shadow: none;
+}
+
+.root-empty .github-activity-graph > span[data-level="1"] { background: color-mix(in srgb, var(--md-sys-color-primary) 30%, var(--md-sys-color-surface-container)); }
+.root-empty .github-activity-graph > span[data-level="2"] { background: color-mix(in srgb, var(--md-sys-color-primary) 50%, var(--md-sys-color-surface-container)); }
+.root-empty .github-activity-graph > span[data-level="3"] { background: color-mix(in srgb, var(--md-sys-color-primary) 72%, var(--md-sys-color-surface-container)); }
+.root-empty .github-activity-graph > span[data-level="4"] { background: var(--md-sys-color-primary); }
+
+.root-empty .github-activity-card:hover,
+.root-empty .github-repo-card:hover,
+.root-empty .developer-tool:hover {
+  border-color: transparent;
+  background: var(--md-sys-color-surface-container-high);
+  box-shadow: var(--md-elevation-1);
+  transform: translateY(-3px);
+}
+
+.root-empty .developer-tools__grid,
+.root-empty .github-repo-grid {
+  gap: 16px;
+}
+
+.root-empty .developer-tool {
+  min-height: 156px;
+  padding: 20px;
+}
+
+.root-empty .developer-tool__logo {
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+  border-radius: var(--md-shape-medium);
+  background: var(--md-sys-color-surface-container-highest);
+  filter: none;
+}
+
+@media (max-width: 760px) {
+  .root-empty .homeHero {
+    width: calc(100% - 28px);
+    min-height: 100svh;
+    padding: 104px 0 64px;
+  }
+
+  .root-empty .homeHeroGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .root-empty .github-showcase,
+  .root-empty .developer-tools {
+    width: calc(100% - 28px);
+  }
+}
