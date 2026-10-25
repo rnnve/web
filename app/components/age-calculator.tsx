@@ -4,6 +4,8 @@ import { useEffect, useId, useState } from "react";
 
 type AgeCalculatorProps = { birthDate: Date | string; className?: string };
 
+const AGE_UPDATE_INTERVAL = 250;
+
 function calculateAge(birthDate: Date, now: Date) {
   let years = now.getFullYear() - birthDate.getFullYear();
   let lastBirthday = new Date(birthDate);
@@ -22,23 +24,28 @@ function calculateAge(birthDate: Date, now: Date) {
 }
 
 export default function AgeCalculator({ birthDate, className = "" }: AgeCalculatorProps) {
-  const [age, setAge] = useState("0.0000000");
+  const [age, setAge] = useState("0.00000000");
   const tooltipId = useId();
 
   useEffect(() => {
     const parsedBirthDate = birthDate instanceof Date ? new Date(birthDate.getTime()) : new Date(birthDate);
     if (Number.isNaN(parsedBirthDate.getTime())) {
-      const invalidFrame = window.requestAnimationFrame(() => setAge("0.0000000"));
+      const invalidFrame = window.requestAnimationFrame(() => setAge("0.00000000"));
       return () => window.cancelAnimationFrame(invalidFrame);
     }
 
-    let frame = 0;
-    const tick = () => {
-      setAge(calculateAge(parsedBirthDate, new Date()).toFixed(7));
-      frame = window.requestAnimationFrame(tick);
+    const updateAge = () => {
+      const nextAge = calculateAge(parsedBirthDate, new Date()).toFixed(8);
+      setAge((currentAge) => currentAge === nextAge ? currentAge : nextAge);
     };
-    frame = window.requestAnimationFrame(tick);
-    return () => window.cancelAnimationFrame(frame);
+
+    const initialFrame = window.requestAnimationFrame(updateAge);
+    const interval = window.setInterval(updateAge, AGE_UPDATE_INTERVAL);
+
+    return () => {
+      window.cancelAnimationFrame(initialFrame);
+      window.clearInterval(interval);
+    };
   }, [birthDate]);
 
   const integerAge = age.split(".")[0];

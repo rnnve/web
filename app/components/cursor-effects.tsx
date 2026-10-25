@@ -21,6 +21,10 @@ export default function CursorEffects() {
     let lastX = -100;
     let lastY = -100;
     let lastStarAt = 0;
+    let moveFrame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let pointerTime = 0;
 
     const showStar = (x: number, y: number) => {
       const star = stars[starIndex++ % stars.length];
@@ -42,22 +46,31 @@ export default function CursorEffects() {
       );
     };
 
-    const handleMove = (event: PointerEvent) => {
+    const renderMove = () => {
+      moveFrame = 0;
+
       if (document.documentElement.dataset.pageLoading === "true") {
         return;
       }
 
       glow.style.opacity = "1";
-      glow.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
+      glow.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0)`;
 
-      const distance = Math.hypot(event.clientX - lastX, event.clientY - lastY);
-      if (distance > 4.6 && event.timeStamp - lastStarAt > 11) {
-        showStar(event.clientX, event.clientY);
-        if (starIndex % 2 === 0) showStar(event.clientX + (Math.random() - 0.5) * 12, event.clientY + (Math.random() - 0.5) * 12);
-        lastX = event.clientX;
-        lastY = event.clientY;
-        lastStarAt = event.timeStamp;
+      const distance = Math.hypot(pointerX - lastX, pointerY - lastY);
+      if (distance > 4.6 && pointerTime - lastStarAt > 11) {
+        showStar(pointerX, pointerY);
+        if (starIndex % 2 === 0) showStar(pointerX + (Math.random() - 0.5) * 12, pointerY + (Math.random() - 0.5) * 12);
+        lastX = pointerX;
+        lastY = pointerY;
+        lastStarAt = pointerTime;
       }
+    };
+
+    const handleMove = (event: PointerEvent) => {
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      pointerTime = event.timeStamp;
+      if (!moveFrame) moveFrame = window.requestAnimationFrame(renderMove);
     };
 
     const hideGlow = () => { glow.style.opacity = "0"; };
@@ -67,6 +80,7 @@ export default function CursorEffects() {
     return () => {
       window.removeEventListener("pointermove", handleMove);
       document.documentElement.removeEventListener("pointerleave", hideGlow);
+      window.cancelAnimationFrame(moveFrame);
       stars.forEach((star) => star.getAnimations().forEach((animation) => animation.cancel()));
     };
   }, []);

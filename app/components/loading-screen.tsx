@@ -1,6 +1,6 @@
 "use client";
 
-import LoadingMessage from "../loading/loading-message";
+import LoadingMessage from "./loading-message";
 
 type LoadingScreenProps = {
   overlay?: boolean;

@@ -7,9 +7,8 @@ import GitHubShowcase from "./components/github-showcase";
 import PortfolioNavbar from "./components/portfolio-navbar";
 import SectionRevealController from "./components/section-reveal-controller";
 import SiteFooter from "./components/site-footer";
-import useRandomProfileImage from "./components/use-random-profile-image";
 import { DiscordWidget, SpotifyWidget, StatusIcon, type DiscordProfile, type SpotifyView } from "./components/status-widgets";
-import "./home.css";
+import "./styles/home.css";
 
 const BIRTH_DATE = "2010-12-31T13:12:00+07:00";
 
@@ -64,7 +63,6 @@ function normalizeSpotify(value: unknown): SpotifyView {
 }
 
 export default function Home() {
-  const profileImage = useRandomProfileImage();
   const [payload, setPayload] = useState<StatusPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastSpotify, setLastSpotify] = useState<SpotifyView | null>(() => {
@@ -172,7 +170,6 @@ export default function Home() {
       <section id="top" className={styles.homeHero} style={{ "--profile-accent": discord?.accentColor || "#ff76b8" } as CSSProperties} data-reveal>
         <div className={styles.homeHeroGrid}>
           <div className={styles.homeIdentity}>
-            <div className={styles.homeAvatar} style={profileImage ? { backgroundImage: `url(${profileImage})` } : undefined}>{!profileImage && <span>R</span>}</div>
             <div className={styles.homeIdentityCopy}>
               <h1>Hey, I’m Rynnie<span aria-hidden="true">.</span></h1>
             </div>

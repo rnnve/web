@@ -752,6 +752,8 @@ a:focus-visible {
 }
 
 .root-empty .aboutCard {
+  position: relative;
+  top: -35px;
   min-height: 132px;
   padding: 28px;
 }
@@ -764,6 +766,11 @@ a:focus-visible {
 .root-empty .homeStatusColumn,
 .root-empty .homeLoading {
   gap: 16px;
+}
+
+.root-empty .homeStatusColumn {
+  position: relative;
+  top: -30px;
 }
 
 .root-empty .compactStatusCard {

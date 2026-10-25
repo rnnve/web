@@ -4,17 +4,21 @@ import PageTransition from "./page-transition";
 import CursorEffects from "./components/cursor-effects";
 import ExternalLinkConfirmation from "./components/external-link-confirmation";
 import ShardBackground from "./components/shard-background";
+import favicon from "./icon.webp";
 import "./globals.css";
-import "./navbar-collapse.css";
-import "./loading/loading.css";
-import "./cursor-effects.css";
-import "./external-link-confirmation.css";
-import "./shard-background.css";
-import "./material-theme.css";
+import "./styles/navbar-collapse.css";
+import "./styles/loading.css";
+import "./styles/cursor-effects.css";
+import "./styles/external-link-confirmation.css";
+import "./styles/shard-background.css";
+import "./styles/material-theme.css";
 
 export const metadata: Metadata = {
   title: "rynnie",
   description: "Ryn's personal site.",
+  icons: {
+    icon: [{ url: favicon.src, type: "image/webp" }],
+  },
 };
 
 export const viewport: Viewport = {
