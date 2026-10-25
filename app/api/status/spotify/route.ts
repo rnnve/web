@@ -1,21 +1,17 @@
 const SPOTIFY_URL = "https://sptf.rynni.cc/api/spotify";
-const STATUS_TIMEOUT_MS = 15_000;
+const STATUS_TIMEOUT_MS = 4_000;
 let lastSpotify: unknown = null;
 
-async function fetchSpotify(retries = 1): Promise<unknown> {
-  try {
-    const response = await fetch(SPOTIFY_URL, {
-      cache: "no-store",
-      headers: { Accept: "application/json", "User-Agent": "rynni-status-proxy" },
-      signal: AbortSignal.timeout(STATUS_TIMEOUT_MS),
-    });
+async function fetchSpotify(): Promise<unknown> {
+  const response = await fetch(SPOTIFY_URL, {
+    cache: "force-cache",
+    headers: { Accept: "application/json", "User-Agent": "rynni-status-proxy" },
+    next: { revalidate: 3 },
+    signal: AbortSignal.timeout(STATUS_TIMEOUT_MS),
+  });
 
-    if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
-    return await response.json() as unknown;
-  } catch (error) {
-    if (retries > 0) return fetchSpotify(retries - 1);
-    throw error;
-  }
+  if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
+  return await response.json() as unknown;
 }
 
 export const dynamic = "force-dynamic";

@@ -26,7 +26,6 @@
 .global-loader .loading-demo__card {
   width: min(660px, 100%);
   padding: clamp(30px, 5.5vw, 58px);
-  animation: global-loader-arrive .55s cubic-bezier(.2, .8, .2, 1) both;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
@@ -187,11 +186,6 @@ body:has(.global-loader) {
   to { transform: translate3d(18px, 24px, 0) scale(1.06); }
 }
 
-@keyframes global-loader-arrive {
-  from { opacity: 0; transform: translateY(12px) scale(.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
 @media (max-width: 600px) {
   .loading-demo { padding: 16px; }
   .loading-demo__card {
@@ -204,8 +198,7 @@ body:has(.global-loader) {
 @media (prefers-reduced-motion: reduce) {
   .loading-demo__glow,
   .loading-demo__eyebrow span,
-  .loading-demo__symbols--sweep,
-  .global-loader .loading-demo__card {
+  .loading-demo__symbols--sweep {
     animation: none;
   }
 

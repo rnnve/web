@@ -81,6 +81,7 @@
 .homeStatusColumn .trackInfo h2 { font-size: 16px; }
 .homeStatusColumn .progress, .homeStatusColumn .spotifyLink, .homeStatusColumn .idleMessage { display: none; }
 .homeLoading { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(36px, 7vw, 76px); }.homeLoading div { min-height: 104px; border: 1px solid var(--glass-line); border-radius: 20px; background: linear-gradient(110deg, color-mix(in srgb, var(--surface) 34%, transparent) 20%, color-mix(in srgb, var(--purple-soft) 52%, transparent) 35%, color-mix(in srgb, var(--surface) 34%, transparent) 50%); background-size: 250% 100%; animation: shimmer 1.5s linear infinite; }.homeLoading div:last-child { min-height: 104px; border-radius: 20px; }
+.homeStatusSkeleton { min-height: 104px; border: 1px solid var(--glass-line); border-radius: 20px; background: linear-gradient(110deg, color-mix(in srgb, var(--surface) 34%, transparent) 20%, color-mix(in srgb, var(--purple-soft) 52%, transparent) 35%, color-mix(in srgb, var(--surface) 34%, transparent) 50%); background-size: 250% 100%; animation: shimmer 1.5s linear infinite; }
 .scrollCue { position: absolute; left: 50%; bottom: 18px; display: grid; justify-items: center; gap: 5px; color: var(--ink-soft); font-size: 10px; font-weight: 750; text-decoration: none; transform: translateX(-50%); }
 .scrollCue svg { rotate: 90deg; animation: scroll-cue 1.5s ease-in-out infinite; }
 .homeMore { position: absolute; top: 100%; }
@@ -258,7 +259,7 @@
   .homeHero { min-height: 0; padding-top: 98px; padding-bottom: 44px; }
   .homeHeroGrid { align-content: center; }
   .aboutCard { min-height: 96px; padding: 18px 30px; }
-  .compactStatusCard, .homeLoading div, .homeLoading div:last-child { min-height: 92px; }
+  .compactStatusCard, .homeLoading div, .homeLoading div:last-child, .homeStatusSkeleton { min-height: 92px; }
   .compactStatusArtwork { width: 68px; }
   .compactStatusCard { grid-template-columns: 68px minmax(0, 1fr); }
   .homeStatusColumn, .homeLoading { gap: clamp(36px, 7vw, 76px); }
@@ -272,5 +273,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aurora span, .liveBadge i, .cardTop > i, .equalizer i, .loadingGrid div, .homeLoading div, .animatedDot, .scrollCue svg, .spinning { animation: none !important; }
+  .aurora span, .liveBadge i, .cardTop > i, .equalizer i, .loadingGrid div, .homeLoading div, .homeStatusSkeleton, .animatedDot, .scrollCue svg, .spinning { animation: none !important; }
 }

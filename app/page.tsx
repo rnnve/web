@@ -14,13 +14,15 @@ const BIRTH_DATE = "2010-12-31T13:12:00+07:00";
 
 type JsonRecord = Record<string, unknown>;
 type StatusPayload = {
-  discord: unknown;
-  spotify: unknown;
+  discord?: unknown;
+  spotify?: unknown;
   githubRepos?: unknown;
   githubEvents?: unknown;
-  errors?: { discord?: string | null; spotify?: string | null; githubRepos?: string | null; githubEvents?: string | null };
+  errors?: { discord?: string | null; spotify?: string | null };
 };
+type DiscordPayload = { discord: unknown; error?: string | null };
 type SpotifyPayload = { spotify: unknown; error?: string | null };
+type GitHubPayload = { repos: unknown; events: unknown };
 const styles = new Proxy({} as Record<string, string>, { get: (_target, property) => String(property) });
 const isRecord = (value: unknown): value is JsonRecord => typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -63,8 +65,10 @@ function normalizeSpotify(value: unknown): SpotifyView {
 }
 
 export default function Home() {
-  const [payload, setPayload] = useState<StatusPayload | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [payload, setPayload] = useState<StatusPayload>({ discord: null, spotify: null, githubRepos: [], githubEvents: [] });
+  const [discordLoading, setDiscordLoading] = useState(true);
+  const [spotifyLoading, setSpotifyLoading] = useState(true);
+  const [githubLoading, setGitHubLoading] = useState(true);
   const [lastSpotify, setLastSpotify] = useState<SpotifyView | null>(() => {
     if (typeof window === "undefined") return null;
     try {
@@ -86,19 +90,22 @@ export default function Home() {
     }
   }, []);
 
-  const loadStatus = useCallback(async () => {
+  const loadDiscord = useCallback(async () => {
     try {
       const response = await fetch("/api/status", { cache: "no-store" });
-      if (!response.ok) throw new Error("Status request failed");
-      const next = await response.json() as StatusPayload;
-      rememberSpotify(next.spotify);
-      setPayload(next);
+      if (!response.ok) throw new Error("Discord request failed");
+      const next = await response.json() as DiscordPayload;
+      setPayload((current) => ({
+        ...current,
+        discord: next.discord,
+        errors: { ...current.errors, discord: next.error ?? null },
+      }));
     } catch {
-      setPayload({ discord: null, spotify: null, githubRepos: [], githubEvents: [], errors: { discord: "Could not load Discord", spotify: "Could not load Spotify", githubRepos: "Could not load GitHub repositories", githubEvents: "Could not load GitHub activity" } });
+      setPayload((current) => ({ ...current, errors: { ...current.errors, discord: "Could not load Discord" } }));
     } finally {
-      setLoading(false);
+      setDiscordLoading(false);
     }
-  }, [rememberSpotify]);
+  }, []);
 
   const loadSpotify = useCallback(async () => {
     try {
@@ -121,26 +128,47 @@ export default function Home() {
         githubEvents: current?.githubEvents,
         errors: { ...current?.errors, spotify: "Could not load Spotify" },
       }));
+    } finally {
+      setSpotifyLoading(false);
     }
   }, [rememberSpotify]);
 
+  const loadGitHub = useCallback(async () => {
+    try {
+      const response = await fetch("/api/status/github", { cache: "no-store" });
+      if (!response.ok) throw new Error("GitHub request failed");
+      const next = await response.json() as GitHubPayload;
+      setPayload((current) => ({ ...current, githubRepos: next.repos, githubEvents: next.events }));
+    } catch {
+      // The showcase falls back to its empty state when GitHub is unavailable.
+    } finally {
+      setGitHubLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    let statusInterval: number | undefined;
+    let discordInterval: number | undefined;
     let spotifyInterval: number | undefined;
+    let githubInterval: number | undefined;
 
     const stopPolling = () => {
-      if (statusInterval !== undefined) window.clearInterval(statusInterval);
+      if (discordInterval !== undefined) window.clearInterval(discordInterval);
       if (spotifyInterval !== undefined) window.clearInterval(spotifyInterval);
-      statusInterval = undefined;
+      if (githubInterval !== undefined) window.clearInterval(githubInterval);
+      discordInterval = undefined;
       spotifyInterval = undefined;
+      githubInterval = undefined;
     };
 
     const startPolling = () => {
       stopPolling();
       if (document.hidden) return;
-      void loadStatus();
-      statusInterval = window.setInterval(() => void loadStatus(), 15_000);
-      spotifyInterval = window.setInterval(() => void loadSpotify(), 1_000);
+      void loadDiscord();
+      void loadSpotify();
+      void loadGitHub();
+      discordInterval = window.setInterval(() => void loadDiscord(), 15_000);
+      spotifyInterval = window.setInterval(() => void loadSpotify(), 5_000);
+      githubInterval = window.setInterval(() => void loadGitHub(), 300_000);
     };
 
     const handleVisibilityChange = () => {
@@ -155,11 +183,11 @@ export default function Home() {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       stopPolling();
     };
-  }, [loadSpotify, loadStatus]);
+  }, [loadDiscord, loadGitHub, loadSpotify]);
 
-  const rawDiscord = payload?.discord;
+  const rawDiscord = payload.discord;
   const discord = isRecord(rawDiscord) ? (isRecord(rawDiscord.data) ? rawDiscord.data : rawDiscord) as DiscordProfile : null;
-  const liveSpotify = normalizeSpotify(payload?.spotify);
+  const liveSpotify = normalizeSpotify(payload.spotify);
 
   const spotify = liveSpotify.isPlaying ? liveSpotify : lastSpotify ? { ...lastSpotify, isPlaying: false } : liveSpotify;
 
@@ -180,15 +208,13 @@ export default function Home() {
             </p>
           </article>
           <div className={styles.homeStatusColumn} aria-label="Live status">
-            {loading ? <div className={styles.homeLoading}><div/><div/></div> : <>
-              <SpotifyWidget spotify={spotify} error={payload?.errors?.spotify} compact/>
-              <DiscordWidget profile={discord} error={payload?.errors?.discord} compact/>
-            </>}
+            {spotifyLoading ? <div className={styles.homeStatusSkeleton} aria-label="Loading Spotify status"/> : <SpotifyWidget spotify={spotify} error={payload.errors?.spotify} compact/>}
+            {discordLoading ? <div className={styles.homeStatusSkeleton} aria-label="Loading Discord status"/> : <DiscordWidget profile={discord} error={payload.errors?.discord} compact/>}
           </div>
         </div>
         <a className={styles.scrollCue} href="#more"><span>Scroll for more</span><StatusIcon name="arrow" size={19}/></a>
       </section>
-      <GitHubShowcase repos={payload?.githubRepos} events={payload?.githubEvents} loading={loading} />
+      <GitHubShowcase repos={payload.githubRepos} events={payload.githubEvents} loading={githubLoading} />
       <DeveloperTools />
       <SiteFooter />
     </main>
