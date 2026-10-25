@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import ExternalLinkIcon from "./external-link-icon";
 
 type PendingLink = {
   href: string;
@@ -69,14 +70,14 @@ export default function ExternalLinkConfirmation() {
   return (
     <div className="external-confirmation" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setPendingLink(null); }}>
       <section className="external-confirmation__modal" role="dialog" aria-modal="true" aria-labelledby="external-confirmation-title" aria-describedby="external-confirmation-description">
-        <div className="external-confirmation__icon" aria-hidden="true">↗</div>
+        <div className="external-confirmation__icon"><ExternalLinkIcon size={25}/></div>
         <p className="external-confirmation__eyebrow">External destination</p>
         <h2 id="external-confirmation-title">Leave this website?</h2>
         <p id="external-confirmation-description">You&apos;re about to visit a website outside of Ryn&apos;s personal site.</p>
         <div className="external-confirmation__destination"><span>Continue to</span><strong>{pendingLink.displayUrl}</strong></div>
         <div className="external-confirmation__actions">
           <button ref={cancelRef} type="button" className="external-confirmation__cancel" onClick={() => setPendingLink(null)}>Stay here</button>
-          <button type="button" className="external-confirmation__continue" onClick={continueToDestination}>Continue <span aria-hidden="true">↗</span></button>
+          <button type="button" className="external-confirmation__continue" onClick={continueToDestination}>Continue <ExternalLinkIcon size={16}/></button>
         </div>
       </section>
     </div>

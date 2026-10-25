@@ -248,51 +248,10 @@ a:focus-visible {
 }
 
 .compactSpotifyProgress {
-  position: relative;
-  height: 8px;
+  width: 100%;
   margin-top: 10px;
-  overflow: visible;
-  border-radius: 0;
-  background: transparent;
-}
-
-.compactSpotifyProgress::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  left: 0;
-  right: 2px;
-  top: 50%;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--md-sys-color-outline-variant);
-  transform: translateY(-50%);
-}
-
-.compactSpotifyProgress::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  right: 0;
-  top: 50%;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--md-sys-color-primary);
-  transform: translateY(-50%);
-}
-
-.compactSpotifyProgress span {
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  top: 50%;
-  display: block;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--md-sys-color-primary);
-  transform: translateY(-50%);
-  transition: width .9s linear;
+  --m3e-progress-indicator-color: var(--md-sys-color-primary);
+  --m3e-progress-indicator-track-color: var(--md-sys-color-outline-variant);
 }
 
 .homeLoading {
@@ -794,22 +753,10 @@ a:focus-visible {
 }
 
 .root-empty .compactSpotifyProgress {
-  position: relative;
-  height: 8px;
+  width: 100%;
   margin-top: 10px;
-  overflow: visible;
-  border-radius: 0;
-  background: transparent;
-}
-
-.root-empty .compactSpotifyProgress span {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--md-sys-color-primary);
-  transform: translateY(-50%);
+  --m3e-progress-indicator-color: var(--md-sys-color-primary);
+  --m3e-progress-indicator-track-color: var(--md-sys-color-outline-variant);
 }
 
 
@@ -922,18 +869,61 @@ a:focus-visible {
 
 @media (max-width: 760px) {
   .root-empty .homeHero {
-    width: calc(100% - 28px);
+    width: calc(100% - 20px);
     min-height: 100svh;
-    padding: 104px 0 64px;
+    padding: calc(92px + env(safe-area-inset-top)) 0 56px;
   }
 
   .root-empty .homeHeroGrid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .root-empty .homeIdentity {
+    min-height: auto;
+    padding: 16px 4px;
+  }
+
+  .root-empty .aboutCard {
+    top: 0;
+    min-height: 0;
+    padding: 22px;
+  }
+
+  .root-empty .homeStatusColumn {
+    top: 0;
+  }
+
+  .root-empty .compactStatusCard {
+    min-height: 104px;
+    padding: 14px;
+    grid-template-columns: 64px minmax(0, 1fr);
     gap: 14px;
+  }
+
+  .root-empty .compactStatusArtwork {
+    width: 64px;
   }
 
   .root-empty .github-showcase,
   .root-empty .developer-tools {
-    width: calc(100% - 28px);
+    width: calc(100% - 24px);
+    padding-block: 84px 56px;
+  }
+}
+
+@media (max-width: 520px) {
+  .root-empty .github-repo-grid,
+  .root-empty .developer-tools__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .root-empty .github-repo-card {
+    min-height: 120px;
+  }
+
+  .root-empty .developer-tool {
+    min-height: 88px;
+    padding: 16px;
   }
 }

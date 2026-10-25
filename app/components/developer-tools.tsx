@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import ExternalLinkIcon from "./external-link-icon";
 
 type Tool = {
   name: string;
@@ -35,7 +36,7 @@ export default function DeveloperTools() {
           <a className="developer-tool" href={tool.href} target="_blank" rel="noreferrer" key={tool.name} style={{ "--tool-color": tool.color } as CSSProperties}>
             <span className="developer-tool__logo" aria-hidden="true">{tool.logo}</span>
             <strong>{tool.name}</strong>
-            <span aria-hidden="true">↗</span>
+            <ExternalLinkIcon size={17}/>
           </a>
         ))}
       </div>

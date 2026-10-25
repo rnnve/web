@@ -69,6 +69,7 @@ export default function Home() {
   const [discordLoading, setDiscordLoading] = useState(true);
   const [spotifyLoading, setSpotifyLoading] = useState(true);
   const [githubLoading, setGitHubLoading] = useState(true);
+  const [spotifySyncedAt, setSpotifySyncedAt] = useState(0);
   const [lastSpotify, setLastSpotify] = useState<SpotifyView | null>(() => {
     if (typeof window === "undefined") return null;
     try {
@@ -112,6 +113,7 @@ export default function Home() {
       const response = await fetch("/api/status/spotify", { cache: "no-store" });
       if (!response.ok) throw new Error("Spotify request failed");
       const next = await response.json() as SpotifyPayload;
+      setSpotifySyncedAt(Date.now());
       rememberSpotify(next.spotify);
       setPayload((current) => ({
         discord: current?.discord ?? null,
@@ -208,7 +210,7 @@ export default function Home() {
             </p>
           </article>
           <div className={styles.homeStatusColumn} aria-label="Live status">
-            {spotifyLoading ? <div className={styles.homeStatusSkeleton} aria-label="Loading Spotify status"/> : <SpotifyWidget spotify={spotify} error={payload.errors?.spotify} compact/>}
+            {spotifyLoading ? <div className={styles.homeStatusSkeleton} aria-label="Loading Spotify status"/> : <SpotifyWidget spotify={spotify} error={payload.errors?.spotify} syncedAt={spotifySyncedAt} compact/>}
             {discordLoading ? <div className={styles.homeStatusSkeleton} aria-label="Loading Discord status"/> : <DiscordWidget profile={discord} error={payload.errors?.discord} compact/>}
           </div>
         </div>

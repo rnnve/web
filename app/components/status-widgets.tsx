@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import WavyLinearProgress from "./wavy-linear-progress";
+
 const styles = new Proxy({} as Record<string, string>, { get: (_target, property) => String(property) });
 
 export type Activity = { name?: string; type?: string; details?: string | null; state?: string | null; icon?: string | null; timestamps?: { start?: number | null; end?: number | null } | null };
@@ -49,13 +52,28 @@ export function DiscordWidget({ profile, error, compact = false }: { profile: Di
   </section>;
 }
 
-export function SpotifyWidget({ spotify, error, compact = false }: { spotify: SpotifyView; error?: string | null; compact?: boolean }) {
-  const progress = spotify.duration ? Math.min(100, Math.max(0, spotify.progress / spotify.duration * 100)) : 0;
+export function SpotifyWidget({ spotify, error, compact = false, syncedAt = 0 }: { spotify: SpotifyView; error?: string | null; compact?: boolean; syncedAt?: number }) {
+  const [clock, setClock] = useState(0);
+
+  useEffect(() => {
+    if (!spotify.isPlaying) return;
+
+    const timer = window.setInterval(() => {
+      setClock(Date.now());
+    }, 1_000);
+
+    return () => window.clearInterval(timer);
+  }, [spotify.isPlaying, spotify.title]);
+
+  const currentProgress = spotify.isPlaying && syncedAt > 0
+    ? Math.min(spotify.duration || Number.POSITIVE_INFINITY, spotify.progress + Math.max(0, clock - syncedAt))
+    : spotify.progress;
+  const progress = spotify.duration ? Math.min(100, Math.max(0, currentProgress / spotify.duration * 100)) : 0;
 
   if (compact) {
     return <section className={`${styles.glassCard} ${styles.compactStatusCard} ${styles.compactSpotifyCard}`} aria-labelledby="compact-spotify-title">
       <div className={`${styles.compactStatusArtwork} ${styles.compactSpotifyArtwork}`} style={spotify.artwork ? { backgroundImage: `url(${spotify.artwork})` } : undefined}>{!spotify.artwork && <StatusIcon name="spotify" size={32}/>}</div>
-      <div className={styles.compactStatusCopy}><h2 id="compact-spotify-title">{spotify.title}</h2><p className={styles.compactScrollingText}><span>{spotify.isPlaying ? spotify.artist : spotify.title === "Nothing playing" ? "Spotify is quiet right now" : `Last played · ${spotify.artist}`}</span></p><div className={styles.compactSpotifyProgress} aria-label={`${Math.round(progress)}% played`}><span style={{ width: `${progress}%` }}/></div><div className={styles.compactSpotifyTimes}><span>{formatTime(spotify.progress)}</span><span>{formatTime(spotify.duration)}</span></div>{error && <span className={styles.compactStatusError}>{error}</span>}</div>
+      <div className={styles.compactStatusCopy}><h2 id="compact-spotify-title">{spotify.title}</h2><p className={styles.compactScrollingText}><span>{spotify.isPlaying ? spotify.artist : spotify.title === "Nothing playing" ? "Spotify is quiet right now" : `Last played · ${spotify.artist}`}</span></p><WavyLinearProgress className={styles.compactSpotifyProgress} value={currentProgress} max={spotify.duration || 1} label={`${Math.round(progress)}% played`}/><div className={styles.compactSpotifyTimes}><span>{formatTime(currentProgress)}</span><span>{formatTime(spotify.duration)}</span></div>{error && <span className={styles.compactStatusError}>{error}</span>}</div>
     </section>;
   }
 
@@ -63,7 +81,7 @@ export function SpotifyWidget({ spotify, error, compact = false }: { spotify: Sp
     <div className={styles.cardTop}><span className={`${styles.platformIcon} ${styles.spotifyIcon}`}><StatusIcon name="spotify" size={23}/></span><div><p>Spotify</p><span>{spotify.isPlaying ? "Now playing" : "Not playing"}</span></div><i className={spotify.isPlaying ? styles.pulse : ""}/></div>
     <div className={`${styles.albumArt} ${!spotify.artwork ? styles.albumFallback : ""}`} style={spotify.artwork ? { backgroundImage: `url(${spotify.artwork})` } : undefined}>{!spotify.artwork && <StatusIcon name="headphones" size={54}/>} {spotify.isPlaying && <div className={styles.equalizer}><i/><i/><i/><i/></div>}</div>
     <div className={styles.trackInfo}><p>{spotify.album || (spotify.isPlaying ? "Currently listening" : "Playback paused")}</p><h2 id="spotify-title">{spotify.title}</h2><span>{spotify.artist}</span></div>
-    <div className={styles.progress}><div><span style={{ width: `${progress}%` }}/></div><p><span>{formatTime(spotify.progress)}</span><span>{formatTime(spotify.duration)}</span></p></div>
+    <div className={styles.progress}><WavyLinearProgress value={currentProgress} max={spotify.duration || 1} label={`${Math.round(progress)}% played`}/><p><span>{formatTime(currentProgress)}</span><span>{formatTime(spotify.duration)}</span></p></div>
     {spotify.url ? <a className={styles.spotifyLink} href={spotify.url} target="_blank" rel="noreferrer">Open in Spotify <StatusIcon name="arrow" size={17}/></a> : <div className={styles.idleMessage}><span>♪</span>Waiting for the next song</div>}
     {error && <p className={styles.errorText}>{error}</p>}
   </section>;

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import ExternalLinkIcon from "./external-link-icon";
 import useRandomProfileImage from "./use-random-profile-image";
 
 export default function SiteFooter() {
@@ -14,7 +15,7 @@ export default function SiteFooter() {
       </Link>
       <p>&copy; 2026 Rynnie</p>
       <nav aria-label="Footer navigation">
-        <a href="https://github.com/rnnve" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+        <a href="https://github.com/rnnve" target="_blank" rel="noreferrer">GitHub <ExternalLinkIcon size={14}/></a>
       </nav>
     </footer>
   );

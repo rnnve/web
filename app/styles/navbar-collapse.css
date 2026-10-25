@@ -78,6 +78,6 @@
 }
 
 @media (max-width: 760px) {
-  .site-header { left: 50%; width: calc(100% - 20px); max-width: none; transform: translateX(-50%); }
-  .site-header__socials { min-height: 38px; padding-inline: 13px; }
+  .site-header { top: max(8px, env(safe-area-inset-top)); left: 50%; width: calc(100% - 16px); max-width: none; transform: translateX(-50%); }
+  .site-header__socials { min-height: 44px; padding-inline: 13px; }
 }

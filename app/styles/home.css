@@ -60,8 +60,7 @@
 .compactStatusArtwork .statusDot { position: absolute; right: 2px; bottom: 3px; width: 13px; height: 13px; border: 3px solid var(--surface); }
 .compactStatusCopy { min-width: 0; }.compactStatusCopy h2 { margin: 0; overflow: hidden; font-size: clamp(16px, 1.65vw, 20px); line-height: 1.15; letter-spacing: -.6px; white-space: nowrap; text-overflow: ellipsis; }.compactStatusCopy > p { margin: 5px 0 0; overflow: hidden; color: var(--muted); font-size: 12px; white-space: nowrap; }.compactScrollingText span { width: max-content; min-width: 100%; display: block; }.compactScrollingText:hover span { animation: compact-text-scroll 5s linear infinite alternate; }.compactStatusError { margin-top: 5px; display: block; color: var(--coral); font-size: 7px; }
 .compactSpotifyCard .compactStatusCopy h2 { font-size: clamp(14px, 1.35vw, 17px); letter-spacing: -.35px; }
-.compactSpotifyProgress { height: 3px; margin-top: 8px; overflow: hidden; border-radius: 3px; background: color-mix(in srgb, var(--purple-bright) 18%, transparent); }
-.compactSpotifyProgress span { height: 100%; display: block; border-radius: inherit; background: var(--purple-bright); transition: width .9s linear; }
+.compactSpotifyProgress { width: 100%; margin-top: 8px; --m3e-linear-progress-indicator-thickness: 6px; --m3e-linear-wavy-progress-indicator-amplitude: 2px; --m3e-linear-wavy-progress-indicator-wavelength: 14px; --m3e-progress-indicator-color: var(--purple-bright); --m3e-progress-indicator-track-color: color-mix(in srgb, var(--purple-bright) 18%, transparent); }
 .compactSpotifyTimes { margin-top: 3px; display: flex; justify-content: space-between; color: var(--muted); font-size: 7px; font-variant-numeric: tabular-nums; }
 .homeStatusColumn .discordCard { min-height: 0; border-radius: 20px; }
 .homeStatusColumn .discordBanner { height: 62px; }
@@ -110,7 +109,7 @@
 .github-activity-card__top div strong { display: block; }
 .github-activity-card__top div span { color: var(--purple-bright); font-size: 10px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; }
 .github-activity-card__top div strong { margin-top: 8px; font-size: clamp(18px, 2vw, 25px); letter-spacing: -.7px; }
-.github-activity-card__top > a { color: var(--purple-bright); font-size: 24px; line-height: 1; text-decoration: none; }
+.github-activity-card__top > a { width: 44px; height: 44px; margin: -10px -10px 0 0; display: grid; place-items: center; border-radius: 50%; color: var(--purple-bright); line-height: 1; text-decoration: none; }
 .github-activity-graph { width: 100%; margin: 14px auto 11px; display: grid; grid-template-rows: repeat(7, 1fr); grid-auto-flow: column; grid-auto-columns: 1fr; gap: clamp(3px, .4vw, 5px); }
 .github-activity-graph > span { position: relative; aspect-ratio: 1; min-width: 0; border-radius: 3px; background: color-mix(in srgb, var(--ink-soft) 10%, transparent); cursor: help; outline: none; }
 .github-activity-graph > span[data-level="1"] { background: color-mix(in srgb, var(--purple) 32%, var(--surface)); }
@@ -132,7 +131,7 @@
 .github-repo-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
 .github-repo-card { min-height: 104px; padding: 14px; display: flex; flex-direction: column; overflow: hidden; border-radius: 18px 18px 7px 18px; }
 .github-repo-card > div { display: flex; justify-content: space-between; gap: 12px; color: var(--purple-bright); font-size: 8px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
-.github-repo-card > div b { font-size: 15px; }
+.github-repo-card > div .external-link-icon { flex: 0 0 auto; }
 .github-repo-card h3 { margin: 8px 0 3px; overflow: hidden; font-size: 15px; letter-spacing: -.4px; white-space: nowrap; text-overflow: ellipsis; }
 .github-repo-card p { margin: 0; display: -webkit-box; overflow: hidden; color: var(--ink-soft); font-size: 10px; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .github-repo-card footer { margin-top: auto; padding-top: 9px; display: flex; justify-content: space-between; color: var(--ink-soft); font-size: 8px; }
@@ -151,7 +150,7 @@
 .developer-tool__logo { width: 45px; height: 45px; display: grid; place-items: center; color: var(--tool-color); filter: drop-shadow(0 8px 15px color-mix(in srgb, var(--tool-color) 22%, transparent)); }
 .developer-tool__logo svg { width: 100%; height: 100%; }
 .developer-tool strong { margin-top: auto; font-size: 15px; letter-spacing: -.35px; }
-.developer-tool > span:last-child { position: absolute; top: 16px; right: 16px; color: color-mix(in srgb, var(--tool-color) 82%, var(--ink)); font-size: 15px; }
+.developer-tool > .external-link-icon { position: absolute; top: 16px; right: 16px; color: color-mix(in srgb, var(--tool-color) 82%, var(--ink)); }
 
 .aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; filter: blur(18px); }
 .aurora span { position: absolute; display: block; border-radius: 50%; animation: drift 14s ease-in-out infinite alternate; }
@@ -216,7 +215,7 @@
 .albumArt { position: relative; width: 100%; aspect-ratio: 1.45; margin-top: 24px; overflow: hidden; border-radius: 30px 30px 9px 30px; background-size: cover; background-position: center; box-shadow: 0 18px 35px var(--shadow); }.albumFallback { display: grid; place-items: center; color: var(--purple-bright); background: radial-gradient(circle at 68% 28%, color-mix(in srgb, var(--purple-bright) 24%, transparent), transparent 15%), linear-gradient(135deg, var(--purple-soft), var(--paper-deep) 55%, var(--surface)); }.albumFallback::before, .albumFallback::after { content: ""; position: absolute; border: 1px solid var(--glass-line); border-radius: 50%; }.albumFallback::before { width: 190px; height: 190px; }.albumFallback::after { width: 125px; height: 125px; }
 .equalizer { position: absolute; right: 14px; bottom: 14px; height: 36px; padding: 8px 10px; display: flex; align-items: end; gap: 3px; border-radius: 14px 14px 5px 14px; background: color-mix(in srgb, var(--paper) 66%, transparent); backdrop-filter: blur(10px); }.equalizer i { width: 3px; height: 45%; border-radius: 3px; background: var(--purple-bright); animation: equalize .7s ease-in-out infinite alternate; }.equalizer i:nth-child(2) { height: 100%; animation-delay: -.2s; }.equalizer i:nth-child(3) { height: 70%; animation-delay: -.45s; }.equalizer i:nth-child(4) { height: 35%; animation-delay: -.1s; }
 .trackInfo { margin-top: 22px; }.trackInfo p { margin: 0 0 6px; color: var(--purple-bright); font-size: 8px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }.trackInfo h2 { margin: 0; overflow: hidden; font-size: 20px; letter-spacing: -.55px; white-space: nowrap; text-overflow: ellipsis; }.trackInfo > span { display: block; margin-top: 5px; overflow: hidden; color: var(--muted); font-size: 11px; white-space: nowrap; text-overflow: ellipsis; }
-.progress { margin-top: 21px; }.progress > div { height: 4px; overflow: hidden; border-radius: 3px; background: color-mix(in srgb, var(--purple-bright) 14%, transparent); }.progress > div span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--purple), var(--purple-bright)); }.progress p { margin: 6px 0 0; display: flex; justify-content: space-between; color: var(--muted); font-size: 8px; }
+.progress { margin-top: 21px; }.progress > m3e-linear-progress-indicator { width: 100%; --m3e-linear-progress-indicator-thickness: 7px; --m3e-linear-wavy-progress-indicator-amplitude: 2px; --m3e-linear-wavy-progress-indicator-wavelength: 16px; --m3e-progress-indicator-color: var(--purple-bright); --m3e-progress-indicator-track-color: color-mix(in srgb, var(--purple-bright) 14%, transparent); }.progress p { margin: 6px 0 0; display: flex; justify-content: space-between; color: var(--muted); font-size: 8px; }
 .spotifyLink { min-height: 42px; margin-top: 18px; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--glass-line); border-radius: 18px 18px 7px 18px; color: var(--ink); background: color-mix(in srgb, var(--surface) 48%, transparent); font-size: 10px; font-weight: 900; text-decoration: none; }.spotifyLink:hover { background: color-mix(in srgb, var(--purple-soft) 62%, transparent); }
 .idleMessage { min-height: 42px; margin-top: 18px; padding: 0 14px; display: flex; align-items: center; gap: 9px; border: 1px dashed var(--glass-line); border-radius: 18px 18px 7px 18px; color: var(--muted); font-size: 9px; }.idleMessage > span { color: var(--purple-bright); font-size: 16px; }
 
@@ -247,12 +246,12 @@
 }
 
 @media (max-width: 760px) {
-  .homeHero { height: auto; min-height: 100svh; padding: 116px 18px 80px; }.homeHeroGrid { height: auto; grid-template-columns: 1fr; grid-template-rows: auto; gap: 28px; }.homeIdentity, .aboutCard, .homeStatusColumn { grid-column: auto; }.homeStatusColumn, .homeLoading { width: 100%; grid-template-columns: 1fr; gap: 12px; }.scrollCue { position: relative; left: auto; bottom: auto; width: max-content; margin: 40px auto 0; transform: none; }
+  .homeHero { height: auto; min-height: 100svh; padding: calc(92px + env(safe-area-inset-top)) 18px 64px; }.homeHeroGrid { height: auto; grid-template-columns: 1fr; grid-template-rows: auto; gap: 18px; }.homeIdentity, .aboutCard, .homeStatusColumn { grid-column: auto; }.homeStatusColumn, .homeLoading { width: 100%; grid-template-columns: 1fr; gap: 12px; }.scrollCue { position: relative; left: auto; bottom: auto; width: max-content; margin: 28px auto 0; transform: none; }
   .header { width: calc(100% - 20px); margin-top: 10px; }.liveBadge { display: none; }.headerActions { margin-left: auto; }.homeButton span { display: none; }.homeButton { width: 44px; padding: 0; justify-content: center; border-radius: 50%; }
   .shell { width: calc(100% - 24px); padding-top: 58px; }.intro { grid-template-columns: 1fr; gap: 17px; margin-bottom: 27px; }.intro h1 { font-size: 52px; }.intro > p { max-width: 480px; }
   .dashboard, .loadingGrid { grid-template-columns: 1fr; }.discordCard { min-height: auto; }.discordBanner { height: 180px; }.discordBody { padding-inline: 20px; }.spotifyCard { padding: 20px; }.profileMeta { gap: 8px; }.githubCard { grid-column: auto; padding: 22px; grid-template-columns: 1fr; grid-template-rows: auto; gap: 22px; }.githubContent { padding: 19px 0 0; border-top: 1px solid var(--glass-line); border-left: 0; }.githubStats { width: 100%; }.githubLink { grid-column: auto; }.githubCard > .errorText { grid-column: auto; }.loadingGrid div:nth-child(3) { grid-column: auto; }.footer { padding-bottom: 22px; }
-  .github-showcase { width: calc(100% - 28px); min-height: auto; padding: 100px 0 64px; }.github-showcase__heading { align-items: start; }.github-showcase__grid { grid-template-columns: 1fr; }.github-activity-card { min-height: 200px; }.github-repo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }.github-repo-card { min-height: 104px; padding: 14px; }
-  .developer-tools { width: calc(100% - 28px); min-height: auto; padding: 100px 0 72px; }.developer-tools__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }.developer-tool { min-height: 135px; }
+  .github-showcase { width: calc(100% - 24px); min-height: auto; padding: 84px 0 48px; }.github-showcase__heading { align-items: start; margin-bottom: 24px; }.github-showcase__grid { grid-template-columns: 1fr; }.github-activity-card { min-height: 200px; overflow: hidden; }.github-activity-graph { gap: 2px; }.github-repo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }.github-repo-card { min-height: 112px; padding: 14px; }
+  .developer-tools { width: calc(100% - 24px); min-height: auto; padding: 84px 0 56px; }.developer-tools__heading { margin-bottom: 28px; }.developer-tools__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }.developer-tool { min-height: 128px; }
 }
 
 @media (min-width: 761px) and (max-height: 650px) {
@@ -266,10 +265,17 @@
   .scrollCue { bottom: 9px; }
 }
 
+@media (max-width: 520px) {
+  .github-repo-grid, .developer-tools__grid { grid-template-columns: 1fr; }
+  .developer-tool { min-height: 88px; display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 14px; }
+  .developer-tool strong { margin-top: 0; }
+  .developer-tool > .external-link-icon { position: static; }
+}
+
 @media (max-width: 420px) {
   .intro h1 { font-size: 46px; }.intro > p { font-size: 12px; }.avatar { left: 20px; width: 102px; height: 102px; }.identity { display: block; }.deviceRow { margin-top: 13px; justify-content: flex-start; }.profileMeta { grid-template-columns: 1fr 1fr; }.profileMeta > div:last-child { display: none; }.githubAvatar { width: 72px; height: 72px; }.githubIdentity h2 { font-size: 24px; }.githubStats div { min-width: 0; padding-inline: 8px; }.githubStats span { font-size: 6px; }.footer { flex-direction: column; gap: 7px; }.albumArt { aspect-ratio: 1.3; }
-  .github-showcase__heading h2 { font-size: 36px; }.github-repo-grid { grid-template-columns: 1fr; }.github-activity-card { min-height: 190px; padding: 18px; }.github-activity-card__legend > span:last-child { display: none; }
-  .developer-tools__heading h2 { font-size: 38px; }.developer-tools__grid { grid-template-columns: 1fr; }.developer-tool { min-height: 112px; }
+  .github-showcase__heading h2 { font-size: 34px; }.github-activity-card { min-height: 190px; padding: 18px; }.github-activity-card__legend > span:last-child { display: none; }
+  .developer-tools__heading h2 { font-size: 36px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
