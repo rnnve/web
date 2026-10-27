@@ -1,17 +1,22 @@
 const SPOTIFY_URL = "https://sptf.rynni.cc/api/spotify";
-const STATUS_TIMEOUT_MS = 4_000;
+const STATUS_TIMEOUT_MS = 10_000;
+const STATUS_RETRIES = 1;
 let lastSpotify: unknown = null;
 
-async function fetchSpotify(): Promise<unknown> {
-  const response = await fetch(SPOTIFY_URL, {
-    cache: "force-cache",
-    headers: { Accept: "application/json", "User-Agent": "rynni-status-proxy" },
-    next: { revalidate: 3 },
-    signal: AbortSignal.timeout(STATUS_TIMEOUT_MS),
-  });
+async function fetchSpotify(retries = STATUS_RETRIES): Promise<unknown> {
+  try {
+    const response = await fetch(SPOTIFY_URL, {
+      cache: "no-store",
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(STATUS_TIMEOUT_MS),
+    });
 
-  if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
-  return await response.json() as unknown;
+    if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
+    return await response.json() as unknown;
+  } catch (error) {
+    if (retries > 0) return fetchSpotify(retries - 1);
+    throw error;
+  }
 }
 
 export const dynamic = "force-dynamic";
@@ -25,7 +30,8 @@ export async function GET() {
       { spotify, error: null, updatedAt: Date.now() },
       { headers: { "Cache-Control": "no-store, max-age=0" } },
     );
-  } catch {
+  } catch (error) {
+    console.error("Spotify status request failed", error);
     return Response.json(
       { spotify: lastSpotify, error: lastSpotify === null ? "Spotify status is temporarily unavailable" : null, updatedAt: Date.now() },
       { headers: { "Cache-Control": "no-store, max-age=0" } },

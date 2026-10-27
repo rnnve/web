@@ -1,17 +1,22 @@
 const DISCORD_URL = "https://api.rynni.cc/v2/discord/user/1";
-const STATUS_TIMEOUT_MS = 4_000;
+const STATUS_TIMEOUT_MS = 10_000;
+const STATUS_RETRIES = 1;
 let lastDiscord: unknown = null;
 
-async function fetchDiscord(): Promise<unknown> {
-  const response = await fetch(DISCORD_URL, {
-    cache: "force-cache",
-    headers: { Accept: "application/json", "User-Agent": "rynni-status-proxy" },
-    next: { revalidate: 10 },
-    signal: AbortSignal.timeout(STATUS_TIMEOUT_MS),
-  });
+async function fetchDiscord(retries = STATUS_RETRIES): Promise<unknown> {
+  try {
+    const response = await fetch(DISCORD_URL, {
+      cache: "no-store",
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(STATUS_TIMEOUT_MS),
+    });
 
-  if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
-  return await response.json() as unknown;
+    if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
+    return await response.json() as unknown;
+  } catch (error) {
+    if (retries > 0) return fetchDiscord(retries - 1);
+    throw error;
+  }
 }
 
 export const dynamic = "force-dynamic";
@@ -25,7 +30,8 @@ export async function GET() {
       { discord, error: null, updatedAt: Date.now() },
       { headers: { "Cache-Control": "no-store, max-age=0" } },
     );
-  } catch {
+  } catch (error) {
+    console.error("Discord status request failed", error);
     return Response.json(
       {
         discord: lastDiscord,
