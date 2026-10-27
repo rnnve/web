@@ -3,6 +3,18 @@ const STATUS_TIMEOUT_MS = 10_000;
 const STATUS_RETRIES = 1;
 let lastDiscord: unknown = null;
 
+function describeFailure(error: unknown) {
+  const cause = error instanceof Error && typeof error.cause === "object" && error.cause !== null
+    ? error.cause as { code?: unknown }
+    : null;
+
+  return {
+    name: error instanceof Error ? error.name : "UnknownError",
+    message: error instanceof Error ? error.message : String(error),
+    causeCode: typeof cause?.code === "string" ? cause.code : null,
+  };
+}
+
 async function fetchDiscord(retries = STATUS_RETRIES): Promise<unknown> {
   try {
     const response = await fetch(DISCORD_URL, {
@@ -11,7 +23,13 @@ async function fetchDiscord(retries = STATUS_RETRIES): Promise<unknown> {
       signal: AbortSignal.timeout(STATUS_TIMEOUT_MS),
     });
 
-    if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
+    if (!response.ok) {
+      throw new Error([
+        `http_${response.status}`,
+        `cf_mitigated_${response.headers.get("cf-mitigated") ?? "none"}`,
+        `content_type_${response.headers.get("content-type") ?? "unknown"}`,
+      ].join(";"));
+    }
     return await response.json() as unknown;
   } catch (error) {
     if (retries > 0) return fetchDiscord(retries - 1);
@@ -36,6 +54,7 @@ export async function GET() {
       {
         discord: lastDiscord,
         error: lastDiscord === null ? "Discord status is temporarily unavailable" : null,
+        diagnostic: describeFailure(error),
         updatedAt: Date.now(),
       },
       { headers: { "Cache-Control": "no-store, max-age=0" } },
