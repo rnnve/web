@@ -3,18 +3,6 @@ const STATUS_TIMEOUT_MS = 10_000;
 const STATUS_RETRIES = 1;
 let lastSpotify: unknown = null;
 
-function describeFailure(error: unknown) {
-  const cause = error instanceof Error && typeof error.cause === "object" && error.cause !== null
-    ? error.cause as { code?: unknown }
-    : null;
-
-  return {
-    name: error instanceof Error ? error.name : "UnknownError",
-    message: error instanceof Error ? error.message : String(error),
-    causeCode: typeof cause?.code === "string" ? cause.code : null,
-  };
-}
-
 async function fetchSpotify(retries = STATUS_RETRIES): Promise<unknown> {
   try {
     const response = await fetch(SPOTIFY_URL, {
@@ -54,7 +42,6 @@ export async function GET() {
       {
         spotify: lastSpotify,
         error: lastSpotify === null ? "Spotify status is temporarily unavailable" : null,
-        diagnostic: describeFailure(error),
         updatedAt: Date.now(),
       },
       { headers: { "Cache-Control": "no-store, max-age=0" } },
