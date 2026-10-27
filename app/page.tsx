@@ -20,8 +20,8 @@ type StatusPayload = {
   githubEvents?: unknown;
   errors?: { discord?: string | null; spotify?: string | null };
 };
-type DiscordPayload = { discord?: unknown; error?: string | null };
-type SpotifyPayload = { spotify?: unknown; error?: string | null };
+type DiscordPayload = { discord: unknown; error?: string | null };
+type SpotifyPayload = { spotify: unknown; error?: string | null };
 type GitHubPayload = { repos: unknown; events: unknown };
 const styles = new Proxy({} as Record<string, string>, { get: (_target, property) => String(property) });
 const isRecord = (value: unknown): value is JsonRecord => typeof value === "object" && value !== null && !Array.isArray(value);
@@ -98,7 +98,7 @@ export default function Home() {
       const next = await response.json() as DiscordPayload;
       setPayload((current) => ({
         ...current,
-        discord: Object.hasOwn(next, "discord") ? next.discord : next,
+        discord: next.discord,
         errors: { ...current.errors, discord: next.error ?? null },
       }));
     } catch {
@@ -113,12 +113,11 @@ export default function Home() {
       const response = await fetch("/api/status/spotify", { cache: "no-store" });
       if (!response.ok) throw new Error("Spotify request failed");
       const next = await response.json() as SpotifyPayload;
-      const nextSpotify = Object.hasOwn(next, "spotify") ? next.spotify : next;
       setSpotifySyncedAt(Date.now());
-      rememberSpotify(nextSpotify);
+      rememberSpotify(next.spotify);
       setPayload((current) => ({
         discord: current?.discord ?? null,
-        spotify: nextSpotify,
+        spotify: next.spotify,
         githubRepos: current?.githubRepos,
         githubEvents: current?.githubEvents,
         errors: { ...current?.errors, spotify: next.error ?? null },
