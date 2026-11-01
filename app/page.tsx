@@ -2,7 +2,9 @@
 
 import WidgetPreloads from "./components/widget-preloads";
 import AgeCalculator from "./components/age-calculator";
-import DeveloperTools from "./components/developer-tools";
+import BlurText from "./components/blur-text";
+import { usePageReady } from "./page-transition";
+import Stacks from "./components/stacks";
 import GitHubShowcase from "./components/github-showcase";
 import PortfolioNavbar from "./components/portfolio-navbar";
 import SectionRevealController from "./components/section-reveal-controller";
@@ -11,11 +13,11 @@ import DiscordWidget from "./components/discord-widget";
 import SpotifyWidget from "./components/spotify-widget";
 import { StatusIcon } from "./components/status-icon";
 import usePortfolioStatus from "./hooks/use-portfolio-status";
+import { BIRTH_DATE } from "./lib/birthday";
 import "./styles/home.css";
 
-const BIRTH_DATE = "2010-12-31T13:12:00+07:00";
-
 export default function Home() {
+  const pageReady = usePageReady();
   const {
     payload,
     discord,
@@ -36,7 +38,19 @@ export default function Home() {
           <div className="homeIdentity">
             <div className="homeIdentityCopy">
               <h1>
-                Hey, I’m Rynnie<span aria-hidden="true">.</span>
+                <BlurText
+                  text="Hey, I’m Rynnie."
+                  effect="tilt"
+                  animateBy="letters"
+                  direction="bottom"
+                  staggerFrom="start"
+                  trigger="load"
+                  enabled={pageReady}
+                  delay={40}
+                  stepDuration={0.45}
+                  blur={8}
+                  distance={40}
+                />
               </h1>
             </div>
           </div>
@@ -97,7 +111,7 @@ export default function Home() {
         events={payload.githubEvents}
         loading={githubLoading}
       />
-      <DeveloperTools />
+      <Stacks />
       <SiteFooter />
     </main>
   );

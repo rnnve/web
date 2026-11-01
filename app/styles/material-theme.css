@@ -568,7 +568,7 @@ a:focus-visible {
   color: var(--md-sys-color-surface-container-highest);
 }
 
-.loading-demo__symbols--sweep {
+.loading-demo__fill {
   background: linear-gradient(
     90deg,
     var(--md-sys-color-primary),
@@ -917,14 +917,28 @@ a:focus-visible {
 
 @media (max-width: 760px) {
   .root-empty .homeHero {
-    width: calc(100% - 20px);
+    width: calc(100% - 32px);
+    height: auto;
     min-height: 100svh;
-    padding: calc(92px + env(safe-area-inset-top)) 0 56px;
+    padding: calc(92px + env(safe-area-inset-top)) 0
+      calc(56px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .root-empty .homeHeroGrid {
+    height: auto;
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .root-empty .scrollCue {
+    position: static;
+    flex-shrink: 0;
+    width: max-content;
+    margin: 28px auto 0;
+    transform: none;
   }
 
   .root-empty .homeIdentity {

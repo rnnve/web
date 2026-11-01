@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useSyncExternalStore } from "react";
+import { usePageReady } from "../page-transition";
 import "../styles/target-cursor.css";
 
 const Crosshair = dynamic(() => import("./crosshair"), { ssr: false });
@@ -24,12 +25,13 @@ function serverSnapshot() {
 }
 
 export default function CursorEffects() {
+  const pageReady = usePageReady();
   const enabled = useSyncExternalStore(
     subscribeToCursorPreference,
     canAnimateCursor,
     serverSnapshot,
   );
-  if (!enabled) return null;
+  if (!pageReady || !enabled) return null;
 
   return (
     <>

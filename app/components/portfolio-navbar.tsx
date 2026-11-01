@@ -20,7 +20,7 @@ import {
 const navItems = [
   { name: "Home", link: "#top", icon: <IconHome2 size={18} /> },
   { name: "Projects", link: "#more", icon: <IconCode size={18} /> },
-  { name: "Tools", link: "#developer", icon: <IconTools size={18} /> },
+  { name: "Stacks", link: "#developer", icon: <IconTools size={18} /> },
 ];
 
 export default function PortfolioNavbar() {

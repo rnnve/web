@@ -37,10 +37,17 @@ export default function RootLayout({
         <link rel="preload" as="image" href="/loading.webp" />
       </head>
       <body>
-        <SiteBackground />
-        <CursorEffects />
         <ExternalLinkConfirmation />
-        <PageTransition>{children}</PageTransition>
+        <PageTransition
+          effects={
+            <>
+              <SiteBackground />
+              <CursorEffects />
+            </>
+          }
+        >
+          {children}
+        </PageTransition>
       </body>
     </html>
   );

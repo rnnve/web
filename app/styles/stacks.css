@@ -1,0 +1,24 @@
+.stacks__loop {
+  min-width: 0;
+  margin-top: 32px;
+  padding-block: 32px;
+  border-block: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.stacks .logoloop__node svg {
+  width: var(--logoloop-logoHeight);
+  height: var(--logoloop-logoHeight);
+  flex-shrink: 0;
+}
+
+.stacks .logoloop__content {
+  min-height: 48px;
+  padding: 4px;
+}
+
+@media (max-width: 760px) {
+  .stacks__loop {
+    margin-top: 24px;
+    padding-block: 24px;
+  }
+}

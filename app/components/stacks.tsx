@@ -1,5 +1,8 @@
-import type { CSSProperties, ReactNode } from "react";
-import ExternalLinkIcon from "./external-link-icon";
+"use client";
+
+import type { ReactNode } from "react";
+import LogoLoop from "./logo-loop";
+import "../styles/stacks.css";
 
 type Tool = {
   name: string;
@@ -202,41 +205,42 @@ const tools: Tool[] = [
   },
 ];
 
-export default function DeveloperTools() {
+const stackLogos = tools.map((tool) => ({
+  node: tool.logo,
+  title: tool.name,
+  href: tool.href,
+  hoverColor: tool.color,
+}));
+
+export default function Stacks() {
   return (
     <section
       id="developer"
-      className="developer-tools"
-      aria-labelledby="developer-tools-title"
+      className="developer-tools stacks"
+      aria-labelledby="stacks-title"
       data-reveal
     >
       <div className="developer-tools__heading">
-        <p>Developer</p>
-        <h2 id="developer-tools-title">
+        <p>Stacks</p>
+        <h2 id="stacks-title">
           Tools I build with<span>.</span>
         </h2>
         <p>
-          My everyday stack for designing, developing, deploying, and keeping
-          projects fast.
+          My everyday stack for designing, developing, and shipping projects.
         </p>
       </div>
-      <div className="developer-tools__grid">
-        {tools.map((tool) => (
-          <a
-            className="developer-tool"
-            href={tool.href}
-            target="_blank"
-            rel="noreferrer"
-            key={tool.name}
-            style={{ "--tool-color": tool.color } as CSSProperties}
-          >
-            <span className="developer-tool__logo" aria-hidden="true">
-              {tool.logo}
-            </span>
-            <strong>{tool.name}</strong>
-            <ExternalLinkIcon size={17} />
-          </a>
-        ))}
+      <div className="stacks__loop">
+        <LogoLoop
+          logos={stackLogos}
+          speed={80}
+          direction="left"
+          logoHeight={40}
+          gap={56}
+          hoverSpeed={0}
+          labels="inline"
+          muted={0.5}
+          ariaLabel="My technology stack"
+        />
       </div>
     </section>
   );
