@@ -17,22 +17,22 @@ The profile-picture manifest is generated automatically before development and p
 
 ## Finding your way around
 
-| Location                            | Responsibility                                                               |
-| ----------------------------------- | ---------------------------------------------------------------------------- |
-| `app/page.tsx`                      | Homepage layout and introduction                                             |
-| `app/layout.tsx`                    | Site metadata, fonts, global styles, and shared effects                      |
-| `app/components/`                   | Widgets, navigation, loading screen, and visual effects                      |
-| `app/hooks/use-portfolio-status.ts` | Live data requests, loading states, polling, and last-played Spotify storage |
-| `app/lib/spotify.ts`                | Converts different Spotify payload formats into one widget view              |
-| `app/lib/github.ts`                 | Selects repositories and builds activity graph cells                         |
-| `app/lib/status-types.ts`           | Shared widget data types                                                     |
-| `app/lib/status-handler.ts`         | Status API caching, request deduplication, and fallbacks                     |
-| `app/config/portfolio.ts`           | Featured repository names in display order                                   |
-| `app/api/`                          | Discord, Spotify, GitHub, and profile-image endpoints                        |
-| `app/globals.css`                   | Base styles and shared site styling                                          |
-| `app/styles/`                       | Homepage, theme, loading, and effect styles                                  |
-| `scripts/generate-pfp-manifest.mjs` | Generates the profile-image list                                             |
-| `tests/status.test.ts`              | Regression checks for data adapters and API fallbacks                        |
+| Location                            | Responsibility                                                  |
+| ----------------------------------- | --------------------------------------------------------------- |
+| `app/page.tsx`                      | Homepage layout and introduction                                |
+| `app/layout.tsx`                    | Site metadata, fonts, global styles, and shared effects         |
+| `app/components/`                   | Widgets, navigation, loading screen, and visual effects         |
+| `app/hooks/use-portfolio-status.ts` | Live data requests, loading states, and polling                 |
+| `app/lib/spotify.ts`                | Converts different Spotify payload formats into one widget view |
+| `app/lib/github.ts`                 | Selects repositories and builds activity graph cells            |
+| `app/lib/status-types.ts`           | Shared widget data types                                        |
+| `app/lib/status-handler.ts`         | Status API caching, request deduplication, and fallbacks        |
+| `app/config/portfolio.ts`           | Featured repository names in display order                      |
+| `app/api/`                          | Discord, Spotify, GitHub, and profile-image endpoints           |
+| `app/globals.css`                   | Base styles and shared site styling                             |
+| `app/styles/`                       | Homepage, theme, loading, and effect styles                     |
+| `scripts/generate-pfp-manifest.mjs` | Generates the profile-image list                                |
+| `tests/status.test.ts`              | Regression checks for data adapters and API fallbacks           |
 
 Each service widget has its own component: `discord-widget.tsx`, `spotify-widget.tsx`, and `github-widget.tsx`. `status-widgets.tsx` keeps their existing named exports available.
 
@@ -40,7 +40,7 @@ The status hook polls Discord every 15 seconds, Spotify every second, and GitHub
 
 Discord and Spotify upstream requests time out after 3 seconds without a blocking retry. Concurrent requests share the same in-flight fetch, and failures retain a process-local last successful value without caching empty errors. Browser requests have a 6-second deadline and also share overlapping requests.
 
-Recent widget snapshots are restored from session storage for up to 5 minutes while live requests refresh them. Restored Spotify data appears as last played until playback is confirmed by a live response. Clearing or blocking browser storage does not prevent live widgets from loading.
+Recent Discord and GitHub snapshots are restored from session storage for up to 5 minutes while live requests refresh them. Spotify waits for live playback status and shows “Nothing is playing” when stopped or paused, without restoring a last-played track. Clearing or blocking browser storage does not prevent live widgets from loading.
 
 ## Background
 
@@ -50,18 +50,13 @@ The pattern loads in a separate browser bundle, stays behind page content, and u
 
 ## Navigation
 
-`app/components/portfolio-navbar.tsx` composes the Aceternity Resizable Navbar with the site's section links, profile image, GitHub, and Socials. The reusable exports are in `app/components/ui/resizable-navbar.tsx`; `app/lib/utils.ts` provides the `clsx` and `tailwind-merge` class helper.
+`app/components/portfolio-navbar.tsx` composes the navbar with the site's section links, profile image, GitHub, and Socials. The reusable exports are in `app/components/ui/resizable-navbar.tsx`; `app/lib/utils.ts` provides the `clsx` and `tailwind-merge` class helper.
 
-The navbar is fixed near the top of the viewport and contracts after 100 pixels of scrolling. Below the reference's `lg` breakpoint, it uses a mobile menu that closes on navigation, Escape, or an outside click. Motion is reduced when requested by the operating system. Tailwind's dark variant follows the site's `data-theme` attribute.
+The Material 3 styling lives in `app/styles/material-navbar.css` and uses the site's shared surface, text, shape, and elevation tokens. The navbar has opaque surfaces, pill-shaped navigation indicators, icons, filled and tonal actions, and a selected section that follows scrolling. Profile images retain their original colors.
 
-Reference adaptations:
+The desktop bar contracts from 1120 to 860 pixels after 100 pixels of scrolling, with its maximum width constrained to the viewport. Below 1024 pixels, it becomes a compact top app bar and rounded menu. The menu closes on navigation, Escape, or an outside click. Reduced-motion settings disable resizing and menu animation.
 
-- The primitives live under `app/components/ui`, with `cn` under `app/lib`, matching this repository's aliases and layout. The existing `PortfolioNavbar` serves as the integration instead of adding the demo's dummy page content.
-- The caller selects fixed positioning with a 16-pixel top offset rather than the demo's sticky positioning. The reference's desktop/mobile widths, Tailwind utilities, spring settings, and normal-motion hover treatment are retained.
-- The logo uses the site's local random profile image, Rynnie branding, and Next.js `Image`/`Link`; the sample Features/Pricing/Contact/Login/Book a call content is replaced with real section links, GitHub, and Socials.
-- The mobile toggle is a labeled button with expanded/control attributes. The menu's provided `onClose` now handles Escape and outside clicks, and section links close it on selection.
-- MotionConfig and reduced-motion checks disable resize/menu animation when requested; the supplied source did not include explicit preference handling. Tailwind's dark selector follows `data-theme` rather than system color preference, matching the site's existing theme.
-- The old navbar-collapse stylesheet and its layout import were removed so the previous animation does not affect the new component.
+The component began with the supplied Aceternity Resizable Navbar composition. Its exports, Motion resizing, real site links, local profile image via Next.js `Image`/`Link`, and accessible mobile controls are retained. Its visual styling now uses Material 3 tokens rather than the reference's transparent/blurred surfaces and Tailwind color defaults.
 
 ## Cursor effect
 

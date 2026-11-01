@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { IconHome2, IconCode, IconTools } from "@tabler/icons-react";
 import { MotionConfig } from "motion/react";
 import ExternalLinkIcon from "./external-link-icon";
 import useRandomProfileImage from "./use-random-profile-image";
@@ -17,25 +18,46 @@ import {
 } from "./ui/resizable-navbar";
 
 const navItems = [
-  { name: "Home", link: "#top" },
-  { name: "Projects", link: "#more" },
-  { name: "Tools", link: "#developer" },
+  { name: "Home", link: "#top", icon: <IconHome2 size={18} /> },
+  { name: "Projects", link: "#more", icon: <IconCode size={18} /> },
+  { name: "Tools", link: "#developer", icon: <IconTools size={18} /> },
 ];
 
 export default function PortfolioNavbar() {
+  const [activeLink, setActiveLink] = useState("#top");
   const profileImage = useRandomProfileImage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActiveLink(`#${entry.target.id}`);
+        }
+      },
+      { rootMargin: "-20% 0px -55% 0px" },
+    );
+    for (const item of navItems) {
+      const section = document.querySelector(item.link);
+      if (section) observer.observe(section);
+    }
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <MotionConfig reducedMotion="user">
       <header>
         <nav aria-label="Primary navigation">
-          <Navbar className="fixed top-4">
+          <Navbar>
             <NavBody>
               <NavbarLogo imageSrc={profileImage ?? undefined} />
-              <NavItems items={navItems} />
-              <div className="flex items-center gap-4">
+              <NavItems
+                items={navItems}
+                activeLink={activeLink}
+                onItemClick={setActiveLink}
+              />
+              <div className="m3-navbar-actions">
                 <NavbarButton
                   href="https://github.com/rnnve"
                   target="_blank"
@@ -49,7 +71,6 @@ export default function PortfolioNavbar() {
                   target="_blank"
                   rel="noreferrer"
                   variant="primary"
-                  className="inline-flex items-center gap-2"
                 >
                   Socials <ExternalLinkIcon size={15} />
                 </NavbarButton>
@@ -72,20 +93,28 @@ export default function PortfolioNavbar() {
                   <a
                     key={item.link}
                     href={item.link}
-                    onClick={closeMobileMenu}
-                    className="relative text-neutral-600 dark:text-neutral-300"
+                    onClick={() => {
+                      setActiveLink(item.link);
+                      closeMobileMenu();
+                    }}
+                    aria-current={
+                      activeLink === item.link ? "location" : undefined
+                    }
+                    className="m3-navbar-link"
                   >
-                    <span className="block">{item.name}</span>
+                    <span className="m3-navbar-icon" aria-hidden="true">
+                      {item.icon}
+                    </span>
+                    <span>{item.name}</span>
                   </a>
                 ))}
-                <div className="flex w-full flex-col gap-4">
+                <div className="m3-navbar-menu-actions">
                   <NavbarButton
                     href="https://github.com/rnnve"
                     target="_blank"
                     rel="noreferrer"
                     onClick={closeMobileMenu}
                     variant="secondary"
-                    className="w-full"
                   >
                     GitHub
                   </NavbarButton>
@@ -95,7 +124,6 @@ export default function PortfolioNavbar() {
                     rel="noreferrer"
                     onClick={closeMobileMenu}
                     variant="primary"
-                    className="inline-flex w-full items-center justify-center gap-2"
                   >
                     Socials <ExternalLinkIcon size={15} />
                   </NavbarButton>

@@ -9,8 +9,8 @@ test("Spotify handles absent or malformed data with an idle view", () => {
   for (const input of [null, undefined, [], "unexpected"]) {
     const view = normalizeSpotify(input);
     assert.equal(view.isPlaying, false);
-    assert.equal(view.title, "Nothing playing");
-    assert.equal(view.artist, "Spotify is quiet right now");
+    assert.equal(view.title, "Nothing is playing");
+    assert.equal(view.artist, "");
     assert.equal(view.progress, 0);
     assert.equal(view.duration, 0);
   }
@@ -201,5 +201,34 @@ test("Live Spotify responses pick up each song change without data or CDN cachin
     assert.equal(options.cache, "no-store");
     assert.equal(options.next, undefined);
     assert.equal(new Headers(options.headers).get("Cache-Control"), "no-cache");
+  }
+});
+
+test("Paused Spotify responses clear the previous track's details", () => {
+  for (const playbackState of [
+    { isPlaying: false },
+    { is_playing: false },
+    { playing: false },
+  ]) {
+    const view = normalizeSpotify({
+      ...playbackState,
+      track: {
+        name: "Previous song",
+        artists: [{ name: "Previous artist" }],
+        duration_ms: 180_000,
+        album: { images: [{ url: "old-artwork.webp" }] },
+      },
+      progress_ms: 45_000,
+    });
+    assert.deepEqual(view, {
+      isPlaying: false,
+      title: "Nothing is playing",
+      artist: "",
+      album: "",
+      artwork: "",
+      progress: 0,
+      duration: 0,
+      url: "",
+    });
   }
 });

@@ -44,14 +44,6 @@ export default function SpotifyWidget({
     ? Math.min(100, Math.max(0, (currentProgress / spotify.duration) * 100))
     : 0;
 
-  let artistLabel = spotify.artist;
-  if (!spotify.isPlaying) {
-    artistLabel =
-      spotify.title === "Nothing playing"
-        ? "Spotify is quiet right now"
-        : `Last played · ${spotify.artist}`;
-  }
-
   if (compact) {
     return (
       <section
@@ -70,19 +62,23 @@ export default function SpotifyWidget({
         </div>
         <div className="compactStatusCopy">
           <h2 id="compact-spotify-title">{spotify.title}</h2>
-          <p className="compactScrollingText">
-            <span>{artistLabel}</span>
-          </p>
-          <WavyLinearProgress
-            className="compactSpotifyProgress"
-            value={currentProgress}
-            max={spotify.duration || 1}
-            label={`${Math.round(progress)}% played`}
-          />
-          <div className="compactSpotifyTimes">
-            <span>{formatTime(currentProgress)}</span>
-            <span>{formatTime(spotify.duration)}</span>
-          </div>
+          {spotify.isPlaying && (
+            <>
+              <p className="compactScrollingText">
+                <span>{spotify.artist}</span>
+              </p>
+              <WavyLinearProgress
+                className="compactSpotifyProgress"
+                value={currentProgress}
+                max={spotify.duration || 1}
+                label={`${Math.round(progress)}% played`}
+              />
+              <div className="compactSpotifyTimes">
+                <span>{formatTime(currentProgress)}</span>
+                <span>{formatTime(spotify.duration)}</span>
+              </div>
+            </>
+          )}
           {error && <span className="compactStatusError">{error}</span>}
         </div>
       </section>

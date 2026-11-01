@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { isRecord } from "@/app/lib/json";
 import { readWidgetSnapshot, requestWidget } from "@/app/lib/widget-request";
 import { normalizeSpotify } from "@/app/lib/spotify";
-import type { DiscordProfile, SpotifyView } from "@/app/lib/status-types";
+import type { DiscordProfile } from "@/app/lib/status-types";
 
 type StatusPayload = {
   discord: unknown;
@@ -32,35 +32,6 @@ export default function usePortfolioStatus() {
   const [spotifyLoading, setSpotifyLoading] = useState(true);
   const [githubLoading, setGitHubLoading] = useState(true);
   const [spotifySyncedAt, setSpotifySyncedAt] = useState(0);
-  const [lastSpotify, setLastSpotify] = useState<SpotifyView | null>(() => {
-    if (typeof window === "undefined") return null;
-    try {
-      const saved = JSON.parse(
-        window.localStorage.getItem("ryn:last-spotify") ?? "null",
-      ) as unknown;
-      return isRecord(saved) && typeof saved.title === "string"
-        ? (saved as SpotifyView)
-        : null;
-    } catch {
-      return null;
-    }
-  });
-
-  const rememberSpotify = useCallback((value: unknown) => {
-    const nextSpotify = normalizeSpotify(value);
-    if (!nextSpotify.isPlaying || nextSpotify.title === "Nothing playing")
-      return;
-    setLastSpotify(nextSpotify);
-    try {
-      window.localStorage.setItem(
-        "ryn:last-spotify",
-        JSON.stringify(nextSpotify),
-      );
-    } catch {
-      // The live widget still works when local storage is unavailable.
-    }
-  }, []);
-
   const loadDiscord = useCallback(async () => {
     try {
       const next = await requestWidget<DiscordPayload>("/api/status");
@@ -85,7 +56,6 @@ export default function usePortfolioStatus() {
         cache: "no-store",
       });
       setSpotifySyncedAt(next.updatedAt || Date.now());
-      rememberSpotify(next.spotify);
       setPayload((current) => ({
         ...current,
         spotify: next.error ? current.spotify : next.spotify,
@@ -99,7 +69,7 @@ export default function usePortfolioStatus() {
     } finally {
       setSpotifyLoading(false);
     }
-  }, [rememberSpotify]);
+  }, []);
 
   const loadGitHub = useCallback(async () => {
     try {
@@ -148,25 +118,14 @@ export default function usePortfolioStatus() {
     // Restore after hydration so server and initial client markup stay identical.
     const restoreFrame = window.requestAnimationFrame(() => {
       const discord = readWidgetSnapshot<DiscordPayload>("/api/status");
-      const spotify = readWidgetSnapshot<SpotifyPayload>("/api/status/spotify");
       const github = readWidgetSnapshot<GitHubPayload>("/api/status/github");
-      const savedSpotify = spotify ? normalizeSpotify(spotify.spotify) : null;
       setPayload((current) => ({
         ...current,
         discord: discord?.discord ?? current.discord,
-        spotify: savedSpotify
-          ? { ...savedSpotify, isPlaying: false }
-          : current.spotify,
         githubRepos: github?.repos ?? current.githubRepos,
         githubEvents: github?.events ?? current.githubEvents,
       }));
       if (discord) setDiscordLoading(false);
-      if (spotify) {
-        setSpotifyLoading(false);
-        // Saved playback is shown as last played until the live response arrives.
-        if (savedSpotify && savedSpotify.title !== "Nothing playing")
-          setLastSpotify(savedSpotify);
-      }
       if (github) setGitHubLoading(false);
       startPolling();
     });
@@ -184,13 +143,7 @@ export default function usePortfolioStatus() {
         ? rawDiscord.data
         : rawDiscord) as DiscordProfile)
     : null;
-  const liveSpotify = normalizeSpotify(payload.spotify);
-
-  const spotify = liveSpotify.isPlaying
-    ? liveSpotify
-    : lastSpotify
-      ? { ...lastSpotify, isPlaying: false }
-      : liveSpotify;
+  const spotify = normalizeSpotify(payload.spotify);
 
   return {
     payload,

@@ -13,6 +13,21 @@ function firstRecord(...values: unknown[]) {
 
 export function normalizeSpotify(value: unknown): SpotifyView {
   const root = isRecord(value) ? value : {};
+  const isPlaying =
+    (root.isPlaying ?? root.is_playing ?? root.playing) === true;
+  if (!isPlaying) {
+    return {
+      isPlaying: false,
+      title: "Nothing is playing",
+      artist: "",
+      album: "",
+      artwork: "",
+      progress: 0,
+      duration: 0,
+      url: "",
+    };
+  }
+
   // Providers expose the same track under different keys. Earlier keys win.
   const track = firstRecord(root.track, root.item, root.song) ?? root;
   const album = firstRecord(track.album, root.album);
@@ -27,7 +42,7 @@ export function normalizeSpotify(value: unknown): SpotifyView {
   const external = firstRecord(track.external_urls, root.external_urls);
 
   return {
-    isPlaying: (root.isPlaying ?? root.is_playing ?? root.playing) === true,
+    isPlaying,
     title: readString(track, "name", "title", "track") || "Nothing playing",
     artist:
       artists.join(", ") ||
