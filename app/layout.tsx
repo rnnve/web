@@ -2,15 +2,12 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/google-sans-flex";
 import PageTransition from "./page-transition";
 import CursorEffects from "./components/cursor-effects";
+import SiteBackground from "./components/site-background";
 import ExternalLinkConfirmation from "./components/external-link-confirmation";
-import ShardBackground from "./components/shard-background";
 import favicon from "./icon.webp";
 import "./globals.css";
-import "./styles/navbar-collapse.css";
 import "./styles/loading.css";
-import "./styles/cursor-effects.css";
 import "./styles/external-link-confirmation.css";
-import "./styles/shard-background.css";
 import "./styles/material-theme.css";
 
 export const metadata: Metadata = {
@@ -22,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0d050a",
+  themeColor: "#121212",
   width: "device-width",
   initialScale: 1,
   maximumScale: 2,
@@ -35,15 +32,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      data-theme="dark"
-    >
-      <head><link rel="preload" as="image" href="/loading.webp" /></head>
+    <html lang="en" data-theme="dark">
+      <head>
+        <link rel="preload" as="image" href="/loading.webp" />
+      </head>
       <body>
+        <SiteBackground />
         <CursorEffects />
         <ExternalLinkConfirmation />
-        <ShardBackground />
         <PageTransition>{children}</PageTransition>
       </body>
     </html>

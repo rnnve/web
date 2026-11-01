@@ -3,7 +3,10 @@ type ExternalLinkIconProps = {
   size?: number;
 };
 
-export default function ExternalLinkIcon({ className, size = 16 }: ExternalLinkIconProps) {
+export default function ExternalLinkIcon({
+  className,
+  size = 16,
+}: ExternalLinkIconProps) {
   return (
     <svg
       className={`external-link-icon${className ? ` ${className}` : ""}`}

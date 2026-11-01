@@ -11,7 +11,12 @@ type WavyLinearProgressProps = {
   value: number;
 };
 
-export default function WavyLinearProgress({ className, label, max, value }: WavyLinearProgressProps) {
+export default function WavyLinearProgress({
+  className,
+  label,
+  max,
+  value,
+}: WavyLinearProgressProps) {
   useEffect(() => {
     registration ??= import("@m3e/web/progress-indicator");
   }, []);

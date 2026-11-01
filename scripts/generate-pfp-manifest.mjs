@@ -18,5 +18,8 @@ try {
 }
 
 await mkdir(outputDirectory, { recursive: true });
-await writeFile(outputFile, `export const profileImages = ${JSON.stringify(images, null, 2)} as const;\n`);
+await writeFile(
+  outputFile,
+  `export const profileImages = ${JSON.stringify(images, null, 2)} as const;\n`,
+);
 console.log(`Generated profile image manifest with ${images.length} image(s).`);

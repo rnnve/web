@@ -1,37 +1,15 @@
-/* Material 3 dark theme overrides. The legacy variables resolve to the
-   semantic roles declared in globals.css so profile-derived color stays global. */
+/* Material 3 monochrome surfaces. Color roles are defined in globals.css. */
 :root {
-  --md-sys-color-primary: #ffafd5;
-  --md-sys-color-on-primary: #5f1038;
-  --md-sys-color-primary-container: #7b2851;
-  --md-sys-color-on-primary-container: #ffd8e9;
-  --md-sys-color-secondary: #e1bdcc;
-  --md-sys-color-secondary-container: #513441;
-  --md-sys-color-on-secondary-container: #ffdae9;
-  --md-sys-color-tertiary: #f3b7bd;
-  --md-sys-color-tertiary-container: #5d3035;
-  --md-sys-color-on-tertiary-container: #ffdadc;
-  --md-sys-color-surface: #171216;
-  --md-sys-color-surface-dim: #120d11;
-  --md-sys-color-surface-bright: #3f373c;
-  --md-sys-color-surface-container-lowest: #0d080c;
-  --md-sys-color-surface-container-low: #20191d;
-  --md-sys-color-surface-container: #241d21;
-  --md-sys-color-surface-container-high: #2f272c;
-  --md-sys-color-surface-container-highest: #3a3237;
-  --md-sys-color-on-surface: #eee1e7;
-  --md-sys-color-on-surface-variant: #d3c2c9;
-  --md-sys-color-outline: #9d8c93;
-  --md-sys-color-outline-variant: #504349;
   --md-shape-extra-small: 8px;
   --md-shape-small: 12px;
   --md-shape-medium: 16px;
   --md-shape-large: 24px;
   --md-shape-extra-large: 28px;
-  --md-motion-emphasized: cubic-bezier(.2, 0, 0, 1);
-  --md-motion-standard: cubic-bezier(.2, 0, 0, 1);
-  --md-elevation-1: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .18);
-  --md-elevation-2: 0 2px 6px rgba(0, 0, 0, .28), 0 8px 24px rgba(0, 0, 0, .2);
+  --md-motion-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-motion-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.18);
+  --md-elevation-2:
+    0 2px 6px rgba(0, 0, 0, 0.28), 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 html,
@@ -68,7 +46,7 @@ a:focus-visible {
   color: var(--md-sys-color-on-surface);
   font-size: 18px;
   font-weight: 680;
-  letter-spacing: -.25px;
+  letter-spacing: -0.25px;
 }
 
 .site-header .wordmark__shape {
@@ -96,7 +74,11 @@ a:focus-visible {
 
 .site-header__socials:hover {
   color: var(--md-sys-color-on-secondary-container);
-  background: color-mix(in srgb, var(--md-sys-color-on-secondary-container) 10%, var(--md-sys-color-secondary-container));
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-on-secondary-container) 10%,
+    var(--md-sys-color-secondary-container)
+  );
   transform: none;
 }
 
@@ -153,10 +135,14 @@ a:focus-visible {
 .homeIdentityCopy > span {
   display: block;
   margin-bottom: 4px;
-  color: color-mix(in srgb, var(--md-sys-color-on-primary-container) 76%, transparent);
+  color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-primary-container) 76%,
+    transparent
+  );
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: .2px;
+  letter-spacing: 0.2px;
 }
 
 .homeIdentityCopy h1 {
@@ -212,7 +198,10 @@ a:focus-visible {
   grid-template-columns: 72px minmax(0, 1fr);
   gap: 16px;
   background: var(--md-sys-color-surface-container-high);
-  transition: background-color .25s ease, transform .4s var(--md-motion-emphasized), box-shadow .25s ease;
+  transition:
+    background-color 0.25s ease,
+    transform 0.4s var(--md-motion-emphasized),
+    box-shadow 0.25s ease;
 }
 
 .compactStatusCard:hover {
@@ -239,7 +228,7 @@ a:focus-visible {
   color: var(--md-sys-color-on-surface);
   font-size: 17px;
   font-weight: 650;
-  letter-spacing: -.25px;
+  letter-spacing: -0.25px;
 }
 
 .compactStatusCopy > p,
@@ -263,7 +252,12 @@ a:focus-visible {
   min-height: 112px;
   border: 0;
   border-radius: var(--md-shape-extra-large);
-  background: linear-gradient(105deg, var(--md-sys-color-surface-container) 25%, var(--md-sys-color-surface-container-high) 40%, var(--md-sys-color-surface-container) 55%);
+  background: linear-gradient(
+    105deg,
+    var(--md-sys-color-surface-container) 25%,
+    var(--md-sys-color-surface-container-high) 40%,
+    var(--md-sys-color-surface-container) 55%
+  );
   background-size: 240% 100%;
 }
 
@@ -298,7 +292,7 @@ a:focus-visible {
   color: var(--md-sys-color-primary);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: .2px;
+  letter-spacing: 0.2px;
   text-transform: none;
 }
 
@@ -336,7 +330,10 @@ a:focus-visible {
   background: var(--md-sys-color-surface-container);
   box-shadow: none;
   backdrop-filter: none;
-  transition: background-color .2s ease, transform .4s var(--md-motion-emphasized), box-shadow .2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.4s var(--md-motion-emphasized),
+    box-shadow 0.2s ease;
 }
 
 .github-activity-card:hover,
@@ -363,7 +360,7 @@ a:focus-visible {
 .github-repo-card > div,
 .github-repo-card--empty > span {
   text-transform: none;
-  letter-spacing: .2px;
+  letter-spacing: 0.2px;
 }
 
 .github-activity-card__top div strong {
@@ -376,10 +373,31 @@ a:focus-visible {
   background: var(--md-sys-color-surface-container-highest);
 }
 
-.github-activity-graph > span[data-level="1"] { background: color-mix(in srgb, var(--md-sys-color-primary) 30%, var(--md-sys-color-surface-container)); }
-.github-activity-graph > span[data-level="2"] { background: color-mix(in srgb, var(--md-sys-color-primary) 50%, var(--md-sys-color-surface-container)); }
-.github-activity-graph > span[data-level="3"] { background: color-mix(in srgb, var(--md-sys-color-primary) 72%, var(--md-sys-color-surface-container)); }
-.github-activity-graph > span[data-level="4"] { background: var(--md-sys-color-primary); box-shadow: none; }
+.github-activity-graph > span[data-level="1"] {
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 30%,
+    var(--md-sys-color-surface-container)
+  );
+}
+.github-activity-graph > span[data-level="2"] {
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 50%,
+    var(--md-sys-color-surface-container)
+  );
+}
+.github-activity-graph > span[data-level="3"] {
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 72%,
+    var(--md-sys-color-surface-container)
+  );
+}
+.github-activity-graph > span[data-level="4"] {
+  background: var(--md-sys-color-primary);
+  box-shadow: none;
+}
 
 .github-activity-graph > span > span {
   border: 1px solid var(--md-sys-color-outline-variant);
@@ -429,7 +447,10 @@ a:focus-visible {
   background: var(--md-sys-color-surface-container);
   box-shadow: none;
   backdrop-filter: none;
-  transition: background-color .2s ease, transform .4s var(--md-motion-emphasized), box-shadow .2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.4s var(--md-motion-emphasized),
+    box-shadow 0.2s ease;
 }
 
 .developer-tool:hover {
@@ -514,7 +535,7 @@ a:focus-visible {
 
 .external-confirmation__eyebrow {
   color: var(--md-sys-color-primary);
-  letter-spacing: .2px;
+  letter-spacing: 0.2px;
   text-transform: none;
 }
 
@@ -548,7 +569,11 @@ a:focus-visible {
 }
 
 .loading-demo__symbols--sweep {
-  background: linear-gradient(90deg, var(--md-sys-color-primary), var(--md-sys-color-on-surface));
+  background: linear-gradient(
+    90deg,
+    var(--md-sys-color-primary),
+    var(--md-sys-color-on-surface)
+  );
 }
 
 /* Opaque Material surfaces: no frosted glass or backdrop blurring. */
@@ -663,7 +688,6 @@ a:focus-visible {
   .developer-tool {
     transform: none !important;
   }
-
 }
 
 /* Page CSS is emitted as a route chunk after layout CSS in Next.js. These
@@ -759,13 +783,17 @@ a:focus-visible {
   --m3e-progress-indicator-track-color: var(--md-sys-color-outline-variant);
 }
 
-
 .root-empty .homeLoading div,
 .root-empty .homeLoading div:last-child {
   min-height: 112px;
   border: 0;
   border-radius: var(--md-shape-extra-large);
-  background: linear-gradient(105deg, var(--md-sys-color-surface-container) 25%, var(--md-sys-color-surface-container-high) 40%, var(--md-sys-color-surface-container) 55%);
+  background: linear-gradient(
+    105deg,
+    var(--md-sys-color-surface-container) 25%,
+    var(--md-sys-color-surface-container-high) 40%,
+    var(--md-sys-color-surface-container) 55%
+  );
   background-size: 240% 100%;
 }
 
@@ -793,7 +821,7 @@ a:focus-visible {
   color: var(--md-sys-color-primary);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: .2px;
+  letter-spacing: 0.2px;
   text-transform: none;
 }
 
@@ -834,10 +862,30 @@ a:focus-visible {
   box-shadow: none;
 }
 
-.root-empty .github-activity-graph > span[data-level="1"] { background: color-mix(in srgb, var(--md-sys-color-primary) 30%, var(--md-sys-color-surface-container)); }
-.root-empty .github-activity-graph > span[data-level="2"] { background: color-mix(in srgb, var(--md-sys-color-primary) 50%, var(--md-sys-color-surface-container)); }
-.root-empty .github-activity-graph > span[data-level="3"] { background: color-mix(in srgb, var(--md-sys-color-primary) 72%, var(--md-sys-color-surface-container)); }
-.root-empty .github-activity-graph > span[data-level="4"] { background: var(--md-sys-color-primary); }
+.root-empty .github-activity-graph > span[data-level="1"] {
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 30%,
+    var(--md-sys-color-surface-container)
+  );
+}
+.root-empty .github-activity-graph > span[data-level="2"] {
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 50%,
+    var(--md-sys-color-surface-container)
+  );
+}
+.root-empty .github-activity-graph > span[data-level="3"] {
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 72%,
+    var(--md-sys-color-surface-container)
+  );
+}
+.root-empty .github-activity-graph > span[data-level="4"] {
+  background: var(--md-sys-color-primary);
+}
 
 .root-empty .github-activity-card:hover,
 .root-empty .github-repo-card:hover,

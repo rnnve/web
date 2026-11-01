@@ -10,10 +10,16 @@ function requestRandomImage() {
   if (imageRequest) return imageRequest;
 
   imageRequest = fetch("/api/pfp", { cache: "no-store" })
-    .then(async (response) => response.ok ? await response.json() as unknown : [])
+    .then(async (response) =>
+      response.ok ? ((await response.json()) as unknown) : [],
+    )
     .then((value) => {
-      const images = Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
-      selectedImage = images.length ? images[Math.floor(Math.random() * images.length)] : null;
+      const images = Array.isArray(value)
+        ? value.filter((item): item is string => typeof item === "string")
+        : [];
+      selectedImage = images.length
+        ? images[Math.floor(Math.random() * images.length)]
+        : null;
       return selectedImage;
     })
     .catch(() => null);
@@ -29,7 +35,9 @@ export default function useRandomProfileImage() {
     void requestRandomImage().then((nextImage) => {
       if (active) setImage(nextImage);
     });
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
 
   return image;
