@@ -1,5 +1,6 @@
 "use client";
 
+import { useSiteSettings } from "./site-settings-provider";
 import { StatusIcon } from "./status-icon";
 import { useEffect, useState } from "react";
 import type { SpotifyView } from "@/app/lib/status-types";
@@ -21,6 +22,11 @@ export default function SpotifyWidget({
   compact?: boolean;
   syncedAt?: number;
 }) {
+  const { t } = useSiteSettings();
+  const title =
+    spotify.title === "Nothing is playing"
+      ? t("Nothing is playing", "ยังไม่มีเพลงที่กำลังเล่น")
+      : spotify.title;
   const [clock, setClock] = useState(0);
 
   useEffect(() => {
@@ -61,7 +67,7 @@ export default function SpotifyWidget({
           {!spotify.artwork && <StatusIcon name="spotify" size={32} />}
         </div>
         <div className="compactStatusCopy">
-          <h2 id="compact-spotify-title">{spotify.title}</h2>
+          <h2 id="compact-spotify-title">{title}</h2>
           {spotify.isPlaying && (
             <>
               <p className="compactScrollingText">
@@ -93,7 +99,11 @@ export default function SpotifyWidget({
         </span>
         <div>
           <p>Spotify</p>
-          <span>{spotify.isPlaying ? "Now playing" : "Not playing"}</span>
+          <span>
+            {spotify.isPlaying
+              ? t("Now playing", "กำลังเล่น")
+              : t("Not playing", "ไม่ได้เล่นเพลง")}
+          </span>
         </div>
         <i className={spotify.isPlaying ? "pulse" : ""} />
       </div>
@@ -118,9 +128,11 @@ export default function SpotifyWidget({
       <div className="trackInfo">
         <p>
           {spotify.album ||
-            (spotify.isPlaying ? "Currently listening" : "Playback paused")}
+            (spotify.isPlaying
+              ? t("Currently listening", "กำลังฟัง")
+              : t("Playback paused", "หยุดเล่นชั่วคราว"))}
         </p>
-        <h2 id="spotify-title">{spotify.title}</h2>
+        <h2 id="spotify-title">{title}</h2>
         <span>{spotify.artist}</span>
       </div>
       <div className="progress">
@@ -141,11 +153,13 @@ export default function SpotifyWidget({
           target="_blank"
           rel="noreferrer"
         >
-          Open in Spotify <StatusIcon name="arrow" size={17} />
+          {t("Open in Spotify", "เปิดใน Spotify")}{" "}
+          <StatusIcon name="arrow" size={17} />
         </a>
       ) : (
         <div className="idleMessage">
-          <span>♪</span>Waiting for the next song
+          <span>♪</span>
+          {t("Waiting for the next song", "รอเพลงถัดไป")}
         </div>
       )}
       {error && <p className="errorText">{error}</p>}

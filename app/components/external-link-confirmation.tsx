@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSiteSettings } from "./site-settings-provider";
 import ExternalLinkIcon from "./external-link-icon";
 
 type PendingLink = {
@@ -10,6 +11,7 @@ type PendingLink = {
 };
 
 export default function ExternalLinkConfirmation() {
+  const { t } = useSiteSettings();
   const [pendingLink, setPendingLink] = useState<PendingLink | null>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
 
@@ -94,14 +96,20 @@ export default function ExternalLinkConfirmation() {
         <div className="external-confirmation__icon">
           <ExternalLinkIcon size={25} />
         </div>
-        <p className="external-confirmation__eyebrow">External destination</p>
-        <h2 id="external-confirmation-title">Leave this website?</h2>
+        <p className="external-confirmation__eyebrow">
+          {t("External destination", "ลิงก์ภายนอก")}
+        </p>
+        <h2 id="external-confirmation-title">
+          {t("Leave this website?", "ออกจากเว็บไซต์นี้หรือไม่?")}
+        </h2>
         <p id="external-confirmation-description">
-          You&apos;re about to visit a website outside of Ryn&apos;s personal
-          site.
+          {t(
+            "You’re about to visit a website outside of Ryn’s personal site.",
+            "คุณกำลังจะไปยังเว็บไซต์ภายนอกเว็บไซต์ส่วนตัวของ Ryn",
+          )}
         </p>
         <div className="external-confirmation__destination">
-          <span>Continue to</span>
+          <span>{t("Continue to", "ไปยัง")}</span>
           <strong>{pendingLink.displayUrl}</strong>
         </div>
         <div className="external-confirmation__actions">
@@ -111,14 +119,14 @@ export default function ExternalLinkConfirmation() {
             className="external-confirmation__cancel"
             onClick={() => setPendingLink(null)}
           >
-            Stay here
+            {t("Stay here", "อยู่ที่นี่")}
           </button>
           <button
             type="button"
             className="external-confirmation__continue"
             onClick={continueToDestination}
           >
-            Continue <ExternalLinkIcon size={16} />
+            {t("Continue", "ดำเนินการต่อ")} <ExternalLinkIcon size={16} />
           </button>
         </div>
       </section>

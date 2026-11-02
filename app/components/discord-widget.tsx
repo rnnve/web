@@ -1,5 +1,6 @@
 "use client";
 
+import { useSiteSettings } from "./site-settings-provider";
 import { StatusIcon } from "./status-icon";
 import type { DiscordProfile } from "@/app/lib/status-types";
 
@@ -12,6 +13,7 @@ export default function DiscordWidget({
   error?: string | null;
   compact?: boolean;
 }) {
+  const { t } = useSiteSettings();
   const status = profile?.status ?? "offline";
   const customStatus =
     typeof profile?.customStatus === "string"
@@ -37,9 +39,11 @@ export default function DiscordWidget({
         </div>
         <div className="compactStatusCopy">
           <h2 id="compact-discord-title">
-            {profile?.displayName || profile?.globalName || "Discord profile"}
+            {profile?.displayName ||
+              profile?.globalName ||
+              t("Discord profile", "โปรไฟล์ Discord")}
           </h2>
-          <p>@{profile?.username || "unavailable"}</p>
+          <p>@{profile?.username || t("unavailable", "ไม่พร้อมใช้งาน")}</p>
           {error && <span className="compactStatusError">{error}</span>}
         </div>
       </section>
@@ -81,9 +85,11 @@ export default function DiscordWidget({
               {status}
             </p>
             <h2 id="discord-title">
-              {profile?.displayName || profile?.globalName || "Discord profile"}
+              {profile?.displayName ||
+                profile?.globalName ||
+                t("Discord profile", "โปรไฟล์ Discord")}
             </h2>
-            <p>@{profile?.username || "unavailable"}</p>
+            <p>@{profile?.username || t("unavailable", "ไม่พร้อมใช้งาน")}</p>
           </div>
           <div className="deviceRow">
             {profile?.desktop && <span title="Desktop">Desktop</span>}
@@ -94,15 +100,15 @@ export default function DiscordWidget({
         {customStatus && <div className="customStatus">{customStatus}</div>}
         <div className="profileMeta">
           <div>
-            <span>Member since</span>
+            <span>{t("Member since", "เป็นสมาชิกตั้งแต่")}</span>
             <strong>2022</strong>
           </div>
           <div>
-            <span>Community</span>
+            <span>{t("Community", "ชุมชน")}</span>
             <strong>{profile?.guildName || "Discord"}</strong>
           </div>
           <div>
-            <span>Activities</span>
+            <span>{t("Activities", "กิจกรรม")}</span>
             <strong>{profile?.activities?.length ?? 0}</strong>
           </div>
         </div>

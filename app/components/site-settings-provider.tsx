@@ -1,0 +1,97 @@
+"use client";
+
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
+import {
+  DEFAULT_SETTINGS,
+  SETTINGS_KEY,
+  parseSettings,
+  type Language,
+  type SiteSettings,
+} from "../lib/site-settings";
+
+const CHANGE_EVENT = "rynnie-settings-change";
+let snapshot: SiteSettings | undefined;
+function getSnapshot() {
+  if (!snapshot) {
+    try {
+      snapshot = parseSettings(window.localStorage.getItem(SETTINGS_KEY));
+    } catch {
+      snapshot = DEFAULT_SETTINGS;
+    }
+  }
+  return snapshot;
+}
+function getServerSnapshot() {
+  return DEFAULT_SETTINGS;
+}
+function subscribe(listener: () => void) {
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === SETTINGS_KEY || event.key === null) {
+      snapshot = undefined;
+      listener();
+    }
+  };
+  window.addEventListener(CHANGE_EVENT, listener);
+  window.addEventListener("storage", onStorage);
+  return () => {
+    window.removeEventListener(CHANGE_EVENT, listener);
+    window.removeEventListener("storage", onStorage);
+  };
+}
+function updateSettings(patch: Partial<SiteSettings>) {
+  snapshot = { ...getSnapshot(), ...patch };
+  try {
+    window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(snapshot));
+  } catch {
+    /* Keep preferences usable when storage is unavailable. */
+  }
+  window.dispatchEvent(new Event(CHANGE_EVENT));
+}
+const SettingsContext = createContext<{
+  language: Language;
+  backgroundAnimation: boolean;
+  setLanguage: (language: Language) => void;
+  setBackgroundAnimation: (enabled: boolean) => void;
+  t: (english: string, thai: string) => string;
+} | null>(null);
+
+export default function SiteSettingsProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const settings = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
+  useEffect(() => {
+    document.documentElement.lang = settings.language;
+  }, [settings.language]);
+  return (
+    <SettingsContext.Provider
+      value={{
+        ...settings,
+        setLanguage: (language) => updateSettings({ language }),
+        setBackgroundAnimation: (backgroundAnimation) =>
+          updateSettings({ backgroundAnimation }),
+        t: (english, thai) => (settings.language === "th" ? thai : english),
+      }}
+    >
+      {children}
+    </SettingsContext.Provider>
+  );
+}
+
+export function useSiteSettings() {
+  const settings = useContext(SettingsContext);
+  if (!settings)
+    throw new Error("useSiteSettings requires SiteSettingsProvider");
+  return settings;
+}

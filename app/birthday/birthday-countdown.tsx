@@ -4,11 +4,19 @@ import { useEffect, useState } from "react";
 import Counter from "../components/counter";
 import { getBirthdayCountdown } from "../lib/birthday";
 import { usePageReady } from "../page-transition";
+import { useSiteSettings } from "../components/site-settings-provider";
 
 type Countdown = ReturnType<typeof getBirthdayCountdown>;
 const units = ["days", "hours", "minutes", "seconds"] as const;
 
 export default function BirthdayCountdown() {
+  const { language, t } = useSiteSettings();
+  const unitLabels = {
+    days: t("days", "วัน"),
+    hours: t("hours", "ชั่วโมง"),
+    minutes: t("minutes", "นาที"),
+    seconds: t("seconds", "วินาที"),
+  };
   const [countdown, setCountdown] = useState<Countdown | null>(null);
   const pageReady = usePageReady();
 
@@ -27,20 +35,29 @@ export default function BirthdayCountdown() {
     <>
       <h1 id="birthday-title" aria-live="polite">
         {countdown?.isBirthday
-          ? "Happy birthday, Rynnie!"
-          : "Until my birthday."}
+          ? t("Happy birthday, Rynnie!", "สุขสันต์วันเกิดนะ Rynnie!")
+          : t("Until my birthday.", "นับถอยหลังถึงวันเกิด")}
       </h1>
       <p className="birthday-description" aria-live="polite">
         {countdown
           ? countdown.isBirthday
-            ? `${countdown.age} years of little moments. Here’s to another year.`
-            : `Counting down to chapter ${countdown.age}.`
-          : "The next chapter is on its way."}
+            ? t(
+                `${countdown.age} years of little moments. Here’s to another year.`,
+                `${countdown.age} ปีแห่งความทรงจำเล็ก ๆ ขอให้เป็นอีกปีที่ดี`,
+              )
+            : t(
+                `Counting down to chapter ${countdown.age}.`,
+                `นับถอยหลังสู่ปีที่ ${countdown.age} ของชีวิต`,
+              )
+          : t("The next chapter is on its way.", "บทต่อไปของชีวิตกำลังมาถึง")}
       </p>
       <div
         className="birthday-countdown"
         role="timer"
-        aria-label="Time until Rynnie’s birthday"
+        aria-label={t(
+          "Time until Rynnie’s birthday",
+          "เวลาที่เหลือก่อนวันเกิดของ Rynnie",
+        )}
         aria-busy={!countdown}
       >
         {units.map((unit) => (
@@ -66,20 +83,28 @@ export default function BirthdayCountdown() {
                 --
               </span>
             )}
-            <span className="birthday-unit-label">{unit}</span>
+            <span className="birthday-unit-label">{unitLabels[unit]}</span>
           </div>
         ))}
       </div>
       <p className="birthday-date">
         {countdown ? (
           <time dateTime={new Date(countdown.target).toISOString()}>
-            December 31,{" "}
-            {new Date(countdown.target + 7 * 3_600_000).getUTCFullYear()}
+            {new Intl.DateTimeFormat(
+              language === "th" ? "th-TH-u-ca-gregory" : "en-US",
+              {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+                timeZone: "Asia/Bangkok",
+              },
+            ).format(new Date(countdown.target))}
           </time>
         ) : (
-          "December 31"
+          t("December 31", "31 ธันวาคม")
         )}
-        <span aria-hidden="true"> / </span>A day worth waiting for.
+        <span aria-hidden="true"> / </span>
+        {t("A day worth waiting for.", "วันที่คุ้มค่าแก่การรอคอย")}
       </p>
     </>
   );

@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import LogoLoop from "./logo-loop";
+import { useSiteSettings } from "./site-settings-provider";
 import "../styles/stacks.css";
 
 type Tool = {
@@ -213,6 +214,7 @@ const stackLogos = tools.map((tool) => ({
 }));
 
 export default function Stacks() {
+  const { t } = useSiteSettings();
   return (
     <section
       id="developer"
@@ -221,12 +223,16 @@ export default function Stacks() {
       data-reveal
     >
       <div className="developer-tools__heading">
-        <p>Stacks</p>
+        <p>{t("Stacks", "เทคโนโลยีที่ใช้")}</p>
         <h2 id="stacks-title">
-          Tools I build with<span>.</span>
+          {t("Tools I build with", "เครื่องมือที่เราใช้")}
+          <span>.</span>
         </h2>
         <p>
-          My everyday stack for designing, developing, and shipping projects.
+          {t(
+            "My everyday stack for designing, developing, and shipping projects.",
+            "เครื่องมือที่เราใช้ทุกวันในการออกแบบ พัฒนา และเผยแพร่โปรเจกต์",
+          )}
         </p>
       </div>
       <div className="stacks__loop">
@@ -239,7 +245,7 @@ export default function Stacks() {
           hoverSpeed={0}
           labels="inline"
           muted={0.5}
-          ariaLabel="My technology stack"
+          ariaLabel={t("My technology stack", "เทคโนโลยีที่เราใช้")}
         />
       </div>
     </section>

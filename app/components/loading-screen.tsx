@@ -2,6 +2,7 @@
 
 import LoadingMessage from "./loading-message";
 import ShapeGrid from "./shape-grid";
+import { useSiteSettings } from "./site-settings-provider";
 
 type LoadingScreenProps = {
   overlay?: boolean;
@@ -12,6 +13,7 @@ export default function LoadingScreen({
   overlay = false,
   fading = false,
 }: LoadingScreenProps) {
+  const { backgroundAnimation, t } = useSiteSettings();
   const content = (
     <>
       <div className="loading-demo__background" aria-hidden="true">
@@ -29,7 +31,7 @@ export default function LoadingScreen({
           glow={0.2}
           dpr={1}
           intro={false}
-          paused={fading}
+          paused={fading || !backgroundAnimation}
         />
       </div>
       <section className="loading-demo__card" aria-busy="true">
@@ -44,7 +46,7 @@ export default function LoadingScreen({
           </span>
         </div>
         <div className="loading-demo__copy">
-          <h1>Loading into My Sekai</h1>
+          <h1>{t("Loading into My Sekai", "กำลังเข้าสู่ My Sekai")}</h1>
           <LoadingMessage />
         </div>
       </section>
@@ -57,7 +59,7 @@ export default function LoadingScreen({
         className={`loading-demo global-loader${fading ? " global-loader--fading" : ""}`}
         role="status"
         aria-live="polite"
-        aria-label="Loading page"
+        aria-label={t("Loading page", "กำลังโหลดหน้าเว็บ")}
       >
         {content}
       </div>

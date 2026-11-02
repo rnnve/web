@@ -12,6 +12,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
+import { useSiteSettings } from "../site-settings-provider";
 import "@/app/styles/material-navbar.css";
 
 type NavbarProps = {
@@ -83,11 +84,11 @@ export function NavItems({
   return (
     <div className={cn("m3-navbar-items", className)}>
       {items.map((item) => (
-        <a
+        <Link
           key={item.link}
           href={item.link}
           onClick={() => onItemClick?.(item.link)}
-          aria-current={activeLink === item.link ? "location" : undefined}
+          aria-current={activeLink === item.link ? "page" : undefined}
           className="m3-navbar-link"
         >
           {item.icon && (
@@ -96,7 +97,7 @@ export function NavItems({
             </span>
           )}
           <span>{item.name}</span>
-        </a>
+        </Link>
       ))}
     </div>
   );
@@ -183,12 +184,17 @@ export function MobileNavToggle({
   isOpen: boolean;
   onClick: () => void;
 }) {
+  const { t } = useSiteSettings();
   const Icon = isOpen ? IconX : IconMenu2;
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+      aria-label={
+        isOpen
+          ? t("Close navigation menu", "ปิดเมนูนำทาง")
+          : t("Open navigation menu", "เปิดเมนูนำทาง")
+      }
       aria-expanded={isOpen}
       aria-controls="mobile-navigation-menu"
       data-navbar-toggle
@@ -205,7 +211,7 @@ export function NavbarLogo({
   imageSrc?: string;
 }) {
   return (
-    <Link href="/#top" aria-label="Rynnie home" className="m3-navbar-logo">
+    <Link href="/" aria-label="Rynnie home" className="m3-navbar-logo">
       <Image
         src={imageSrc}
         alt=""

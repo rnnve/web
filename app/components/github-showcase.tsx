@@ -1,4 +1,7 @@
+"use client";
+
 import ExternalLinkIcon from "./external-link-icon";
+import { useSiteSettings } from "./site-settings-provider";
 import { normalizeRepos, activityCells } from "@/app/lib/github";
 export { FEATURED_REPOSITORY_WHITELIST } from "@/app/config/portfolio";
 
@@ -13,6 +16,7 @@ export default function GitHubShowcase({
   events,
   loading = false,
 }: GitHubShowcaseProps) {
+  const { language, t } = useSiteSettings();
   const repos = normalizeRepos(rawRepos);
   const cells = activityCells(events);
   const totalActivity = cells.reduce((total, cell) => total + cell.count, 0);
@@ -27,17 +31,28 @@ export default function GitHubShowcase({
         <div>
           <p>GitHub</p>
           <h2 id="github-showcase-title">
-            Building in public<span>.</span>
+            {t("Building in public", "ผลงานที่แบ่งปัน")}
+            <span>.</span>
           </h2>
         </div>
-        <span>Selected work and recent activity</span>
+        <span>
+          {t(
+            "Selected work and recent activity",
+            "ผลงานที่เลือกและกิจกรรมล่าสุด",
+          )}
+        </span>
       </div>
       <div className="github-showcase__grid">
         <article className="github-activity-card">
           <div className="github-activity-card__top">
             <div>
-              <span>GitHub activity</span>
-              <strong>{totalActivity} public contributions</strong>
+              <span>{t("GitHub activity", "กิจกรรมบน GitHub")}</span>
+              <strong>
+                {t(
+                  `${totalActivity} public contributions`,
+                  `มีส่วนร่วมสาธารณะ ${totalActivity} ครั้ง`,
+                )}
+              </strong>
             </div>
             <a
               href="https://github.com/rnnve"
@@ -63,25 +78,30 @@ export default function GitHubShowcase({
                   <strong>{cell.count}</strong> contribution
                   {cell.count === 1 ? "" : "s"}
                   <small>
-                    {new Intl.DateTimeFormat("en", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                      timeZone: "UTC",
-                    }).format(new Date(`${cell.key}T00:00:00Z`))}
+                    {new Intl.DateTimeFormat(
+                      language === "th" ? "th-TH" : "en",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                        timeZone: "UTC",
+                      },
+                    ).format(new Date(`${cell.key}T00:00:00Z`))}
                   </small>
                 </span>
               </span>
             ))}
           </div>
           <div className="github-activity-card__legend">
-            <span>42 weeks of public activity</span>
             <span>
-              Less <i />
+              {t("42 weeks of public activity", "กิจกรรมสาธารณะใน 42 สัปดาห์")}
+            </span>
+            <span>
+              {t("Less", "น้อย")} <i />
               <i />
               <i />
               <i />
-              <i /> More
+              <i /> {t("More", "มาก")}
             </span>
           </div>
         </article>
@@ -107,7 +127,9 @@ export default function GitHubShowcase({
                     key={repo.url}
                   >
                     <div>
-                      <span>Repository {index + 1}/4</span>
+                      <span>
+                        {t("Repository", "คลังโค้ด")} {index + 1}/4
+                      </span>
                       <ExternalLinkIcon size={16} />
                     </div>
                     <h3>{repo.name}</h3>
@@ -125,8 +147,10 @@ export default function GitHubShowcase({
                     rel="noreferrer"
                     key={index}
                   >
-                    <span>Repository {index + 1}/4</span>
-                    <h3>Explore my projects</h3>
+                    <span>
+                      {t("Repository", "คลังโค้ด")} {index + 1}/4
+                    </span>
+                    <h3>{t("Explore my projects", "สำรวจโปรเจกต์ของเรา")}</h3>
                   </a>
                 );
               })}

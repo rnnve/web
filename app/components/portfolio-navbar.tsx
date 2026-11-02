@@ -1,10 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { IconHome2, IconCode, IconTools } from "@tabler/icons-react";
+import { useCallback, useRef, useState } from "react";
+import { IconHome2, IconCake } from "@tabler/icons-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MotionConfig } from "motion/react";
 import ExternalLinkIcon from "./external-link-icon";
 import useRandomProfileImage from "./use-random-profile-image";
+import SettingsButton, { SettingsDialog } from "./settings-button";
+import { useSiteSettings } from "./site-settings-provider";
 import {
   Navbar,
   NavBody,
@@ -17,46 +21,31 @@ import {
   NavbarButton,
 } from "./ui/resizable-navbar";
 
-const navItems = [
-  { name: "Home", link: "#top", icon: <IconHome2 size={18} /> },
-  { name: "Projects", link: "#more", icon: <IconCode size={18} /> },
-  { name: "Stacks", link: "#developer", icon: <IconTools size={18} /> },
-];
-
 export default function PortfolioNavbar() {
-  const [activeLink, setActiveLink] = useState("#top");
+  const { t } = useSiteSettings();
+  const navItems = [
+    { name: t("Home", "หน้าแรก"), link: "/", icon: <IconHome2 size={18} /> },
+    {
+      name: t("Birthday", "วันเกิด"),
+      link: "/birthday",
+      icon: <IconCake size={18} />,
+    },
+  ];
+  const settingsDialogRef = useRef<HTMLDialogElement>(null);
+  const openSettings = () => settingsDialogRef.current?.showModal();
+  const activeLink = usePathname();
   const profileImage = useRandomProfileImage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) setActiveLink(`#${entry.target.id}`);
-        }
-      },
-      { rootMargin: "-20% 0px -55% 0px" },
-    );
-    for (const item of navItems) {
-      const section = document.querySelector(item.link);
-      if (section) observer.observe(section);
-    }
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <MotionConfig reducedMotion="user">
       <header>
-        <nav aria-label="Primary navigation">
+        <nav aria-label={t("Primary navigation", "เมนูหลัก")}>
           <Navbar>
             <NavBody>
               <NavbarLogo imageSrc={profileImage ?? undefined} />
-              <NavItems
-                items={navItems}
-                activeLink={activeLink}
-                onItemClick={setActiveLink}
-              />
+              <NavItems items={navItems} activeLink={activeLink} />
               <div className="m3-navbar-actions">
                 <NavbarButton
                   href="https://github.com/rnnve"
@@ -72,41 +61,40 @@ export default function PortfolioNavbar() {
                   rel="noreferrer"
                   variant="primary"
                 >
-                  Socials <ExternalLinkIcon size={15} />
+                  {t("Socials", "โซเชียล")} <ExternalLinkIcon size={15} />
                 </NavbarButton>
+                <SettingsButton onClick={openSettings} />
               </div>
             </NavBody>
 
             <MobileNav>
               <MobileNavHeader>
                 <NavbarLogo imageSrc={profileImage ?? undefined} />
-                <MobileNavToggle
-                  isOpen={isMobileMenuOpen}
-                  onClick={() => setIsMobileMenuOpen((open) => !open)}
-                />
+                <div className="m3-navbar-mobile-controls">
+                  <SettingsButton onClick={openSettings} />
+                  <MobileNavToggle
+                    isOpen={isMobileMenuOpen}
+                    onClick={() => setIsMobileMenuOpen((open) => !open)}
+                  />
+                </div>
               </MobileNavHeader>
               <MobileNavMenu
                 isOpen={isMobileMenuOpen}
                 onClose={closeMobileMenu}
               >
                 {navItems.map((item) => (
-                  <a
+                  <Link
                     key={item.link}
                     href={item.link}
-                    onClick={() => {
-                      setActiveLink(item.link);
-                      closeMobileMenu();
-                    }}
-                    aria-current={
-                      activeLink === item.link ? "location" : undefined
-                    }
+                    onClick={closeMobileMenu}
+                    aria-current={activeLink === item.link ? "page" : undefined}
                     className="m3-navbar-link"
                   >
                     <span className="m3-navbar-icon" aria-hidden="true">
                       {item.icon}
                     </span>
                     <span>{item.name}</span>
-                  </a>
+                  </Link>
                 ))}
                 <div className="m3-navbar-menu-actions">
                   <NavbarButton
@@ -125,13 +113,14 @@ export default function PortfolioNavbar() {
                     onClick={closeMobileMenu}
                     variant="primary"
                   >
-                    Socials <ExternalLinkIcon size={15} />
+                    {t("Socials", "โซเชียล")} <ExternalLinkIcon size={15} />
                   </NavbarButton>
                 </div>
               </MobileNavMenu>
             </MobileNav>
           </Navbar>
         </nav>
+        <SettingsDialog dialogRef={settingsDialogRef} />
       </header>
     </MotionConfig>
   );

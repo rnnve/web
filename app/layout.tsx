@@ -3,6 +3,8 @@ import "@fontsource-variable/google-sans-flex";
 import PageTransition from "./page-transition";
 import CursorEffects from "./components/cursor-effects";
 import SiteBackground from "./components/site-background";
+import PortfolioNavbar from "./components/portfolio-navbar";
+import SiteSettingsProvider from "./components/site-settings-provider";
 import ExternalLinkConfirmation from "./components/external-link-confirmation";
 import favicon from "./icon.webp";
 import "./globals.css";
@@ -37,17 +39,20 @@ export default function RootLayout({
         <link rel="preload" as="image" href="/loading.webp" />
       </head>
       <body>
-        <ExternalLinkConfirmation />
-        <PageTransition
-          effects={
-            <>
-              <SiteBackground />
-              <CursorEffects />
-            </>
-          }
-        >
-          {children}
-        </PageTransition>
+        <SiteSettingsProvider>
+          <ExternalLinkConfirmation />
+          <PageTransition
+            effects={
+              <>
+                <SiteBackground />
+                <CursorEffects />
+              </>
+            }
+          >
+            <PortfolioNavbar />
+            {children}
+          </PageTransition>
+        </SiteSettingsProvider>
       </body>
     </html>
   );
