@@ -78,6 +78,8 @@ bun run build
 
 Run `bun run format` to format source files consistently. Generated files, build output, and dependency files are excluded from formatting.
 
+TypeScript 7 is installed as `@typescript/native` and provides `tsc`. The `typescript` dependency aliases `@typescript/typescript6` to provide the compiler API required by typescript-eslint.
+
 ## Vercel deployment
 
 Deploy the repository as a standard Next.js project. The site uses a fixed dark monochrome palette and does not require theme-related environment variables or external storage.
