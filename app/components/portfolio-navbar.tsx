@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { IconHome2, IconCake } from "@tabler/icons-react";
+import { IconHome2, IconCake, IconHeadphones } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MotionConfig } from "motion/react";
@@ -29,6 +29,11 @@ export default function PortfolioNavbar() {
       name: t("Birthday", "วันเกิด"),
       link: "/birthday",
       icon: <IconCake size={18} />,
+    },
+    {
+      name: t("Listening", "เพลงที่ฟัง"),
+      link: "/listen",
+      icon: <IconHeadphones size={18} />,
     },
   ];
   const activeLink = usePathname();
