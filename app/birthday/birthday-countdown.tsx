@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Counter from "../components/counter";
 import { getBirthdayCountdown } from "../lib/birthday";
 import { usePageReady } from "../page-transition";
@@ -18,21 +18,66 @@ export default function BirthdayCountdown() {
     seconds: t("seconds", "วินาที"),
   };
   const [countdown, setCountdown] = useState<Countdown | null>(null);
+  const [celebrating, setCelebrating] = useState(false);
+  const previousCountdown = useRef<Countdown | null>(null);
   const pageReady = usePageReady();
 
   useEffect(() => {
-    const update = () => setCountdown(getBirthdayCountdown(Date.now()));
+    let celebrationTimer: number | undefined;
+    const update = () => {
+      const next = getBirthdayCountdown(Date.now());
+      const previous = previousCountdown.current;
+      if (
+        previous &&
+        !previous.isBirthday &&
+        next.isBirthday &&
+        previous.target === next.target &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        setCelebrating(true);
+        celebrationTimer = window.setTimeout(() => setCelebrating(false), 4000);
+      }
+      previousCountdown.current = next;
+      setCountdown(next);
+    };
     update();
     const timer = window.setInterval(update, 1_000);
     document.addEventListener("visibilitychange", update);
     return () => {
       window.clearInterval(timer);
+      window.clearTimeout(celebrationTimer);
       document.removeEventListener("visibilitychange", update);
     };
   }, []);
 
   return (
     <>
+      {celebrating && (
+        <div className="birthday-confetti" aria-hidden="true">
+          {Array.from({ length: 48 }, (_, index) => (
+            <span
+              key={index}
+              style={
+                {
+                  "--confetti-x": `${((index * 73) % 181) - 90}vw`,
+                  "--confetti-mid-x": `${(((index * 73) % 181) - 90) * 0.65}vw`,
+                  "--confetti-mid-y": `${-(30 + ((index * 41) % 45)) * 0.6}vh`,
+                  "--confetti-rotate": `${(index % 2 ? 1 : -1) * (360 + ((index * 137) % 720))}deg`,
+                  "--confetti-mid-rotate": `${(index % 2 ? 1 : -1) * (360 + ((index * 137) % 720)) * 0.45}deg`,
+                  "--confetti-delay": `${(index % 8) * 0.035}s`,
+                  "--confetti-color": [
+                    "#f6c7db",
+                    "#d8c8ff",
+                    "#ffe7a8",
+                    "#b9e4f3",
+                    "#ffffff",
+                  ][index % 5],
+                } as CSSProperties
+              }
+            />
+          ))}
+        </div>
+      )}
       <h1 id="birthday-title" aria-live="polite">
         {countdown?.isBirthday
           ? t("Happy birthday, Rynnie!", "สุขสันต์วันเกิดนะ Rynnie!")
