@@ -17,6 +17,59 @@
   font-size: 13px;
 }
 
+.birthday-confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.birthday-confetti span {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--confetti-color);
+  opacity: 0;
+  animation: birthday-confetti-burst 3.3s var(--confetti-delay) ease-out
+    forwards;
+}
+
+.birthday-confetti span:nth-child(3n) {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+@keyframes birthday-confetti-burst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  35% {
+    opacity: 1;
+    transform: translate(
+        calc(-50% + var(--confetti-mid-x)),
+        calc(-50% + var(--confetti-mid-y))
+      )
+      rotate(var(--confetti-mid-rotate));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--confetti-x)), 55vh)
+      rotate(var(--confetti-rotate));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .birthday-confetti {
+    display: none;
+  }
+}
+
 .birthday-content {
   flex: 1;
   display: flex;
