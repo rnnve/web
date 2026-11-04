@@ -13,7 +13,7 @@ export default function LoadingScreen({
   overlay = false,
   fading = false,
 }: LoadingScreenProps) {
-  const { backgroundAnimation, t } = useSiteSettings();
+  const { t } = useSiteSettings();
   const content = (
     <>
       <div className="loading-demo__background" aria-hidden="true">
@@ -31,7 +31,7 @@ export default function LoadingScreen({
           glow={0.2}
           dpr={1}
           intro={false}
-          paused={fading || !backgroundAnimation}
+          paused={fading}
         />
       </div>
       <section className="loading-demo__card" aria-busy="true">

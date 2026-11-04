@@ -1,13 +1,13 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { IconHome2, IconCake } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MotionConfig } from "motion/react";
 import ExternalLinkIcon from "./external-link-icon";
 import useRandomProfileImage from "./use-random-profile-image";
-import SettingsButton, { SettingsDialog } from "./settings-button";
+import LanguageSwitcher from "./language-switcher";
 import { useSiteSettings } from "./site-settings-provider";
 import {
   Navbar,
@@ -31,8 +31,6 @@ export default function PortfolioNavbar() {
       icon: <IconCake size={18} />,
     },
   ];
-  const settingsDialogRef = useRef<HTMLDialogElement>(null);
-  const openSettings = () => settingsDialogRef.current?.showModal();
   const activeLink = usePathname();
   const profileImage = useRandomProfileImage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -63,7 +61,7 @@ export default function PortfolioNavbar() {
                 >
                   {t("Socials", "โซเชียล")} <ExternalLinkIcon size={15} />
                 </NavbarButton>
-                <SettingsButton onClick={openSettings} />
+                <LanguageSwitcher />
               </div>
             </NavBody>
 
@@ -71,7 +69,7 @@ export default function PortfolioNavbar() {
               <MobileNavHeader>
                 <NavbarLogo imageSrc={profileImage ?? undefined} />
                 <div className="m3-navbar-mobile-controls">
-                  <SettingsButton onClick={openSettings} />
+                  <LanguageSwitcher />
                   <MobileNavToggle
                     isOpen={isMobileMenuOpen}
                     onClick={() => setIsMobileMenuOpen((open) => !open)}
@@ -120,7 +118,6 @@ export default function PortfolioNavbar() {
             </MobileNav>
           </Navbar>
         </nav>
-        <SettingsDialog dialogRef={settingsDialogRef} />
       </header>
     </MotionConfig>
   );

@@ -1,9 +1,8 @@
 export type Language = "en" | "th";
-export type SiteSettings = { language: Language; backgroundAnimation: boolean };
+export type SiteSettings = { language: Language };
 export const SETTINGS_KEY = "rynnie.site-settings.v1";
 export const DEFAULT_SETTINGS: SiteSettings = {
   language: "en",
-  backgroundAnimation: true,
 };
 
 export function parseSettings(value: string | null): SiteSettings {
@@ -13,10 +12,6 @@ export function parseSettings(value: string | null): SiteSettings {
     const settings = parsed as Partial<SiteSettings>;
     return {
       language: settings.language === "th" ? "th" : "en",
-      backgroundAnimation:
-        typeof settings.backgroundAnimation === "boolean"
-          ? settings.backgroundAnimation
-          : true,
     };
   } catch {
     return DEFAULT_SETTINGS;

@@ -8,29 +8,16 @@ test("missing or corrupt preferences restore safe defaults", () => {
   }
 });
 
-test("saved Thai and disabled animation preferences survive parsing", () => {
+test("saved Thai preference survives parsing", () => {
   assert.deepEqual(
     parseSettings('{"language":"th","backgroundAnimation":false}'),
-    {
-      language: "th",
-      backgroundAnimation: false,
-    },
+    { language: "th" },
   );
 });
 
-test("invalid fields fall back independently without discarding valid preferences", () => {
+test("invalid language falls back safely", () => {
   assert.deepEqual(
     parseSettings('{"language":"fr","backgroundAnimation":false}'),
-    {
-      language: "en",
-      backgroundAnimation: false,
-    },
-  );
-  assert.deepEqual(
-    parseSettings('{"language":"th","backgroundAnimation":"false"}'),
-    {
-      language: "th",
-      backgroundAnimation: true,
-    },
+    { language: "en" },
   );
 });

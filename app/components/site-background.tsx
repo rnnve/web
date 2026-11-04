@@ -2,17 +2,15 @@
 
 import dynamic from "next/dynamic";
 import { usePageReady } from "../page-transition";
-import { useSiteSettings } from "./site-settings-provider";
 import "../styles/pattern-waves.css";
 
 const PatternWaves = dynamic(() => import("./pattern-waves"), { ssr: false });
 
 export default function SiteBackground() {
   const pageReady = usePageReady();
-  const { backgroundAnimation } = useSiteSettings();
   return (
     <div className="site-background" aria-hidden="true">
-      {pageReady && backgroundAnimation && (
+      {pageReady && (
         <PatternWaves
           preset="ocean"
           color="#ffffff"

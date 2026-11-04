@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/google-sans-flex";
+import "@fontsource-variable/google-sans";
 import PageTransition from "./page-transition";
 import CursorEffects from "./components/cursor-effects";
 import SiteBackground from "./components/site-background";

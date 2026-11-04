@@ -55,9 +55,7 @@ function updateSettings(patch: Partial<SiteSettings>) {
 }
 const SettingsContext = createContext<{
   language: Language;
-  backgroundAnimation: boolean;
   setLanguage: (language: Language) => void;
-  setBackgroundAnimation: (enabled: boolean) => void;
   t: (english: string, thai: string) => string;
 } | null>(null);
 
@@ -79,8 +77,6 @@ export default function SiteSettingsProvider({
       value={{
         ...settings,
         setLanguage: (language) => updateSettings({ language }),
-        setBackgroundAnimation: (backgroundAnimation) =>
-          updateSettings({ backgroundAnimation }),
         t: (english, thai) => (settings.language === "th" ? thai : english),
       }}
     >

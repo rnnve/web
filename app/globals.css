@@ -3,7 +3,7 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --font-site: "Google Sans Flex Variable", "Segoe UI", sans-serif;
+  --font-site: "Google Sans Variable", "Segoe UI", sans-serif;
   --md-sys-color-primary: #e2e2e2;
   --md-sys-color-on-primary: #181818;
   --md-sys-color-primary-container: #363636;
