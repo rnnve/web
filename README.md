@@ -85,3 +85,5 @@ TypeScript 7 is installed as `@typescript/native` and provides `tsc`. The `types
 Deploy the repository as a standard Next.js project. The site uses a fixed dark monochrome palette and does not require theme-related environment variables or external storage.
 
 Optionally set `GITHUB_TOKEN` to a read-only GitHub token so the public activity graph and repository cards are not constrained by GitHub's low unauthenticated API rate limit. The site retains usable GitHub fallbacks when the token is absent.
+
+The anonymous question form at `/ask` sends submissions to Discord. Set `ASK_DISCORD_WEBHOOK_URL` to override the built-in webhook. The default URL is encoded in the server source, but Base64 is reversible and does not keep it private.
