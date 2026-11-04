@@ -1,0 +1,113 @@
+.ask-page {
+  width: min(680px, calc(100% - 48px));
+  min-height: 100svh;
+  margin-inline: auto;
+  padding: calc(120px + env(safe-area-inset-top, 0px)) 0 64px;
+  display: flex;
+  align-items: center;
+}
+
+.ask-content {
+  width: 100%;
+}
+.ask-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--md-sys-color-surface-container);
+}
+.ask-eyebrow {
+  margin: 0 0 16px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.ask-content h1 {
+  margin: 0;
+  font-size: clamp(38px, 6vw, 64px);
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+.ask-description {
+  margin: 16px 0 32px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+.ask-form {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--md-sys-color-surface-container);
+}
+.ask-form label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 650;
+}
+.ask-form textarea {
+  display: block;
+  width: 100%;
+  min-height: 150px;
+  padding: 16px;
+  resize: vertical;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
+  background: var(--md-sys-color-surface-container-low);
+  color: var(--ink);
+  line-height: 1.6;
+}
+.ask-form textarea:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+.ask-form-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+}
+.ask-count {
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.ask-form button {
+  min-height: 48px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-weight: 650;
+  cursor: pointer;
+}
+.ask-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ask-feedback {
+  min-height: 1.5em;
+  margin: 16px 0 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+@media (max-width: 600px) {
+  .ask-page {
+    width: calc(100% - 32px);
+    padding-top: 120px;
+  }
+  .ask-form {
+    padding: 20px;
+  }
+}
