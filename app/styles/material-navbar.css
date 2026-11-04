@@ -27,7 +27,7 @@
 
 .m3-navbar-desktop {
   display: none;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
@@ -288,7 +288,7 @@
   opacity: 0.85;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .m3-navbar-desktop {
     display: grid;
   }
@@ -297,7 +297,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .m3-navbar-mobile {
     width: calc(100% - 32px) !important;
   }
@@ -312,7 +312,7 @@
   }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 1024px) and (max-width: 1199px) {
   .m3-navbar-desktop {
     padding-inline: 12px;
     gap: 12px;
