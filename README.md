@@ -16,6 +16,8 @@ A personal corner of the web: a portfolio, live activity, and a browser start pa
 
 The portfolio includes English and Thai text, Material 3 styling, and scroll snapping between the homepage’s three sections. Background and cursor effects adapt to motion preferences and device capabilities.
 
+Navigation stays fixed above the scrolling content, including the last section. The desktop row shows up to three page links; additional pages appear in a More dropdown. The phone menu lists all pages.
+
 ## A new home for your tabs
 
 Use **[rynni.cc/newtab](https://rynni.cc/newtab)** or **[rynni.cc/nt](https://rynni.cc/nt)** as your browser’s custom new-tab URL. Some browsers require an extension to change this setting.

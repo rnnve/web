@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/app/lib/utils";
-import { IconMenu2, IconX } from "@tabler/icons-react";
+import { IconMenu2, IconX, IconChevronDown } from "@tabler/icons-react";
 import {
   AnimatePresence,
   motion,
@@ -11,7 +11,7 @@ import {
 } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { useSiteSettings } from "../site-settings-provider";
 import "@/app/styles/material-navbar.css";
 
@@ -65,7 +65,7 @@ export function NavBody({ children, className, visible }: NavSurfaceProps) {
   const reduceMotion = useReducedMotion();
   return (
     <motion.div
-      animate={{ width: visible ? 1000 : 1120, height: visible ? 64 : 72 }}
+      animate={{ width: visible ? 1040 : 1120, height: visible ? 64 : 72 }}
       transition={reduceMotion ? { duration: 0 } : resizeTransition}
       data-elevated={visible || undefined}
       className={cn("m3-navbar-surface m3-navbar-desktop", className)}
@@ -81,9 +81,46 @@ export function NavItems({
   className,
   onItemClick,
 }: NavItemsProps) {
+  const { t } = useSiteSettings();
+  const moreRef = useRef<HTMLDetailsElement>(null);
+  const dropdownId = useId();
+  const visibleItems = items.slice(0, 3);
+  const overflowItems = items.slice(3);
+  const overflowActive = overflowItems.some((item) => item.link === activeLink);
+
+  useEffect(() => {
+    const details = moreRef.current;
+    if (!details) return;
+    details.open = false;
+    const closeOutside = (event: PointerEvent) => {
+      if (event.target instanceof Node && !details.contains(event.target))
+        details.open = false;
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || !details.open) return;
+      details.open = false;
+      details.querySelector("summary")?.focus();
+    };
+    const closeOnBlur = (event: FocusEvent) => {
+      if (
+        event.relatedTarget instanceof Node &&
+        !details.contains(event.relatedTarget)
+      )
+        details.open = false;
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    details.addEventListener("focusout", closeOnBlur);
+    return () => {
+      document.removeEventListener("pointerdown", closeOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+      details.removeEventListener("focusout", closeOnBlur);
+    };
+  }, [activeLink, overflowItems.length]);
+
   return (
     <div className={cn("m3-navbar-items", className)}>
-      {items.map((item) => (
+      {visibleItems.map((item) => (
         <Link
           key={item.link}
           href={item.link}
@@ -99,6 +136,39 @@ export function NavItems({
           <span>{item.name}</span>
         </Link>
       ))}
+      {overflowItems.length > 0 && (
+        <details ref={moreRef} className="m3-navbar-more">
+          <summary
+            className="m3-navbar-link m3-navbar-more-toggle"
+            aria-controls={dropdownId}
+            data-active={overflowActive || undefined}
+          >
+            <span>{t("More", "เพิ่มเติม")}</span>
+            <IconChevronDown size={16} aria-hidden="true" />
+          </summary>
+          <div id={dropdownId} className="m3-navbar-more-menu">
+            {overflowItems.map((item) => (
+              <Link
+                key={item.link}
+                href={item.link}
+                aria-current={activeLink === item.link ? "page" : undefined}
+                className="m3-navbar-link"
+                onClick={() => {
+                  if (moreRef.current) moreRef.current.open = false;
+                  onItemClick?.(item.link);
+                }}
+              >
+                {item.icon && (
+                  <span className="m3-navbar-icon" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                )}
+                <span>{item.name}</span>
+              </Link>
+            ))}
+          </div>
+        </details>
+      )}
     </div>
   );
 }

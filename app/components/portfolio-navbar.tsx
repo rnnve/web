@@ -1,7 +1,14 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { IconHome2, IconCake, IconHeadphones } from "@tabler/icons-react";
+import { useCallback, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
+import {
+  IconHome2,
+  IconCake,
+  IconHeadphones,
+  IconMessageQuestion,
+  IconBrowser,
+} from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MotionConfig } from "motion/react";
@@ -9,6 +16,7 @@ import ExternalLinkIcon from "./external-link-icon";
 import useRandomProfileImage from "./use-random-profile-image";
 import LanguageSwitcher from "./language-switcher";
 import { useSiteSettings } from "./site-settings-provider";
+import { usePageReady } from "../page-transition";
 import {
   Navbar,
   NavBody,
@@ -21,8 +29,18 @@ import {
   NavbarButton,
 } from "./ui/resizable-navbar";
 
+const subscribeToMount = () => () => {};
+const clientMounted = () => true;
+const serverMounted = () => false;
+
 export default function PortfolioNavbar() {
   const { t } = useSiteSettings();
+  const pageReady = usePageReady();
+  const mounted = useSyncExternalStore(
+    subscribeToMount,
+    clientMounted,
+    serverMounted,
+  );
   const navItems = [
     { name: t("Home", "หน้าแรก"), link: "/", icon: <IconHome2 size={18} /> },
     {
@@ -35,15 +53,29 @@ export default function PortfolioNavbar() {
       link: "/listen",
       icon: <IconHeadphones size={18} />,
     },
+    {
+      name: t("Ask", "ถามเรา"),
+      link: "/ask",
+      icon: <IconMessageQuestion size={18} />,
+    },
+    {
+      name: t("New Tab", "แท็บใหม่"),
+      link: "/newtab",
+      icon: <IconBrowser size={18} />,
+    },
   ];
   const activeLink = usePathname();
   const profileImage = useRandomProfileImage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
 
-  return (
+  const navigation = (
     <MotionConfig reducedMotion="user">
-      <header>
+      <header
+        className="portfolio-navbar-root"
+        inert={!pageReady || undefined}
+        aria-hidden={!pageReady || undefined}
+      >
         <nav aria-label={t("Primary navigation", "เมนูหลัก")}>
           <Navbar>
             <NavBody>
@@ -126,4 +158,7 @@ export default function PortfolioNavbar() {
       </header>
     </MotionConfig>
   );
+
+  // Anchor navigation to the viewport, outside the page's scrolling/paint layers.
+  return mounted ? createPortal(navigation, document.body) : navigation;
 }
