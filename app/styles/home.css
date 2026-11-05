@@ -3,21 +3,30 @@ html:has(.home-page) {
   scroll-snap-type: y mandatory;
 }
 
-.root-empty.home-page > section {
+.root-empty.home-page > :is(section, .home-last-section) {
   min-height: 100svh;
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
 
 /* Keep snap positions stable while sections fade into view. */
-.reveal-ready .home-page > section[data-reveal] {
+.reveal-ready .home-page section[data-reveal] {
   transform: none;
   will-change: opacity;
 }
 
-/* Give the footer its own stop so it remains reachable after the last section. */
-.home-page > .site-footer {
-  scroll-snap-align: end;
+/* Share the final screen between the stacks and footer. */
+.home-last-section {
+  display: flex;
+  flex-direction: column;
+}
+.home-page .home-last-section > .developer-tools {
+  flex: 1;
+  min-height: 0;
+}
+.home-last-section > .site-footer {
+  flex-shrink: 0;
+  margin-top: 0;
 }
 
 .page {

@@ -132,8 +132,10 @@ export default function Home() {
         events={payload.githubEvents}
         loading={githubLoading}
       />
-      <Stacks />
-      <SiteFooter />
+      <div className="home-last-section">
+        <Stacks />
+        <SiteFooter />
+      </div>
     </main>
   );
 }
