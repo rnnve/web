@@ -1481,6 +1481,14 @@ a:focus-visible {
   font-size: 10px;
   letter-spacing: 0.5px;
 }
+.site-footer__commit a {
+  color: #fff;
+  text-decoration-color: currentColor;
+  text-underline-offset: 2px;
+}
+.site-footer__commit a:hover {
+  color: #fff;
+}
 .site-footer nav {
   justify-self: end;
   display: flex;
