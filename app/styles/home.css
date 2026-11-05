@@ -1,3 +1,25 @@
+/* Scope document snapping to the home route, including after client navigation. */
+html:has(.home-page) {
+  scroll-snap-type: y mandatory;
+}
+
+.root-empty.home-page > section {
+  min-height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Keep snap positions stable while sections fade into view. */
+.reveal-ready .home-page > section[data-reveal] {
+  transform: none;
+  will-change: opacity;
+}
+
+/* Give the footer its own stop so it remains reachable after the last section. */
+.home-page > .site-footer {
+  scroll-snap-align: end;
+}
+
 .page {
   --glass: color-mix(in srgb, var(--surface) 62%, transparent);
   --glass-strong: color-mix(in srgb, var(--surface) 78%, transparent);

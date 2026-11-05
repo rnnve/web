@@ -30,7 +30,7 @@ export default function Home() {
   } = usePortfolioStatus();
 
   return (
-    <main className="root-empty" aria-label="Home">
+    <main className="root-empty home-page" aria-label="Home">
       <WidgetPreloads />
       <SectionRevealController />
       <section id="top" className="homeHero" data-reveal>

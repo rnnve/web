@@ -22,13 +22,21 @@ function getCommitHash() {
 
 const nextConfig: NextConfig = {
   env: { NEXT_PUBLIC_COMMIT_HASH: getCommitHash() },
-  allowedDevOrigins: ["192.168.1.39", "100.73.17.117"],
+  allowedDevOrigins: ["192.168.1.39", "100.73.17.117", "100.119.174.10"],
   async redirects() {
-    return ["listening", "songs", "music"].map((alias) => ({
-      source: `/${alias}`,
-      destination: "/listen",
-      permanent: true,
-    }));
+    return [
+      ...["/sitemap", "/sm.xml"].map((source) => ({
+        source,
+        destination: "/sitemap.xml",
+        permanent: true,
+      })),
+      { source: "/nt", destination: "/newtab", permanent: true },
+      ...["listening", "songs", "music"].map((alias) => ({
+        source: `/${alias}`,
+        destination: "/listen",
+        permanent: true,
+      })),
+    ];
   },
   experimental: {
     agentFeedback: true,
@@ -36,6 +44,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     rules: {
       "*.css": {
+        condition: { not: { path: "*.module.css" } },
         loaders: ["@tailwindcss/turbopack"],
         as: "*.css",
       },

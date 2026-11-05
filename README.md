@@ -1,72 +1,108 @@
-# Ryn's personal site
+# Rynnie
 
-A personal site built with Next.js, React, and Tailwind CSS. Designed by me, with coding help from Codex.
+My personal website, portfolio, and browser start page. Built with Next.js App Router, React, TypeScript, and Tailwind CSS, with Material 3 styling and English/Thai language support on the portfolio pages.
 
-[Older versions of the site](https://git.rynni.cc/rinne/site-archived)
+[Website](https://rynni.cc) · [New tab](https://rynni.cc/newtab) · [Older versions](https://git.rynni.cc/rinne/site-archived)
+
+## Pages
+
+| Route          | What’s there                                                                                                                                      |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`            | Introduction, live Discord and Spotify status, GitHub activity, projects, and technology stacks. Scrolling snaps between the three main sections. |
+| `/birthday`    | Birthday countdown using Bangkok time.                                                                                                            |
+| `/listen`      | Current listening activity, recent tracks, and weekly favorites from Last.fm.                                                                     |
+| `/ask`         | Anonymous questions delivered to Discord.                                                                                                         |
+| `/newtab`      | A responsive browser start page with a clock, search, shortcuts, and live wallpaper.                                                              |
+| `/sitemap.xml` | Generated sitemap for indexable pages.                                                                                                            |
+| `/robots.txt`  | Crawler instructions and the sitemap location.                                                                                                    |
+
+Aliases redirect permanently to their canonical routes:
+
+| Alias                            | Destination    |
+| -------------------------------- | -------------- |
+| `/nt`                            | `/newtab`      |
+| `/listening`, `/songs`, `/music` | `/listen`      |
+| `/sitemap`, `/sm.xml`            | `/sitemap.xml` |
 
 ## Local development
 
-Use Bun, the package manager configured for this project:
+Install [Bun](https://bun.sh) and use the version pinned in `package.json`.
 
 ```bash
 bun install
 bun run dev
 ```
 
-The profile-picture manifest is generated automatically before development and production builds from the images in `public/pfp`. Update that folder rather than editing `app/generated/pfp-images.ts`.
+The default development address is `http://localhost:3000`. To choose another port or allow access from another device:
 
-## Finding your way around
+```bash
+bun run dev --hostname 0.0.0.0 --port 3001
+```
 
-| Location                            | Responsibility                                                  |
-| ----------------------------------- | --------------------------------------------------------------- |
-| `app/page.tsx`                      | Homepage layout and introduction                                |
-| `app/layout.tsx`                    | Site metadata, fonts, global styles, and shared effects         |
-| `app/components/`                   | Widgets, navigation, loading screen, and visual effects         |
-| `app/hooks/use-portfolio-status.ts` | Live data requests, loading states, and polling                 |
-| `app/lib/spotify.ts`                | Converts different Spotify payload formats into one widget view |
-| `app/lib/github.ts`                 | Selects repositories and builds activity graph cells            |
-| `app/lib/status-types.ts`           | Shared widget data types                                        |
-| `app/lib/status-handler.ts`         | Status API caching, request deduplication, and fallbacks        |
-| `app/config/portfolio.ts`           | Featured repository names in display order                      |
-| `app/api/`                          | Discord, Spotify, GitHub, and profile-image endpoints           |
-| `app/globals.css`                   | Base styles and shared site styling                             |
-| `app/styles/`                       | Homepage, theme, loading, and effect styles                     |
-| `scripts/generate-pfp-manifest.mjs` | Generates the profile-image list                                |
-| `tests/status.test.ts`              | Regression checks for data adapters and API fallbacks           |
+Add the accessing hostname or IP to `allowedDevOrigins` in `next.config.ts` when needed. Entries contain only the hostname or IP, without a scheme or port.
 
-Each service widget has its own component: `discord-widget.tsx`, `spotify-widget.tsx`, and `github-widget.tsx`. `status-widgets.tsx` keeps their existing named exports available.
+Production builds use the standard Next.js commands:
 
-The status hook polls Discord every 15 seconds, Spotify every second, and GitHub every 5 minutes while the page is visible. Returning to the tab refreshes all three immediately. Widget API requests begin from HTML preload hints before hydration. Discord uses Next.js's persistent fetch cache with a 15-second refresh interval. Spotify bypasses browser, server, and response CDN caching so song changes are picked up on the next one-second poll. Discord responses also advertise short shared-CDN caching with background revalidation; GitHub advertises a 60-second shared cache. Actual freshness can include both the upstream cache age and CDN age.
+```bash
+bun run build
+bun run start
+```
 
-Discord and Spotify upstream requests time out after 3 seconds without a blocking retry. Concurrent requests share the same in-flight fetch, and failures retain a process-local last successful value without caching empty errors. Browser requests have a 6-second deadline and also share overlapping requests.
+Both development and build commands regenerate the profile-picture manifest from `public/pfp`. Add or remove images there instead of editing `app/generated/pfp-images.ts`.
 
-Recent Discord and GitHub snapshots are restored from session storage for up to 5 minutes while live requests refresh them. Spotify waits for live playback status and shows “Nothing is playing” when stopped or paused, without restoring a last-played track. Clearing or blocking browser storage does not prevent live widgets from loading.
+## Configuration
 
-## Background
+The site can run with its built-in service endpoints and fallback states. Configure these optional server environment variables locally in `.env.local` or in your hosting provider:
 
-The fixed background uses the supplied React Bits `PatternWaves` component with `ogl`. Adjust its preset, opacity, wave speed, and cursor settings in `app/components/site-background.tsx`. The renderer lives in `app/components/pattern-waves.jsx`, with styles in `app/styles/pattern-waves.css`.
+| Variable                  | Purpose                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| `GITHUB_TOKEN`            | Read-only token to increase the GitHub API rate limit for activity and repositories.  |
+| `ASK_DISCORD_WEBHOOK_URL` | Discord webhook used to deliver anonymous questions. Overrides the built-in fallback. |
 
-The pattern loads in a separate browser bundle, stays behind page content, and uses a capped rendering resolution. Animation pauses in hidden tabs and becomes static when reduced motion is enabled. Browsers without WebGL2 keep the plain site background. Images, logos, and status colors keep their original colors.
+The fallback webhook is Base64-encoded in the source, which is not secret storage. Configure your own webhook when deploying your own copy.
 
-## Navigation
+Discord, Spotify, and Last.fm endpoints are configured in `app/api/`. Featured GitHub repositories are selected in `app/config/portfolio.ts`. The footer reads deployment commit metadata, falling back to the local Git commit at build time.
 
-`app/components/portfolio-navbar.tsx` composes the navbar with the site's section links, profile image, GitHub, and Socials. The reusable exports are in `app/components/ui/resizable-navbar.tsx`; `app/lib/utils.ts` provides the `clsx` and `tailwind-merge` class helper.
+## New-tab page
 
-The Material 3 styling lives in `app/styles/material-navbar.css` and uses the site's shared surface, text, shape, and elevation tokens. The navbar has opaque surfaces, pill-shaped navigation indicators, icons, filled and tonal actions, and a selected section that follows scrolling. Profile images retain their original colors.
+Set your browser’s custom new-tab URL to `https://rynni.cc/newtab` or `https://rynni.cc/nt`, using your browser’s settings or a new-tab extension where required.
 
-The desktop bar contracts from 1120 to 860 pixels after 100 pixels of scrolling, with its maximum width constrained to the viewport. Below 1024 pixels, it becomes a compact top app bar and rounded menu. The menu closes on navigation, Escape, or an outside click. Reduced-motion settings disable resizing and menu animation.
+The page fits the viewport without document scrolling on desktop and phone. It includes local time and date, Google/DuckDuckGo/Bing search, and up to eight editable shortcuts. Customize opens an editor that can scroll independently. Search-engine preferences and shortcuts are stored only in that browser’s local storage.
 
-The component began with the supplied Aceternity Resizable Navbar composition. Its exports, Motion resizing, real site links, local profile image via Next.js `Image`/`Link`, and accessible mobile controls are retained. Its visual styling now uses Material 3 tokens rather than the reference's transparent/blurred surfaces and Tailwind color defaults.
+The page is statically prerendered and uses system fonts. It skips the portfolio loading screen, navigation, animated effects, and status requests. Search and default shortcuts work before JavaScript loads. The clock updates once per minute and pauses its timer in hidden tabs.
 
-## Cursor effect
+The wallpaper streams from `https://cdn.rynni.cc/assets/wallpapers/kanade.mp4` after the page paints, with `public/newtab-wallpaper.webp` as its initial still image. Video playback is muted, loops inline, and pauses when the tab is hidden. A play/pause control is available at the bottom of the page. Reduced-motion preferences show the still image until playback is requested. Update the video URL in `app/newtab/live-wallpaper.tsx` and replace the still image when changing wallpapers.
 
-`app/components/cursor-effects.tsx` configures the supplied React Bits `TargetCursor`: a rotating reticle that locks onto links, buttons, and elements with `.cursor-target`. Add `data-cursor-label` to a target for an optional hover label. There are no trails, glow canvases, or click bursts.
+## Sitemap
 
-The component is in `app/components/target-cursor.jsx`, with styles in `app/styles/target-cursor.css`. It loads separately, lets clicks pass through, and uses the normal cursor for touch input or reduced motion. It pauses in hidden tabs and restores the system cursor when leaving the page.
+Next.js generates `/sitemap.xml` from `app/sitemap.ts` during production builds. It includes the canonical homepage, birthday, listening, and ask URLs under `https://rynni.cc`. Update those entries when adding indexable pages or changing the production domain.
 
-`app/components/crosshair.jsx` supplies a separate viewport crosshair, enabled alongside TargetCursor in `cursor-effects.tsx`. Its guide lines and coordinates follow the pointer directly, with a gap around the reticle. TargetCursor handles target brackets; Crosshair's own target lock, click pulses, and smoothing are disabled. Both components share the touch and reduced-motion preference gate.
+`app/robots.ts` generates `/robots.txt` and advertises the sitemap. The new-tab page is marked `noindex` and is omitted from the sitemap, along with API endpoints and redirect aliases. `/sitemap` and `/sm.xml` redirect to `/sitemap.xml`.
 
-## Checking and formatting changes
+## Project structure
+
+| Location                             | Responsibility                                                         |
+| ------------------------------------ | ---------------------------------------------------------------------- |
+| `app/layout.tsx`                     | Root metadata, viewport defaults, and global styles.                   |
+| `app/components/route-shell.tsx`     | Keeps the new-tab page separate from portfolio chrome.                 |
+| `app/components/portfolio-shell.tsx` | Portfolio fonts, settings, loading screen, navigation, and effects.    |
+| `app/page.tsx`                       | Homepage content and section composition.                              |
+| `app/newtab/`                        | New-tab interface, preferences, wallpaper playback, and scoped styles. |
+| `app/api/`                           | Status, listening, anonymous question, and profile-image handlers.     |
+| `app/hooks/use-portfolio-status.ts`  | Homepage polling and loading state.                                    |
+| `app/lib/`                           | Data normalization, caching, settings, and shared utilities.           |
+| `app/config/portfolio.ts`            | Featured repository names and ordering.                                |
+| `app/styles/`                        | Portfolio theme, page styles, and effect styles.                       |
+| `app/sitemap.ts`, `app/robots.ts`    | Generated crawler metadata.                                            |
+| `public/`                            | Static assets, profile images, and wallpaper poster.                   |
+| `scripts/`                           | Profile-picture manifest generation.                                   |
+| `tests/`                             | Data adapters, API behavior, preferences, and date calculations.       |
+
+Portfolio background and cursor effects are configured in `app/components/site-background.tsx` and `app/components/cursor-effects.tsx`. Their renderers load separately and respect device capabilities and motion preferences.
+
+The homepage polls Discord every 15 seconds, Spotify every second, and GitHub every five minutes while visible. Returning to the tab refreshes the widgets. Requests are deduplicated, and temporary service failures retain available fallbacks. Spotify uses live responses rather than restoring a previously playing track.
+
+## Checks
 
 ```bash
 bun run lint
@@ -76,14 +112,8 @@ bun run format:check
 bun run build
 ```
 
-Run `bun run format` to format source files consistently. Generated files, build output, and dependency files are excluded from formatting.
+Use `bun run format` to apply Prettier. Build output, dependencies, the lockfile, and generated profile manifests are excluded from formatting.
 
-TypeScript 7 is installed as `@typescript/native` and provides `tsc`. The `typescript` dependency aliases `@typescript/typescript6` to provide the compiler API required by typescript-eslint.
+## Deployment
 
-## Vercel deployment
-
-Deploy the repository as a standard Next.js project. The site uses a fixed dark monochrome palette and does not require theme-related environment variables or external storage.
-
-Optionally set `GITHUB_TOKEN` to a read-only GitHub token so the public activity graph and repository cards are not constrained by GitHub's low unauthenticated API rate limit. The site retains usable GitHub fallbacks when the token is absent.
-
-The anonymous question form at `/ask` sends submissions to Discord. Set `ASK_DISCORD_WEBHOOK_URL` to override the built-in webhook. The default URL is encoded in the server source, but Base64 is reversible and does not keep it private.
+Deploy as a standard Next.js application on Vercel or another host that supports its server runtime. The API routes require server execution; a static-only export does not provide them. Set any optional environment variables in the hosting provider, then build with `bun run build`.
