@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import RouteShell from "./components/route-shell";
 import SiteFooter from "./components/site-footer";
 import favicon from "./icon.webp";
@@ -40,6 +41,12 @@ export default function RootLayout({
           {children}
           <SiteFooter />
         </RouteShell>
+        <Script
+          defer
+          src="https://rynni.cc/hub/p.js"
+          data-site="prt_ls8d2qywl0a2v8fhbw5u"
+          data-api="https://rynni.cc/hub/e"
+        />
       </body>
     </html>
   );
