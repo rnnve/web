@@ -21,6 +21,17 @@ function getCommitHash() {
 }
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.discordapp.com",
+        pathname: "/avatars/**",
+      },
+    ],
+  },
+  // Preserve navigation headers so Markdown negotiation can leave React requests alone.
+  skipProxyUrlNormalize: true,
   env: { NEXT_PUBLIC_COMMIT_HASH: getCommitHash() },
   allowedDevOrigins: ["192.168.1.39", "100.73.17.117", "100.119.174.10"],
   async redirects() {

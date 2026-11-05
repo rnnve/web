@@ -16,6 +16,7 @@
   "dependencies": {
     "@fontsource-variable/google-sans": "^5.3.2",
     "@m3e/web": "^2.11.1",
+    "@mixmark-io/domino": "^2.2.0",
     "@tabler/icons-react": "^3.50.0",
     "clsx": "^2.1.1",
     "geist": "^1.9.0",
@@ -24,13 +25,15 @@
     "ogl": "^1.0.11",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "tailwind-merge": "^3.7.0"
+    "tailwind-merge": "^3.7.0",
+    "turndown": "^7.2.5"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4.3.4",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@types/turndown": "^5.0.6",
     "@typescript/native": "npm:typescript@^7.0.2",
     "eslint": "^10.14.0",
     "eslint-config-next": "16.4.4",

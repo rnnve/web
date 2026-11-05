@@ -5,6 +5,8 @@ import { useSiteSettings } from "./site-settings-provider";
 export default function LoadingMessage() {
   const { t } = useSiteSettings();
   return (
-    <p>{t("Good things are taking shape.", "สิ่งดี ๆ กำลังเป็นรูปเป็นร่าง")}</p>
+    <p className="m-0 mt-[11px] text-sm italic text-(--ink-soft)">
+      {t("Good things are taking shape.", "สิ่งดี ๆ กำลังเป็นรูปเป็นร่าง")}
+    </p>
   );
 }

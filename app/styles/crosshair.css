@@ -1,9 +1,0 @@
-html[data-page-loading="true"] .site-crosshair {
-  visibility: hidden;
-}
-
-@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
-  .site-crosshair {
-    display: none;
-  }
-}

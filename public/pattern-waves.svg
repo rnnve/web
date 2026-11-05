@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1000" fill="none">
+  <defs>
+    <pattern id="dots" width="10" height="10" patternUnits="userSpaceOnUse">
+      <circle cx="5" cy="5" r="1.55" fill="white"/>
+    </pattern>
+    <linearGradient id="fade" x1="0" y1="0" x2="1440" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white" stop-opacity="0"/>
+      <stop offset=".2" stop-color="white" stop-opacity=".3"/>
+      <stop offset=".5" stop-color="white"/>
+      <stop offset=".8" stop-color="white" stop-opacity=".4"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="waves">
+      <g stroke="url(#fade)" stroke-width="94">
+        <path d="M-160 260C160 420 430 50 760 140S1290 360 1620 70"/>
+        <path d="M-160 570C160 730 430 360 760 450S1290 670 1620 380"/>
+        <path d="M-160 880C160 1040 430 670 760 760S1290 980 1620 690"/>
+      </g>
+    </mask>
+  </defs>
+  <path fill="url(#dots)" mask="url(#waves)" d="M0 0h1440v1000H0z"/>
+</svg>

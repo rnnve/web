@@ -3,6 +3,23 @@ export const BIRTH_DATE = "2010-12-31T13:12:00+07:00";
 const BANGKOK_OFFSET = 7 * 60 * 60 * 1_000;
 const DAY = 24 * 60 * 60 * 1_000;
 
+export function getBirthdayWishWindow(now: number) {
+  const year = new Date(now + BANGKOK_OFFSET).getUTCFullYear();
+  const thisBirthday = Date.parse(`${year}${BIRTH_DATE.slice(4)}`);
+  const lastBirthday =
+    now >= thisBirthday
+      ? thisBirthday
+      : Date.parse(`${year - 1}${BIRTH_DATE.slice(4)}`);
+  const isOpen = now >= lastBirthday && now < lastBirthday + 2 * DAY;
+  const opensAt = isOpen
+    ? lastBirthday
+    : now < thisBirthday
+      ? thisBirthday
+      : Date.parse(`${year + 1}${BIRTH_DATE.slice(4)}`);
+
+  return { isOpen, opensAt, closesAt: opensAt + 2 * DAY };
+}
+
 export function getBirthdayCountdown(now: number) {
   const year = new Date(now + BANGKOK_OFFSET).getUTCFullYear();
   const birthday = Date.parse(`${year}${BIRTH_DATE.slice(4)}`);

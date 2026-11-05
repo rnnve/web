@@ -3,10 +3,8 @@
 import { useState, useSyncExternalStore, type FormEvent } from "react";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import { useSiteSettings } from "../components/site-settings-provider";
-
 const MAX_LENGTH = 1000;
 const subscribe = () => () => {};
-
 function alreadySent(key: string) {
   try {
     return sessionStorage.getItem(key) === "true";
@@ -14,11 +12,12 @@ function alreadySent(key: string) {
     return false;
   }
 }
-
 export default function AskForm({
   variant = "question",
+  disabled = false,
 }: {
   variant?: "question" | "birthday";
+  disabled?: boolean;
 }) {
   const birthday = variant === "birthday";
   const sentKey = birthday ? "rynnie.birthday.sent" : "rynnie.ask.sent";
@@ -34,10 +33,10 @@ export default function AskForm({
     () => null,
   );
   const sent = sentInSession === true || status === "sent";
-
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (
+      disabled ||
       !question.trim() ||
       sentInSession === null ||
       sent ||
@@ -48,11 +47,17 @@ export default function AskForm({
     try {
       const response = await fetch(birthday ? "/api/birthday" : "/api/ask", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(
           birthday
-            ? { message: question.trim() }
-            : { question: question.trim() },
+            ? {
+                message: question.trim(),
+              }
+            : {
+                question: question.trim(),
+              },
         ),
       });
       if (!response.ok) throw new Error("Submission failed");
@@ -67,9 +72,11 @@ export default function AskForm({
       setStatus("error");
     }
   }
-
   return (
-    <form className="ask-form" onSubmit={submit}>
+    <form
+      className="ask-form [padding:24px] [border:1px_solid_var(--line)] [border-radius:28px] [background:var(--md-sys-color-surface-container)] [&_label]:block [&_label]:[margin-bottom:12px] [&_label]:[font-size:14px] [&_label]:[font-weight:650] [&_textarea]:block [&_textarea]:[width:100%] [&_textarea]:[min-height:150px] [&_textarea]:[padding:16px] [&_textarea]:[resize:vertical] [&_textarea]:[border:1px_solid_var(--md-sys-color-outline-variant)] [&_textarea]:[border-radius:16px] [&_textarea]:[background:var(--md-sys-color-surface-container-low)] [&_textarea]:[color:var(--ink)] [&_textarea]:[line-height:1.6] [&_textarea:focus-visible]:[outline:2px_solid_var(--md-sys-color-primary)] [&_textarea:focus-visible]:[outline-offset:2px] [&_button]:[min-height:48px] [&_button]:[padding:0_20px] [&_button]:inline-flex [&_button]:items-center [&_button]:justify-center [&_button]:[gap:8px] [&_button]:[border:0] [&_button]:[border-radius:24px] [&_button]:[background:var(--md-sys-color-primary)] [&_button]:[color:var(--md-sys-color-on-primary)] [&_button]:[font-weight:650] [&_button]:cursor-pointer [&_button:disabled]:[opacity:0.5] [&_button:disabled]:[cursor:not-allowed] max-[601px]:[padding:20px]"
+      onSubmit={submit}
+    >
       <label htmlFor={inputId}>
         {birthday
           ? t("Your birthday wish", "คำอวยพรวันเกิดของคุณ")
@@ -78,7 +85,9 @@ export default function AskForm({
       <textarea
         id={inputId}
         value={question}
-        disabled={sentInSession === null || sent || status === "sending"}
+        disabled={
+          disabled || sentInSession === null || sent || status === "sending"
+        }
         onChange={(event) => {
           setQuestion(event.target.value);
           if (status === "error") setStatus("idle");
@@ -95,13 +104,14 @@ export default function AskForm({
         rows={5}
         required
       />
-      <div className="ask-form-bottom">
-        <span className="ask-count">
+      <div className="ask-form-bottom flex items-center justify-between [gap:16px] [margin-top:16px]">
+        <span className="ask-count [color:var(--ink-soft)] [font-size:12px] [font-variant-numeric:tabular-nums]">
           {question.length} / {MAX_LENGTH}
         </span>
         <button
           type="submit"
           disabled={
+            disabled ||
             sentInSession === null ||
             sent ||
             !question.trim() ||
@@ -116,7 +126,11 @@ export default function AskForm({
           <IconArrowUpRight size={18} aria-hidden="true" />
         </button>
       </div>
-      <p className="ask-feedback" role="status" aria-live="polite">
+      <p
+        className="ask-feedback [min-height:1.5em] [margin:16px_0_0] [color:var(--ink-soft)] [font-size:13px]"
+        role="status"
+        aria-live="polite"
+      >
         {sent &&
           (birthday
             ? t(

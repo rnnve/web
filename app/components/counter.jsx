@@ -9,28 +9,33 @@ import {
   useRef,
   useState,
 } from "react";
-import "../styles/counter.css";
-
-const ROOT = "counter";
-const SR = "counter__sr";
-const ROW = "counter__row";
-const AFFIX = "counter__affix";
-const DIGIT = "counter__digit";
-const SIZER = "counter__sizer";
-const WINDOW = "counter__window";
-const STRIP = "counter__strip";
-const NUMERAL = "counter__numeral";
-const SYMBOL = "counter__symbol";
-const SYMBOL_TEXT = "counter__symbol-text";
-const BLUR = "counter__blur";
-const MEASURE = "counter__measure";
-
+const ROOT =
+  "counter relative inline-flex items-baseline [line-height:1] whitespace-nowrap [direction:ltr] [unicode-bidi:isolate]";
+const SR =
+  "counter__sr absolute [width:1px] [height:1px] [margin:-1px] [padding:0] overflow-hidden [clip-path:inset(50%)] whitespace-nowrap [border:0]";
+const ROW =
+  "counter__row inline-flex items-baseline [margin:0_calc(var(--counter-gap,_0px)_/_-2)] [user-select:none] [-webkit-user-select:none]";
+const AFFIX =
+  "counter__affix [margin:0_calc(var(--counter-gap,_0px)_/_2_*_var(--counter-shown,_1))] [opacity:var(--counter-shown,_1)] whitespace-pre";
+const DIGIT =
+  "counter__digit [margin:0_calc(var(--counter-gap,_0px)_/_2_*_var(--counter-shown,_1))] [opacity:var(--counter-shown,_1)] relative inline-block box-content [line-height:calc(1em_+_var(--counter-padding,_0px))] text-center";
+const SIZER = "counter__sizer [visibility:hidden]";
+const WINDOW =
+  "counter__window absolute [top:calc(var(--counter-fade,_0em)_*_-1)] [right:0] [bottom:calc(var(--counter-fade,_0em)_*_-1)] [left:0] overflow-hidden pointer-events-none";
+const STRIP = "counter__strip absolute [inset:0]";
+const NUMERAL =
+  "counter__numeral absolute [inset:0] flex items-center justify-center [will-change:transform]";
+const SYMBOL =
+  "counter__symbol [margin:0_calc(var(--counter-gap,_0px)_/_2_*_var(--counter-shown,_1))] [opacity:var(--counter-shown,_1)] relative inline-flex justify-center [clip-path:inset(-0.5em_0)]";
+const SYMBOL_TEXT = "counter__symbol-text inline-block whitespace-pre";
+const BLUR = "counter__blur absolute [width:0] [height:0] overflow-hidden";
+const MEASURE =
+  "counter__measure absolute [top:0] [left:0] [height:0] overflow-hidden whitespace-nowrap [visibility:hidden] pointer-events-none [&_>_span]:inline-block";
 const TAU = Math.PI * 2;
 const NUMERIC = new Set(["integer", "group", "decimal", "fraction"]);
 const DIRECTIONS = ["auto", "up", "down", "shortest"];
 const MASK =
   "linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.0355) calc(var(--counter-fade, 0em) * 0.1667), rgba(0, 0, 0, 0.2099) calc(var(--counter-fade, 0em) * 0.3333), rgba(0, 0, 0, 0.5) calc(var(--counter-fade, 0em) * 0.5), rgba(0, 0, 0, 0.7901) calc(var(--counter-fade, 0em) * 0.6667), rgba(0, 0, 0, 0.9645) calc(var(--counter-fade, 0em) * 0.8333), #000 var(--counter-fade, 0em), #000 calc(100% - var(--counter-fade, 0em)), rgba(0, 0, 0, 0.9645) calc(100% - var(--counter-fade, 0em) * 0.8333), rgba(0, 0, 0, 0.7901) calc(100% - var(--counter-fade, 0em) * 0.6667), rgba(0, 0, 0, 0.5) calc(100% - var(--counter-fade, 0em) * 0.5), rgba(0, 0, 0, 0.2099) calc(100% - var(--counter-fade, 0em) * 0.3333), rgba(0, 0, 0, 0.0355) calc(100% - var(--counter-fade, 0em) * 0.1667), rgba(0, 0, 0, 0) 100%)";
-
 const useIsoLayoutEffect =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
@@ -39,7 +44,6 @@ const wrap = (offset) => mod(offset + 5, 10) - 5;
 const prefersReduced = () =>
   typeof window !== "undefined" &&
   (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
-
 const stepBetween = (from, to, direction) => {
   const up = mod(to - from, 10);
   if (direction === "up") return up;
@@ -59,7 +63,12 @@ const digitsFor = (formatter) => {
     numberingSystem,
     useGrouping: false,
   });
-  return Array.from({ length: 10 }, (_, digit) => plain.format(digit));
+  return Array.from(
+    {
+      length: 10,
+    },
+    (_, digit) => plain.format(digit),
+  );
 };
 const slotsFor = (formatter, digits, value) => {
   const parts = formatter.formatToParts(value);
@@ -200,7 +209,9 @@ function Counter({
       : Number(value);
   const formatKey = JSON.stringify(format ?? {});
   const formatter = useMemo(() => {
-    const options = { ...JSON.parse(formatKey) };
+    const options = {
+      ...JSON.parse(formatKey),
+    };
     if (decimals !== undefined) {
       const fixed = clamp(Math.round(decimals), 0, 20);
       options.minimumFractionDigits = fixed;
@@ -243,7 +254,6 @@ function Counter({
   useIsoLayoutEffect(() => {
     settingsRef.current = settings;
   });
-
   const paint = (item) => {
     const el = item.el;
     if (!el) return;
@@ -364,7 +374,6 @@ function Counter({
   useIsoLayoutEffect(() => {
     kickRef.current = kick;
   });
-
   useIsoLayoutEffect(() => {
     const e = engine.current;
     const s = settingsRef.current;
@@ -452,7 +461,6 @@ function Counter({
     });
     kick();
   }, [slots]);
-
   useIsoLayoutEffect(() => {
     const row = rowRef.current;
     if (!row) return;
@@ -474,7 +482,6 @@ function Counter({
       paint(item);
     });
   }, [list, motionBlur]);
-
   useIsoLayoutEffect(() => {
     const row = measureRef.current;
     const root = rootRef.current;
@@ -501,7 +508,6 @@ function Counter({
       observer.disconnect();
     };
   }, []);
-
   useEffect(() => {
     const root = rootRef.current;
     if (!intro || !root || prefersReduced()) return undefined;
@@ -528,12 +534,13 @@ function Counter({
         observer.disconnect();
         spin();
       },
-      { threshold: 0.5 },
+      {
+        threshold: 0.5,
+      },
     );
     observer.observe(root);
     return () => observer.disconnect();
   }, [intro]);
-
   useEffect(() => {
     const e = engine.current;
     return () => {
@@ -541,7 +548,6 @@ function Counter({
       e.raf = 0;
     };
   }, []);
-
   const affix = (node) =>
     node === undefined || node === null || node === false ? null : (
       <span className={AFFIX}>{node}</span>
@@ -579,7 +585,10 @@ function Counter({
               <span className={SIZER}>{digits[slot.digit]}</span>
               <span
                 className={WINDOW}
-                style={{ maskImage: MASK, WebkitMaskImage: MASK }}
+                style={{
+                  maskImage: MASK,
+                  WebkitMaskImage: MASK,
+                }}
               >
                 <span className={STRIP} data-strip="">
                   {digits.map((char, n) => (

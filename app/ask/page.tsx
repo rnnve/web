@@ -1,33 +1,32 @@
-import type { Metadata } from "next";
+import { generatePageMetadata } from "../lib/og/metadata";
 import { IconMessageQuestion } from "@tabler/icons-react";
 import LocalizedText from "../components/localized-text";
 import AskForm from "./ask-form";
-import "../styles/ask.css";
-
-export const metadata: Metadata = {
-  title: "Ask · Rynnie",
-  description: "Send Rynnie an anonymous question.",
-};
-
+import styles from "../viewport-pages.module.css";
+export function generateMetadata() {
+  return generatePageMetadata("/ask");
+}
 export default function AskPage() {
   return (
-    <main className="ask-page">
-      <section className="ask-content" aria-labelledby="ask-title">
-        <span className="ask-icon" aria-hidden="true">
-          <IconMessageQuestion size={30} stroke={1.5} />
-        </span>
-        <p className="ask-eyebrow">
-          <LocalizedText en="A little conversation" th="มาคุยกันสักหน่อย" />
-        </p>
-        <h1 id="ask-title">
-          <LocalizedText en="Ask me anything." th="ถามเราได้เลย" />
-        </h1>
-        <p className="ask-description">
-          <LocalizedText
-            en="Have a question? Leave it here anonymously."
-            th="มีคำถามอะไรไหม ฝากไว้ได้เลยโดยไม่ต้องบอกชื่อ"
-          />
-        </p>
+    <main className={`viewport-page ${styles.page} ${styles.ask}`}>
+      <section className={styles.askContent} aria-labelledby="ask-title">
+        <div className={styles.introduction}>
+          <span className={styles.icon} aria-hidden="true">
+            <IconMessageQuestion size={30} stroke={1.5} />
+          </span>
+          <p className={styles.eyebrow}>
+            <LocalizedText en="A little conversation" th="มาคุยกันสักหน่อย" />
+          </p>
+          <h1 id="ask-title">
+            <LocalizedText en="Ask me anything." th="ถามเราได้เลย" />
+          </h1>
+          <p className={styles.description}>
+            <LocalizedText
+              en="Have a question? Leave it here anonymously."
+              th="มีคำถามอะไรไหม ฝากไว้ได้เลยโดยไม่ต้องบอกชื่อ"
+            />
+          </p>
+        </div>
         <AskForm />
       </section>
     </main>

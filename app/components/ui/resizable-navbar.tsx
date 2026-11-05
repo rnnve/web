@@ -2,79 +2,45 @@
 
 import { cn } from "@/app/lib/utils";
 import { IconMenu2, IconX, IconChevronDown } from "@tabler/icons-react";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-} from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useId, useRef, useState } from "react";
+import React, { useEffect, useId, useRef } from "react";
 import { useSiteSettings } from "../site-settings-provider";
-import "@/app/styles/material-navbar.css";
-
 type NavbarProps = {
   children: React.ReactNode;
   className?: string;
 };
-
-type NavSurfaceProps = NavbarProps & { visible?: boolean };
-
 type NavItemsProps = {
-  items: { name: string; link: string; icon?: React.ReactNode }[];
+  items: {
+    name: string;
+    link: string;
+    icon?: React.ReactNode;
+  }[];
   activeLink?: string;
   className?: string;
   onItemClick?: (link: string) => void;
 };
-
 type MobileNavMenuProps = NavbarProps & {
   isOpen: boolean;
   onClose: () => void;
   id?: string;
 };
-
-const resizeTransition = {
-  type: "spring",
-  stiffness: 200,
-  damping: 50,
-} as const;
-
 export function Navbar({ children, className }: NavbarProps) {
-  const { scrollY } = useScroll();
-  const [visible, setVisible] = useState(false);
-
-  useMotionValueEvent(scrollY, "change", (latest) => setVisible(latest > 100));
-
+  return <div className={cn("m3-navbar relative", className)}>{children}</div>;
+}
+export function NavBody({ children, className }: NavbarProps) {
   return (
-    <div className={cn("m3-navbar", className)}>
-      {React.Children.map(children, (child) =>
-        React.isValidElement(child)
-          ? React.cloneElement(
-              child as React.ReactElement<{ visible?: boolean }>,
-              { visible },
-            )
-          : child,
+    <div
+      className={cn(
+        "m3-navbar-surface relative [width:1120px] [height:72px] [margin-inline:auto] [max-width:calc(100%_-_32px)] [padding-inline:16px] [border:1px_solid_var(--md-sys-color-outline-variant)] [border-radius:16px] [color:var(--md-sys-color-on-surface)] [background:color-mix(in_srgb,_var(--md-sys-color-surface-container)_55%,_transparent)] [backdrop-filter:blur(24px)] [-webkit-backdrop-filter:blur(24px)] [box-shadow:var(--md-elevation-1)] m3-navbar-desktop hidden [grid-template-columns:minmax(0,_1fr)_auto_minmax(0,_1fr)] items-center justify-between [gap:24px] min-[1024px]:grid [@media(min-width:_1024px)_and_(max-width:_1199px)]:[padding-inline:12px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[gap:12px]",
+        className,
       )}
+    >
+      {children}
     </div>
   );
 }
-
-export function NavBody({ children, className, visible }: NavSurfaceProps) {
-  const reduceMotion = useReducedMotion();
-  return (
-    <motion.div
-      animate={{ width: visible ? 1040 : 1120, height: visible ? 64 : 72 }}
-      transition={reduceMotion ? { duration: 0 } : resizeTransition}
-      data-elevated={visible || undefined}
-      className={cn("m3-navbar-surface m3-navbar-desktop", className)}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
 export function NavItems({
   items,
   activeLink,
@@ -87,7 +53,6 @@ export function NavItems({
   const visibleItems = items.slice(0, 3);
   const overflowItems = items.slice(3);
   const overflowActive = overflowItems.some((item) => item.link === activeLink);
-
   useEffect(() => {
     const details = moreRef.current;
     if (!details) return;
@@ -117,19 +82,26 @@ export function NavItems({
       details.removeEventListener("focusout", closeOnBlur);
     };
   }, [activeLink, overflowItems.length]);
-
   return (
-    <div className={cn("m3-navbar-items", className)}>
+    <div
+      className={cn(
+        "m3-navbar-items flex items-center justify-center [gap:4px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[gap:2px]",
+        className,
+      )}
+    >
       {visibleItems.map((item) => (
         <Link
           key={item.link}
           href={item.link}
           onClick={() => onItemClick?.(item.link)}
           aria-current={activeLink === item.link ? "page" : undefined}
-          className="m3-navbar-link"
+          className="m3-navbar-link [.m3-navbar-more-menu_&]:flex [.m3-navbar-more-menu_&]:[min-height:48px] [.m3-navbar-desktop:has(.m3-navbar-more)_&]:[padding-inline:12px] [min-height:44px] [padding:0_16px] inline-flex items-center [gap:8px] [border-radius:20px] [color:var(--md-sys-color-on-surface-variant)] [font-size:14px] [font-weight:550] [line-height:20px] [letter-spacing:0.1px] [text-decoration:none] whitespace-nowrap [transition:color_0.2s_var(--md-motion-standard),_background-color_0.2s_var(--md-motion-standard)] [&:hover]:[color:var(--md-sys-color-on-surface)] [&:hover]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-surface)_8%,_transparent_)] [&:focus-visible]:[color:var(--md-sys-color-on-surface)] [&:focus-visible]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-surface)_8%,_transparent_)] [&[aria-current]]:[color:var(--md-sys-color-on-secondary-container)] [&[aria-current]]:[background:var(--md-sys-color-secondary-container)] [&[aria-current]]:[font-weight:650] [&[aria-current]:hover]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-secondary-container)_8%,_var(--md-sys-color-secondary-container)_)] [.m3-navbar-menu_&]:[width:100%] [.m3-navbar-menu_&]:[min-height:48px] [.m3-navbar-menu_&]:[border-radius:24px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[padding-inline:10px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[gap:6px] motion-reduce:[transition:none]"
         >
           {item.icon && (
-            <span className="m3-navbar-icon" aria-hidden="true">
+            <span
+              className="m3-navbar-icon inline-flex [flex-shrink:0] items-center"
+              aria-hidden="true"
+            >
               {item.icon}
             </span>
           )}
@@ -137,29 +109,38 @@ export function NavItems({
         </Link>
       ))}
       {overflowItems.length > 0 && (
-        <details ref={moreRef} className="m3-navbar-more">
+        <details
+          ref={moreRef}
+          className="m3-navbar-more relative [&[open]_>_summary]:[color:var(--md-sys-color-on-secondary-container)] [&[open]_>_summary]:[background:var(--md-sys-color-secondary-container)]"
+        >
           <summary
-            className="m3-navbar-link m3-navbar-more-toggle"
+            className="m3-navbar-link [.m3-navbar-more-menu_&]:flex [.m3-navbar-more-menu_&]:[min-height:48px] [.m3-navbar-desktop:has(.m3-navbar-more)_&]:[padding-inline:12px] [min-height:44px] [padding:0_16px] inline-flex items-center [gap:8px] [border-radius:20px] [color:var(--md-sys-color-on-surface-variant)] [font-size:14px] [font-weight:550] [line-height:20px] [letter-spacing:0.1px] [text-decoration:none] whitespace-nowrap [transition:color_0.2s_var(--md-motion-standard),_background-color_0.2s_var(--md-motion-standard)] [&:hover]:[color:var(--md-sys-color-on-surface)] [&:hover]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-surface)_8%,_transparent_)] [&:focus-visible]:[color:var(--md-sys-color-on-surface)] [&:focus-visible]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-surface)_8%,_transparent_)] [&[aria-current]]:[color:var(--md-sys-color-on-secondary-container)] [&[aria-current]]:[background:var(--md-sys-color-secondary-container)] [&[aria-current]]:[font-weight:650] [&[aria-current]:hover]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-secondary-container)_8%,_var(--md-sys-color-secondary-container)_)] [.m3-navbar-menu_&]:[width:100%] [.m3-navbar-menu_&]:[min-height:48px] [.m3-navbar-menu_&]:[border-radius:24px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[padding-inline:10px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[gap:6px] motion-reduce:[transition:none] m3-navbar-more-toggle [list-style:none] cursor-pointer [&::-webkit-details-marker]:hidden [&[data-active]]:[color:var(--md-sys-color-on-secondary-container)] [&[data-active]]:[background:var(--md-sys-color-secondary-container)]"
             aria-controls={dropdownId}
             data-active={overflowActive || undefined}
           >
             <span>{t("More", "เพิ่มเติม")}</span>
             <IconChevronDown size={16} aria-hidden="true" />
           </summary>
-          <div id={dropdownId} className="m3-navbar-more-menu">
+          <div
+            id={dropdownId}
+            className="m3-navbar-more-menu absolute [top:calc(100%_+_14px)] [right:0] [width:max-content] [min-width:180px] [max-height:calc(100dvh_-_128px)] [overflow-y:auto] [overscroll-behavior:contain] [padding:8px] [border:1px_solid_var(--md-sys-color-outline-variant)] [border-radius:20px] [background:var(--md-sys-color-surface-container-high)] [box-shadow:var(--md-elevation-2)]"
+          >
             {overflowItems.map((item) => (
               <Link
                 key={item.link}
                 href={item.link}
                 aria-current={activeLink === item.link ? "page" : undefined}
-                className="m3-navbar-link"
+                className="m3-navbar-link [.m3-navbar-more-menu_&]:flex [.m3-navbar-more-menu_&]:[min-height:48px] [.m3-navbar-desktop:has(.m3-navbar-more)_&]:[padding-inline:12px] [min-height:44px] [padding:0_16px] inline-flex items-center [gap:8px] [border-radius:20px] [color:var(--md-sys-color-on-surface-variant)] [font-size:14px] [font-weight:550] [line-height:20px] [letter-spacing:0.1px] [text-decoration:none] whitespace-nowrap [transition:color_0.2s_var(--md-motion-standard),_background-color_0.2s_var(--md-motion-standard)] [&:hover]:[color:var(--md-sys-color-on-surface)] [&:hover]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-surface)_8%,_transparent_)] [&:focus-visible]:[color:var(--md-sys-color-on-surface)] [&:focus-visible]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-surface)_8%,_transparent_)] [&[aria-current]]:[color:var(--md-sys-color-on-secondary-container)] [&[aria-current]]:[background:var(--md-sys-color-secondary-container)] [&[aria-current]]:[font-weight:650] [&[aria-current]:hover]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-secondary-container)_8%,_var(--md-sys-color-secondary-container)_)] [.m3-navbar-menu_&]:[width:100%] [.m3-navbar-menu_&]:[min-height:48px] [.m3-navbar-menu_&]:[border-radius:24px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[padding-inline:10px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[gap:6px] motion-reduce:[transition:none]"
                 onClick={() => {
                   if (moreRef.current) moreRef.current.open = false;
                   onItemClick?.(item.link);
                 }}
               >
                 {item.icon && (
-                  <span className="m3-navbar-icon" aria-hidden="true">
+                  <span
+                    className="m3-navbar-icon inline-flex [flex-shrink:0] items-center"
+                    aria-hidden="true"
+                  >
                     {item.icon}
                   </span>
                 )}
@@ -172,27 +153,30 @@ export function NavItems({
     </div>
   );
 }
-
-export function MobileNav({ children, className, visible }: NavSurfaceProps) {
-  const reduceMotion = useReducedMotion();
+export function MobileNav({ children, className }: NavbarProps) {
   return (
-    <motion.div
-      animate={{ width: visible ? "92%" : "100%" }}
-      transition={reduceMotion ? { duration: 0 } : resizeTransition}
-      data-elevated={visible || undefined}
-      className={cn("m3-navbar-surface m3-navbar-mobile", className)}
+    <div
+      className={cn(
+        "m3-navbar-surface relative [margin-inline:auto] [width:calc(100%_-_32px)] [border:1px_solid_var(--md-sys-color-outline-variant)] [border-radius:16px] [color:var(--md-sys-color-on-surface)] [background:color-mix(in_srgb,_var(--md-sys-color-surface-container)_55%,_transparent)] [backdrop-filter:blur(24px)] [-webkit-backdrop-filter:blur(24px)] [box-shadow:var(--md-elevation-1)] m3-navbar-mobile [min-height:64px] [padding-inline:12px] min-[1024px]:hidden",
+        className,
+      )}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
-
 export function MobileNavHeader({ children, className }: NavbarProps) {
   return (
-    <div className={cn("m3-navbar-mobile-header", className)}>{children}</div>
+    <div
+      className={cn(
+        "m3-navbar-mobile-header [min-height:62px] flex items-center justify-between [gap:12px]",
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 }
-
 export function MobileNavMenu({
   children,
   className,
@@ -202,7 +186,6 @@ export function MobileNavMenu({
 }: MobileNavMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -224,21 +207,36 @@ export function MobileNavMenu({
       document.removeEventListener("pointerdown", handlePointerDown);
     };
   }, [isOpen, onClose]);
-
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
           ref={menuRef}
           id={id}
-          initial={reduceMotion ? false : { opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
+          initial={
+            reduceMotion
+              ? false
+              : {
+                  opacity: 0,
+                  y: -8,
+                }
+          }
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          exit={{
+            opacity: 0,
+            y: -8,
+          }}
           transition={{
             duration: reduceMotion ? 0 : 0.2,
             ease: [0.2, 0, 0, 1],
           }}
-          className={cn("m3-navbar-menu", className)}
+          className={cn(
+            "m3-navbar-menu absolute [inset-inline:0] [top:calc(100%_+_8px)] [max-height:calc(_100dvh_-_112px_-_env(safe-area-inset-top,_0px)_-_env(safe-area-inset-bottom,_0px)_)] [overflow-y:auto] [overflow-x:hidden] [overscroll-behavior:contain] [padding:12px] flex flex-col [gap:4px] [border:1px_solid_var(--md-sys-color-outline-variant)] [border-radius:var(--md-shape-extra-large)] [color:var(--md-sys-color-on-surface)] [background:var(--md-sys-color-surface-container-high)] [box-shadow:var(--md-elevation-2)]",
+            className,
+          )}
         >
           {children}
         </motion.div>
@@ -246,7 +244,6 @@ export function MobileNavMenu({
     </AnimatePresence>
   );
 }
-
 export function MobileNavToggle({
   isOpen,
   onClick,
@@ -268,34 +265,39 @@ export function MobileNavToggle({
       aria-expanded={isOpen}
       aria-controls="mobile-navigation-menu"
       data-navbar-toggle
-      className="m3-navbar-toggle"
+      className="m3-navbar-toggle [&:active]:[opacity:0.85] [width:48px] [height:48px] inline-flex items-center justify-center [border:0] [border-radius:50%] [color:var(--md-sys-color-on-surface-variant)] [background:transparent] [transition:background-color_0.2s_var(--md-motion-standard)] [&:hover]:[color:var(--md-sys-color-on-secondary-container)] [&:hover]:[background:var(--md-sys-color-secondary-container)] [&[aria-expanded='true']]:[color:var(--md-sys-color-on-secondary-container)] [&[aria-expanded='true']]:[background:var(--md-sys-color-secondary-container)] motion-reduce:[transition:none]"
     >
       <Icon size={24} aria-hidden="true" />
     </button>
   );
 }
-
 export function NavbarLogo({
   imageSrc = "/pfp/ena1.webp",
 }: {
   imageSrc?: string;
 }) {
   return (
-    <Link href="/" aria-label="Rynnie home" className="m3-navbar-logo">
+    <Link
+      href="/"
+      aria-label="Rynnie home"
+      className="m3-navbar-logo [justify-self:start] inline-flex [flex-shrink:0] items-center [gap:10px] [border-radius:var(--md-shape-medium)] [color:var(--md-sys-color-on-surface)] [font-size:18px] [font-weight:650] [letter-spacing:-0.4px] [text-decoration:none] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[gap:8px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[font-size:16px]"
+    >
       <Image
         src={imageSrc}
         alt=""
         width={36}
         height={36}
-        className="m3-navbar-avatar"
+        className="m3-navbar-avatar [width:36px] [height:36px] [border:1px_solid_var(--md-sys-color-outline-variant)] [border-radius:50%] [object-fit:cover] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[width:32px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[height:32px]"
       />
       <span>
-        Rynnie<span className="m3-navbar-brand-dot">.</span>
+        Rynnie
+        <span className="m3-navbar-brand-dot [color:var(--md-sys-color-primary)]">
+          .
+        </span>
       </span>
     </Link>
   );
 }
-
 export function NavbarButton({
   href,
   as: Tag = "a",
@@ -315,7 +317,10 @@ export function NavbarButton({
   return (
     <Tag
       href={href || undefined}
-      className={cn("m3-navbar-button", className)}
+      className={cn(
+        "m3-navbar-button [.m3-navbar-desktop:has(.m3-navbar-more)_&]:[padding-inline:18px] relative [min-height:44px] [min-width:64px] [padding:0_24px] inline-flex items-center justify-center [gap:8px] [border:0] [border-radius:999px] [font-size:14px] [font-weight:600] [line-height:20px] [letter-spacing:0.1px] text-center [text-decoration:none] whitespace-nowrap [transition:background-color_0.2s_var(--md-motion-standard)] [&[data-variant='primary']]:[color:var(--md-sys-color-on-primary)] [&[data-variant='primary']]:[background:var(--md-sys-color-primary)] [&[data-variant='primary']:hover]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-primary)_8%,_var(--md-sys-color-primary)_)] [&[data-variant='secondary']]:[color:var(--md-sys-color-on-secondary-container)] [&[data-variant='secondary']]:[background:var(--md-sys-color-secondary-container)] [&[data-variant='secondary']:hover]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-secondary-container)_8%,_var(--md-sys-color-secondary-container)_)] [&[data-variant='dark']]:[color:var(--md-sys-color-on-surface)] [&[data-variant='dark']]:[background:var(--md-sys-color-surface-container-highest)] [&:active]:[opacity:0.85] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[padding-inline:14px] motion-reduce:[transition:none]",
+        className,
+      )}
       data-variant={variant === "gradient" ? "primary" : variant}
       {...props}
     >

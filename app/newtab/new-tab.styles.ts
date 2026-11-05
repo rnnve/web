@@ -1,0 +1,59 @@
+// Static Tailwind utilities shared by the new-tab server and client components.
+const styles = {
+  page: "nt-page relative isolate [--nt-text:#eeedf4] [--nt-muted:#93919f] [--nt-accent:#d1c4f3] [height:100dvh] overflow-clip [padding:max(24px,_env(safe-area-inset-top))_max(36px,_env(safe-area-inset-right))_max(24px,_env(safe-area-inset-bottom))_max(36px,_env(safe-area-inset-left))] flex flex-col [color:var(--nt-text)] [background:radial-gradient(ellipse_at_50%_40%,_#22202b_0%,_#141417_65%)] [font-family:ui-sans-serif,_system-ui,_-apple-system,_BlinkMacSystemFont,_'Segoe_UI',_sans-serif] [color-scheme:dark] [&:has(.nt-wallpaper)_:is(.nt-greeting,_.nt-date,_.nt-headerLabel,_.nt-shortcut)]:[color:#e0dbe9] [&_button]:[font:inherit] [&_button]:[-webkit-tap-highlight-color:transparent] [&_button]:cursor-pointer [&_input]:[font:inherit] [&_select]:[font:inherit] [&_select]:[-webkit-tap-highlight-color:transparent] [&_select]:cursor-pointer [&_a]:[-webkit-tap-highlight-color:transparent] [&_:is(a,_button,_input,_select):focus-visible]:[outline:2px_solid_var(--nt-accent)] [&_:is(a,_button,_input,_select):focus-visible]:[outline-offset:5px] max-[601px]:[padding:max(20px,_env(safe-area-inset-top))_max(20px,_env(safe-area-inset-right))_max(16px,_env(safe-area-inset-bottom))_max(20px,_env(safe-area-inset-left))] max-[351px]:[padding-inline:14px]",
+  wallpaper:
+    "nt-wallpaper fixed [inset:0] [width:100%] [height:100%] pointer-events-none [z-index:0] [object-fit:cover] [object-position:center]",
+  wallpaperShade:
+    "nt-wallpaperShade fixed [inset:0] [width:100%] [height:100%] pointer-events-none [z-index:0] [background:linear-gradient(#0d0b1699,_#0d0b1673_40%,_#0d0b16b8)]",
+  search:
+    "nt-search [.nt-page:has(.nt-wallpaper)_&]:[background:#1c192dcc] flex items-center [gap:14px] [min-height:64px] [padding:8px_10px_8px_22px] [border:1px_solid_#ffffff17] [border-radius:22px] [background:#ffffff06] [box-shadow:0_12px_40px_#00000012] [&:focus-within]:[border-color:#d1c4f366] [&:focus-within]:[background:#ffffff09] [&_input]:[min-width:0] [&_input]:[width:100%] [&_input]:[padding:10px_0] [&_input]:[color:var(--nt-text)] [&_input]:[border:0] [&_input]:[background:transparent] [&_input]:[font-size:15px] [&_input]:[outline:none]! [&_input::placeholder]:[color:#8e899b] [&_select]:[max-width:118px] [&_select]:[min-height:44px] [&_select]:[padding:0_8px] [&_select]:[border:0] [&_select]:[border-left:1px_solid_#ffffff12] [&_select]:[color:#bcb6c9] [&_select]:[background:transparent] [&_select]:[font-size:12px] [&_option]:[background:#222027] max-[601px]:[gap:8px] max-[601px]:[min-height:60px] max-[601px]:[padding-left:15px] max-[601px]:[border-radius:19px] max-[601px]:[&_input]:[font-size:16px] max-[601px]:[&_select]:[width:77px] max-[601px]:[&_select]:[padding-left:6px] max-[601px]:[&_select]:[font-size:11px]",
+  customize:
+    "nt-customize [.nt-page:has(.nt-wallpaper)_&]:[background:#1c192db3] [.nt-page:has(.nt-wallpaper)_&]:[color:#e0dbe9] [margin-left:auto] flex items-center [gap:9px] [padding:11px_15px] [border:1px_solid_#ffffff16] [border-radius:24px] [background:#ffffff04] [color:#bcb9c7] [font-size:12px]! [&:hover]:[background:#ffffff0b] [&:hover]:[color:var(--nt-text)]",
+  clock:
+    "nt-clock [.nt-page:has(.nt-wallpaper)_&]:[text-shadow:0_2px_24px_#08061080] text-center",
+  header: "nt-header relative [z-index:1] flex items-center [gap:18px]",
+  content:
+    "nt-content relative [z-index:1] [flex:1] [min-height:0] [width:min(100%,_720px)] [align-self:center] flex flex-col justify-center [padding:70px_0_100px] max-[601px]:[padding:70px_0] [@media(max-height:_650px)_and_(min-width:_601px)]:[padding:24px_0] [@media(max-height:_700px)]:[padding:0_0_48px] [@media(max-height:_500px)_and_(min-width:_500px)]:[width:min(100%,_900px)] [@media(max-height:_500px)_and_(min-width:_500px)]:grid [@media(max-height:_500px)_and_(min-width:_500px)]:[grid-template-columns:minmax(100px,_0.7fr)_minmax(0,_2fr)] [@media(max-height:_500px)_and_(min-width:_500px)]:items-center [@media(max-height:_500px)_and_(min-width:_500px)]:[gap:24px]",
+  wallpaperToggle:
+    "nt-wallpaperToggle absolute [z-index:2] [right:max(36px,_env(safe-area-inset-right))] [bottom:max(24px,_env(safe-area-inset-bottom))] flex items-center [gap:8px] [min-height:44px] [padding:0] [border:0] [background:transparent] [color:#e0dbe9] [font-size:11px]! max-[601px]:[right:max(20px,_env(safe-area-inset-right))] max-[601px]:[bottom:max(16px,_env(safe-area-inset-bottom))]",
+  brand:
+    "nt-brand [color:var(--nt-text)] [font-size:34px] [font-weight:750] [letter-spacing:-4px] [text-decoration:none] [line-height:1] [padding-right:4px] [&_span]:[color:var(--nt-accent)]",
+  headerLabel:
+    "nt-headerLabel [color:var(--nt-muted)] [font-size:9px] [letter-spacing:2px] max-[601px]:hidden",
+  greeting:
+    "nt-greeting [margin:0_0_10px] [font-size:16px] [color:#bbb7c8] [font-weight:400] [letter-spacing:0.1px] [&_>_span]:[color:var(--nt-accent)] max-[601px]:[font-size:14px] [@media(max-height:_700px)]:[margin-bottom:4px] [@media(max-height:_700px)]:[font-size:12px]",
+  time: "nt-time [margin:0] [color:var(--nt-accent)] [font-size:clamp(90px,_12vw,_164px)] [font-weight:250] [line-height:1.1] [letter-spacing:-8px] [font-variant-numeric:tabular-nums] max-[601px]:[font-size:clamp(88px,_24vw,_128px)] max-[601px]:[letter-spacing:-5px] [@media(max-height:_650px)_and_(min-width:_601px)]:[font-size:100px] [@media(max-height:_700px)]:[font-size:clamp(44px,_10dvh,_72px)] [@media(max-height:_700px)]:[letter-spacing:-3px]",
+  date: "nt-date [min-height:24px] [margin:14px_0_0] [color:#aaa6b7] [font-size:14px] [letter-spacing:0.5px] max-[601px]:[font-size:12px] [@media(max-height:_700px)]:[min-height:18px] [@media(max-height:_700px)]:[margin-top:4px] [@media(max-height:_700px)]:[font-size:11px]",
+  launcher:
+    "nt-launcher [width:100%] [margin-top:48px] max-[601px]:[margin-top:36px] [@media(max-height:_650px)_and_(min-width:_601px)]:[margin-top:24px] [@media(max-height:_700px)]:[margin-top:14px] [@media(max-height:_500px)_and_(min-width:_500px)]:[margin-top:0]",
+  searchIcon: "nt-searchIcon [color:#9c97ac] flex max-[601px]:hidden",
+  go: "nt-go [flex:0_0_44px] [height:44px] [border:0] [border-radius:15px] [color:#292035] [background:var(--nt-accent)] [font-size:23px]! [&:hover]:[background:#e0d3ff]",
+  shortcuts:
+    "nt-shortcuts flex [flex-wrap:wrap] justify-center [gap:14px_8px] [margin:30px_auto_0] max-[601px]:grid max-[601px]:[grid-template-columns:repeat(4,_minmax(0,_1fr))] max-[601px]:[gap:12px_0] max-[601px]:[margin-top:24px] max-[351px]:[grid-template-columns:repeat(3,_minmax(0,_1fr))] [@media(max-height:_650px)_and_(min-width:_601px)]:[margin-top:16px] [@media(max-height:_700px)]:grid [@media(max-height:_700px)]:[grid-template-columns:repeat(4,_minmax(0,_1fr))] [@media(max-height:_700px)]:[gap:8px_0] [@media(max-height:_700px)]:[margin-top:10px]",
+  shortcut:
+    "nt-shortcut [width:88px] [padding:10px_4px] [border:0] [border-radius:16px] flex flex-col items-center [gap:11px] [color:#aaa6b7] [background:transparent] [text-decoration:none] [font-size:11px]! [&:hover]:[background:#ffffff06] [&:hover]:[color:var(--nt-text)] [&_>_span:last-child]:[max-width:100%] [&_>_span:last-child]:overflow-hidden [&_>_span:last-child]:whitespace-nowrap [&_>_span:last-child]:[text-overflow:ellipsis] max-[601px]:[width:100%] max-[601px]:[font-size:10px]! [@media(max-height:_700px)]:[width:100%] [@media(max-height:_700px)]:[padding:6px_2px] [@media(max-height:_700px)]:[gap:6px] [@media(max-height:_360px)_and_(min-width:_500px)]:[padding-block:4px] [@media(max-height:_360px)_and_(min-width:_500px)]:[gap:4px]",
+  shortcutIcon:
+    "nt-shortcutIcon [width:48px] [height:48px] [border:1px_solid_#ffffff0b] [border-radius:17px] grid [place-items:center] [background:#292631] [color:#d1c4f3] [font-size:19px] [font-weight:500] [&[data-tone='1']]:[background:#302629] [&[data-tone='1']]:[color:#e6bbc2] [&[data-tone='2']]:[background:#292d2a] [&[data-tone='2']]:[color:#bcd5bd] [&[data-tone='3']]:[background:#272b32] [&[data-tone='3']]:[color:#bdcce6] [@media(max-height:_700px)]:[width:40px] [@media(max-height:_700px)]:[height:40px] [@media(max-height:_700px)]:[border-radius:14px] [@media(max-height:_360px)_and_(min-width:_500px)]:[width:32px] [@media(max-height:_360px)_and_(min-width:_500px)]:[height:32px] [@media(max-height:_360px)_and_(min-width:_500px)]:[border-radius:10px]",
+  addIcon:
+    "nt-addIcon [background:transparent] [border:1px_dashed_#ffffff25] [color:#898392] [font-size:24px] [font-weight:300]",
+  notice:
+    "nt-notice [z-index:3] fixed [bottom:12px] [left:50%] [transform:translateX(-50%)] [max-width:calc(100%_-_24px)] [margin:0] [padding:10px_16px] [border-radius:12px] [background:#302b3b] [color:var(--nt-text)] [font-size:12px] text-center [&:empty]:hidden",
+  srOnly:
+    "nt-srOnly absolute [width:1px] [height:1px] [padding:0] overflow-hidden [clip-path:inset(50%)] whitespace-nowrap",
+  dialog:
+    "nt-dialog [overflow-y:auto] [overscroll-behavior:contain] [width:min(560px,_calc(100%_-_24px))] [max-height:calc(100svh_-_32px)] [padding:28px] [border:1px_solid_#ffffff20] [border-radius:24px] [background:#201e27] [color:var(--nt-text)] [box-shadow:0_30px_100px_#0007] [&::backdrop]:[background:#09080dbb] max-[601px]:[padding:22px_18px]",
+  dialogHeading:
+    "nt-dialogHeading flex justify-between items-center [gap:16px] [&_p]:[margin:0_0_8px] [&_p]:[color:var(--nt-accent)] [&_p]:[font-size:9px] [&_p]:[letter-spacing:2px] [&_h2]:[margin:0] [&_h2]:[font-size:25px] [&_h2]:[font-weight:500] [&_h2]:[letter-spacing:-0.8px] [&_>_button]:[flex-shrink:0] [&_>_button]:[width:44px] [&_>_button]:[height:44px] [&_>_button]:[border:0] [&_>_button]:[border-radius:50%] [&_>_button]:[background:#ffffff08] [&_>_button]:[color:#c1baca] [&_>_button]:[font-size:23px]",
+  editorRow:
+    "nt-editorRow [&_>_button]:[flex-shrink:0] [&_>_button]:[width:44px] [&_>_button]:[height:44px] [&_>_button]:[border:0] [&_>_button]:[border-radius:50%] [&_>_button]:[background:#ffffff08] [&_>_button]:[color:#c1baca] [&_>_button]:[font-size:23px] grid [grid-template-columns:minmax(0,_1fr)_minmax(0,_1.7fr)_44px] [align-items:end] [gap:10px] [&_label]:grid [&_label]:[gap:6px] [&_label]:[color:#bcb2c8] [&_label]:[font-size:11px] [&_input]:[width:100%] [&_input]:[min-width:0] [&_input]:[height:44px] [&_input]:[padding:0_10px] [&_input]:[border:1px_solid_#ffffff16] [&_input]:[border-radius:10px] [&_input]:[background:#ffffff04] [&_input]:[color:var(--nt-text)] [&_input]:[font-size:13px] max-[601px]:[grid-template-columns:minmax(0,_1fr)_44px] max-[601px]:[gap:8px] max-[601px]:[padding-bottom:14px] max-[601px]:[border-bottom:1px_solid_#ffffff0d] max-[601px]:[&_label:nth-child(2)]:[grid-column:1] max-[601px]:[&_>_button]:[grid-column:2] max-[601px]:[&_>_button]:[grid-row:1_/_3] max-[601px]:[&_>_button]:[align-self:center]",
+  dialogDescription:
+    "nt-dialogDescription [color:#a49bad] [font-size:13px] [line-height:1.6]",
+  editor: "nt-editor grid [gap:14px] [margin:24px_0_16px]",
+  addRow:
+    "nt-addRow [min-height:44px] [padding:8px_0] [border:0] [background:transparent] [color:var(--nt-accent)] [font-size:13px]",
+  editorNotice:
+    "nt-editorNotice [color:#dfbfcf] [font-size:12px] [&:empty]:hidden",
+  dialogActions:
+    "nt-dialogActions flex justify-between [gap:12px] [margin-top:20px] [padding-top:18px] [border-top:1px_solid_#ffffff12] [&_button]:[min-height:44px] [&_button]:[padding:0_16px] [&_button]:[border:0] [&_button]:[border-radius:12px] [&_button]:[background:transparent] [&_button]:[color:#bcb2c8] [&_button]:[font-size:13px] [&_button[type='submit']]:[color:#292035] [&_button[type='submit']]:[background:var(--nt-accent)]",
+} as const;
+export default styles;

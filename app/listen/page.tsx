@@ -1,13 +1,11 @@
-import type { Metadata } from "next";
+import { generatePageMetadata } from "../lib/og/metadata";
 import ListenDashboard from "./listen-dashboard";
-import "../styles/listening-widget.css";
-
-export const metadata: Metadata = {
-  title: "Listening · Rynnie",
-  description: "A little look at what Rynnie has been listening to.",
-  alternates: { canonical: "https://rynni.cc/listen" },
-};
-
+export async function generateMetadata() {
+  return {
+    ...(await generatePageMetadata("/listen")),
+    alternates: { canonical: "https://rynni.cc/listen" },
+  };
+}
 export default function ListenPage() {
   return <ListenDashboard />;
 }

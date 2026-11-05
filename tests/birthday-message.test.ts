@@ -11,6 +11,9 @@ function request(message: unknown) {
 }
 
 test("birthday wishes use their own webhook and birthday embed title", async (context) => {
+  context.mock.method(Date, "now", () =>
+    Date.parse("2026-12-31T13:12:00+07:00"),
+  );
   const previous = process.env.BIRTHDAY_DISCORD_WEBHOOK_URL;
   process.env.BIRTHDAY_DISCORD_WEBHOOK_URL =
     "https://example.com/birthday-webhook";
@@ -45,6 +48,9 @@ test("birthday wishes use their own webhook and birthday embed title", async (co
 });
 
 test("invalid birthday payloads never contact the webhook", async (context) => {
+  context.mock.method(Date, "now", () =>
+    Date.parse("2026-12-31T13:12:00+07:00"),
+  );
   const fetchMock = context.mock.method(
     globalThis,
     "fetch",
@@ -69,6 +75,9 @@ test("invalid birthday payloads never contact the webhook", async (context) => {
 });
 
 test("birthday wishes use the default webhook when the environment override is absent", async (context) => {
+  context.mock.method(Date, "now", () =>
+    Date.parse("2026-12-31T13:12:00+07:00"),
+  );
   const previous = process.env.BIRTHDAY_DISCORD_WEBHOOK_URL;
   delete process.env.BIRTHDAY_DISCORD_WEBHOOK_URL;
   context.after(() => {
@@ -91,6 +100,9 @@ test("birthday wishes use the default webhook when the environment override is a
 });
 
 test("failed default and overridden birthday delivery never report success", async (context) => {
+  context.mock.method(Date, "now", () =>
+    Date.parse("2026-12-31T13:12:00+07:00"),
+  );
   const previous = process.env.BIRTHDAY_DISCORD_WEBHOOK_URL;
   delete process.env.BIRTHDAY_DISCORD_WEBHOOK_URL;
   context.after(() => {
@@ -107,4 +119,41 @@ test("failed default and overridden birthday delivery never report success", asy
   process.env.BIRTHDAY_DISCORD_WEBHOOK_URL =
     "https://example.com/birthday-webhook";
   assert.equal((await POST(request("Happy birthday"))).status, 502);
+});
+
+test("birthday wishes are blocked outside the 48-hour window without contacting the webhook", async (context) => {
+  const clock = context.mock.method(Date, "now", () => 0);
+  const fetchMock = context.mock.method(
+    globalThis,
+    "fetch",
+    async () => new Response(null, { status: 204 }),
+  );
+  for (const date of [
+    "2026-12-31T13:11:59.999+07:00",
+    "2027-01-02T13:12:00+07:00",
+    "2027-06-01T00:00:00+07:00",
+  ]) {
+    clock.mock.mockImplementation(() => Date.parse(date));
+    const response = await POST(request("Happy birthday"));
+    assert.equal(response.status, 403);
+    assert.equal(response.headers.get("Cache-Control"), "no-store");
+  }
+  assert.equal(fetchMock.mock.calls.length, 0);
+});
+
+test("birthday wishes remain open across New Year until just before the closing instant", async (context) => {
+  const clock = context.mock.method(Date, "now", () => 0);
+  const fetchMock = context.mock.method(
+    globalThis,
+    "fetch",
+    async () => new Response(null, { status: 204 }),
+  );
+  for (const date of [
+    "2027-01-01T00:00:00+07:00",
+    "2027-01-02T13:11:59.999+07:00",
+  ]) {
+    clock.mock.mockImplementation(() => Date.parse(date));
+    assert.equal((await POST(request("Happy birthday"))).status, 200);
+  }
+  assert.equal(fetchMock.mock.calls.length, 2);
 });

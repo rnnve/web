@@ -100,6 +100,25 @@ Next.js generates `/sitemap.xml` from `app/sitemap.ts` and `/robots.txt` from `a
 
 Update the sitemap entries and the sitemap URL in `app/robots.ts` when changing the production domain or adding indexable pages.
 
+## Markdown for agents
+
+Public pages support content negotiation. Request the same URL with `Accept: text/markdown` to receive Markdown with `Content-Type: text/markdown; charset=utf-8` and `Vary: Accept`. Browsers keep HTML by default; API responses, assets, sitemaps, and React navigation requests keep their original formats.
+
+```bash
+curl -i -H 'Accept: text/markdown' https://rynni.cc/
+curl -i -H 'Accept: text/html' https://rynni.cc/
+```
+
+`proxy.ts` fetches the page's server-rendered HTML and converts its main content, preserving headings, links, and page metadata while omitting scripts, navigation, and form controls. Live widgets remain limited to the content present in server-rendered HTML. Markdown responses use `private, no-store` so shared caches do not mix them with browser pages. Token counts are not emitted because a model-specific tokenizer is not configured.
+
+This runs in the application and does not require Cloudflare. If the domain is later proxied through Cloudflare, its optional [Markdown for Agents setting](https://developers.cloudflare.com/fundamentals/reference/markdown-for-agents/) can provide conversion at the edge instead.
+
+## Performance and accessibility
+
+The portfolio loading screen uses a static CSS pattern and the existing symbol artwork, without a canvas renderer. It starts a 180 ms fade on the first hydrated frame, with no minimum display timer and no wait for live widgets. The heading renders directly instead of animating individual letters. The dotted page background uses a small SVG texture with a CSS transform animation; touch devices and reduced-motion preferences get a static texture instead of a full-screen WebGL renderer.
+
+The GitHub showcase and technology stack are memoized so Spotify polling does not rebuild them every second. GitHub date labels share one formatter per language. Discord avatars use Next.js image optimization, and page zoom remains enabled.
+
 ## Check changes
 
 ```bash
@@ -111,6 +130,16 @@ bun run build
 ```
 
 Use `bun run format` to apply Prettier. Tests cover data normalization, API behavior, browser preferences, and date calculations. Generated files, dependencies, and build output are excluded from formatting.
+
+## Open Graph previews
+
+Public pages share their metadata with the PNG renderer at `/internal/og?path=/birthday` (1200×630). `app/lib/og/resolver.ts` is the source for page titles and descriptions, `app/lib/og/metadata.ts` builds absolute Open Graph and Twitter image URLs, and `app/components/og/og-template.tsx` controls the dark grid design. The home page's interactive content lives in `app/home.tsx` so its server page can export metadata.
+
+When adding a public route, register its pattern and content loader in `PUBLIC_PAGES` and call `generatePageMetadata()` from the page's `generateMetadata()`. Patterns such as `/projects/[slug]` receive decoded route parameters; reuse the same public data loader as the page. Only registered routes can supply image content. No user-specific preferences, anonymous messages, arbitrary URLs, or private routes are loaded.
+
+Try `/internal/og?path=/`, `/internal/og?path=/birthday`, or `/internal/og?path=/listen`. Unknown routes receive the generic site image; malformed paths or unsupported query parameters receive a fallback PNG with HTTP 400. Successful images use a one-day shared cache, unknown routes a one-minute cache, and errors are not cached. Images render locally with `next/og` and the existing Geist fonts; the endpoint needs the Node.js server runtime. `SITE_URL` in the resolver is the canonical origin for all social image URLs.
+
+The project currently has no dynamic content pages. Resolver tests cover `[slug]` sources, missing records, and loader failures without adding placeholder routes.
 
 ## Deploy
 

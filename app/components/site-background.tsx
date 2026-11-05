@@ -1,34 +1,27 @@
-"use client";
-
-import dynamic from "next/dynamic";
-import { usePageReady } from "../page-transition";
-import "../styles/pattern-waves.css";
-
-const PatternWaves = dynamic(() => import("./pattern-waves"), { ssr: false });
+import ShapeGrid from "./shape-grid";
+import FallingStars from "./falling-stars";
 
 export default function SiteBackground() {
-  const pageReady = usePageReady();
   return (
-    <div className="site-background" aria-hidden="true">
-      {pageReady && (
-        <PatternWaves
-          preset="ocean"
-          color="#ffffff"
-          backgroundColor="transparent"
-          fade="edges"
-          opacity={0.28}
-          interactive
-          cursorSize={50}
-          cursorStrength={0.6}
-          wave="swell"
-          spacing={10}
-          markSize={0.9}
-          depth={0.42}
-          shine={1}
-          speed={0.5}
-          direction={100}
-        />
-      )}
+    <div
+      className="site-background fixed [inset:0] [z-index:0] overflow-hidden pointer-events-none [background:var(--paper)]"
+      aria-hidden="true"
+    >
+      <ShapeGrid
+        shape="square"
+        direction="diagonal"
+        lineColor="#2a2734"
+        hoverColor="#ffffff"
+        hoverFillColor="#ffffff"
+        fillOpacity={0.15}
+        cellSize={40}
+        speed={0.5}
+        tiltX={0}
+        tiltY={0}
+        rainbow={false}
+        clickCascade={false}
+      />
+      <FallingStars />
     </div>
   );
 }

@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import "../styles/crosshair.css";
-
 // Adapted from the React Bits Crosshair source supplied for this project.
 
 const LINE_STYLES = ["solid", "dashed", "dotted"];
@@ -10,19 +8,27 @@ const EFFECTS = ["lock", "glitch", "none"];
 const FONT =
   "500 10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 const HIDDEN = "crosshair-cursor-hidden";
-
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-
 const toRgb = (ctx, color) => {
   ctx.fillStyle = "#000";
   ctx.fillStyle = color;
   const value = String(ctx.fillStyle);
   if (value.startsWith("#")) {
     const hex = parseInt(value.slice(1, 7), 16);
-    return { r: (hex >> 16) & 255, g: (hex >> 8) & 255, b: hex & 255, a: 1 };
+    return {
+      r: (hex >> 16) & 255,
+      g: (hex >> 8) & 255,
+      b: hex & 255,
+      a: 1,
+    };
   }
   const parts = value.match(/[\d.]+/g)?.map(Number) ?? [255, 255, 255, 1];
-  return { r: parts[0], g: parts[1], b: parts[2], a: parts[3] ?? 1 };
+  return {
+    r: parts[0],
+    g: parts[1],
+    b: parts[2],
+    a: parts[3] ?? 1,
+  };
 };
 
 /**
@@ -85,7 +91,6 @@ const Crosshair = ({
     settingsRef.current = settings;
     wakeRef.current?.();
   });
-
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
@@ -107,16 +112,25 @@ const Crosshair = ({
       presence: 0,
       glitch: 0,
       target: null,
-      lock: { x: 0, y: 0, w: 0, h: 0, alpha: 0 },
+      lock: {
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0,
+        alpha: 0,
+      },
       pulses: [],
     };
-    const size = { w: 0, h: 0, dpr: 1 };
+    const size = {
+      w: 0,
+      h: 0,
+      dpr: 1,
+    };
     let ink = toRgb(ctx, settingsRef.current.color);
     let inkSource = settingsRef.current.color;
     let raf = 0;
     let last = 0;
     let alive = true;
-
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
       size.dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -126,14 +140,12 @@ const Crosshair = ({
       canvas.height = Math.max(1, Math.round(rect.height * size.dpr));
       wake();
     };
-
     const rgba = (alpha) =>
       `rgba(${ink.r}, ${ink.g}, ${ink.b}, ${clamp(alpha * ink.a, 0, 1)})`;
     const crisp = (value, width) => {
       const device = Math.round(width * size.dpr);
       return (Math.round(value * size.dpr) + (device % 2 ? 0.5 : 0)) / size.dpr;
     };
-
     const tag = (text, x, y, align) => {
       ctx.font = FONT;
       const width = ctx.measureText(text).width + 10;
@@ -152,7 +164,6 @@ const Crosshair = ({
       ctx.textAlign = "center";
       ctx.fillText(text, left + width / 2, top + height / 2 + 0.5);
     };
-
     const segment = (x1, y1, x2, y2, horizontal, s) => {
       const length = horizontal ? x2 - x1 : y2 - y1;
       if (length <= 0) return;
@@ -193,7 +204,6 @@ const Crosshair = ({
       }
       ctx.stroke();
     };
-
     const brackets = (x, y, w, h, alpha) => {
       const arm = Math.min(14, w / 3, h / 3);
       ctx.strokeStyle = rgba(alpha);
@@ -215,7 +225,6 @@ const Crosshair = ({
       ctx.lineTo(x, y + h - arm);
       ctx.stroke();
     };
-
     const draw = () => {
       const s = settingsRef.current;
       ctx.setTransform(size.dpr, 0, 0, size.dpr, 0, 0);
@@ -281,14 +290,12 @@ const Crosshair = ({
       });
       ctx.globalAlpha = 1;
     };
-
     const relative = () => {
       const rect = canvas.getBoundingClientRect();
       state.tx = state.clientX - rect.left;
       state.ty = state.clientY - rect.top;
       return rect;
     };
-
     const tick = (now) => {
       raf = 0;
       if (!alive || document.hidden) return;
@@ -325,7 +332,12 @@ const Crosshair = ({
           h: box.height + 12,
         };
       } else {
-        goal = { x: state.x - 10, y: state.y - 10, w: 20, h: 20 };
+        goal = {
+          x: state.x - 10,
+          y: state.y - 10,
+          w: 20,
+          h: 20,
+        };
       }
       const snap = reduce ? 1 : 1 - Math.exp(-dt / 0.085);
       lock.x += (goal.x - lock.x) * snap;
@@ -354,22 +366,18 @@ const Crosshair = ({
         state.pulses.length > 0;
       if (settling) raf = requestAnimationFrame(tick);
     };
-
     const wake = () => {
       if (raf || !alive || document.hidden) return;
       last = performance.now();
       raf = requestAnimationFrame(tick);
     };
-
     const setCursorHidden = (hidden) => {
       cursorOwner.classList.toggle(HIDDEN, hidden);
     };
-
     wakeRef.current = () => {
       setCursorHidden(state.inside && settingsRef.current.hideCursor);
       wake();
     };
-
     const pick = (element) => {
       const s = settingsRef.current;
       if (s.targetEffect === "none" || !(element instanceof Element))
@@ -383,7 +391,6 @@ const Crosshair = ({
       if (found && host && !host.contains(found)) return null;
       return found;
     };
-
     const retarget = (element) => {
       const next = pick(element);
       if (next === state.target) return;
@@ -391,7 +398,6 @@ const Crosshair = ({
       if (next && settingsRef.current.targetEffect === "glitch")
         state.glitch = 1;
     };
-
     const enter = () => {
       if (!state.seen) {
         state.seen = true;
@@ -406,14 +412,12 @@ const Crosshair = ({
       state.inside = true;
       setCursorHidden(settingsRef.current.hideCursor);
     };
-
     const leave = () => {
       state.inside = false;
       state.target = null;
       setCursorHidden(false);
       wake();
     };
-
     const onMove = (event) => {
       if (document.documentElement.dataset.pageLoading === "true") return;
       if (event.pointerType && event.pointerType !== "mouse") return;
@@ -424,30 +428,29 @@ const Crosshair = ({
       retarget(event.target);
       wake();
     };
-
     const onDown = (event) => {
       if (document.documentElement.dataset.pageLoading === "true") return;
       onMove(event);
       if (!settingsRef.current.clickPulse || reduce) return;
       relative();
-      state.pulses.push({ x: state.tx, y: state.ty, age: 0 });
+      state.pulses.push({
+        x: state.tx,
+        y: state.ty,
+        age: 0,
+      });
       wake();
     };
-
     const onUp = (event) => {
       if (event.pointerType !== "mouse") leave();
     };
-
     const onWindowOut = (event) => {
       if (!event.relatedTarget) leave();
     };
-
     const onScroll = () => {
       if (!state.inside) return;
       retarget(document.elementFromPoint(state.clientX, state.clientY));
       wake();
     };
-
     const onVisibility = () => {
       if (!document.hidden) return;
       cancelAnimationFrame(raf);
@@ -464,7 +467,6 @@ const Crosshair = ({
     };
     document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("blur", leave);
-
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
     scope.addEventListener("pointermove", onMove);
@@ -478,7 +480,6 @@ const Crosshair = ({
     if (host) host.addEventListener("pointerleave", leave);
     else document.addEventListener("pointerout", onWindowOut);
     resize();
-
     return () => {
       alive = false;
       cancelAnimationFrame(raf);
@@ -489,14 +490,15 @@ const Crosshair = ({
       scope.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onUp);
-      window.removeEventListener("scroll", onScroll, { capture: true });
+      window.removeEventListener("scroll", onScroll, {
+        capture: true,
+      });
       if (host) host.removeEventListener("pointerleave", leave);
       else document.removeEventListener("pointerout", onWindowOut);
       setCursorHidden(false);
       wakeRef.current = null;
     };
   }, [containerRef]);
-
   return (
     <>
       <style>{`.${HIDDEN}, .${HIDDEN} * { cursor: none !important; }`}</style>
@@ -518,5 +520,4 @@ const Crosshair = ({
     </>
   );
 };
-
 export default Crosshair;

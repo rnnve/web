@@ -12,11 +12,9 @@ import {
   type Preferences,
   type Shortcut,
 } from "./preferences";
-import styles from "./new-tab.module.css";
-
+import styles from "./new-tab.styles";
 const CHANGE_EVENT = "rynnie-newtab-change";
 let cachedPreferences: Preferences | undefined;
-
 function getPreferences() {
   if (!cachedPreferences) {
     try {
@@ -29,7 +27,6 @@ function getPreferences() {
   }
   return cachedPreferences;
 }
-
 function subscribePreferences(onChange: () => void) {
   const onStorage = (event: StorageEvent) => {
     if (event.key === PREFERENCES_KEY || event.key === null) {
@@ -44,7 +41,6 @@ function subscribePreferences(onChange: () => void) {
     window.removeEventListener(CHANGE_EVENT, onChange);
   };
 }
-
 function savePreferences(preferences: Preferences) {
   cachedPreferences = preferences;
   let persisted = true;
@@ -74,7 +70,6 @@ function subscribeClock(onChange: () => void) {
     document.removeEventListener("visibilitychange", update);
   };
 }
-
 function Clock() {
   const minute = useSyncExternalStore(
     subscribeClock,
@@ -114,7 +109,6 @@ function Clock() {
     </div>
   );
 }
-
 function SearchIcon() {
   return (
     <svg
@@ -131,7 +125,6 @@ function SearchIcon() {
     </svg>
   );
 }
-
 export default function NewTab() {
   const preferences = useSyncExternalStore(
     subscribePreferences,
@@ -142,26 +135,31 @@ export default function NewTab() {
   const [draft, setDraft] = useState<Shortcut[]>([]);
   const [notice, setNotice] = useState("");
   const engine = ENGINES[preferences.engine];
-
   function openEditor(addShortcut = false) {
     setNotice("");
     const shortcuts = preferences.shortcuts.map((shortcut) => ({
       ...shortcut,
     }));
     if (addShortcut && shortcuts.length < 8)
-      shortcuts.push({ name: "", url: "" });
+      shortcuts.push({
+        name: "",
+        url: "",
+      });
     setDraft(shortcuts);
     dialog.current?.showModal();
   }
-
   function updateShortcut(index: number, field: keyof Shortcut, value: string) {
     setDraft((current) =>
       current.map((item, position) =>
-        position === index ? { ...item, [field]: value } : item,
+        position === index
+          ? {
+              ...item,
+              [field]: value,
+            }
+          : item,
       ),
     );
   }
-
   function saveShortcuts(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const shortcuts = draft.map((item) => ({
@@ -174,7 +172,10 @@ export default function NewTab() {
       );
       return;
     }
-    const persisted = savePreferences({ ...preferences, shortcuts });
+    const persisted = savePreferences({
+      ...preferences,
+      shortcuts,
+    });
     setNotice(
       persisted
         ? "Shortcuts saved on this browser."
@@ -182,7 +183,6 @@ export default function NewTab() {
     );
     dialog.current?.close();
   }
-
   return (
     <>
       <LiveWallpaper />
@@ -391,7 +391,13 @@ export default function NewTab() {
               className={styles.addRow}
               type="button"
               onClick={() =>
-                setDraft((current) => [...current, { name: "", url: "" }])
+                setDraft((current) => [
+                  ...current,
+                  {
+                    name: "",
+                    url: "",
+                  },
+                ])
               }
             >
               + Add a shortcut
@@ -405,7 +411,9 @@ export default function NewTab() {
               type="button"
               onClick={() =>
                 setDraft(
-                  DEFAULT_PREFERENCES.shortcuts.map((item) => ({ ...item })),
+                  DEFAULT_PREFERENCES.shortcuts.map((item) => ({
+                    ...item,
+                  })),
                 )
               }
             >

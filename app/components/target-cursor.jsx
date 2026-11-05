@@ -2,13 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import "../styles/target-cursor.css";
-
 // Adapted from the React Bits TargetCursor source supplied for this project.
 
 const CORNER_ANGLES = [0, 90, 180, 270];
 const QUARTER = Math.PI / 2;
-
 const spring = (state, goal, stiffness, damping, dt) => {
   const steps = 2;
   const h = dt / steps;
@@ -17,7 +14,6 @@ const spring = (state, goal, stiffness, damping, dt) => {
     state.x += state.v * h;
   }
 };
-
 const resolveElement = (value) =>
   (value && "current" in value ? value.current : value) || null;
 
@@ -91,7 +87,6 @@ const TargetCursor = ({
     settingsRef.current = settings;
     wakeRef.current?.();
   });
-
   useEffect(() => {
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
     const update = () => setHost(finePointer.matches ? document.body : null);
@@ -102,27 +97,57 @@ const TargetCursor = ({
       finePointer.removeEventListener("change", update);
     };
   }, []);
-
   useEffect(() => {
     const root = rootRef.current;
     if (!host || !root) return undefined;
-
     const reduce = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
     const style = document.createElement("style");
     document.head.appendChild(style);
-
-    const pointer = { x: 0, y: 0, inside: false, seen: false, pressed: false };
-    const centerX = { x: 0, v: 0 };
-    const centerY = { x: 0, v: 0 };
-    const halfW = { x: 0, v: 0 };
-    const halfH = { x: 0, v: 0 };
-    const radius = { x: 0, v: 0 };
-    const turn = { x: 0, v: 0 };
-    const lock = { x: 0, v: 0 };
-    const press = { x: 0, v: 0 };
-    const presence = { x: 0, v: 0 };
+    const pointer = {
+      x: 0,
+      y: 0,
+      inside: false,
+      seen: false,
+      pressed: false,
+    };
+    const centerX = {
+      x: 0,
+      v: 0,
+    };
+    const centerY = {
+      x: 0,
+      v: 0,
+    };
+    const halfW = {
+      x: 0,
+      v: 0,
+    };
+    const halfH = {
+      x: 0,
+      v: 0,
+    };
+    const radius = {
+      x: 0,
+      v: 0,
+    };
+    const turn = {
+      x: 0,
+      v: 0,
+    };
+    const lock = {
+      x: 0,
+      v: 0,
+    };
+    const press = {
+      x: 0,
+      v: 0,
+    };
+    const presence = {
+      x: 0,
+      v: 0,
+    };
     let target = null;
     let targetRadius = 0;
     let quarter = 0;
@@ -132,9 +157,7 @@ const TargetCursor = ({
     let lastLabel = "";
     let lastColor = "";
     let lastScope = null;
-
     const scopeOf = () => resolveElement(settingsRef.current.container);
-
     const hideCursor = () => {
       const s = settingsRef.current;
       const scope = scopeOf();
@@ -150,7 +173,6 @@ const TargetCursor = ({
           : "";
       if (style.textContent !== rule) style.textContent = rule;
     };
-
     const findTarget = (x, y, element) => {
       const s = settingsRef.current;
       const node = element || document.elementFromPoint(x, y);
@@ -159,7 +181,6 @@ const TargetCursor = ({
       if (found && scope && !scope.contains(found)) return null;
       return found;
     };
-
     const lockOn = (next) => {
       if (next === target) return;
       target = next;
@@ -172,25 +193,21 @@ const TargetCursor = ({
         spinSpeed = 0;
       }
     };
-
     const frame = (now) => {
       raf = 0;
       if (document.hidden) return;
       const s = settingsRef.current;
       const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
       last = now;
-
       if (target && !target.isConnected) lockOn(null);
       const rect = target ? target.getBoundingClientRect() : null;
       const locked = !!rect && pointer.inside;
       const snapW = 4.6 / s.hoverDuration;
       const snapK = snapW * snapW;
       const snapC = 2 * 0.62 * snapW;
-
       spring(presence, pointer.inside ? 1 : 0, 260, 32, dt);
       spring(lock, locked ? 1 : 0, snapK, 2 * snapW, dt);
       spring(press, pointer.pressed && s.clickEffect ? 1 : 0, 900, 40, dt);
-
       let goalX = pointer.x;
       let goalY = pointer.y;
       let goalW = s.size / 2;
@@ -211,7 +228,6 @@ const TargetCursor = ({
           ? Math.min(targetRadius + Math.max(0, s.padding), s.cornerSize)
           : 0;
       }
-
       if (!pointer.inside && presence.x < 0.01) pointer.seen = false;
       if (!pointer.seen) {
         centerX.x = goalX;
@@ -220,7 +236,6 @@ const TargetCursor = ({
         halfH.x = goalH;
         pointer.seen = pointer.inside;
       }
-
       const follow = locked ? snapK : 2200;
       const followC = locked ? snapC : 2 * Math.sqrt(2200);
       spring(centerX, goalX, follow, followC, dt);
@@ -228,7 +243,6 @@ const TargetCursor = ({
       spring(halfW, goalW, snapK, snapC, dt);
       spring(halfH, goalH, snapK, snapC, dt);
       spring(radius, goalR, snapK, 2 * snapW, dt);
-
       if (locked) {
         spring(turn, quarter * QUARTER, snapK, snapC, dt);
       } else {
@@ -238,7 +252,6 @@ const TargetCursor = ({
         turn.v = spinSpeed;
         turn.x += spinSpeed * dt;
       }
-
       const squeeze = 1 - press.x * 0.14;
       const cos = Math.cos(turn.x);
       const sin = Math.sin(turn.x);
@@ -267,7 +280,6 @@ const TargetCursor = ({
         corner.style.borderWidth = `${s.thickness}px 0 0 ${s.thickness}px`;
         corner.style.borderTopLeftRadius = `${r.toFixed(2)}px`;
       });
-
       const dot = dotRef.current;
       if (dot) {
         const dotScale = 1 - press.x * 0.35;
@@ -275,7 +287,6 @@ const TargetCursor = ({
         dot.style.width = `${s.dotSize}px`;
         dot.style.height = `${s.dotSize}px`;
       }
-
       const label = labelRef.current;
       if (label) {
         const text =
@@ -288,7 +299,6 @@ const TargetCursor = ({
         label.style.transform = `translate3d(${left.toFixed(2)}px, ${(top - 8).toFixed(2)}px, 0) translateY(-100%) translateY(${((1 - shown) * 4).toFixed(2)}px)`;
         label.style.opacity = shown.toFixed(3);
       }
-
       const mix = s.cursorColorOnTarget
         ? Math.round(Math.max(0, Math.min(1, lock.x)) * 100)
         : 0;
@@ -300,7 +310,6 @@ const TargetCursor = ({
         lastColor = color;
       }
       root.style.opacity = Math.max(0, Math.min(1, presence.x)).toFixed(3);
-
       const resting =
         !pointer.inside &&
         presence.x < 0.002 &&
@@ -321,7 +330,6 @@ const TargetCursor = ({
         raf = requestAnimationFrame(frame);
       else last = 0;
     };
-
     const wake = () => {
       if (document.hidden) return;
       if (!raf) raf = requestAnimationFrame(frame);
@@ -330,7 +338,6 @@ const TargetCursor = ({
       hideCursor();
       wake();
     };
-
     const insideScope = (x, y, element) => {
       const scope = scopeOf();
       if (!scope) return true;
@@ -338,7 +345,6 @@ const TargetCursor = ({
       const box = scope.getBoundingClientRect();
       return x >= box.left && x <= box.right && y >= box.top && y <= box.bottom;
     };
-
     const onPointerMove = (event) => {
       if (document.documentElement.dataset.pageLoading === "true") return;
       if (event.pointerType && event.pointerType !== "mouse") return;
@@ -352,7 +358,6 @@ const TargetCursor = ({
       lockOn(inside ? findTarget(pointer.x, pointer.y, event.target) : null);
       wake();
     };
-
     const onPointerDown = (event) => {
       if (
         !pointer.inside ||
@@ -363,12 +368,10 @@ const TargetCursor = ({
       pointer.pressed = true;
       wake();
     };
-
     const onPointerUp = () => {
       pointer.pressed = false;
       wake();
     };
-
     const onLeave = () => {
       pointer.inside = false;
       pointer.pressed = false;
@@ -376,13 +379,11 @@ const TargetCursor = ({
       hideCursor();
       wake();
     };
-
     const onScroll = () => {
       if (!pointer.inside) return;
       lockOn(findTarget(pointer.x, pointer.y));
       wake();
     };
-
     const onVisibility = () => {
       if (document.hidden) {
         cancelAnimationFrame(raf);
@@ -399,24 +400,30 @@ const TargetCursor = ({
       }
     };
     document.addEventListener("visibilitychange", onVisibility);
-
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("pointerdown", onPointerDown, { passive: true });
-    window.addEventListener("pointerup", onPointerUp, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, {
+      passive: true,
+    });
+    window.addEventListener("pointerdown", onPointerDown, {
+      passive: true,
+    });
+    window.addEventListener("pointerup", onPointerUp, {
+      passive: true,
+    });
     window.addEventListener("scroll", onScroll, {
       passive: true,
       capture: true,
     });
     document.documentElement.addEventListener("pointerleave", onLeave);
     window.addEventListener("blur", onLeave);
-
     return () => {
       cancelAnimationFrame(raf);
       wakeRef.current = null;
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointerup", onPointerUp);
-      window.removeEventListener("scroll", onScroll, { capture: true });
+      window.removeEventListener("scroll", onScroll, {
+        capture: true,
+      });
       document.documentElement.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("blur", onLeave);
       document.removeEventListener("visibilitychange", onVisibility);
@@ -424,14 +431,15 @@ const TargetCursor = ({
       style.remove();
     };
   }, [host]);
-
   if (!host) return null;
-
   return createPortal(
     <div
       ref={rootRef}
-      className="target-cursor"
-      style={{ mixBlendMode: blendMode, opacity: 0 }}
+      className="target-cursor fixed [inset:0] [z-index:2147483647] pointer-events-none [html[data-page-loading='true']_&]:[visibility:hidden] [@media(hover:_none),_(pointer:_coarse),_(prefers-reduced-motion:_reduce)]:hidden"
+      style={{
+        mixBlendMode: blendMode,
+        opacity: 0,
+      }}
       aria-hidden="true"
     >
       {CORNER_ANGLES.map((angle, i) => (
@@ -440,14 +448,19 @@ const TargetCursor = ({
           ref={(element) => {
             cornerRefs.current[i] = element;
           }}
-          className="target-cursor__corner"
+          className="target-cursor__corner absolute [top:0] [left:0] box-border [border-style:solid] [border-color:var(--target-cursor-color,_#ffffff)] [transform-origin:0_0] [will-change:transform]"
         />
       ))}
-      <span ref={dotRef} className="target-cursor__dot" />
-      <span ref={labelRef} className="target-cursor__label" />
+      <span
+        ref={dotRef}
+        className="target-cursor__dot absolute [top:0] [left:0] [border-radius:50%] [background:var(--target-cursor-color,_#ffffff)] [will-change:transform]"
+      />
+      <span
+        ref={labelRef}
+        className="target-cursor__label absolute [top:0] [left:0] [color:var(--target-cursor-color,_#ffffff)] [font-size:12px] [font-weight:500] [line-height:1] whitespace-nowrap [opacity:0] [will-change:transform,_opacity]"
+      />
     </div>,
     host,
   );
 };
-
 export default TargetCursor;

@@ -1,15 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import styles from "./new-tab.module.css";
-
+import styles from "./new-tab.styles";
 const WALLPAPER_URL = "https://cdn.rynni.cc/assets/wallpapers/kanade.mp4";
-
 export default function LiveWallpaper() {
   const video = useRef<HTMLVideoElement>(null);
   const manuallyPaused = useRef(false);
   const [playing, setPlaying] = useState(false);
-
   function play() {
     const element = video.current;
     if (!element) return;
@@ -19,7 +16,6 @@ export default function LiveWallpaper() {
       // The poster remains visible if autoplay is blocked or the CDN is unavailable.
     });
   }
-
   useEffect(() => {
     const element = video.current;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -45,7 +41,6 @@ export default function LiveWallpaper() {
       element?.pause();
     };
   }, []);
-
   return (
     <>
       <video

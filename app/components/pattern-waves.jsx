@@ -2,9 +2,6 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { Renderer, Program, Mesh, Triangle, RenderTarget, Texture } from "ogl";
-
-import "../styles/pattern-waves.css";
-
 // Adapted from the React Bits PatternWaves source supplied for this project.
 
 const SURFACE_PRESETS = {
@@ -87,10 +84,25 @@ const SURFACE_PRESETS = {
     direction: 325,
   },
 };
-
-const PATTERNS = { dot: 0, square: 1, plus: 2, line: 3, glyph: 4 };
-const WAVES = { silk: 0, swell: 1, ripple: 2 };
-const FADES = { none: 0, edges: 1, center: 2, bottom: 3, top: 4 };
+const PATTERNS = {
+  dot: 0,
+  square: 1,
+  plus: 2,
+  line: 3,
+  glyph: 4,
+};
+const WAVES = {
+  silk: 0,
+  swell: 1,
+  ripple: 2,
+};
+const FADES = {
+  none: 0,
+  edges: 1,
+  center: 2,
+  bottom: 3,
+  top: 4,
+};
 const DEFAULT_CHARACTERS = ".:-=+*#%@";
 const GLYPH_FONT = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 const ATLAS_TILE = 128;
@@ -99,12 +111,9 @@ const RIPPLE_CELL = 8;
 const RIPPLE_RATE = 60;
 const PIXEL_BUDGET = 2e6;
 const INTRO_SECONDS = 2;
-
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
 const luminance = (rgba) =>
   0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2];
-
 const parseColor = (value, fallback) => {
   try {
     const ctx = document.createElement("canvas").getContext("2d");
@@ -133,7 +142,6 @@ const parseColor = (value, fallback) => {
     return fallback;
   }
 };
-
 const buildAtlas = (characters) => {
   const glyphs = Array.from(
     characters && characters.length ? characters : DEFAULT_CHARACTERS,
@@ -154,16 +162,19 @@ const buildAtlas = (characters) => {
     const y = Math.floor(index / columns) * ATLAS_TILE + ATLAS_TILE / 2;
     ctx.fillText(glyph, x, y);
   });
-  return { canvas, columns, lines, count: glyphs.length };
+  return {
+    canvas,
+    columns,
+    lines,
+    count: glyphs.length,
+  };
 };
-
 const passVertex = `#version 300 es
 in vec2 position;
 void main() {
   gl_Position = vec4(position, 0.0, 1.0);
 }
 `;
-
 const fieldFragment = `#version 300 es
 precision highp float;
 precision highp int;
@@ -305,7 +316,6 @@ void main() {
   fragColor = vec4(level, alpha, emphasis, lift + 0.5);
 }
 `;
-
 const rippleFragment = `#version 300 es
 precision highp float;
 uniform sampler2D tState;
@@ -334,7 +344,6 @@ void main() {
   fragColor = vec4(next, state.r, 0.0, 1.0);
 }
 `;
-
 const markFragment = `#version 300 es
 precision highp float;
 precision highp int;
@@ -491,11 +500,9 @@ const PatternWaves = ({
   const containerRef = useRef(null);
   const settingsRef = useRef(null);
   const wakeRef = useRef(null);
-
   const base = SURFACE_PRESETS[preset] || SURFACE_PRESETS.silk;
   const pick = (value, key) =>
     value === undefined || value === null ? base[key] : value;
-
   const colors = useMemo(
     () => ({
       color: parseColor(color, [1, 1, 1, 1]),
@@ -503,7 +510,6 @@ const PatternWaves = ({
     }),
     [color, backgroundColor],
   );
-
   useEffect(() => {
     settingsRef.current = {
       ...colors,
@@ -530,7 +536,6 @@ const PatternWaves = ({
     };
     wakeRef.current?.();
   });
-
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return undefined;
@@ -565,16 +570,13 @@ const PatternWaves = ({
     canvas.style.height = "100%";
     canvas.setAttribute("aria-hidden", "true");
     container.appendChild(canvas);
-
     const geometry = new Triangle(gl);
     const blank = new Texture(gl);
     const floatTargets = !!gl.getExtension("EXT_color_buffer_float");
-
     const dispose = (target) => {
       gl.deleteFramebuffer(target.buffer);
       gl.deleteTexture(target.texture.texture);
     };
-
     const fieldTargetFor = (w, h) =>
       new RenderTarget(gl, {
         width: w,
@@ -583,7 +585,6 @@ const PatternWaves = ({
         minFilter: gl.NEAREST,
         magFilter: gl.NEAREST,
       });
-
     const rippleTargetFor = (w, h) =>
       new RenderTarget(gl, {
         width: w,
@@ -595,38 +596,75 @@ const PatternWaves = ({
         minFilter: gl.LINEAR,
         magFilter: gl.LINEAR,
       });
-
     let fieldTarget = fieldTargetFor(1, 1);
     let ripple = null;
-
     const atlasTexture = new Texture(gl, {
       generateMipmaps: true,
       minFilter: gl.LINEAR_MIPMAP_LINEAR,
       magFilter: gl.LINEAR,
       flipY: false,
     });
-
     const fieldUniforms = {
-      uSize: { value: [1, 1] },
-      uDpr: { value: 1 },
-      uOrigin: { value: [0, 0] },
-      uPitch: { value: [1, 1] },
-      uWave: { value: 0 },
-      uTime: { value: 0 },
-      uUnit: { value: WAVE_UNIT },
-      uHeading: { value: [1, 0] },
-      uAmp: { value: 0 },
-      uDepth: { value: 0.5 },
-      uLight: { value: [0, 0, 1] },
-      uShine: { value: 0.8 },
-      uContrast: { value: 1 },
-      uInk: { value: 0 },
-      uOpacity: { value: 1 },
-      uFade: { value: 0 },
-      uFadeSize: { value: 0.5 },
-      uAppear: { value: 0 },
-      tRipple: { value: blank },
-      uRipple: { value: 0 },
+      uSize: {
+        value: [1, 1],
+      },
+      uDpr: {
+        value: 1,
+      },
+      uOrigin: {
+        value: [0, 0],
+      },
+      uPitch: {
+        value: [1, 1],
+      },
+      uWave: {
+        value: 0,
+      },
+      uTime: {
+        value: 0,
+      },
+      uUnit: {
+        value: WAVE_UNIT,
+      },
+      uHeading: {
+        value: [1, 0],
+      },
+      uAmp: {
+        value: 0,
+      },
+      uDepth: {
+        value: 0.5,
+      },
+      uLight: {
+        value: [0, 0, 1],
+      },
+      uShine: {
+        value: 0.8,
+      },
+      uContrast: {
+        value: 1,
+      },
+      uInk: {
+        value: 0,
+      },
+      uOpacity: {
+        value: 1,
+      },
+      uFade: {
+        value: 0,
+      },
+      uFadeSize: {
+        value: 0.5,
+      },
+      uAppear: {
+        value: 0,
+      },
+      tRipple: {
+        value: blank,
+      },
+      uRipple: {
+        value: 0,
+      },
     };
     const fieldMesh = new Mesh(gl, {
       geometry,
@@ -638,16 +676,31 @@ const PatternWaves = ({
         depthWrite: false,
       }),
     });
-
     const rippleUniforms = {
-      tState: { value: blank },
-      uTexel: { value: [1, 1] },
-      uSize: { value: [1, 1] },
-      uFrom: { value: [0, 0] },
-      uTo: { value: [0, 0] },
-      uRadius: { value: 40 },
-      uImpulse: { value: 0 },
-      uDamping: { value: 0.975 },
+      tState: {
+        value: blank,
+      },
+      uTexel: {
+        value: [1, 1],
+      },
+      uSize: {
+        value: [1, 1],
+      },
+      uFrom: {
+        value: [0, 0],
+      },
+      uTo: {
+        value: [0, 0],
+      },
+      uRadius: {
+        value: 40,
+      },
+      uImpulse: {
+        value: 0,
+      },
+      uDamping: {
+        value: 0.975,
+      },
     };
     const rippleMesh = new Mesh(gl, {
       geometry,
@@ -659,20 +712,43 @@ const PatternWaves = ({
         depthWrite: false,
       }),
     });
-
     const markUniforms = {
-      tField: { value: fieldTarget.texture },
-      tAtlas: { value: atlasTexture },
-      uOrigin: { value: [0, 0] },
-      uPitch: { value: [1, 1] },
-      uGrid: { value: [1, 1] },
-      uPattern: { value: 0 },
-      uMarkSize: { value: 0.9 },
-      uStroke: { value: 2 },
-      uColor: { value: [1, 1, 1] },
-      uAccent: { value: [1, 1, 1] },
-      uBackground: { value: [0, 0, 0, 1] },
-      uAtlas: { value: [1, 1, 0] },
+      tField: {
+        value: fieldTarget.texture,
+      },
+      tAtlas: {
+        value: atlasTexture,
+      },
+      uOrigin: {
+        value: [0, 0],
+      },
+      uPitch: {
+        value: [1, 1],
+      },
+      uGrid: {
+        value: [1, 1],
+      },
+      uPattern: {
+        value: 0,
+      },
+      uMarkSize: {
+        value: 0.9,
+      },
+      uStroke: {
+        value: 2,
+      },
+      uColor: {
+        value: [1, 1, 1],
+      },
+      uAccent: {
+        value: [1, 1, 1],
+      },
+      uBackground: {
+        value: [0, 0, 0, 1],
+      },
+      uAtlas: {
+        value: [1, 1, 0],
+      },
     };
     const markMesh = new Mesh(gl, {
       geometry,
@@ -684,12 +760,10 @@ const PatternWaves = ({
         depthWrite: false,
       }),
     });
-
     const motionPreference = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     );
     let reducedMotion = motionPreference.matches;
-
     let width = 1;
     let height = 1;
     let raf = 0;
@@ -712,7 +786,6 @@ const PatternWaves = ({
       lastY: 0,
       burst: 0,
     };
-
     const buildRipple = () => {
       if (!floatTargets) return;
       const w = clamp(Math.ceil(width / RIPPLE_CELL), 4, 512);
@@ -730,7 +803,6 @@ const PatternWaves = ({
       };
       rippleLive = false;
     };
-
     const clearRipple = () => {
       if (!ripple) return;
       [ripple.read, ripple.write].forEach((target) => {
@@ -740,7 +812,6 @@ const PatternWaves = ({
       });
       renderer.bindFramebuffer();
     };
-
     const refreshAtlas = (s) => {
       if (s.characters === atlasKey) return;
       atlasKey = s.characters;
@@ -749,7 +820,6 @@ const PatternWaves = ({
       atlasTexture.image = built.canvas;
       markUniforms.uAtlas.value = [built.columns, built.lines, built.count];
     };
-
     const resize = () => {
       width = Math.max(1, container.clientWidth);
       height = Math.max(1, container.clientHeight);
@@ -763,7 +833,6 @@ const PatternWaves = ({
       dirty = true;
       start();
     };
-
     const stepRipple = (field, s, dt) => {
       rippleClock = Math.min(rippleClock + dt * RIPPLE_RATE, 4);
       const strength = clamp(s.cursorStrength, 0, 1);
@@ -797,7 +866,6 @@ const PatternWaves = ({
       pointer.lastX = pointer.x;
       pointer.lastY = pointer.y;
     };
-
     const frame = (now) => {
       raf = 0;
       if (!alive || !visible || document.hidden) return;
@@ -805,7 +873,6 @@ const PatternWaves = ({
       const dt = Math.min(0.05, Math.max(1 / 240, (now - last) / 1000));
       last = now;
       if (!s) return;
-
       const moving = !s.paused && !reducedMotion && s.speed !== 0;
       if (moving) time += dt * s.speed;
       introClock =
@@ -815,7 +882,6 @@ const PatternWaves = ({
       const appear = 1 - Math.pow(1 - clamp(introClock / 0.75, 0, 1), 3);
       const rise = clamp((introClock - 0.1) / 0.9, 0, 1);
       const amp = rise * rise * (3 - 2 * rise);
-
       const rippling =
         s.interactive && !reducedMotion && !!ripple && s.cursorStrength > 0;
       if (rippling && pointer.inside && !pointer.placed) {
@@ -833,10 +899,8 @@ const PatternWaves = ({
         clearRipple();
         rippleLive = false;
       }
-
       const patternIndex = PATTERNS[s.pattern] ?? 0;
       if (patternIndex === 4) refreshAtlas(s);
-
       const canvasW = gl.canvas.width;
       const canvasH = gl.canvas.height;
       const dpr = canvasW / width;
@@ -862,7 +926,6 @@ const PatternWaves = ({
         background[3] > 0.02
           ? luminance(s.color) < luminance(background)
           : luminance(s.color) < 0.5;
-
       fieldUniforms.uSize.value = [width, height];
       fieldUniforms.uDpr.value = dpr;
       fieldUniforms.uOrigin.value = origin;
@@ -888,8 +951,10 @@ const PatternWaves = ({
       fieldUniforms.tRipple.value =
         ripple && rippleLive ? ripple.read.texture : blank;
       fieldUniforms.uRipple.value = rippleLive ? 0.32 : 0;
-      renderer.render({ scene: fieldMesh, target: fieldTarget });
-
+      renderer.render({
+        scene: fieldMesh,
+        target: fieldTarget,
+      });
       markUniforms.uOrigin.value = origin;
       markUniforms.uPitch.value = [pitchX, pitchY];
       markUniforms.uGrid.value = [cols, rows];
@@ -904,19 +969,18 @@ const PatternWaves = ({
         .slice(0, 3)
         .map((channel) => channel + (tint - channel) * blend);
       markUniforms.uBackground.value = background;
-      renderer.render({ scene: markMesh });
+      renderer.render({
+        scene: markMesh,
+      });
       dirty = false;
-
       if (visible && (moving || introClock < 1 || rippleActive || dirty))
         raf = requestAnimationFrame(frame);
     };
-
     const start = () => {
       if (raf || !visible || !alive || document.hidden) return;
       last = performance.now();
       raf = requestAnimationFrame(frame);
     };
-
     const locate = (e) => {
       const rect = container.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -927,7 +991,6 @@ const PatternWaves = ({
         inside: x >= 0 && y >= 0 && x <= rect.width && y <= rect.height,
       };
     };
-
     const onPointerMove = (e) => {
       if (reducedMotion || !settingsRef.current?.interactive) return;
       const spot = locate(e);
@@ -937,7 +1000,6 @@ const PatternWaves = ({
       pointer.inside = spot.inside;
       if (spot.inside) start();
     };
-
     const onPointerDown = (e) => {
       if (reducedMotion || !settingsRef.current?.interactive) return;
       const spot = locate(e);
@@ -951,21 +1013,17 @@ const PatternWaves = ({
       pointer.burst = 1.2;
       start();
     };
-
     const onPointerLeave = () => {
       pointer.inside = false;
       pointer.placed = false;
       start();
     };
-
     const onPointerOut = (e) => {
       if (!e.relatedTarget) onPointerLeave();
     };
-
     const onPointerUp = (e) => {
       if (e.pointerType === "touch") onPointerLeave();
     };
-
     const onVisibility = () => {
       if (document.hidden) {
         cancelAnimationFrame(raf);
@@ -978,14 +1036,20 @@ const PatternWaves = ({
       start();
     };
     motionPreference.addEventListener("change", onMotionChange);
-
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("pointerdown", onPointerDown, { passive: true });
-    window.addEventListener("pointerout", onPointerOut, { passive: true });
-    window.addEventListener("pointerup", onPointerUp, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, {
+      passive: true,
+    });
+    window.addEventListener("pointerdown", onPointerDown, {
+      passive: true,
+    });
+    window.addEventListener("pointerout", onPointerOut, {
+      passive: true,
+    });
+    window.addEventListener("pointerup", onPointerUp, {
+      passive: true,
+    });
     window.addEventListener("blur", onPointerLeave);
     document.addEventListener("visibilitychange", onVisibility);
-
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(container);
     const intersectionObserver = new IntersectionObserver(([entry]) => {
@@ -993,13 +1057,11 @@ const PatternWaves = ({
       start();
     });
     intersectionObserver.observe(container);
-
     wakeRef.current = () => {
       dirty = true;
       start();
     };
     resize();
-
     return () => {
       alive = false;
       visible = false;
@@ -1029,14 +1091,12 @@ const PatternWaves = ({
       if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
     };
   }, []);
-
   return (
     <div
       ref={containerRef}
-      className={`pattern-waves ${className}`.trim()}
+      className={`pattern-waves relative [width:100%] [height:100%] overflow-hidden [&_canvas]:block ${className}`.trim()}
       style={style}
     />
   );
 };
-
 export default PatternWaves;

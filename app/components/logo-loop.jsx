@@ -10,8 +10,6 @@ import {
   useRef,
   useState,
 } from "react";
-import "../styles/logo-loop.css";
-
 const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
 const SMOOTH_TAU = 0.25;
@@ -95,7 +93,10 @@ const createEngine = (root, track, config, setLayout) => {
     sizeMax: 0,
     tipMax: 0,
     geo: null,
-    layout: { copies: 2, primary: 0 },
+    layout: {
+      copies: 2,
+      primary: 0,
+    },
     hovered: false,
     focused: false,
     pointer: null,
@@ -287,7 +288,10 @@ const createEngine = (root, track, config, setLayout) => {
         : `${L / 2}px 50%`
       : "";
     if (copies !== st.layout.copies || primary !== st.layout.primary) {
-      st.layout = { copies, primary };
+      st.layout = {
+        copies,
+        primary,
+      };
       setLayout(st.layout);
     }
   };
@@ -417,7 +421,10 @@ const createEngine = (root, track, config, setLayout) => {
   const stepTiming = (speed) => {
     const cycle = st.pitch / Math.max(1, Math.abs(speed)),
       move = clamp(cycle * 0.55, 0.35, 0.9);
-    return { move, hold: Math.max(0.35, cycle - move) };
+    return {
+      move,
+      hold: Math.max(0.35, cycle - move),
+    };
   };
   const write = (it, key, prop, value, target) => {
     if (it[key] !== value) {
@@ -882,7 +889,9 @@ const createEngine = (root, track, config, setLayout) => {
   root.addEventListener("focusin", onFocusIn);
   root.addEventListener("focusout", onFocusOut);
   root.addEventListener("scroll", onRootScroll);
-  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("scroll", onScroll, {
+    passive: true,
+  });
   query?.addEventListener?.("change", onMotion);
   let resizeObserver = null;
   const observed = new Set();
@@ -917,7 +926,9 @@ const createEngine = (root, track, config, setLayout) => {
         st.visible = entry.isIntersecting;
         if (st.visible) wake();
       },
-      { threshold: 0.1 },
+      {
+        threshold: 0.1,
+      },
     );
     intersection.observe(root);
   }
@@ -947,7 +958,12 @@ const createEngine = (root, track, config, setLayout) => {
     resizeObserver?.disconnect();
     intersection?.disconnect();
   };
-  return { refresh, wake, destroy, state: st };
+  return {
+    refresh,
+    wake,
+    destroy,
+    state: st,
+  };
 };
 
 /**
@@ -1097,99 +1113,111 @@ function LogoLoopComponent({
   });
   const lists = useMemo(
     () =>
-      Array.from({ length: copies }, (_, copyIndex) => {
-        const isPrimary = copyIndex === primary;
-        return (
-          <ul
-            className="logoloop__list"
-            key={copyIndex}
-            role="list"
-            aria-hidden={isPrimary ? undefined : true}
-          >
-            {logos.map((item, itemIndex) => {
-              const key = `${copyIndex}-${itemIndex}`,
-                isNode = "node" in item;
-              const visual = renderItem ? (
-                renderItem(item, key)
-              ) : isNode ? (
-                <span
-                  className="logoloop__node"
-                  aria-hidden={!!item.href && !item.ariaLabel}
-                >
-                  {item.node}
-                </span>
-              ) : (
-                <img
-                  src={item.src}
-                  srcSet={item.srcSet}
-                  sizes={item.sizes}
-                  width={item.width}
-                  height={item.height}
-                  alt={item.alt ?? ""}
-                  title={item.title}
-                  loading="lazy"
-                  decoding="async"
-                  draggable={false}
-                />
-              );
-              const text =
-                (labels === "inline" || labels === "below") && item.title
-                  ? item.title
-                  : null;
-              const inner = (
-                <>
-                  {visual}
-                  {text && (
-                    <span
-                      className="logoloop__label"
-                      aria-hidden={!isNode && !!item.alt}
-                    >
-                      {text}
-                    </span>
-                  )}
-                </>
-              );
-              const name = isNode
-                ? (item.ariaLabel ?? item.title)
-                : (item.alt ?? item.title);
-              return (
-                <li
-                  className="logoloop__item"
-                  key={key}
-                  role="listitem"
-                  data-color={item.hoverColor ? "" : undefined}
-                  style={
-                    item.hoverColor
-                      ? { "--logoloop-item-color": item.hoverColor }
-                      : undefined
-                  }
-                >
-                  {item.href ? (
-                    <a
-                      className="logoloop__content"
-                      href={item.href}
-                      aria-label={name || "logo link"}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      draggable={false}
-                      tabIndex={isPrimary ? undefined : -1}
-                    >
-                      {inner}
-                    </a>
-                  ) : (
-                    <div className="logoloop__content">{inner}</div>
-                  )}
-                  {labels === "hover" && item.title && (
-                    <span className="logoloop__tip" aria-hidden="true">
-                      {item.title}
-                    </span>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        );
-      }),
+      Array.from(
+        {
+          length: copies,
+        },
+        (_, copyIndex) => {
+          const isPrimary = copyIndex === primary;
+          return (
+            <ul
+              className="logoloop__list flex items-center [margin:0] [padding:0] [list-style:none] [.logoloop--vertical_&]:flex-col"
+              key={copyIndex}
+              role="list"
+              aria-hidden={isPrimary ? undefined : true}
+            >
+              {logos.map((item, itemIndex) => {
+                const key = `${copyIndex}-${itemIndex}`,
+                  isNode = "node" in item;
+                const visual = renderItem ? (
+                  renderItem(item, key)
+                ) : isNode ? (
+                  <span
+                    className="logoloop__node inline-flex items-center [transition:transform_0.3s_cubic-bezier(0.4,_0,_0.2,_1)] [.logoloop--scale-hover_.logoloop\\_\\_item:hover_&]:[transform:scale(1.2)] motion-reduce:[transition:none] [.stacks_&_svg]:[width:var(--logoloop-logoHeight)] [.stacks_&_svg]:[height:var(--logoloop-logoHeight)] [.stacks_&_svg]:[flex-shrink:0]"
+                    aria-hidden={!!item.href && !item.ariaLabel}
+                  >
+                    {item.node}
+                  </span>
+                ) : (
+                  <img
+                    src={item.src}
+                    srcSet={item.srcSet}
+                    sizes={item.sizes}
+                    width={item.width}
+                    height={item.height}
+                    alt={item.alt ?? ""}
+                    title={item.title}
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                  />
+                );
+                const text =
+                  (labels === "inline" || labels === "below") && item.title
+                    ? item.title
+                    : null;
+                const inner = (
+                  <>
+                    {visual}
+                    {text && (
+                      <span
+                        className="logoloop__label [font-size:max(12px,_calc(var(--logoloop-logoHeight)_*_0.5))] [font-weight:600] [line-height:1.2] [letter-spacing:-0.01em] whitespace-nowrap [.logoloop[data-labels='below']_&]:[font-size:max(11px,_calc(var(--logoloop-logoHeight)_*_0.26))] [.logoloop[data-labels='below']_&]:[font-weight:500] [.logoloop[data-labels='below']_&]:[letter-spacing:0] [.logoloop[data-labels='below']_&]:[opacity:0.72]"
+                        aria-hidden={!isNode && !!item.alt}
+                      >
+                        {text}
+                      </span>
+                    )}
+                  </>
+                );
+                const name = isNode
+                  ? (item.ariaLabel ?? item.title)
+                  : (item.alt ?? item.title);
+                return (
+                  <li
+                    className="logoloop__item relative [flex:0_0_auto] [margin-right:var(--logoloop-gap)] [font-size:var(--logoloop-logoHeight)] [line-height:1] [.logoloop--vertical_&]:[margin-right:0] [.logoloop--vertical_&]:[margin-bottom:var(--logoloop-gap)] [.logoloop[data-intro]_&]:[opacity:0] [&_img]:block [&_img]:[width:auto] [&_img]:[height:var(--logoloop-logoHeight)] [&_img]:[object-fit:contain] [&_img]:[image-rendering:-webkit-optimize-contrast] [&_img]:[-webkit-user-drag:none] [&_img]:pointer-events-none [&_img]:[transition:transform_0.3s_cubic-bezier(0.4,_0,_0.2,_1)] [.logoloop--scale-hover_&:hover_img]:[transform:scale(1.2)] motion-reduce:[&_img]:[transition:none]"
+                    key={key}
+                    role="listitem"
+                    data-color={item.hoverColor ? "" : undefined}
+                    style={
+                      item.hoverColor
+                        ? {
+                            "--logoloop-item-color": item.hoverColor,
+                          }
+                        : undefined
+                    }
+                  >
+                    {item.href ? (
+                      <a
+                        className="logoloop__content inline-flex items-center [gap:calc(var(--logoloop-logoHeight)_*_0.3)] [border-radius:4px] [color:inherit] [text-decoration:none] [transition:opacity_0.35s_ease,_filter_0.35s_ease,_color_0.35s_ease] [.logoloop[data-labels='below']_&]:flex-col [.logoloop[data-labels='below']_&]:[gap:calc(var(--logoloop-logoHeight)_*_0.22)] [&:focus-visible]:[outline:2px_solid_currentColor] [&:focus-visible]:[outline-offset:2px] [.logoloop[data-muted]_&]:[filter:grayscale(var(--logoloop-gray,_1))] [.logoloop[data-muted]_&]:[opacity:var(--logoloop-dim,_0.5)] [.logoloop[data-muted]_.logoloop\\_\\_item:hover_&]:[filter:none] [.logoloop[data-muted]_.logoloop\\_\\_item:hover_&]:[opacity:1] [.logoloop[data-muted]_.logoloop\\_\\_item:focus-within_&]:[filter:none] [.logoloop[data-muted]_.logoloop\\_\\_item:focus-within_&]:[opacity:1] [.logoloop[data-muted]_.logoloop\\_\\_item[data-active]_&]:[filter:none] [.logoloop[data-muted]_.logoloop\\_\\_item[data-active]_&]:[opacity:1] [.logoloop\\_\\_item[data-color]:hover_&]:[color:var(--logoloop-item-color)] [.logoloop\\_\\_item[data-color]:focus-within_&]:[color:var(--logoloop-item-color)] [.logoloop\\_\\_item[data-color][data-active]_&]:[color:var(--logoloop-item-color)] [.logoloop:not([data-muted])_.logoloop\\_\\_item:not([data-color])_a&:hover]:[opacity:0.8] motion-reduce:[transition:none] [.stacks_&]:[min-height:48px] [.stacks_&]:[padding:4px]"
+                        href={item.href}
+                        aria-label={name || "logo link"}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        draggable={false}
+                        tabIndex={isPrimary ? undefined : -1}
+                      >
+                        {inner}
+                      </a>
+                    ) : (
+                      <div className="logoloop__content inline-flex items-center [gap:calc(var(--logoloop-logoHeight)_*_0.3)] [border-radius:4px] [color:inherit] [text-decoration:none] [transition:opacity_0.35s_ease,_filter_0.35s_ease,_color_0.35s_ease] [.logoloop[data-labels='below']_&]:flex-col [.logoloop[data-labels='below']_&]:[gap:calc(var(--logoloop-logoHeight)_*_0.22)] [&:focus-visible]:[outline:2px_solid_currentColor] [&:focus-visible]:[outline-offset:2px] [.logoloop[data-muted]_&]:[filter:grayscale(var(--logoloop-gray,_1))] [.logoloop[data-muted]_&]:[opacity:var(--logoloop-dim,_0.5)] [.logoloop[data-muted]_.logoloop\\_\\_item:hover_&]:[filter:none] [.logoloop[data-muted]_.logoloop\\_\\_item:hover_&]:[opacity:1] [.logoloop[data-muted]_.logoloop\\_\\_item:focus-within_&]:[filter:none] [.logoloop[data-muted]_.logoloop\\_\\_item:focus-within_&]:[opacity:1] [.logoloop[data-muted]_.logoloop\\_\\_item[data-active]_&]:[filter:none] [.logoloop[data-muted]_.logoloop\\_\\_item[data-active]_&]:[opacity:1] [.logoloop\\_\\_item[data-color]:hover_&]:[color:var(--logoloop-item-color)] [.logoloop\\_\\_item[data-color]:focus-within_&]:[color:var(--logoloop-item-color)] [.logoloop\\_\\_item[data-color][data-active]_&]:[color:var(--logoloop-item-color)] [.logoloop:not([data-muted])_.logoloop\\_\\_item:not([data-color])_a&:hover]:[opacity:0.8] motion-reduce:[transition:none] [.stacks_&]:[min-height:48px] [.stacks_&]:[padding:4px]">
+                        {inner}
+                      </div>
+                    )}
+                    {labels === "hover" && item.title && (
+                      <span
+                        className="logoloop__tip absolute [top:100%] [left:50%] [margin-top:calc(var(--logoloop-logoHeight)_*_0.2)] [font-size:max(11px,_calc(var(--logoloop-logoHeight)_*_0.26))] [font-weight:500] [line-height:1.2] whitespace-nowrap [opacity:0] [translate:-50%_4px] pointer-events-none [transition:opacity_0.25s_ease,_translate_0.25s_ease] [.logoloop--vertical_&]:[top:50%] [.logoloop--vertical_&]:[left:100%] [.logoloop--vertical_&]:[margin-top:0] [.logoloop--vertical_&]:[margin-left:calc(var(--logoloop-logoHeight)_*_0.25)] [.logoloop--vertical_&]:[translate:4px_-50%] [.logoloop\\_\\_item:hover_&]:[opacity:0.8] [.logoloop\\_\\_item:hover_&]:[translate:-50%_0] [.logoloop\\_\\_item:focus-within_&]:[opacity:0.8] [.logoloop\\_\\_item:focus-within_&]:[translate:-50%_0] [.logoloop\\_\\_item[data-active]_&]:[opacity:0.8] [.logoloop\\_\\_item[data-active]_&]:[translate:-50%_0] [.logoloop--vertical_.logoloop\\_\\_item:hover_&]:[translate:0_-50%] [.logoloop--vertical_.logoloop\\_\\_item:focus-within_&]:[translate:0_-50%] [.logoloop--vertical_.logoloop\\_\\_item[data-active]_&]:[translate:0_-50%] motion-reduce:[transition:none]"
+                        aria-hidden="true"
+                      >
+                        {item.title}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          );
+        },
+      ),
     [copies, primary, logos, renderItem, labels],
   );
   const mask = fadeOut ? fadeMask(fadeOutWidth, vertical) : undefined,
@@ -1206,12 +1234,17 @@ function LogoLoopComponent({
       "--logoloop-gray": Math.min(1, amount * 2).toFixed(3),
       "--logoloop-dim": (1 - amount * 0.6).toFixed(3),
     }),
-    ...(mask && { WebkitMaskImage: mask, maskImage: mask }),
+    ...(mask && {
+      WebkitMaskImage: mask,
+      maskImage: mask,
+    }),
     ...style,
   };
   const rootClassName = [
-    "logoloop",
-    vertical ? "logoloop--vertical" : "logoloop--horizontal",
+    "logoloop [--logoloop-gap:32px] [--logoloop-logoHeight:28px] [--logoloop-pad:0px] relative overflow-clip [padding-top:var(--logoloop-pad)] [padding-bottom:var(--logoloop-pad)] [-webkit-tap-highlight-color:transparent] [&[data-draggable]]:[cursor:grab] [&[data-draggable]]:[touch-action:pan-y_pinch-zoom] [&[data-dragging]]:[cursor:grabbing] [&[data-dragging]_*]:[cursor:grabbing]",
+    vertical
+      ? "logoloop--vertical inline-block [height:100%] [padding:0_var(--logoloop-pad)] [&[data-draggable]]:[touch-action:pan-x_pinch-zoom]"
+      : "logoloop--horizontal",
     scaleOnHover && "logoloop--scale-hover",
     className,
   ]
@@ -1229,7 +1262,10 @@ function LogoLoopComponent({
       data-muted={amount > 0 ? "" : undefined}
       data-labels={labels !== "none" ? labels : undefined}
     >
-      <div className="logoloop__track" ref={trackRef}>
+      <div
+        className="logoloop__track relative [z-index:0] flex [width:max-content] [will-change:transform] [user-select:none] [-webkit-user-select:none] [.logoloop--vertical_&]:flex-col [.logoloop--vertical_&]:[width:100%] [.logoloop--vertical_&]:[height:max-content]"
+        ref={trackRef}
+      >
         {lists}
       </div>
     </div>

@@ -3,8 +3,6 @@
 // Adapted from React Bits BlurText, with a loading gate and reduced-motion support.
 import { motion, MotionConfig, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import "../styles/blur-text.css";
-
 const AXES = {
   top: ["y", -1],
   bottom: ["y", 1],
@@ -16,9 +14,10 @@ const EASE_IN_OUT = [0.65, 0, 0.35, 1];
 const EASE_IN = [0.55, 0, 0.9, 0.45];
 const CSS_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 const MOVE_KEYS = ["x", "y", "scale", "rotateX", "rotateY", "skewX"];
-const INSTANT = { duration: 0 };
+const INSTANT = {
+  duration: 0,
+};
 const blurTo = (px) => `blur(${Math.max(0, px)}px)`;
-
 const buildEffect = (effect, direction, blur, distance) => {
   const [axis, sign] = AXES[direction] || AXES.top;
   const b = Math.max(0, blur);
@@ -38,7 +37,12 @@ const buildEffect = (effect, direction, blur, distance) => {
           scale: 0.97,
           [axis]: -sign * d * 0.03,
         },
-        { filter: blurTo(0), opacity: 1, scale: 1, [axis]: 0 },
+        {
+          filter: blurTo(0),
+          opacity: 1,
+          scale: 1,
+          [axis]: 0,
+        },
       ],
       exit: {
         filter: blurTo(b),
@@ -98,12 +102,24 @@ const buildEffect = (effect, direction, blur, distance) => {
     };
   }
   if (effect === "focus") {
-    const soft = { filter: blurTo(b * 1.4), opacity: 0.32, scale: 1.12 };
+    const soft = {
+      filter: blurTo(b * 1.4),
+      opacity: 0.32,
+      scale: 1.12,
+    };
     return {
       from: soft,
       steps: [
-        { filter: blurTo(b * 0.1), opacity: 0.95, scale: 0.995 },
-        { filter: blurTo(0), opacity: 1, scale: 1 },
+        {
+          filter: blurTo(b * 0.1),
+          opacity: 0.95,
+          scale: 0.995,
+        },
+        {
+          filter: blurTo(0),
+          opacity: 1,
+          scale: 1,
+        },
       ],
       exit: soft,
       times: [0, 0.72, 1],
@@ -132,7 +148,13 @@ const buildEffect = (effect, direction, blur, distance) => {
           y: 0,
           skewX: -h * 7,
         },
-        { filter: blurTo(0), opacity: 1, x: 0, y: 0, skewX: 0 },
+        {
+          filter: blurTo(0),
+          opacity: 1,
+          x: 0,
+          y: 0,
+          skewX: 0,
+        },
       ],
       exit: {
         filter: blurTo(b),
@@ -149,12 +171,28 @@ const buildEffect = (effect, direction, blur, distance) => {
     };
   }
   return {
-    from: { filter: blurTo(b), opacity: 0, [axis]: sign * d },
+    from: {
+      filter: blurTo(b),
+      opacity: 0,
+      [axis]: sign * d,
+    },
     steps: [
-      { filter: blurTo(b / 2), opacity: 0.5, [axis]: (-sign * d) / 10 },
-      { filter: blurTo(0), opacity: 1, [axis]: 0 },
+      {
+        filter: blurTo(b / 2),
+        opacity: 0.5,
+        [axis]: (-sign * d) / 10,
+      },
+      {
+        filter: blurTo(0),
+        opacity: 1,
+        [axis]: 0,
+      },
     ],
-    exit: { filter: blurTo(b), opacity: 0, [axis]: -sign * d * 0.6 },
+    exit: {
+      filter: blurTo(b),
+      opacity: 0,
+      [axis]: -sign * d * 0.6,
+    },
     times: [0, 0.5, 1],
     fade: "linear",
     bounce: 0.35,
@@ -162,7 +200,6 @@ const buildEffect = (effect, direction, blur, distance) => {
     exitEase: EASE_IN,
   };
 };
-
 const buildKeyframes = (from, steps) => {
   const keyframes = {};
   new Set([
@@ -173,9 +210,13 @@ const buildKeyframes = (from, steps) => {
   });
   return keyframes;
 };
-
 const buildRanks = (count, staggerFrom, seedText) => {
-  const ranks = Array.from({ length: count }, (_, i) => i);
+  const ranks = Array.from(
+    {
+      length: count,
+    },
+    (_, i) => i,
+  );
   if (staggerFrom === "end") return ranks.map((i) => count - 1 - i);
   if (staggerFrom === "center") {
     const mid = (count - 1) / 2;
@@ -201,7 +242,6 @@ const buildRanks = (count, staggerFrom, seedText) => {
   }
   return ranks;
 };
-
 export default function BlurText({
   text = "",
   delay = 200,
@@ -254,8 +294,11 @@ export default function BlurText({
   const stepCount = toSnapshots.length + 1;
   const totalDuration = stepDuration * (stepCount - 1);
   const times = animationTo
-    ? Array.from({ length: stepCount }, (_, i) =>
-        stepCount === 1 ? 0 : i / (stepCount - 1),
+    ? Array.from(
+        {
+          length: stepCount,
+        },
+        (_, i) => (stepCount === 1 ? 0 : i / (stepCount - 1)),
       )
     : fx.times;
   const stagger = Math.max(0, delay) / 1000;
@@ -275,9 +318,18 @@ export default function BlurText({
         return;
       }
       Array.from(word).forEach((char, c) =>
-        list.push({ word: w, content: char, key: `char-${w}-${c}` }),
+        list.push({
+          word: w,
+          content: char,
+          key: `char-${w}-${c}`,
+        }),
       );
-      if (!isLast) list.push({ word: w, content: "\u00A0", key: `space-${w}` });
+      if (!isLast)
+        list.push({
+          word: w,
+          content: "\u00A0",
+          key: `space-${w}`,
+        });
     });
     return list;
   }, [words, animateBy]);
@@ -296,7 +348,6 @@ export default function BlurText({
       maxRank * stagger) *
     1000;
   const outTotal = (exitDuration + maxRank * exitStagger) * 1000;
-
   useEffect(() => {
     if (!enabled || phase !== "from") return;
     // Loading and intersection observers control when the entrance can begin.
@@ -316,12 +367,14 @@ export default function BlurText({
           observer.disconnect();
         }
       },
-      { threshold, rootMargin },
+      {
+        threshold,
+        rootMargin,
+      },
     );
     observer.observe(element);
     return () => observer.disconnect();
   }, [enabled, phase, trigger, threshold, rootMargin, reducedMotion]);
-
   useEffect(() => {
     if (!enabled) return;
     let timer = 0;
@@ -352,7 +405,6 @@ export default function BlurText({
     }
     return () => window.clearTimeout(timer);
   }, [enabled, phase, loop, loopDelay, inTotal, outTotal, reducedMotion]);
-
   const replay = () => {
     if (enabled && !reducedMotion && phase !== "out" && phase !== "from")
       setPhase("out");
@@ -428,7 +480,7 @@ export default function BlurText({
     return (
       <motion.span
         aria-hidden="true"
-        className="blur-text__piece"
+        className="blur-text__piece inline-block [will-change:transform,_filter,_opacity] motion-reduce:[filter:none]! motion-reduce:[opacity:1]! motion-reduce:[transform:none]! motion-reduce:[will-change:auto]"
         key={piece.key}
         style={style}
         initial={
@@ -454,15 +506,20 @@ export default function BlurText({
     <MotionConfig reducedMotion="user">
       <span
         ref={ref}
-        className={`blur-text ${className}`}
-        style={{ color, cursor: trigger === "click" ? "pointer" : undefined }}
+        className={`blur-text inline-flex [flex-wrap:wrap] ${className}`}
+        style={{
+          color,
+          cursor: trigger === "click" ? "pointer" : undefined,
+        }}
         onPointerEnter={trigger === "hover" ? handleEnter : undefined}
         onClick={trigger === "click" ? replay : undefined}
       >
-        <span className="blur-text__accessible">{text}</span>
+        <span className="blur-text__accessible absolute [width:1px] [height:1px] [padding:0] [margin:-1px] overflow-hidden [clip-path:inset(50%)] whitespace-nowrap [border:0] [user-select:none]">
+          {text}
+        </span>
         {groups.map((indices, w) => (
           <span
-            className="blur-text__word"
+            className="blur-text__word inline-flex"
             key={`word-${w}`}
             style={wordStyle(w)}
             onPointerEnter={focusOnHover ? () => setFocusWord(w) : undefined}
