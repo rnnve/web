@@ -64,9 +64,9 @@ Optional server environment variables can be set in `.env.local` or through your
 | ------------------------------ | -------------------------------------------------------------------------------------------- |
 | `GITHUB_TOKEN`                 | Increase GitHub API rate limits for repository and activity requests. Use a read-only token. |
 | `ASK_DISCORD_WEBHOOK_URL`      | Set the Discord webhook that receives anonymous questions. Overrides the built-in fallback.  |
-| `BIRTHDAY_DISCORD_WEBHOOK_URL` | Discord webhook for anonymous birthday wishes from `/birthday`.                              |
+| `BIRTHDAY_DISCORD_WEBHOOK_URL` | Override the built-in webhook for anonymous birthday wishes from `/birthday`.                |
 
-When deploying your own copy, configure your own webhook. The fallback in the source is Base64-encoded, not encrypted.
+When deploying your own copy, configure your own webhooks. The defaults in the server source are Base64-encoded, not encrypted.
 
 Common changes:
 

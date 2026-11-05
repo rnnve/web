@@ -68,7 +68,29 @@ test("invalid birthday payloads never contact the webhook", async (context) => {
   assert.equal(fetchMock.mock.calls.length, 0);
 });
 
-test("missing birthday configuration and failed delivery never report success", async (context) => {
+test("birthday wishes use the default webhook when the environment override is absent", async (context) => {
+  const previous = process.env.BIRTHDAY_DISCORD_WEBHOOK_URL;
+  delete process.env.BIRTHDAY_DISCORD_WEBHOOK_URL;
+  context.after(() => {
+    if (previous === undefined) delete process.env.BIRTHDAY_DISCORD_WEBHOOK_URL;
+    else process.env.BIRTHDAY_DISCORD_WEBHOOK_URL = previous;
+  });
+  const fetchMock = context.mock.method(
+    globalThis,
+    "fetch",
+    async () => new Response(null, { status: 204 }),
+  );
+  assert.equal((await POST(request("Happy birthday"))).status, 200);
+  const target = new URL(String(fetchMock.mock.calls[0].arguments[0]));
+  assert.equal(target.protocol, "https:");
+  assert.equal(target.hostname, "discord.com");
+  assert.match(
+    target.pathname,
+    /^\/api\/webhooks\/1567751021201981500\/[^/]+$/,
+  );
+});
+
+test("failed default and overridden birthday delivery never report success", async (context) => {
   const previous = process.env.BIRTHDAY_DISCORD_WEBHOOK_URL;
   delete process.env.BIRTHDAY_DISCORD_WEBHOOK_URL;
   context.after(() => {
@@ -80,8 +102,8 @@ test("missing birthday configuration and failed delivery never report success", 
     "fetch",
     async () => new Response(null, { status: 500 }),
   );
-  assert.equal((await POST(request("Happy birthday"))).status, 503);
-  assert.equal(fetchMock.mock.calls.length, 0);
+  assert.equal((await POST(request("Happy birthday"))).status, 502);
+  assert.equal(fetchMock.mock.calls.length, 1);
   process.env.BIRTHDAY_DISCORD_WEBHOOK_URL =
     "https://example.com/birthday-webhook";
   assert.equal((await POST(request("Happy birthday"))).status, 502);
