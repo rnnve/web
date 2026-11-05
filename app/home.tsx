@@ -24,7 +24,7 @@ export default function Home() {
   } = usePortfolioStatus();
   return (
     <main
-      className="root-empty home-page [.root-empty&_>_:is(section,_.home-last-section)]:[min-height:100svh] [.root-empty&_>_:is(section,_.home-last-section)]:[scroll-snap-align:start] [.reveal-ready_&_section[data-reveal]]:[transform:none] [.reveal-ready_&_section[data-reveal]]:[will-change:opacity]"
+      className="root-empty home-page [.root-empty&_>_:is(section,_.home-last-section)]:[min-height:100svh] [.reveal-ready_&_section[data-reveal]]:[transform:none] [.reveal-ready_&_section[data-reveal]]:[will-change:opacity]"
       aria-label="Home"
     >
       <WidgetPreloads />
