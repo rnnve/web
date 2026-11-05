@@ -27,7 +27,8 @@
 
 .m3-navbar-desktop {
   display: none;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  /* Equal side tracks keep page links centered despite unequal end controls. */
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   justify-content: space-between;
   gap: 24px;

@@ -9,7 +9,7 @@ A personal corner of the web: a portfolio, live activity, and a browser start pa
 | Page      | URL         | Features                                                                                                         |
 | --------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
 | Home      | `/`         | Introduction, Discord presence, Spotify playback, GitHub activity, featured repositories, and technology stacks. |
-| Birthday  | `/birthday` | Countdown to December 31 using Bangkok time.                                                                     |
+| Birthday  | `/birthday` | Birthday countdown using Bangkok time and anonymous birthday wishes.                                             |
 | Listening | `/listen`   | Current track, recent listening, and weekly favorites from Last.fm.                                              |
 | Ask       | `/ask`      | Send an anonymous question to Discord.                                                                           |
 | New Tab   | `/newtab`   | Local clock, web search, personal shortcuts, and a live video wallpaper.                                         |
@@ -60,10 +60,11 @@ Development and build commands generate the profile-picture manifest automatical
 
 Optional server environment variables can be set in `.env.local` or through your hosting provider:
 
-| Variable                  | Purpose                                                                                      |
-| ------------------------- | -------------------------------------------------------------------------------------------- |
-| `GITHUB_TOKEN`            | Increase GitHub API rate limits for repository and activity requests. Use a read-only token. |
-| `ASK_DISCORD_WEBHOOK_URL` | Set the Discord webhook that receives anonymous questions. Overrides the built-in fallback.  |
+| Variable                       | Purpose                                                                                      |
+| ------------------------------ | -------------------------------------------------------------------------------------------- |
+| `GITHUB_TOKEN`                 | Increase GitHub API rate limits for repository and activity requests. Use a read-only token. |
+| `ASK_DISCORD_WEBHOOK_URL`      | Set the Discord webhook that receives anonymous questions. Overrides the built-in fallback.  |
+| `BIRTHDAY_DISCORD_WEBHOOK_URL` | Discord webhook for anonymous birthday wishes from `/birthday`.                              |
 
 When deploying your own copy, configure your own webhook. The fallback in the source is Base64-encoded, not encrypted.
 

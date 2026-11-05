@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { IconCake } from "@tabler/icons-react";
 import LocalizedText from "../components/localized-text";
 import BirthdayCountdown from "./birthday-countdown";
+import AskForm from "../ask/ask-form";
+import "../styles/ask.css";
 import "../styles/birthday.css";
 
 export const metadata: Metadata = {
@@ -23,6 +25,24 @@ export default function BirthdayPage() {
           />
         </p>
         <BirthdayCountdown />
+      </section>
+      <section
+        className="birthday-wishes"
+        aria-labelledby="birthday-wishes-title"
+      >
+        <h2 id="birthday-wishes-title">
+          <LocalizedText
+            en="Leave a birthday wish."
+            th="ฝากคำอวยพรวันเกิดไว้หน่อย"
+          />
+        </h2>
+        <p>
+          <LocalizedText
+            en="A little message for my birthday. Sent anonymously."
+            th="ฝากข้อความเล็ก ๆ สำหรับวันเกิด ส่งแบบไม่ระบุตัวตน"
+          />
+        </p>
+        <AskForm variant="birthday" />
       </section>
       <footer className="birthday-footer">
         <span>

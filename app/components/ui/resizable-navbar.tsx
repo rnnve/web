@@ -65,7 +65,7 @@ export function NavBody({ children, className, visible }: NavSurfaceProps) {
   const reduceMotion = useReducedMotion();
   return (
     <motion.div
-      animate={{ width: visible ? 860 : 1120, height: visible ? 64 : 72 }}
+      animate={{ width: visible ? 1000 : 1120, height: visible ? 64 : 72 }}
       transition={reduceMotion ? { duration: 0 } : resizeTransition}
       data-elevated={visible || undefined}
       className={cn("m3-navbar-surface m3-navbar-desktop", className)}
