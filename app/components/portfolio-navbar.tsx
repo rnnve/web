@@ -45,14 +45,14 @@ export default function PortfolioNavbar() {
       icon: <IconHome2 size={18} />,
     },
     {
-      name: t("Birthday", "วันเกิด"),
-      link: "/birthday",
-      icon: <IconCake size={18} />,
-    },
-    {
       name: t("Listening", "เพลงที่ฟัง"),
       link: "/listen",
       icon: <IconHeadphones size={18} />,
+    },
+    {
+      name: t("Birthday", "วันเกิด"),
+      link: "/birthday",
+      icon: <IconCake size={18} />,
     },
     {
       name: t("Ask", "ถามเรา"),
