@@ -7,6 +7,24 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useId, useRef } from "react";
 import { useSiteSettings } from "../site-settings-provider";
+import ShapeGrid from "../shape-grid";
+
+function NavbarBackground() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden [border-radius:inherit] [background:var(--paper)]"
+    >
+      <ShapeGrid
+        shape="cross"
+        lineColor="#cecece"
+        interactive={false}
+        clickCascade={false}
+        fade={0}
+      />
+    </div>
+  );
+}
 type NavbarProps = {
   children: React.ReactNode;
   className?: string;
@@ -33,10 +51,11 @@ export function NavBody({ children, className }: NavbarProps) {
   return (
     <div
       className={cn(
-        "m3-navbar-surface relative [width:1120px] [height:72px] [margin-inline:auto] [max-width:calc(100%_-_32px)] [padding-inline:16px] [border:1px_solid_var(--md-sys-color-outline-variant)] [border-radius:16px] [color:var(--md-sys-color-on-surface)] [background:color-mix(in_srgb,_var(--md-sys-color-surface-container)_55%,_transparent)] [backdrop-filter:blur(24px)] [-webkit-backdrop-filter:blur(24px)] [box-shadow:var(--md-elevation-1)] m3-navbar-desktop hidden [grid-template-columns:minmax(0,_1fr)_auto_minmax(0,_1fr)] items-center justify-between [gap:24px] min-[1024px]:grid [@media(min-width:_1024px)_and_(max-width:_1199px)]:[padding-inline:12px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[gap:12px]",
+        "m3-navbar-surface relative isolate [width:1120px] [height:72px] [margin-inline:auto] [max-width:calc(100%_-_32px)] [padding-inline:16px] [border:1px_solid_var(--md-sys-color-outline-variant)] [border-radius:16px] [color:var(--md-sys-color-on-surface)] [background:color-mix(in_srgb,_var(--md-sys-color-surface-container)_55%,_transparent)] [backdrop-filter:blur(24px)] [-webkit-backdrop-filter:blur(24px)] [box-shadow:var(--md-elevation-1)] m3-navbar-desktop hidden [grid-template-columns:minmax(0,_1fr)_auto_minmax(0,_1fr)] items-center justify-between [gap:24px] min-[1024px]:grid [@media(min-width:_1024px)_and_(max-width:_1199px)]:[padding-inline:12px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[gap:12px]",
         className,
       )}
     >
+      <NavbarBackground />
       {children}
     </div>
   );
@@ -157,10 +176,11 @@ export function MobileNav({ children, className }: NavbarProps) {
   return (
     <div
       className={cn(
-        "m3-navbar-surface relative [margin-inline:auto] [width:calc(100%_-_32px)] [border:1px_solid_var(--md-sys-color-outline-variant)] [border-radius:16px] [color:var(--md-sys-color-on-surface)] [background:color-mix(in_srgb,_var(--md-sys-color-surface-container)_55%,_transparent)] [backdrop-filter:blur(24px)] [-webkit-backdrop-filter:blur(24px)] [box-shadow:var(--md-elevation-1)] m3-navbar-mobile [min-height:64px] [padding-inline:12px] min-[1024px]:hidden",
+        "m3-navbar-surface relative isolate [margin-inline:auto] [width:calc(100%_-_32px)] [border:1px_solid_var(--md-sys-color-outline-variant)] [border-radius:16px] [color:var(--md-sys-color-on-surface)] [background:color-mix(in_srgb,_var(--md-sys-color-surface-container)_55%,_transparent)] [backdrop-filter:blur(24px)] [-webkit-backdrop-filter:blur(24px)] [box-shadow:var(--md-elevation-1)] m3-navbar-mobile [min-height:64px] [padding-inline:12px] min-[1024px]:hidden",
         className,
       )}
     >
+      <NavbarBackground />
       {children}
     </div>
   );
