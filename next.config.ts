@@ -36,6 +36,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.1.39", "100.73.17.117", "100.119.174.10"],
   async rewrites() {
     return [
+      { source: "/r/:path*", destination: "/redirect/:path*" },
       { source: "/hub/p.js", destination: "https://portus.sh/p.js" },
       { source: "/hub/e", destination: "https://portus.sh/api/e" },
     ];
