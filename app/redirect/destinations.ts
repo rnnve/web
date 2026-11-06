@@ -1,6 +1,6 @@
 // Add named redirect destinations here, e.g. /redirect/test.
 export const REDIRECT_DESTINATIONS: Readonly<Record<string, string>> = {
-  test: "https://example.com/",
+  "prsk-bot": "https://prsk-bot.rynni.cc",
 };
 
 export const REDIRECT_NAME_PATTERN = /^[A-Za-z0-9_-]+$/;

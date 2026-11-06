@@ -3,6 +3,7 @@
 import { useSiteSettings } from "../settings/site-settings-provider";
 import { StatusIcon } from "./status-icon";
 import { useEffect, useState } from "react";
+import { IconDeviceSpeaker } from "@tabler/icons-react";
 import type { SpotifyView } from "@/app/lib/status-types";
 import WavyLinearProgress from "./wavy-linear-progress";
 
@@ -76,8 +77,22 @@ export default function SpotifyWidget({
               <p className="compactScrollingText [&_span]:[width:max-content] [&_span]:[min-width:100%] [&_span]:block [&:hover_span]:[animation:compact-text-scroll_5s_linear_infinite_alternate]">
                 <span>{spotify.artist}</span>
               </p>
+              {spotify.device && (
+                <div
+                  className="compactSpotifyDevice [margin-top:5px] flex items-center [gap:5px] overflow-hidden [color:var(--md-sys-color-on-surface-variant)] [font-size:9px] [&_svg]:[flex:0_0_auto] [&_span]:overflow-hidden [&_span]:[text-overflow:ellipsis] [&_span]:whitespace-nowrap [&_small]:[flex:0_0_auto] [&_small]:[color:var(--md-sys-color-outline)] [&_small]:[font-size:8px]"
+                  title={spotify.device.type || spotify.device.name}
+                >
+                  <IconDeviceSpeaker size={12} aria-hidden="true" />
+                  <span>
+                    {t("Playing on", "กำลังเล่นบน")} {spotify.device.name}
+                  </span>
+                  {spotify.device.type && (
+                    <small>· {spotify.device.type}</small>
+                  )}
+                </div>
+              )}
               <WavyLinearProgress
-                className="compactSpotifyProgress [width:100%] [margin-top:10px] [--m3e-linear-progress-indicator-thickness:6px] [--m3e-linear-wavy-progress-indicator-amplitude:2px] [--m3e-linear-wavy-progress-indicator-wavelength:14px] [--m3e-progress-indicator-color:var(--md-sys-color-primary)] [--m3e-progress-indicator-track-color:var(--md-sys-color-outline-variant)] [.root-empty_&]:[width:100%] [.root-empty_&]:[margin-top:10px] [.root-empty_&]:[--m3e-progress-indicator-color:var(--md-sys-color-primary)] [.root-empty_&]:[--m3e-progress-indicator-track-color:var(--md-sys-color-outline-variant)]"
+                className="compactSpotifyProgress [width:100%] [margin-top:8px] [--m3e-linear-progress-indicator-thickness:6px] [--m3e-linear-wavy-progress-indicator-amplitude:2px] [--m3e-linear-wavy-progress-indicator-wavelength:14px] [--m3e-progress-indicator-color:var(--md-sys-color-primary)] [--m3e-progress-indicator-track-color:var(--md-sys-color-outline-variant)] [.root-empty_&]:[width:100%] [.root-empty_&]:[margin-top:8px] [.root-empty_&]:[--m3e-progress-indicator-color:var(--md-sys-color-primary)] [.root-empty_&]:[--m3e-progress-indicator-track-color:var(--md-sys-color-outline-variant)]"
                 value={currentProgress}
                 max={spotify.duration || 1}
                 label={`${Math.round(progress)}% played`}
@@ -144,6 +159,18 @@ export default function SpotifyWidget({
         </p>
         <h2 id="spotify-title">{title}</h2>
         <span>{spotify.artist}</span>
+        {spotify.isPlaying && spotify.device && (
+          <div
+            className="spotifyDevice [margin-top:9px] flex items-center [gap:6px] [color:var(--md-sys-color-on-surface-variant)] [font-size:10px] [&_small]:[color:var(--md-sys-color-outline)] [&_small]:[font-size:9px]"
+            title={spotify.device.type || spotify.device.name}
+          >
+            <IconDeviceSpeaker size={14} aria-hidden="true" />
+            <span>
+              {t("Playing on", "กำลังเล่นบน")} {spotify.device.name}
+            </span>
+            {spotify.device.type && <small>· {spotify.device.type}</small>}
+          </div>
+        )}
       </div>
       <div className="progress [.homeStatusColumn_&]:hidden [margin-top:21px] [&_>_m3e-linear-progress-indicator]:[width:100%] [&_>_m3e-linear-progress-indicator]:[--m3e-linear-progress-indicator-thickness:7px] [&_>_m3e-linear-progress-indicator]:[--m3e-linear-wavy-progress-indicator-amplitude:2px] [&_>_m3e-linear-progress-indicator]:[--m3e-linear-wavy-progress-indicator-wavelength:16px] [&_>_m3e-linear-progress-indicator]:[--m3e-progress-indicator-color:var(--purple-bright)] [&_>_m3e-linear-progress-indicator]:[--m3e-progress-indicator-track-color:color-mix(_in_srgb,_var(--purple-bright)_14%,_transparent_)] [&_p]:[margin:6px_0_0] [&_p]:flex [&_p]:justify-between [&_p]:[color:var(--muted)] [&_p]:[font-size:8px]">
         <WavyLinearProgress

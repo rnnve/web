@@ -4,5 +4,5 @@ export const GET = createStatusHandler({
   freshSeconds: 0,
   name: "Spotify",
   key: "spotify",
-  url: "https://sptf.rynni.cc/api/spotify",
+  url: "https://api.rynni.cc/api/v2/spotify",
 });

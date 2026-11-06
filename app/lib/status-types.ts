@@ -34,6 +34,7 @@ export type SpotifyView = {
   progress: number;
   duration: number;
   url: string;
+  device: { name: string; type: string } | null;
 };
 export type GitHubView = {
   login: string;

@@ -41,6 +41,39 @@ test("Spotify supports nested tracks and mixed artist formats", () => {
       progress: 15_000,
       duration: 180_000,
       url: "https://example.com/song",
+      device: null,
+    },
+  );
+});
+
+test("Spotify supports the v2 response envelope and playback device", () => {
+  assert.deepEqual(
+    normalizeSpotify({
+      success: true,
+      data: {
+        isPlaying: true,
+        progressMs: 15_000,
+        track: {
+          name: "Track",
+          artist: "Artist",
+          album: "Album",
+          cover: "https://example.com/cover.webp",
+          durationMs: 180_000,
+          url: "https://open.spotify.com/track/example",
+        },
+        device: { name: "iPad", type: "Tablet", volumePercent: 100 },
+      },
+    }),
+    {
+      isPlaying: true,
+      title: "Track",
+      artist: "Artist",
+      album: "Album",
+      artwork: "https://example.com/cover.webp",
+      progress: 15_000,
+      duration: 180_000,
+      url: "https://open.spotify.com/track/example",
+      device: { name: "iPad", type: "Tablet" },
     },
   );
 });
@@ -201,6 +234,7 @@ test("Live Spotify responses pick up each song change without data or CDN cachin
     assert.equal(options.cache, "no-store");
     assert.equal(options.next, undefined);
     assert.equal(new Headers(options.headers).get("Cache-Control"), "no-cache");
+    assert.equal(call.arguments[0], "https://api.rynni.cc/api/v2/spotify");
   }
 });
 
@@ -229,6 +263,7 @@ test("Paused Spotify responses clear the previous track's details", () => {
       progress: 0,
       duration: 0,
       url: "",
+      device: null,
     });
   }
 });
