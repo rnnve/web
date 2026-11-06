@@ -11,6 +11,12 @@ type LoadingScreenProps = {
 const symbolMask =
   "absolute inset-0 [mask:url('/loading.webp')_center/contain_no-repeat] [-webkit-mask:url('/loading.webp')_center/contain_no-repeat]";
 
+// Colors follow the icon order in loading.webp, with stops in the gaps.
+// VIRTUAL SINGER, Leo/need, MORE MORE JUMP!, Nightcord at 25:00,
+// Wonderlands×Showtime, Vivid BAD SQUAD.
+const unitColors =
+  "linear-gradient(to right, #ffffff 0% 16.4%, #4455dd 16.4% 32%, #88dd44 32% 49%, #884499 49% 66%, #ff9900 66% 83.2%, #ee1166 83.2% 100%)";
+
 export default function LoadingScreen({
   overlay = false,
   fading = false,
@@ -42,7 +48,8 @@ export default function LoadingScreen({
           />
           <span className={symbolMask}>
             <span
-              className={`absolute inset-0 origin-left bg-linear-to-r from-(--md-sys-color-primary) to-(--md-sys-color-on-surface) transition-transform duration-[180ms] ease-out will-change-transform motion-reduce:scale-x-100 motion-reduce:transition-none ${fading ? "scale-x-100" : "scale-x-0"}`}
+              className="absolute inset-0 [animation:loading-symbol-fill_1.5s_ease-in-out_both] [will-change:clip-path] motion-reduce:[animation:none]"
+              style={{ backgroundImage: unitColors }}
             />
           </span>
         </div>
