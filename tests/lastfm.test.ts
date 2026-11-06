@@ -1,6 +1,17 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { normalizeListenData } from "../app/lib/lastfm";
+import {
+  LISTEN_PERIODS,
+  normalizeListenData,
+  parseListenPeriod,
+} from "../app/lib/lastfm";
+
+test("listening periods are allowlisted and default to seven days", () => {
+  for (const period of LISTEN_PERIODS)
+    assert.equal(parseListenPeriod(period), period);
+  assert.equal(parseListenPeriod("weekly"), "7day");
+  assert.equal(parseListenPeriod(null), "7day");
+});
 
 test("normalizes Last.fm current, recent, ranked and profile data", () => {
   const wrap = (data: unknown) => ({ success: true, data });

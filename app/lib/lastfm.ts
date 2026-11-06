@@ -1,5 +1,22 @@
 import { isRecord, readString } from "./json";
 
+export const LISTEN_PERIODS = [
+  "7day",
+  "1month",
+  "3month",
+  "6month",
+  "12month",
+  "overall",
+] as const;
+
+export type ListenPeriod = (typeof LISTEN_PERIODS)[number];
+
+export function parseListenPeriod(value: string | null): ListenPeriod {
+  return LISTEN_PERIODS.includes(value as ListenPeriod)
+    ? (value as ListenPeriod)
+    : "7day";
+}
+
 export type ListenItem = {
   name: string;
   artist: string;
