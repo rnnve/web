@@ -19,13 +19,12 @@ export default function PageTransition({
   const blocked = phase !== "hidden";
   useEffect(() => {
     let finish: ReturnType<typeof setTimeout>;
-    // The page is already rendered: fade on its first hydrated frame, without a minimum wait.
-    const frame = requestAnimationFrame(() => {
+    const show = setTimeout(() => {
       setPhase("fading");
       finish = setTimeout(() => setPhase("hidden"), 180);
-    });
+    }, 1_500);
     return () => {
-      cancelAnimationFrame(frame);
+      clearTimeout(show);
       clearTimeout(finish);
     };
   }, []);
