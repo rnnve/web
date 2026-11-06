@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import BackgroundMusic from "./components/background-music";
 import RouteShell from "./components/route-shell";
 import SiteFooter from "./components/site-footer";
 import favicon from "./icon.webp";
@@ -42,7 +41,6 @@ export default function RootLayout({
           {children}
           <SiteFooter />
         </RouteShell>
-        <BackgroundMusic />
         <Script
           defer
           src="https://rynni.cc/hub/p.js"
