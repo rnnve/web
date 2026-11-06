@@ -29,8 +29,8 @@ export default function SpotifyWidget({
   useEffect(() => {
     if (!spotify.isPlaying) return;
     const timer = window.setInterval(() => {
-      setClock(Date.now());
-    }, 1_000);
+      if (!document.hidden) setClock(Date.now());
+    }, 100);
     return () => window.clearInterval(timer);
   }, [spotify.isPlaying, spotify.title]);
   const currentProgress =
