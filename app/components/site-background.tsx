@@ -16,6 +16,7 @@ export default function SiteBackground() {
         fillOpacity={0.15}
         cellSize={40}
         speed={0.5}
+        trail={0.2}
         tiltX={0}
         tiltY={0}
         rainbow={false}
