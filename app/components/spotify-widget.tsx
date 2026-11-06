@@ -5,6 +5,23 @@ import { StatusIcon } from "./status-icon";
 import { useEffect, useState } from "react";
 import type { SpotifyView } from "@/app/lib/status-types";
 import WavyLinearProgress from "./wavy-linear-progress";
+
+function SpotifyArtwork({ src }: { src: string }) {
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  if (!src || failedSrc === src) return <StatusIcon name="spotify" size={32} />;
+
+  return (
+    // Artwork URLs come from the live Spotify status provider.
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt=""
+      referrerPolicy="no-referrer"
+      className="absolute inset-0 h-full w-full object-cover"
+      onError={() => setFailedSrc(src)}
+    />
+  );
+}
 const formatTime = (milliseconds: number) => {
   const seconds = Math.floor(milliseconds / 1000);
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
@@ -49,17 +66,8 @@ export default function SpotifyWidget({
         className="glassCard overflow-hidden [border:0] [background:var(--md-sys-color-surface-container)] [box-shadow:none] [backdrop-filter:none] [border-radius:var(--md-shape-extra-large)] [-webkit-backdrop-filter:none] [.root-empty_&]:[border:0] [.root-empty_&]:[border-radius:var(--md-shape-extra-large)] [.root-empty_&]:[background:var(--md-sys-color-surface-container)] [.root-empty_&]:[box-shadow:none] [.root-empty_&]:[-webkit-backdrop-filter:none] [.root-empty_&]:[backdrop-filter:none] compactStatusCard [min-height:112px] [padding:16px] grid [grid-template-columns:72px_minmax(0,_1fr)] items-center [gap:16px] [border-radius:var(--md-shape-extra-large)] [border:0] [background:var(--md-sys-color-surface-container-high)] [box-shadow:none] [backdrop-filter:none] [transition:background-color_0.25s_ease,_transform_0.4s_var(--md-motion-emphasized),_box-shadow_0.25s_ease] [@media(min-width:_761px)_and_(max-height:_650px)]:[min-height:92px] [@media(min-width:_761px)_and_(max-height:_650px)]:[grid-template-columns:68px_minmax(0,_1fr)] [&:hover]:[background:var(--md-sys-color-surface-container-highest)] [&:hover]:[box-shadow:var(--md-elevation-1)] [&:hover]:[transform:translateY(-2px)] motion-reduce:[transform:none]! [.root-empty_&]:[border:0] [.root-empty_&]:[border-radius:var(--md-shape-extra-large)] [.root-empty_&]:[background:var(--md-sys-color-surface-container)] [.root-empty_&]:[box-shadow:none] [.root-empty_&]:[-webkit-backdrop-filter:none] [.root-empty_&]:[backdrop-filter:none] [.root-empty_&]:[min-height:112px] [.root-empty_&]:[padding:16px] [.root-empty_&]:[grid-template-columns:72px_minmax(0,_1fr)] [.root-empty_&]:[gap:16px] [.root-empty_&]:[background:var(--md-sys-color-surface-container-high)] [.root-empty_&:hover]:[background:var(--md-sys-color-surface-container-highest)] [.root-empty_&:hover]:[box-shadow:var(--md-elevation-1)] max-[761px]:[.root-empty_&]:[min-height:104px] max-[761px]:[.root-empty_&]:[padding:14px] max-[761px]:[.root-empty_&]:[grid-template-columns:64px_minmax(0,_1fr)] max-[761px]:[.root-empty_&]:[gap:14px] compactSpotifyCard"
         aria-labelledby="compact-spotify-title"
       >
-        <div
-          className="compactStatusArtwork relative [width:72px] [aspect-ratio:1] grid [place-items:center] [border:0] [border-radius:var(--md-shape-large)] [color:var(--md-sys-color-on-primary-container)] [background:linear-gradient(145deg,_var(--purple-soft),_var(--paper-deep))] [background-position:center] [background-size:cover] [box-shadow:none] [background-color:var(--md-sys-color-primary-container)] [background-image:none] [@media(min-width:_761px)_and_(max-height:_650px)]:[width:68px] [.root-empty_&]:[width:72px] [.root-empty_&]:[border:0] [.root-empty_&]:[border-radius:var(--md-shape-large)] [.root-empty_&]:[color:var(--md-sys-color-on-primary-container)] [.root-empty_&]:[background-color:var(--md-sys-color-primary-container)] [.root-empty_&]:[box-shadow:none] max-[761px]:[.root-empty_&]:[width:64px] compactSpotifyArtwork"
-          style={
-            spotify.artwork
-              ? {
-                  backgroundImage: `url(${spotify.artwork})`,
-                }
-              : undefined
-          }
-        >
-          {!spotify.artwork && <StatusIcon name="spotify" size={32} />}
+        <div className="compactStatusArtwork relative overflow-hidden [width:72px] [aspect-ratio:1] grid [place-items:center] [border:0] [border-radius:var(--md-shape-large)] [color:var(--md-sys-color-on-primary-container)] [background:linear-gradient(145deg,_var(--purple-soft),_var(--paper-deep))] [background-position:center] [background-size:cover] [box-shadow:none] [background-color:var(--md-sys-color-primary-container)] [background-image:none] [@media(min-width:_761px)_and_(max-height:_650px)]:[width:68px] [.root-empty_&]:[width:72px] [.root-empty_&]:[border:0] [.root-empty_&]:[border-radius:var(--md-shape-large)] [.root-empty_&]:[color:var(--md-sys-color-on-primary-container)] [.root-empty_&]:[background-color:var(--md-sys-color-primary-container)] [.root-empty_&]:[box-shadow:none] max-[761px]:[.root-empty_&]:[width:64px] compactSpotifyArtwork">
+          <SpotifyArtwork src={spotify.artwork} />
         </div>
         <div className="compactStatusCopy [min-width:0] [&_h2]:[margin:0] [&_h2]:overflow-hidden [&_h2]:[font-size:17px] [&_h2]:[line-height:1.15] [&_h2]:[letter-spacing:-0.25px] [&_h2]:whitespace-nowrap [&_h2]:[text-overflow:ellipsis] [&_h2]:[color:var(--md-sys-color-on-surface)] [&_h2]:[font-weight:650] [&_>_p]:[margin:5px_0_0] [&_>_p]:overflow-hidden [&_>_p]:[color:var(--md-sys-color-on-surface-variant)] [&_>_p]:[font-size:12px] [&_>_p]:whitespace-nowrap [.compactSpotifyCard_&_h2]:[font-size:clamp(14px,_1.35vw,_17px)] [.compactSpotifyCard_&_h2]:[letter-spacing:-0.35px]">
           <h2 id="compact-spotify-title">{title}</h2>
@@ -116,15 +124,8 @@ export default function SpotifyWidget({
       </div>
       <div
         className={`albumArt [.homeStatusColumn_&]:[width:58px] [.homeStatusColumn_&]:[aspect-ratio:1] [.homeStatusColumn_&]:[float:left] [.homeStatusColumn_&]:[margin:12px_13px_0_0] [.homeStatusColumn_&]:[border-radius:14px] relative [width:100%] [aspect-ratio:1.45] [margin-top:24px] overflow-hidden [border-radius:30px_30px_9px_30px] [background-size:cover] [background-position:center] [box-shadow:0_18px_35px_var(--shadow)] max-[421px]:[aspect-ratio:1.3] ${!spotify.artwork ? "albumFallback" : ""}`}
-        style={
-          spotify.artwork
-            ? {
-                backgroundImage: `url(${spotify.artwork})`,
-              }
-            : undefined
-        }
       >
-        {!spotify.artwork && <StatusIcon name="headphones" size={54} />}{" "}
+        <SpotifyArtwork src={spotify.artwork} />
         {spotify.isPlaying && (
           <div className="equalizer absolute [right:14px] [bottom:14px] [height:36px] [padding:8px_10px] flex [align-items:end] [gap:3px] [border-radius:14px_14px_5px_14px] [background:var(--md-sys-color-surface-container-high)] [backdrop-filter:none] [-webkit-backdrop-filter:none] [&_i]:[width:3px] [&_i]:[height:45%] [&_i]:[border-radius:3px] [&_i]:[background:var(--purple-bright)] [&_i]:[animation:equalize_0.7s_ease-in-out_infinite_alternate] [&_i:nth-child(2)]:[height:100%] [&_i:nth-child(2)]:[animation-delay:-0.2s] [&_i:nth-child(3)]:[height:70%] [&_i:nth-child(3)]:[animation-delay:-0.45s] [&_i:nth-child(4)]:[height:35%] [&_i:nth-child(4)]:[animation-delay:-0.1s] motion-reduce:[&_i]:[animation:none]!">
             <i />
