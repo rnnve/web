@@ -20,7 +20,7 @@ function Artwork({
   const placeholder = item.image.includes("2a96cbd8b46e442fc41c2b86b821562f");
   return (
     <span
-      className={`listen-art [flex:0_0_auto] [width:48px] [aspect-ratio:1] grid [place-items:center] overflow-hidden [border-radius:13px] [background:var(--md-sys-color-surface-container-highest)] [color:var(--ink-soft)] [&_img]:[width:100%] [&_img]:[height:100%] [&_img]:[object-fit:cover]${large ? " listen-art--large" : ""}`}
+      className={`listen-art [flex:0_0_auto] [aspect-ratio:1] grid [place-items:center] overflow-hidden [background:var(--md-sys-color-surface-container-highest)] [color:var(--ink-soft)] [&_img]:[width:100%] [&_img]:[height:100%] [&_img]:[object-fit:cover] ${large ? "listen-art--large [width:100%] [border-radius:20px] max-[651px]:[border-radius:16px]" : "[width:48px] [border-radius:13px]"}`}
     >
       {item.image && !placeholder && !failed ? (
         // External album artwork is supplied by Last.fm.
