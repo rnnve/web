@@ -34,6 +34,7 @@ export interface ShapeGridProps {
   opacity?: number;
   backgroundColor?: string;
   paused?: boolean;
+  interactive?: boolean;
   dpr?: number;
   className?: string;
   style?: CSSProperties;
@@ -76,6 +77,7 @@ interface Settings {
   clickCascade: boolean;
   intro: boolean;
   paused: boolean;
+  interactive: boolean;
   dpr?: number;
 }
 interface Cascade {
@@ -413,6 +415,7 @@ export default function ShapeGrid({
   opacity = 1,
   backgroundColor = "transparent",
   paused = false,
+  interactive = true,
   dpr,
   className = "",
   style,
@@ -441,6 +444,7 @@ export default function ShapeGrid({
     clickCascade,
     intro,
     paused,
+    interactive,
     dpr,
   };
   const settingsRef = useRef(settings);
@@ -842,7 +846,12 @@ export default function ShapeGrid({
       return toPlane(x, y);
     };
     const onMove = (event: PointerEvent) => {
-      if (reduce || settingsRef.current.paused) return;
+      if (
+        reduce ||
+        settingsRef.current.paused ||
+        !settingsRef.current.interactive
+      )
+        return;
       const point = pointFrom(event);
       if (point && !state.inside && state.spotPower < 0.02) {
         state.spotX = point[0];
@@ -863,7 +872,7 @@ export default function ShapeGrid({
     };
     const onDown = (event: PointerEvent) => {
       const s = settingsRef.current;
-      if (!s.clickCascade || s.paused || reduce) return;
+      if (!s.interactive || !s.clickCascade || s.paused || reduce) return;
       const point = pointFrom(event);
       if (!point) return;
       state.cascades.push({
