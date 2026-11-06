@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import {
   IconArrowUpRight,
   IconHeadphones,
   IconMusic,
   IconVinyl,
 } from "@tabler/icons-react";
-import { useSiteSettings } from "../components/site-settings-provider";
+import { useSiteSettings } from "../components/settings/site-settings-provider";
 import type { ListenData, ListenItem } from "../lib/lastfm";
+import styles from "./listen-dashboard.module.css";
 function Artwork({
   item,
   large = false,
@@ -52,7 +53,11 @@ function ItemList({
       </p>
     );
   return (
-    <ol className="listen-list [padding:8px_18px] [margin:0] [list-style:none] [border-radius:24px] [background:var(--md-sys-color-surface-container)] [&_li_+_li]:[border-top:1px_solid_var(--line)] [&_li_>_a]:[min-height:74px] [&_li_>_a]:flex [&_li_>_a]:items-center [&_li_>_a]:[gap:14px] [&_li_>_a]:[color:var(--ink)] [&_li_>_a]:[text-decoration:none] [&_li_>_div]:[min-height:74px] [&_li_>_div]:flex [&_li_>_div]:items-center [&_li_>_div]:[gap:14px] [&_li_>_div]:[color:var(--ink)] [&_li_>_div]:[text-decoration:none] max-[651px]:[padding-inline:12px] max-[651px]:[&_li_>_a]:[gap:10px] max-[651px]:[&_li_>_div]:[gap:10px]">
+    <ol
+      data-kind={kind}
+      style={{ "--listen-rows": Math.ceil(items.length / 2) } as CSSProperties}
+      className="listen-list [padding:8px_18px] [margin:0] [list-style:none] [border-radius:24px] [background:var(--md-sys-color-surface-container)] [&_li_>_a]:[min-height:74px] [&_li_>_a]:flex [&_li_>_a]:items-center [&_li_>_a]:[gap:14px] [&_li_>_a]:[color:var(--ink)] [&_li_>_a]:[text-decoration:none] [&_li_>_div]:[min-height:74px] [&_li_>_div]:flex [&_li_>_div]:items-center [&_li_>_div]:[gap:14px] [&_li_>_div]:[color:var(--ink)] [&_li_>_div]:[text-decoration:none] max-[651px]:[padding-inline:12px] max-[651px]:[&_li_>_a]:[gap:10px] max-[651px]:[&_li_>_div]:[gap:10px]"
+    >
       {items.map((entry, index) => {
         const body = (
           <>
@@ -121,7 +126,7 @@ function ListeningSkeleton() {
               },
               (_, index) => (
                 <div
-                  className="listen-skeleton-row [min-height:74px] flex items-center [gap:14px] [.listen-skeleton-row_+_&]:[border-top:1px_solid_var(--line)]"
+                  className="listen-skeleton-row [min-height:74px] flex items-center [gap:14px]"
                   key={index}
                 >
                   <span className="listen-skeleton block [border-radius:8px] [background:linear-gradient(_105deg,_var(--md-sys-color-surface-container-highest)_25%,_var(--md-sys-color-surface-bright)_40%,_var(--md-sys-color-surface-container-highest)_55%_)] [background-size:240%_100%] [animation:listen-skeleton-shimmer_1.6s_ease-in-out_infinite] motion-reduce:[animation:none] listen-skeleton-thumb [width:48px] [height:48px] [flex:0_0_auto] [border-radius:13px]" />
@@ -179,7 +184,7 @@ export default function ListenDashboard() {
   }, []);
   const current = data?.current;
   return (
-    <main className="listen-page [width:min(960px,_calc(100%_-_48px))] [margin:0_auto] [padding:calc(146px_+_env(safe-area-inset-top,_0px))_0_48px] max-[651px]:[width:calc(100%_-_32px)] max-[651px]:[padding-top:calc(120px_+_env(safe-area-inset-top,_0px))]">
+    <main className={`listen-page ${styles.page}`}>
       <header className="listen-heading flex justify-between [align-items:end] [gap:20px] [margin-bottom:36px] [&_h1]:[margin:18px_0_12px] [&_h1]:[font-size:clamp(48px,_8vw,_88px)] [&_h1]:[line-height:1.05] [&_h1]:[font-weight:650] [&_h1]:[letter-spacing:-0.055em] [&_h1_span]:[color:var(--md-sys-color-outline)] [&_p]:[margin:0] [&_p]:[color:var(--ink-soft)] [&_p]:[line-height:1.6] max-[651px]:[align-items:start] max-[651px]:[&_h1]:[font-size:48px]">
         <div className="[min-width:0] [flex:1]">
           <span className="listen-kicker inline-flex items-center [gap:8px] [color:var(--ink-soft)] [font-size:11px] [font-weight:700] [letter-spacing:0.12em]">
@@ -226,7 +231,7 @@ export default function ListenDashboard() {
       )}
       {!data && !error && <ListeningSkeleton />}
       {data && (
-        <>
+        <div className={styles.dashboard}>
           <section
             className={`listen-spotlight grid [grid-template-columns:minmax(140px,_280px)_minmax(0,_1fr)] items-center [gap:clamp(20px,_4vw,_40px)] [padding:clamp(20px,_3vw,_32px)] [border:1px_solid_var(--md-sys-color-outline-variant)] [border-radius:36px] [background:var(--md-sys-color-surface-container-high)] [box-shadow:0_16px_40px_#0003] [&_h2]:[margin:18px_0_8px] [&_h2]:[font-size:clamp(24px,_3.5vw,_38px)] [&_h2]:[line-height:1.15] [&_h2]:[letter-spacing:-0.04em] [&_h2]:[overflow-wrap:anywhere] [&_h2_a]:[color:inherit] [&_h2_a]:[text-decoration:none] [&_h2_a:hover]:[text-decoration:underline] max-[651px]:[grid-template-columns:minmax(88px,_38%)_minmax(0,_1fr)] max-[651px]:[gap:16px] max-[651px]:[padding:16px] max-[651px]:[border-radius:26px] max-[651px]:[&_h2]:[margin-top:12px] max-[651px]:[&_h2]:[font-size:clamp(19px,_5vw,_27px)]${current ? "" : " listen-spotlight--empty"}`}
             aria-labelledby="listen-current"
@@ -354,7 +359,7 @@ export default function ListenDashboard() {
               )}
             </section>
           </div>
-        </>
+        </div>
       )}
       <footer className="listen-footer [margin-top:96px] [padding-top:24px] [border-top:1px_solid_var(--line)] [color:var(--ink-soft)] [font-size:12px]">
         {t("Listening data from Last.fm", "ข้อมูลการฟังจาก Last.fm")}

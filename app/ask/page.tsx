@@ -1,6 +1,6 @@
 import { generatePageMetadata } from "../lib/og/metadata";
 import { IconMessageQuestion } from "@tabler/icons-react";
-import LocalizedText from "../components/localized-text";
+import LocalizedText from "../components/settings/localized-text";
 import AskForm from "./ask-form";
 import styles from "../viewport-pages.module.css";
 export function generateMetadata() {

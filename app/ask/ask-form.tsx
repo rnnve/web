@@ -2,7 +2,7 @@
 
 import { useState, useSyncExternalStore, type FormEvent } from "react";
 import { IconArrowUpRight } from "@tabler/icons-react";
-import { useSiteSettings } from "../components/site-settings-provider";
+import { useSiteSettings } from "../components/settings/site-settings-provider";
 const MAX_LENGTH = 1000;
 const subscribe = () => () => {};
 function alreadySent(key: string) {

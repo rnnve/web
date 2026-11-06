@@ -13,7 +13,7 @@ import {
   parseSettings,
   type Language,
   type SiteSettings,
-} from "../lib/site-settings";
+} from "../../lib/site-settings";
 
 const CHANGE_EVENT = "rynnie-settings-change";
 let snapshot: SiteSettings | undefined;

@@ -1,8 +1,8 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import ExternalLinkIcon from "./external-link-icon";
-import { useSiteSettings } from "./site-settings-provider";
+import ExternalLinkIcon from "../ui/external-link-icon";
+import { useSiteSettings } from "../settings/site-settings-provider";
 import { normalizeRepos, activityCells } from "@/app/lib/github";
 export { FEATURED_REPOSITORY_WHITELIST } from "@/app/config/portfolio";
 type GitHubShowcaseProps = {

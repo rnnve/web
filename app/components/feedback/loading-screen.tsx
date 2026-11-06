@@ -1,11 +1,14 @@
 "use client";
 
 import LoadingMessage from "./loading-message";
-import { useSiteSettings } from "./site-settings-provider";
+import { useSiteSettings } from "../settings/site-settings-provider";
 
 type LoadingScreenProps = {
   overlay?: boolean;
   fading?: boolean;
+  durationMs?: number;
+  heading?: string;
+  message?: string;
 };
 
 const symbolMask =
@@ -20,6 +23,9 @@ const unitColors =
 export default function LoadingScreen({
   overlay = false,
   fading = false,
+  durationMs = 1_500,
+  heading,
+  message,
 }: LoadingScreenProps) {
   const { t } = useSiteSettings();
   const layout =
@@ -27,7 +33,7 @@ export default function LoadingScreen({
   const content = (
     <>
       <div
-        className="pointer-events-none absolute inset-0 -z-10 bg-[url('/loading-pattern.svg')] opacity-35 [contain:strict]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[url('/loading-pattern.svg')] opacity-35 [contain:strict] [animation:loading-pattern-drift_3s_linear_infinite] motion-reduce:[animation:none]"
         aria-hidden="true"
       />
       <section
@@ -49,7 +55,10 @@ export default function LoadingScreen({
           <span className={symbolMask}>
             <span
               className="absolute inset-0 [animation:loading-symbol-fill_1.5s_ease-in-out_both] [will-change:clip-path] motion-reduce:[animation:none]"
-              style={{ backgroundImage: unitColors }}
+              style={{
+                backgroundImage: unitColors,
+                animationDuration: `${durationMs}ms`,
+              }}
             />
           </span>
         </div>
@@ -57,9 +66,15 @@ export default function LoadingScreen({
           <h2
             className={`m-0 leading-[1.05] tracking-[-0.045em] text-(--md-sys-color-on-surface) ${overlay ? "text-[clamp(23px,3.4vw,34px)]" : "text-[clamp(25px,4vw,38px)]"}`}
           >
-            {t("Loading into My Sekai", "กำลังเข้าสู่ My Sekai")}
+            {heading ?? t("Loading into My Sekai", "กำลังเข้าสู่ My Sekai")}
           </h2>
-          <LoadingMessage />
+          {message ? (
+            <p className="m-0 mt-[11px] text-sm italic text-(--ink-soft) [overflow-wrap:anywhere]">
+              {message}
+            </p>
+          ) : (
+            <LoadingMessage />
+          )}
         </div>
       </section>
     </>

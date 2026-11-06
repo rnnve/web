@@ -1,5 +1,5 @@
-import ShapeGrid from "./shape-grid";
-import FallingStars from "./falling-stars";
+import ShapeGrid from "../effects/shape-grid";
+import FallingStars from "../effects/falling-stars";
 
 export default function SiteBackground() {
   return (

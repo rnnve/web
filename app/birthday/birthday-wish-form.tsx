@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { IconLock } from "@tabler/icons-react";
 import styles from "../viewport-pages.module.css";
 import AskForm from "../ask/ask-form";
-import { useSiteSettings } from "../components/site-settings-provider";
+import { useSiteSettings } from "../components/settings/site-settings-provider";
 import { getBirthdayWishWindow } from "../lib/birthday";
 
 export default function BirthdayWishForm() {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSiteSettings } from "./site-settings-provider";
+import { useSiteSettings } from "../settings/site-settings-provider";
 import { StatusIcon } from "./status-icon";
 import { useEffect, useState } from "react";
 import type { SpotifyView } from "@/app/lib/status-types";

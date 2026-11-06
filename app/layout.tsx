@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import RouteShell from "./components/route-shell";
-import SiteFooter from "./components/site-footer";
+import RouteShell from "./components/layout/route-shell";
+import SiteFooter from "./components/layout/site-footer";
 import favicon from "./icon.webp";
 import "./globals.css";
 import { HOME_CONTENT, SITE_URL } from "./lib/og/resolver";

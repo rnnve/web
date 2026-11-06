@@ -1,8 +1,8 @@
 "use client";
 
 import { memo, type ReactNode } from "react";
-import LogoLoop from "./logo-loop";
-import { useSiteSettings } from "./site-settings-provider";
+import LogoLoop from "../effects/logo-loop";
+import { useSiteSettings } from "../settings/site-settings-provider";
 type Tool = {
   name: string;
   href: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import LoadingScreen from "./components/loading-screen";
+import LoadingScreen from "./components/feedback/loading-screen";
 const PageReadyContext = createContext(false);
 export function usePageReady() {
   return useContext(PageReadyContext);

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useSiteSettings } from "./site-settings-provider";
+import { useSiteSettings } from "../settings/site-settings-provider";
 import { StatusIcon } from "./status-icon";
 import type { DiscordProfile } from "@/app/lib/status-types";
 export default function DiscordWidget({

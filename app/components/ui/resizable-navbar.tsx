@@ -6,8 +6,8 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useId, useRef } from "react";
-import { useSiteSettings } from "../site-settings-provider";
-import ShapeGrid from "../shape-grid";
+import { useSiteSettings } from "../settings/site-settings-provider";
+import ShapeGrid from "../effects/shape-grid";
 
 function NavbarBackground() {
   return (
@@ -18,6 +18,7 @@ function NavbarBackground() {
       <ShapeGrid
         shape="cross"
         lineColor="#cecece"
+        speed={0.25}
         interactive={false}
         clickCascade={false}
         fade={0}

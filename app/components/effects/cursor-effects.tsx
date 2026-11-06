@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useSyncExternalStore } from "react";
-import { usePageReady } from "../page-transition";
+import { usePageReady } from "../../page-transition";
 const TargetCursor = dynamic(() => import("./target-cursor"), {
   ssr: false,
 });

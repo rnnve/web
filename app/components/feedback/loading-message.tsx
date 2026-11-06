@@ -1,6 +1,6 @@
 "use client";
 
-import { useSiteSettings } from "./site-settings-provider";
+import { useSiteSettings } from "../settings/site-settings-provider";
 
 export default function LoadingMessage() {
   const { t } = useSiteSettings();

@@ -1,0 +1,428 @@
+:global(.page-transition-content):has(> .page) {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-height: 0;
+}
+
+.page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  width: min(1440px, calc(100% - 48px));
+  margin-inline: auto;
+  padding: calc(104px + env(safe-area-inset-top, 0px)) 0 0;
+}
+
+.page :global(.listen-heading) {
+  margin: 0;
+  gap: 12px;
+}
+
+.page :global(.listen-heading) h1 {
+  margin: 4px 0;
+  font-size: clamp(28px, 3vw, 36px);
+}
+
+.page :global(.listen-heading) p {
+  font-size: 12px;
+}
+
+.page :global(.listen-profile) {
+  padding: 10px 14px;
+}
+
+.dashboard {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 10px 16px;
+}
+
+.dashboard :global(.listen-spotlight) {
+  grid-column: 1 / 3;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 18px;
+  padding: 12px 16px;
+  border-radius: 24px;
+  box-shadow: none;
+}
+
+.dashboard :global(.listen-spotlight--empty) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.dashboard :global(.listen-spotlight-copy) {
+  line-height: 1.2;
+}
+
+.dashboard :global(.listen-spotlight) h2 {
+  margin: 6px 0 4px;
+  font-size: 24px;
+}
+
+.dashboard :global(.listen-artist),
+.dashboard :global(.listen-album) {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.dashboard :global(.listen-live) {
+  line-height: 1.2;
+}
+
+.dashboard :global(.listen-total) {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: end;
+  text-align: right;
+  margin: 0;
+  font-size: 11px;
+}
+
+.dashboard :global(.listen-section) {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  margin: 0;
+}
+
+.dashboard > :global(.listen-section),
+.dashboard > :global(.listen-columns) {
+  grid-row: 2;
+}
+
+.dashboard :global(.listen-columns) {
+  grid-column: 2 / -1;
+  min-height: 0;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dashboard :global(.listen-section-heading) {
+  margin: 0;
+  line-height: 1;
+}
+
+.dashboard :global(.listen-section-heading) span {
+  display: block;
+  line-height: 1.2;
+}
+
+.dashboard :global(.listen-section-heading) h2 {
+  margin: 3px 0 0;
+  font-size: 20px;
+}
+
+.dashboard :global(.listen-section-heading) p {
+  display: none;
+}
+
+.dashboard :global(.listen-list) {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  grid-auto-rows: minmax(0, 1fr);
+  padding: 4px 10px;
+  border-radius: 18px;
+}
+
+.dashboard :global(.listen-list) li {
+  min-height: 0;
+}
+
+.dashboard :global(.listen-list) li > a,
+.dashboard :global(.listen-list) li > div {
+  height: 100%;
+  min-height: 0;
+  gap: 8px;
+}
+
+.dashboard :global(.listen-list) :global(.listen-art) {
+  width: clamp(20px, 3dvh, 28px);
+  border-radius: 8px;
+}
+
+.dashboard :global(.listen-rank) {
+  width: 16px;
+  font-size: 9px;
+}
+
+.dashboard :global(.listen-item-copy) {
+  gap: 2px;
+}
+
+.dashboard :global(.listen-item-copy) small {
+  line-height: 1;
+}
+
+.dashboard :global(.listen-item-copy) strong {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.dashboard :global(.listen-item-copy) small,
+.dashboard :global(.listen-item-meta) {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.page :global(.listen-footer) {
+  margin: 0;
+  padding: 6px 0 0;
+  font-size: 10px;
+}
+
+.page > [role="status"] {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+:global(.page-transition-content):has(> .page) > :global(.site-footer) {
+  min-height: 48px;
+  margin-block: 6px max(8px, env(safe-area-inset-bottom, 0px));
+  padding: 4px 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+@media (max-width: 700px) {
+  .page {
+    width: calc(100% - 32px);
+    padding-top: calc(96px + env(safe-area-inset-top, 0px));
+    gap: 8px;
+  }
+
+  .page :global(.listen-heading) h1 {
+    font-size: 28px;
+  }
+
+  .page :global(.listen-heading) p,
+  .page :global(.listen-kicker) {
+    display: none;
+  }
+
+  .dashboard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .dashboard :global(.listen-total) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    text-align: left;
+  }
+
+  .dashboard > :global(.listen-section),
+  .dashboard > :global(.listen-columns) {
+    grid-row: 3;
+  }
+
+  .dashboard :global(.listen-spotlight) {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 18px;
+  }
+
+  .dashboard :global(.listen-spotlight) h2 {
+    margin: 4px 0;
+    font-size: 19px;
+  }
+
+  .dashboard :global(.listen-live) {
+    font-size: 9px;
+  }
+
+  .dashboard :global(.listen-columns) {
+    grid-column: 2;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .dashboard :global(.listen-section-heading) h2 {
+    font-size: 15px;
+  }
+
+  .dashboard :global(.listen-section-heading) span {
+    font-size: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .dashboard :global(.listen-list) {
+    padding: 3px 6px;
+    border-radius: 12px;
+  }
+
+  .dashboard :global(.listen-list) li > a,
+  .dashboard :global(.listen-list) li > div {
+    gap: 4px;
+  }
+
+  .dashboard :global(.listen-list) :global(.listen-art) {
+    width: 22px;
+    border-radius: 5px;
+  }
+
+  .dashboard :global(.listen-rank) {
+    width: 12px;
+    font-size: 8px;
+  }
+
+  .dashboard :global(.listen-item-copy) strong {
+    font-size: 10px;
+  }
+
+  .dashboard :global(.listen-item-copy) small,
+  .dashboard :global(.listen-item-meta) {
+    font-size: 8px;
+  }
+}
+
+@media (max-height: 700px) {
+  .page {
+    gap: 8px;
+  }
+
+  .page :global(.listen-heading) p,
+  .page :global(.listen-kicker) {
+    display: none;
+  }
+
+  .dashboard :global(.listen-section-heading) > div > span {
+    display: none;
+  }
+
+  .dashboard :global(.listen-spotlight) {
+    padding-block: 8px;
+  }
+
+  .page :global(.listen-profile) {
+    padding-block: 6px;
+  }
+
+  :global(.page-transition-content):has(> .page) > :global(.site-footer) {
+    min-height: 36px;
+  }
+
+  :global(.page-transition-content):has(> .page) > :global(.site-footer) nav a {
+    min-height: 28px;
+  }
+}
+
+@media (max-width: 700px) and (max-height: 700px) {
+  .dashboard :global(.listen-artist) {
+    display: inline;
+    margin-right: 8px;
+  }
+
+  .dashboard :global(.listen-album) {
+    display: inline-flex;
+  }
+
+  .dashboard :global(.listen-list) :global(.listen-art) {
+    width: 16px;
+  }
+
+  .dashboard :global(.listen-item-copy) {
+    gap: 1px;
+  }
+
+  .dashboard :global(.listen-item-copy) strong {
+    font-size: 9px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .dashboard {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .dashboard :global(.listen-spotlight) {
+    grid-column: 1 / 3;
+  }
+
+  .dashboard :global(.listen-total) {
+    grid-column: 3 / -1;
+  }
+
+  .dashboard > :global(.listen-section) {
+    grid-column: 1 / 3;
+  }
+
+  .dashboard :global(.listen-columns) {
+    grid-column: 3 / -1;
+    gap: 20px;
+  }
+
+  .dashboard :global(.listen-list)[data-kind="recent"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(var(--listen-rows), minmax(0, 1fr));
+    grid-auto-flow: column;
+    column-gap: 16px;
+  }
+
+  .dashboard :global(.listen-list) {
+    padding: 8px 12px;
+  }
+
+  .dashboard :global(.listen-list) :global(.listen-art) {
+    width: 32px;
+  }
+
+  .dashboard :global(.listen-item-copy) {
+    gap: 4px;
+  }
+
+  .dashboard :global(.listen-item-copy) strong {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .dashboard :global(.listen-item-copy) small,
+  .dashboard :global(.listen-item-meta) {
+    font-size: 11px;
+    line-height: 1.2;
+  }
+}
+
+@media (max-width: 1099px) and (min-height: 780px) {
+  .dashboard :global(.listen-list) {
+    padding: 6px 8px;
+  }
+
+  .dashboard :global(.listen-list) li > a,
+  .dashboard :global(.listen-list) li > div {
+    gap: 6px;
+  }
+
+  .dashboard :global(.listen-list) :global(.listen-art) {
+    width: 28px;
+    border-radius: 8px;
+  }
+
+  .dashboard :global(.listen-item-copy) {
+    gap: 3px;
+  }
+
+  .dashboard :global(.listen-item-copy) strong {
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .dashboard :global(.listen-item-copy) small,
+  .dashboard :global(.listen-item-meta) {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+}

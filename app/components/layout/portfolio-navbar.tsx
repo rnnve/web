@@ -11,11 +11,11 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MotionConfig } from "motion/react";
-import ExternalLinkIcon from "./external-link-icon";
+import ExternalLinkIcon from "../ui/external-link-icon";
 import useRandomProfileImage from "./use-random-profile-image";
-import LanguageSwitcher from "./language-switcher";
-import { useSiteSettings } from "./site-settings-provider";
-import { usePageReady } from "../page-transition";
+import LanguageSwitcher from "../settings/language-switcher";
+import { useSiteSettings } from "../settings/site-settings-provider";
+import { usePageReady } from "../../page-transition";
 import {
   Navbar,
   NavBody,
@@ -26,7 +26,7 @@ import {
   MobileNavToggle,
   NavbarLogo,
   NavbarButton,
-} from "./ui/resizable-navbar";
+} from "../ui/resizable-navbar";
 const subscribeToMount = () => () => {};
 const clientMounted = () => true;
 const serverMounted = () => false;

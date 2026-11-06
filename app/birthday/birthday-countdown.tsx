@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import Counter from "../components/counter";
+import Counter from "../components/ui/counter";
 import { getBirthdayCountdown } from "../lib/birthday";
 import { usePageReady } from "../page-transition";
-import { useSiteSettings } from "../components/site-settings-provider";
+import { useSiteSettings } from "../components/settings/site-settings-provider";
 type Countdown = ReturnType<typeof getBirthdayCountdown>;
 const units = ["days", "hours", "minutes", "seconds"] as const;
 export default function BirthdayCountdown() {

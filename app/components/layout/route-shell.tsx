@@ -10,5 +10,12 @@ const PortfolioShell = dynamic(() => import("./portfolio-shell"));
 export default function RouteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   if (pathname === "/newtab" || pathname === "/nt") return children;
+  if (
+    pathname === "/redirect" ||
+    pathname.startsWith("/redirect/") ||
+    pathname === "/r" ||
+    pathname.startsWith("/r/")
+  )
+    return <div className="[&_.site-footer]:hidden">{children}</div>;
   return <PortfolioShell>{children}</PortfolioShell>;
 }

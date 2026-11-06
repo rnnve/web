@@ -1,6 +1,6 @@
 import { generatePageMetadata } from "../lib/og/metadata";
 import { IconCake } from "@tabler/icons-react";
-import LocalizedText from "../components/localized-text";
+import LocalizedText from "../components/settings/localized-text";
 import BirthdayCountdown from "./birthday-countdown";
 import BirthdayWishForm from "./birthday-wish-form";
 import styles from "../viewport-pages.module.css";

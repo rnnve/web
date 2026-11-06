@@ -1,16 +1,16 @@
 "use client";
 
-import WidgetPreloads from "./components/widget-preloads";
-import AgeCalculator from "./components/age-calculator";
-import Stacks from "./components/stacks";
-import GitHubShowcase from "./components/github-showcase";
-import SectionRevealController from "./components/section-reveal-controller";
-import DiscordWidget from "./components/discord-widget";
-import SpotifyWidget from "./components/spotify-widget";
-import { StatusIcon } from "./components/status-icon";
+import WidgetPreloads from "./components/status/widget-preloads";
+import AgeCalculator from "./components/home/age-calculator";
+import Stacks from "./components/home/stacks";
+import GitHubShowcase from "./components/status/github-showcase";
+import SectionRevealController from "./components/effects/section-reveal-controller";
+import DiscordWidget from "./components/status/discord-widget";
+import SpotifyWidget from "./components/status/spotify-widget";
+import { StatusIcon } from "./components/status/status-icon";
 import usePortfolioStatus from "./hooks/use-portfolio-status";
 import { BIRTH_DATE } from "./lib/birthday";
-import { useSiteSettings } from "./components/site-settings-provider";
+import { useSiteSettings } from "./components/settings/site-settings-provider";
 export default function Home() {
   const { language, t } = useSiteSettings();
   const {
@@ -111,7 +111,7 @@ export default function Home() {
           </div>
         </div>
         <a
-          className="scrollCue absolute [left:50%] [bottom:20px] grid [justify-items:center] [gap:8px] [color:var(--md-sys-color-on-secondary-container)] [font-size:11px] [font-weight:750] [text-decoration:none] [transform:translateX(-50%)] [min-height:40px] [padding:0_16px] [grid-auto-flow:column] [place-items:center] [border-radius:20px] [background:var(--md-sys-color-secondary-container)] [&_svg]:[rotate:90deg] [&_svg]:[animation:scroll-cue_1.5s_ease-in-out_infinite] max-[761px]:relative max-[761px]:[left:auto] max-[761px]:[bottom:auto] max-[761px]:[width:max-content] max-[761px]:[margin:28px_auto_0] max-[761px]:[transform:none] [@media(min-width:_761px)_and_(max-height:_650px)]:[bottom:9px] motion-reduce:[&_svg]:[animation:none]! max-[761px]:[.root-empty_&]:static max-[761px]:[.root-empty_&]:[flex-shrink:0] max-[761px]:[.root-empty_&]:[width:max-content] max-[761px]:[.root-empty_&]:[margin:28px_auto_0] max-[761px]:[.root-empty_&]:[transform:none]"
+          className="scrollCue absolute [left:50%] [bottom:20px] grid [justify-items:center] [gap:8px] [color:var(--md-sys-color-on-secondary-container)] [font-size:11px] [font-weight:750] [text-decoration:none] [transform:translateX(-50%)] [min-height:40px] [padding:4px_16px] [place-items:center] [&_svg]:[rotate:90deg] max-[761px]:relative max-[761px]:[left:auto] max-[761px]:[bottom:auto] max-[761px]:[width:max-content] max-[761px]:[margin:28px_auto_0] max-[761px]:[transform:none] [@media(min-width:_761px)_and_(max-height:_650px)]:[bottom:9px] max-[761px]:[.root-empty_&]:static max-[761px]:[.root-empty_&]:[flex-shrink:0] max-[761px]:[.root-empty_&]:[width:max-content] max-[761px]:[.root-empty_&]:[margin:28px_auto_0] max-[761px]:[.root-empty_&]:[transform:none]"
           href="#more"
         >
           <span>{t("Scroll for more", "เลื่อนเพื่อดูเพิ่มเติม")}</span>

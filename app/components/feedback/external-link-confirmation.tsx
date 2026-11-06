@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSiteSettings } from "./site-settings-provider";
-import ExternalLinkIcon from "./external-link-icon";
+import { useSiteSettings } from "../settings/site-settings-provider";
+import ExternalLinkIcon from "../ui/external-link-icon";
 type PendingLink = {
   href: string;
   target: string;
