@@ -181,7 +181,7 @@ export default function ListenDashboard() {
   return (
     <main className="listen-page [width:min(960px,_calc(100%_-_48px))] [margin:0_auto] [padding:calc(146px_+_env(safe-area-inset-top,_0px))_0_48px] max-[651px]:[width:calc(100%_-_32px)] max-[651px]:[padding-top:calc(120px_+_env(safe-area-inset-top,_0px))]">
       <header className="listen-heading flex justify-between [align-items:end] [gap:20px] [margin-bottom:36px] [&_h1]:[margin:18px_0_12px] [&_h1]:[font-size:clamp(48px,_8vw,_88px)] [&_h1]:[line-height:1.05] [&_h1]:[font-weight:650] [&_h1]:[letter-spacing:-0.055em] [&_h1_span]:[color:var(--md-sys-color-outline)] [&_p]:[margin:0] [&_p]:[color:var(--ink-soft)] [&_p]:[line-height:1.6] max-[651px]:[align-items:start] max-[651px]:[&_h1]:[font-size:48px]">
-        <div>
+        <div className="[min-width:0] [flex:1]">
           <span className="listen-kicker inline-flex items-center [gap:8px] [color:var(--ink-soft)] [font-size:11px] [font-weight:700] [letter-spacing:0.12em]">
             <IconHeadphones size={16} />{" "}
             {t("A LITTLE LISTENING LOG", "บันทึกเพลงที่ฟัง")}
