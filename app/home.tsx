@@ -39,7 +39,7 @@ export default function Home() {
               <h1>{t("Hey, I’m Rynnie.", "สวัสดี เราชื่อ Rynnie")}</h1>
             </div>
           </div>
-          <article className="glassCard overflow-hidden [border:0] [background:var(--md-sys-color-surface-container)] [box-shadow:none] [backdrop-filter:none] [border-radius:var(--md-shape-extra-large)] [-webkit-backdrop-filter:none] [.root-empty_&]:[border:0] [.root-empty_&]:[border-radius:var(--md-shape-extra-large)] [.root-empty_&]:[background:var(--md-sys-color-surface-container)] [.root-empty_&]:[box-shadow:none] [.root-empty_&]:[-webkit-backdrop-filter:none] [.root-empty_&]:[backdrop-filter:none] aboutCard [grid-column:1_/_-1] [min-height:132px] [padding:28px] flex flex-col justify-center [border-radius:var(--md-shape-extra-large)] [border:0] [background:var(--md-sys-color-surface-container)] [box-shadow:none] [backdrop-filter:none] [&_h1]:[max-width:440px] [&_h1]:[margin:8px_0_12px] [&_h1]:[font-size:clamp(27px,_3vw,_40px)] [&_h1]:[line-height:1.02] [&_h1]:[letter-spacing:-1.7px] [&_>_p:last-child]:[width:100%] [&_>_p:last-child]:[max-width:none] [&_>_p:last-child]:[margin:0] [&_>_p:last-child]:[color:var(--md-sys-color-on-surface-variant)] [&_>_p:last-child]:[font-size:14px] [&_>_p:last-child]:[line-height:1.65] [&_strong]:[color:var(--md-sys-color-on-surface)] [&_strong]:[font-weight:650] [&_a]:[color:var(--md-sys-color-on-surface)] [&_a]:[font-weight:650] [&_a]:[text-decoration-color:var(--md-sys-color-primary)] [&_a]:[text-underline-offset:3px] [&_a]:[transition:text-decoration-color_0.2s_ease] [&_a]:[text-decoration-thickness:2px] [&_a:hover]:[text-decoration-color:#fff] min-[761px]:[&_>_p:last-child]:[font-size:14px] max-[761px]:[grid-column:auto] max-[761px]:[padding:24px] [@media(min-width:_761px)_and_(max-height:_650px)]:[min-height:96px] [@media(min-width:_761px)_and_(max-height:_650px)]:[padding:18px_30px] [.root-empty_&]:[border:0] [.root-empty_&]:[border-radius:var(--md-shape-extra-large)] [.root-empty_&]:[background:var(--md-sys-color-surface-container)] [.root-empty_&]:[box-shadow:none] [.root-empty_&]:[-webkit-backdrop-filter:none] [.root-empty_&]:[backdrop-filter:none] [.root-empty_&]:relative [.root-empty_&]:[top:-35px] [.root-empty_&]:[min-height:132px] [.root-empty_&]:[padding:28px] [.root-empty_&_>_p:last-child]:[color:var(--md-sys-color-on-surface-variant)] [.root-empty_&_>_p:last-child]:[font-size:14px] max-[761px]:[.root-empty_&]:[top:0] max-[761px]:[.root-empty_&]:[min-height:0] max-[761px]:[.root-empty_&]:[padding:22px]">
+          <article className="glassCard overflow-hidden [border:0] [background:var(--md-sys-color-surface-container)] [box-shadow:none] [backdrop-filter:none] [border-radius:var(--md-shape-medium)] [-webkit-backdrop-filter:none] [.root-empty_&]:[border:0] [.root-empty_&]:[border-radius:var(--md-shape-medium)] [.root-empty_&]:[background:var(--md-sys-color-surface-container)] [.root-empty_&]:[box-shadow:none] [.root-empty_&]:[-webkit-backdrop-filter:none] [.root-empty_&]:[backdrop-filter:none] aboutCard [grid-column:1_/_-1] [min-height:132px] [padding:28px] flex flex-col justify-center [border-radius:var(--md-shape-medium)] [border:0] [background:var(--md-sys-color-surface-container)] [box-shadow:none] [backdrop-filter:none] [&_h1]:[max-width:440px] [&_h1]:[margin:8px_0_12px] [&_h1]:[font-size:clamp(27px,_3vw,_40px)] [&_h1]:[line-height:1.02] [&_h1]:[letter-spacing:-1.7px] [&_>_p:last-child]:[width:100%] [&_>_p:last-child]:[max-width:72ch] [&_>_p:last-child]:[margin:0] [&_>_p:last-child]:[color:var(--md-sys-color-on-surface-variant)] [&_>_p:last-child]:[font-size:16px] [&_>_p:last-child]:[line-height:1.75] [&_strong]:[color:var(--md-sys-color-on-surface)] [&_strong]:[font-weight:650] [&_a]:[color:var(--md-sys-color-on-surface)] [&_a]:[font-weight:650] [&_a]:[text-decoration-color:var(--md-sys-color-primary)] [&_a]:[text-underline-offset:3px] [&_a]:[transition:text-decoration-color_0.2s_ease] [&_a]:[text-decoration-thickness:2px] [&_a:hover]:[text-decoration-color:#fff] min-[761px]:[&_>_p:last-child]:[font-size:16px] max-[761px]:[grid-column:auto] max-[761px]:[padding:24px] [@media(min-width:_761px)_and_(max-height:_650px)]:[min-height:96px] [@media(min-width:_761px)_and_(max-height:_650px)]:[padding:18px_30px] [.root-empty_&]:[border:0] [.root-empty_&]:[border-radius:var(--md-shape-medium)] [.root-empty_&]:[background:var(--md-sys-color-surface-container)] [.root-empty_&]:[box-shadow:none] [.root-empty_&]:[-webkit-backdrop-filter:none] [.root-empty_&]:[backdrop-filter:none] [.root-empty_&]:relative [.root-empty_&]:[top:-35px] [.root-empty_&]:[min-height:132px] [.root-empty_&]:[padding:28px] [.root-empty_&_>_p:last-child]:[color:var(--md-sys-color-on-surface-variant)] [.root-empty_&_>_p:last-child]:[font-size:16px] max-[761px]:[.root-empty_&]:[top:0] max-[761px]:[.root-empty_&]:[min-height:0] max-[761px]:[.root-empty_&]:[padding:22px]">
             <p>
               {language === "th" ? (
                 <>
@@ -62,17 +62,18 @@ export default function Home() {
                 <>
                   I&apos;m a{" "}
                   <strong>
-                    <AgeCalculator birthDate={BIRTH_DATE} /> years old Semi-Full
+                    <AgeCalculator birthDate={BIRTH_DATE} /> year old Semi-Full
                     Stack Developer
                   </strong>
-                  . I mostly works on <strong>Discord bots and Web</strong>, I
-                  also can design a little bit. My projects are mostly on my{" "}
+                  . I mainly build <strong>Discord bots and websites</strong>,
+                  with a little design work too. You can find most of my
+                  projects on my{" "}
                   <a
                     href="https://github.com/rnnve"
                     target="_blank"
                     rel="noreferrer"
                   >
-                    Github profile
+                    GitHub profile
                   </a>
                   .
                 </>
@@ -85,7 +86,7 @@ export default function Home() {
           >
             {spotifyLoading ? (
               <div
-                className="homeStatusSkeleton [min-height:104px] [border:1px_solid_var(--glass-line)] [border-radius:20px] [background:linear-gradient(_110deg,_color-mix(in_srgb,_var(--surface)_34%,_transparent)_20%,_color-mix(in_srgb,_var(--purple-soft)_52%,_transparent)_35%,_color-mix(in_srgb,_var(--surface)_34%,_transparent)_50%_)] [background-size:250%_100%] [animation:shimmer_1.5s_linear_infinite] [@media(min-width:_761px)_and_(max-height:_650px)]:[min-height:92px] motion-reduce:[animation:none]!"
+                className="homeStatusSkeleton [min-height:104px] [border:1px_solid_var(--glass-line)] [border-radius:var(--md-shape-medium)] [background:linear-gradient(_110deg,_color-mix(in_srgb,_var(--surface)_34%,_transparent)_20%,_color-mix(in_srgb,_var(--purple-soft)_52%,_transparent)_35%,_color-mix(in_srgb,_var(--surface)_34%,_transparent)_50%_)] [background-size:250%_100%] [animation:shimmer_1.5s_linear_infinite] [@media(min-width:_761px)_and_(max-height:_650px)]:[min-height:92px] motion-reduce:[animation:none]!"
                 aria-label="Loading Spotify status"
               />
             ) : (
@@ -98,7 +99,7 @@ export default function Home() {
             )}
             {discordLoading ? (
               <div
-                className="homeStatusSkeleton [min-height:104px] [border:1px_solid_var(--glass-line)] [border-radius:20px] [background:linear-gradient(_110deg,_color-mix(in_srgb,_var(--surface)_34%,_transparent)_20%,_color-mix(in_srgb,_var(--purple-soft)_52%,_transparent)_35%,_color-mix(in_srgb,_var(--surface)_34%,_transparent)_50%_)] [background-size:250%_100%] [animation:shimmer_1.5s_linear_infinite] [@media(min-width:_761px)_and_(max-height:_650px)]:[min-height:92px] motion-reduce:[animation:none]!"
+                className="homeStatusSkeleton [min-height:104px] [border:1px_solid_var(--glass-line)] [border-radius:var(--md-shape-medium)] [background:linear-gradient(_110deg,_color-mix(in_srgb,_var(--surface)_34%,_transparent)_20%,_color-mix(in_srgb,_var(--purple-soft)_52%,_transparent)_35%,_color-mix(in_srgb,_var(--surface)_34%,_transparent)_50%_)] [background-size:250%_100%] [animation:shimmer_1.5s_linear_infinite] [@media(min-width:_761px)_and_(max-height:_650px)]:[min-height:92px] motion-reduce:[animation:none]!"
                 aria-label="Loading Discord status"
               />
             ) : (
