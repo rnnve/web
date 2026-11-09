@@ -16,7 +16,7 @@ My personal website: a portfolio, live listening activity, synchronized lyrics, 
 | `/newtab`   | Clock, search, shortcuts, and a video wallpaper for a browser start page.                                     |
 | `/redirect` | Redirect screen for named destinations or a URL supplied through `?url=`.                                     |
 
-The portfolio supports English and Thai, with a compact navigation rail on the left on desktop and a dock at the bottom on mobile. Only the current page has a background highlight; other icons brighten on hover. Page changes have no fade or slide animation. Background and cursor effects respect motion preferences.
+The portfolio uses a custom glassmorphism theme with translucent panels, fine borders, Geist typography, and plain CSS controls. It supports English and Thai, with a compact navigation rail on the left on desktop and a dock at the bottom on mobile. Only the current page has a background highlight; other icons brighten on hover. Page changes have no fade or slide animation. Background and cursor effects respect motion preferences.
 
 ## Development
 
