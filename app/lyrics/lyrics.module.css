@@ -1,0 +1,246 @@
+.page {
+  width: min(1120px, calc(100% - 48px));
+  margin: auto;
+  padding: calc(128px + env(safe-area-inset-top, 0px)) 0 48px;
+  color: var(--md-sys-color-on-surface);
+}
+
+.header {
+  margin-bottom: 40px;
+}
+.kicker {
+  color: var(--md-sys-color-primary);
+  font-size: 13px;
+}
+.header h1 {
+  margin: 12px 0;
+  font-size: clamp(30px, 4vw, 48px);
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+}
+.header p,
+.album,
+.time,
+.note,
+.credit {
+  color: var(--md-sys-color-on-surface-variant);
+}
+.header p {
+  margin: 0;
+  font-size: 15px;
+}
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: 64px;
+  align-items: start;
+}
+.track {
+  min-width: 0;
+}
+.artwork {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  margin-bottom: 28px;
+  border-radius: 20px;
+  overflow: hidden;
+  color: var(--md-sys-color-primary);
+  background: var(--md-sys-color-surface-container-high);
+}
+.artwork img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.track h2 {
+  margin: 10px 0 8px;
+  font-size: 27px;
+  line-height: 1.25;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.artist {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+.album {
+  margin: 0;
+  font-size: 13px;
+}
+.progress {
+  margin-top: 28px;
+  height: 4px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--md-sys-color-surface-container-highest);
+}
+.progress span {
+  display: block;
+  height: 100%;
+  background: var(--md-sys-color-primary);
+}
+.time {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.spotify,
+.credit a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: var(--md-sys-color-primary);
+}
+.spotify {
+  margin-top: 24px;
+  font-size: 13px;
+}
+.lyricsPanel {
+  min-width: 0;
+  background: var(--md-sys-color-surface-container);
+  border-radius: 24px;
+  overflow: hidden;
+}
+.toolbar {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 24px;
+  font-size: 13px;
+}
+.toolbar button,
+.message button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+  font-size: 12px;
+}
+.toolbar button[aria-pressed="true"] {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+.message button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+.lines {
+  position: relative;
+  height: min(56svh, 540px);
+  min-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 80px 32px 180px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-sys-color-outline-variant) transparent;
+}
+.lines p {
+  margin: 0 0 24px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: clamp(22px, 2.7vw, 32px);
+  font-weight: 550;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  transition: color 200ms ease;
+}
+.lines p.active {
+  color: var(--md-sys-color-primary);
+}
+.lines p.plain {
+  white-space: pre-wrap;
+  color: var(--md-sys-color-on-surface);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.8;
+}
+.message,
+.idle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+  padding: 48px 24px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.message {
+  min-height: 360px;
+}
+.message p,
+.idle p {
+  margin: 0;
+  line-height: 1.7;
+}
+.idle {
+  min-height: 50svh;
+  border-radius: 24px;
+  background: var(--md-sys-color-surface-container);
+}
+.idle h2 {
+  margin: 0;
+  font-size: 24px;
+  color: var(--md-sys-color-on-surface);
+}
+.note {
+  padding: 0 24px;
+  font-size: 12px;
+}
+.credit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 18px;
+  font-size: 12px;
+}
+@media (max-width: 700px) {
+  .page {
+    width: calc(100% - 32px);
+    padding-top: calc(112px + env(safe-area-inset-top, 0px));
+  }
+  .header {
+    margin-bottom: 28px;
+  }
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .artwork {
+    float: left;
+    width: 100px;
+    margin: 0 20px 16px 0;
+    border-radius: 14px;
+  }
+  .track h2 {
+    font-size: 22px;
+  }
+  .progress {
+    clear: both;
+  }
+  .lines {
+    padding-inline: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lines p {
+    transition: none;
+  }
+}
