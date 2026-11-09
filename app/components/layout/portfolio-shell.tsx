@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import "@fontsource-variable/google-sans";
 import PageTransition from "../../page-transition";
 import SiteBackground from "./site-background";
 import PortfolioNavbar from "./portfolio-navbar";
