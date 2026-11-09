@@ -1,11 +1,14 @@
 export type LyricsRecord = {
-  id: number;
+  id: number | string;
   instrumental: boolean;
   plainLyrics: string | null;
   syncedLyrics: string | null;
+  lines?: LyricLine[];
+  source?: "lrclib" | "spicy_lyrics" | "apple_music" | "spotify" | "unknown";
+  contributors?: { role: "uploader" | "maker"; name: string; url?: string }[];
 };
 
-export type LyricLine = { time: number; text: string };
+export type LyricLine = { time: number; text: string; endTime?: number };
 
 // LRC can repeat timestamps on a line and declare a global offset in ms.
 export function parseSyncedLyrics(source: string): LyricLine[] {
@@ -32,5 +35,16 @@ export function parseSyncedLyrics(source: string): LyricLine[] {
 export function activeLyricIndex(lines: LyricLine[], progress: number): number {
   let index = -1;
   for (let i = 0; i < lines.length && lines[i].time <= progress; i++) index = i;
-  return index;
+  return index >= 0 &&
+    lines[index].endTime !== undefined &&
+    progress >= lines[index].endTime!
+    ? -1
+    : index;
+}
+
+export function spotifyTrackId(url: string): string | null {
+  const match = url.match(
+    /^https:\/\/open\.spotify\.com\/(?:intl-[a-z]+\/)?track\/([A-Za-z0-9]{22})(?:[?#].*)?$/,
+  );
+  return match?.[1] ?? null;
 }
