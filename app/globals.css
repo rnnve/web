@@ -6,7 +6,7 @@
 :root {
   --font-site: "Google Sans Variable", "Segoe UI", sans-serif;
   --md-sys-color-primary: #e2e2e2;
-  --md-sys-color-on-primary: #000000;
+  --md-sys-color-on-primary: #181818;
   --md-sys-color-primary-container: #363636;
   --md-sys-color-on-primary-container: #f0f0f0;
   --md-sys-color-secondary: #c6c6c6;
@@ -15,14 +15,14 @@
   --md-sys-color-tertiary: #bdbdbd;
   --md-sys-color-tertiary-container: #323232;
   --md-sys-color-on-tertiary-container: #ededed;
-  --md-sys-color-surface: #000000;
-  --md-sys-color-surface-dim: #000000;
-  --md-sys-color-surface-bright: #292929;
-  --md-sys-color-surface-container-lowest: #000000;
-  --md-sys-color-surface-container-low: #0a0a0a;
-  --md-sys-color-surface-container: #111111;
-  --md-sys-color-surface-container-high: #191919;
-  --md-sys-color-surface-container-highest: #242424;
+  --md-sys-color-surface: #121212;
+  --md-sys-color-surface-dim: #0e0e0e;
+  --md-sys-color-surface-bright: #393939;
+  --md-sys-color-surface-container-lowest: #080808;
+  --md-sys-color-surface-container-low: #191919;
+  --md-sys-color-surface-container: #202020;
+  --md-sys-color-surface-container-high: #292929;
+  --md-sys-color-surface-container-highest: #343434;
   --md-sys-color-on-surface: #eeeeee;
   --md-sys-color-on-surface-variant: #c4c4c4;
   --md-sys-color-outline: #909090;
