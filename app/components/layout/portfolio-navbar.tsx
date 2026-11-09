@@ -9,7 +9,6 @@ import {
   IconMailFilled,
   IconBrandGithubFilled,
   IconLink,
-  IconLanguage,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,7 +21,7 @@ const clientMounted = () => true;
 const serverMounted = () => false;
 
 export default function PortfolioNavbar() {
-  const { t, language, setLanguage } = useSiteSettings();
+  const { t, language } = useSiteSettings();
   const pageReady = usePageReady();
   const mounted = useSyncExternalStore(
     subscribeToMount,
@@ -40,7 +39,6 @@ export default function PortfolioNavbar() {
     { name: t("Birthday", "วันเกิด"), href: "/birthday", icon: IconCake },
     { name: t("Ask", "ถามเรา"), href: "/ask", icon: IconMailFilled },
   ];
-  const languageLabel = t("Switch to Thai", "เปลี่ยนเป็น English");
   const navigation = (
     <header
       className={`portfolio-navbar-root ${styles.position}`}
@@ -54,7 +52,7 @@ export default function PortfolioNavbar() {
         {navItems.map(({ name, href, icon: Icon }) => (
           <Link
             key={href}
-            href={href}
+            href={`${href}#${language}`}
             className={styles.item}
             aria-label={name}
             aria-current={pathname === href ? "page" : undefined}
@@ -95,17 +93,6 @@ export default function PortfolioNavbar() {
             {t("Socials", "โซเชียล")}
           </span>
         </a>
-        <button
-          type="button"
-          className={styles.item}
-          onClick={() => setLanguage(language === "en" ? "th" : "en")}
-          aria-label={languageLabel}
-        >
-          <IconLanguage size={18} stroke={2} aria-hidden="true" />
-          <span className={styles.tooltip} aria-hidden="true">
-            {languageLabel}
-          </span>
-        </button>
       </nav>
     </header>
   );
