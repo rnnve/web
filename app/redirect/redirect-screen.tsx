@@ -25,7 +25,7 @@ export default function RedirectScreen({
         <h1 className="m-0 text-2xl">
           {t("No valid destination", "ปลายทางไม่ถูกต้อง")}
         </h1>
-        <p className="m-0 text-(--ink-soft)">
+        <p className="m-0 text-(--text-muted)">
           {t(
             "Add a valid http:// or https:// URL using ?url= to continue.",
             "เพิ่ม URL ที่ขึ้นต้นด้วย http:// หรือ https:// ผ่าน ?url= เพื่อดำเนินการต่อ",
