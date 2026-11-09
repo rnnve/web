@@ -10,7 +10,7 @@ export default function SiteBackground() {
       <ShapeGrid
         shape="square"
         direction="diagonal"
-        lineColor="#2a2734"
+        lineColor="#202020"
         hoverColor="#ffffff"
         hoverFillColor="#ffffff"
         fillOpacity={0.15}
