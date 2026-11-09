@@ -74,7 +74,7 @@ export default function AskForm({
   }
   return (
     <form
-      className="ask-form [padding:24px] [border:1px_solid_var(--line)] [border-radius:28px] [background:var(--md-sys-color-surface-container)] [&_label]:block [&_label]:[margin-bottom:12px] [&_label]:[font-size:14px] [&_label]:[font-weight:650] [&_textarea]:block [&_textarea]:[width:100%] [&_textarea]:[min-height:150px] [&_textarea]:[padding:16px] [&_textarea]:[resize:vertical] [&_textarea]:[border:1px_solid_var(--md-sys-color-outline-variant)] [&_textarea]:[border-radius:16px] [&_textarea]:[background:var(--md-sys-color-surface-container-low)] [&_textarea]:[color:var(--ink)] [&_textarea]:[line-height:1.6] [&_textarea:focus-visible]:[outline:2px_solid_var(--md-sys-color-primary)] [&_textarea:focus-visible]:[outline-offset:2px] [&_button]:[min-height:48px] [&_button]:[padding:0_20px] [&_button]:inline-flex [&_button]:items-center [&_button]:justify-center [&_button]:[gap:8px] [&_button]:[border:0] [&_button]:[border-radius:24px] [&_button]:[background:var(--md-sys-color-primary)] [&_button]:[color:var(--md-sys-color-on-primary)] [&_button]:[font-weight:650] [&_button]:cursor-pointer [&_button:disabled]:[opacity:0.5] [&_button:disabled]:[cursor:not-allowed] max-[601px]:[padding:20px]"
+      className="ask-form [backdrop-filter:blur(20px)] [-webkit-backdrop-filter:blur(20px)] [box-shadow:var(--glass-shadow)] [padding:24px] [border:1px_solid_var(--border)] [border-radius:16px] [background:var(--surface-panel)] [&_label]:block [&_label]:[margin-bottom:12px] [&_label]:[font-size:14px] [&_label]:[font-weight:650] [&_textarea]:block [&_textarea]:[width:100%] [&_textarea]:[min-height:150px] [&_textarea]:[padding:16px] [&_textarea]:[resize:vertical] [&_textarea]:[border:1px_solid_var(--border)] [&_textarea]:[border-radius:16px] [&_textarea]:[background:var(--surface-sunken)] [&_textarea]:[color:var(--text)] [&_textarea]:[line-height:1.6] [&_textarea:focus-visible]:[outline:2px_solid_var(--accent)] [&_textarea:focus-visible]:[outline-offset:2px] [&_button]:[min-height:48px] [&_button]:[padding:0_20px] [&_button]:inline-flex [&_button]:items-center [&_button]:justify-center [&_button]:[gap:8px] [&_button]:[border:0] [&_button]:[border-radius:12px] [&_button]:[background:var(--accent)] [&_button]:[color:var(--on-accent)] [&_button]:[font-weight:650] [&_button]:cursor-pointer [&_button:disabled]:[opacity:0.5] [&_button:disabled]:[cursor:not-allowed] max-[601px]:[padding:20px]"
       onSubmit={submit}
     >
       <label htmlFor={inputId}>
@@ -105,7 +105,7 @@ export default function AskForm({
         required
       />
       <div className="ask-form-bottom flex items-center justify-between [gap:16px] [margin-top:16px]">
-        <span className="ask-count [color:var(--ink-soft)] [font-size:12px] [font-variant-numeric:tabular-nums]">
+        <span className="ask-count [color:var(--text-muted)] [font-size:12px] [font-variant-numeric:tabular-nums]">
           {question.length} / {MAX_LENGTH}
         </span>
         <button
@@ -127,7 +127,7 @@ export default function AskForm({
         </button>
       </div>
       <p
-        className="ask-feedback [min-height:1.5em] [margin:16px_0_0] [color:var(--ink-soft)] [font-size:13px]"
+        className="ask-feedback [min-height:1.5em] [margin:16px_0_0] [color:var(--text-muted)] [font-size:13px]"
         role="status"
         aria-live="polite"
       >
