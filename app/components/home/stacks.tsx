@@ -149,7 +149,7 @@ const tools: Tool[] = [
         />
         <path
           d="M17 28c4-5 10-7 17-5-2 8-7 13-15 13-3 0-5-2-5-4 0-2 1-3 3-4Z"
-          fill="var(--surface)"
+          fill="var(--surface-panel)"
         />
       </svg>
     ),
@@ -216,7 +216,7 @@ function Stacks() {
       aria-labelledby="stacks-title"
       data-reveal
     >
-      <div className="developer-tools__heading [max-width:680px] [margin-bottom:40px] [&_>_p:first-child]:[margin:0_0_8px] [&_>_p:first-child]:[color:var(--md-sys-color-primary)] [&_>_p:first-child]:[font-size:12px] [&_>_p:first-child]:[font-weight:600] [&_>_p:first-child]:[letter-spacing:0.2px] [&_>_p:first-child]:[text-transform:none] [&_>_p:first-child]:[margin-bottom:8px] [&_h2]:[margin:0] [&_h2]:[font-size:clamp(38px,_6vw,_64px)] [&_h2]:[line-height:1] [&_h2]:[letter-spacing:-2.6px] [&_h2]:[color:var(--md-sys-color-on-surface)] [&_h2]:[font-weight:620] [&_h2_span]:[color:var(--md-sys-color-primary)] [&_>_p:last-child]:[max-width:520px] [&_>_p:last-child]:[margin:17px_0_0] [&_>_p:last-child]:[color:var(--md-sys-color-on-surface-variant)] [&_>_p:last-child]:[font-size:14px] [&_>_p:last-child]:[line-height:1.65] max-[761px]:[margin-bottom:28px] max-[421px]:[&_h2]:[font-size:36px] [.root-empty_&_>_p:first-child]:[color:var(--md-sys-color-primary)] [.root-empty_&_>_p:first-child]:[font-size:12px] [.root-empty_&_>_p:first-child]:[font-weight:600] [.root-empty_&_>_p:first-child]:[letter-spacing:0.2px] [.root-empty_&_>_p:first-child]:[text-transform:none] [.root-empty_&_h2]:[color:var(--md-sys-color-on-surface)] [.root-empty_&_h2]:[font-size:clamp(38px,_6vw,_64px)] [.root-empty_&_h2]:[font-weight:620] [.root-empty_&_h2]:[line-height:1] [.root-empty_&_h2]:[letter-spacing:-2.6px]">
+      <div className="developer-tools__heading [max-width:680px] [margin-bottom:40px] [&_>_p:first-child]:[margin:0_0_8px] [&_>_p:first-child]:[color:var(--accent)] [&_>_p:first-child]:[font-size:12px] [&_>_p:first-child]:[font-weight:600] [&_>_p:first-child]:[letter-spacing:0.2px] [&_>_p:first-child]:[text-transform:none] [&_>_p:first-child]:[margin-bottom:8px] [&_h2]:[margin:0] [&_h2]:[font-size:clamp(38px,_6vw,_64px)] [&_h2]:[line-height:1] [&_h2]:[letter-spacing:-2.6px] [&_h2]:[color:var(--text)] [&_h2]:[font-weight:620] [&_h2_span]:[color:var(--accent)] [&_>_p:last-child]:[max-width:520px] [&_>_p:last-child]:[margin:17px_0_0] [&_>_p:last-child]:[color:var(--text-muted)] [&_>_p:last-child]:[font-size:14px] [&_>_p:last-child]:[line-height:1.65] max-[761px]:[margin-bottom:28px] max-[421px]:[&_h2]:[font-size:36px] [.root-empty_&_>_p:first-child]:[color:var(--accent)] [.root-empty_&_>_p:first-child]:[font-size:12px] [.root-empty_&_>_p:first-child]:[font-weight:600] [.root-empty_&_>_p:first-child]:[letter-spacing:0.2px] [.root-empty_&_>_p:first-child]:[text-transform:none] [.root-empty_&_h2]:[color:var(--text)] [.root-empty_&_h2]:[font-size:clamp(38px,_6vw,_64px)] [.root-empty_&_h2]:[font-weight:620] [.root-empty_&_h2]:[line-height:1] [.root-empty_&_h2]:[letter-spacing:-2.6px]">
         <p>{t("Stacks", "เทคโนโลยีที่ใช้")}</p>
         <h2 id="stacks-title">
           {t("Tools I build with", "เครื่องมือที่เราใช้")}
@@ -229,7 +229,7 @@ function Stacks() {
           )}
         </p>
       </div>
-      <div className="stacks__loop [min-width:0] [margin-top:32px] [padding-block:32px] [border-block:1px_solid_var(--md-sys-color-outline-variant)] max-[761px]:[margin-top:24px] max-[761px]:[padding-block:24px]">
+      <div className="stacks__loop [min-width:0] [margin-top:32px] [padding-block:32px] [border-block:1px_solid_var(--border)] max-[761px]:[margin-top:24px] max-[761px]:[padding-block:24px]">
         <LogoLoop
           logos={stackLogos}
           speed={80}
