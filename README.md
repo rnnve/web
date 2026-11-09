@@ -12,6 +12,7 @@ A personal corner of the web: a portfolio, live activity, and a browser start pa
 | Birthday  | `/birthday` | Birthday countdown using Bangkok time and anonymous birthday wishes.                                             |
 | Listening | `/listen`   | Current track, recent listening, and weekly favorites from Last.fm.                                              |
 | Ask       | `/ask`      | Send an anonymous question to Discord.                                                                           |
+| Lyrics    | `/lyrics`   | Timed lyrics following live Spotify playback, with plain lyrics fallback.                                        |
 | New Tab   | `/newtab`   | Local clock, web search, personal shortcuts, and a live video wallpaper.                                         |
 
 The portfolio includes English and Thai text, Material 3 styling, and scroll snapping between the homepage’s three sections. Background and cursor effects adapt to motion preferences and device capabilities.
@@ -67,6 +68,8 @@ Optional server environment variables can be set in `.env.local` or through your
 | `GITHUB_TOKEN`                 | Increase GitHub API rate limits for repository and activity requests. Use a read-only token. |
 | `ASK_DISCORD_WEBHOOK_URL`      | Set the Discord webhook that receives anonymous questions. Overrides the built-in fallback.  |
 | `BIRTHDAY_DISCORD_WEBHOOK_URL` | Override the built-in webhook for anonymous birthday wishes from `/birthday`.                |
+
+The experimental `/lyrics` page uses LRCLIB by default. Set `SPICYLYRICS_API_KEY` to your Spicy Lyrics **secret** key in `.env.local` (or your host's server environment) to try Spicy Lyrics first, with LRCLIB as fallback. Restart the local server after adding the key. It stays on the server; the browser receives normalized lyrics and provider/contributor credits. Spotify track IDs come from the currently playing track's URL.
 
 When deploying your own copy, configure your own webhooks. The defaults in the server source are Base64-encoded, not encrypted.
 
