@@ -1,14 +1,14 @@
 .page {
   --listen-accent: #d7a3c0;
   --listen-accent-soft: rgb(215 163 192 / 10%);
-  --listen-card: rgb(31 31 31 / 94%);
+  --listen-card: var(--surface-panel);
   --listen-card-hover: rgb(255 255 255 / 4.5%);
-  --listen-border: rgb(255 255 255 / 10%);
+  --listen-border: var(--border);
   --listen-muted: #aaa6aa;
   width: min(1440px, calc(100% - 48px));
   margin-inline: auto;
   padding: calc(122px + env(safe-area-inset-top, 0px)) 0 22px;
-  color: var(--ink);
+  color: var(--text);
 }
 
 .pageHeader {
@@ -61,8 +61,8 @@
   justify-content: center;
   gap: 7px;
   border: 1px solid var(--listen-border);
-  border-radius: 999px;
-  color: var(--ink);
+  border-radius: 8px;
+  color: var(--text);
   background: #252525;
   font: inherit;
   font-size: 12px;
@@ -111,7 +111,7 @@
   padding: 22px 26px 22px 22px;
   overflow: hidden;
   border: 1px solid var(--listen-border);
-  border-radius: 28px;
+  border-radius: 16px;
   background: var(--listen-card);
   box-shadow: 0 18px 50px rgb(0 0 0 / 18%);
   animation: listen-content-in 420ms ease-out both;
@@ -163,7 +163,7 @@
 
 .heroArtwork {
   width: 132px;
-  border-radius: 20px;
+  border-radius: 16px;
   box-shadow: 0 14px 30px rgb(0 0 0 / 28%);
 }
 
@@ -341,7 +341,7 @@
   padding: 0 32px 0 13px;
   border: 1px solid var(--listen-border);
   border-radius: 11px;
-  color: var(--ink);
+  color: var(--text);
   background: #252525;
   font: inherit;
   font-size: 11px;
@@ -376,7 +376,7 @@
   min-width: 0;
   padding: 18px;
   border: 1px solid var(--listen-border);
-  border-radius: 24px;
+  border-radius: 16px;
   background: var(--listen-card);
   box-shadow: 0 12px 35px rgb(0 0 0 / 12%);
   transition: opacity 180ms ease;
@@ -577,7 +577,7 @@
   justify-items: center;
   padding: 40px;
   border: 1px solid var(--listen-border);
-  border-radius: 28px;
+  border-radius: 16px;
   background: var(--listen-card);
   text-align: center;
 }
@@ -618,7 +618,7 @@
   gap: 30px;
   padding: 22px;
   border: 1px solid var(--listen-border);
-  border-radius: 28px;
+  border-radius: 16px;
   background: var(--listen-card);
 }
 
@@ -633,7 +633,7 @@
 .skeletonCover {
   width: 132px;
   aspect-ratio: 1;
-  border-radius: 20px;
+  border-radius: 16px;
 }
 
 .skeletonCopy {
@@ -673,7 +673,7 @@
   gap: 10px;
   padding: 18px;
   border: 1px solid var(--listen-border);
-  border-radius: 24px;
+  border-radius: 16px;
   background: var(--listen-card);
 }
 
@@ -761,7 +761,7 @@
 
   .heroArtwork {
     width: 112px;
-    border-radius: 18px;
+    border-radius: 16px;
   }
 
   .hero h2 {
@@ -809,7 +809,7 @@
     grid-template-columns: 92px minmax(0, 1fr);
     gap: 16px;
     padding: 16px;
-    border-radius: 22px;
+    border-radius: 16px;
   }
 
   .heroArtwork {
@@ -886,7 +886,7 @@
 
   .panel {
     padding: 15px 12px;
-    border-radius: 20px;
+    border-radius: 16px;
   }
 
   .recentList {
@@ -915,7 +915,7 @@
     grid-template-columns: 92px minmax(0, 1fr);
     gap: 16px;
     padding: 16px;
-    border-radius: 22px;
+    border-radius: 16px;
   }
 
   .skeletonCover {
@@ -1009,4 +1009,12 @@
   .panelGrid {
     transition: none;
   }
+}
+
+.hero,
+.panel,
+.unavailable {
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow);
 }
