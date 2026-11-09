@@ -1,5 +1,6 @@
 import { isRecord } from "@/app/lib/json";
 import { fetchSpicyLyrics } from "@/app/lib/spicy-lyrics";
+import { fetchLrcRedLyrics } from "@/app/lib/lrc-red";
 
 export async function GET(request: Request) {
   const input = new URL(request.url).searchParams;
@@ -38,6 +39,17 @@ export async function GET(request: Request) {
     if (spicy)
       return Response.json(
         { lyrics: spicy },
+        { headers: { "Cache-Control": "public, max-age=86400" } },
+      );
+    const lrcRed = await fetchLrcRedLyrics({
+      title,
+      artist,
+      album,
+      ...(duration !== null ? { duration: Number(duration) } : {}),
+    });
+    if (lrcRed)
+      return Response.json(
+        { lyrics: lrcRed },
         { headers: { "Cache-Control": "public, max-age=86400" } },
       );
     const response = await fetch(`https://lrclib.net/api/get?${params}`, {
