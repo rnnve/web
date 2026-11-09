@@ -69,7 +69,7 @@ Optional server environment variables can be set in `.env.local` or through your
 | `ASK_DISCORD_WEBHOOK_URL`      | Set the Discord webhook that receives anonymous questions. Overrides the built-in fallback.  |
 | `BIRTHDAY_DISCORD_WEBHOOK_URL` | Override the built-in webhook for anonymous birthday wishes from `/birthday`.                |
 
-The experimental `/lyrics` page uses LRCLIB by default. Set `SPICYLYRICS_API_KEY` to your Spicy Lyrics **secret** key in `.env.local` (or your host's server environment) to try Spicy Lyrics first, with LRCLIB as fallback. Restart the local server after adding the key. It stays on the server; the browser receives normalized lyrics and provider/contributor credits. Spotify track IDs come from the currently playing track's URL.
+The experimental `/lyrics` page looks up lyrics in this order: **Spicy Lyrics → lrc.red → LRCLIB**. Set `SPICYLYRICS_API_KEY` to your Spicy Lyrics **secret** key in `.env.local` (or your host's server environment). Set `LRC_RED_CONTACT_EMAIL` to a public contact email to enable lrc.red; its API requires that email and the site URL in client identification. Unconfigured or unavailable providers are skipped. Restart the local server after adding the key. It stays on the server; the browser receives normalized lyrics and provider/contributor credits. Spotify track IDs come from the currently playing track's URL.
 
 When deploying your own copy, configure your own webhooks. The defaults in the server source are Base64-encoded, not encrypted.
 
