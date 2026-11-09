@@ -14,8 +14,6 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@fontsource-variable/google-sans": "^5.3.2",
-    "@m3e/web": "^2.11.1",
     "@mixmark-io/domino": "^2.2.0",
     "@tabler/icons-react": "^3.50.0",
     "clsx": "^2.1.1",
