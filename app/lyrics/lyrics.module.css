@@ -143,25 +143,30 @@
 }
 .lines {
   position: relative;
-  height: min(56svh, 540px);
-  min-height: 280px;
+  --lyrics-height: max(280px, min(56svh, 540px));
+  height: var(--lyrics-height);
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 80px 32px 180px;
+  padding: calc(var(--lyrics-height) / 2) 32px;
+  overflow-anchor: none;
+  scroll-behavior: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--md-sys-color-outline-variant) transparent;
 }
 .lines p {
   margin: 0 0 24px;
-  color: var(--md-sys-color-on-surface-variant);
+  color: #818181;
   font-size: clamp(22px, 2.7vw, 32px);
   font-weight: 550;
   line-height: 1.5;
   overflow-wrap: anywhere;
-  transition: color 200ms ease;
+  transition: color 80ms linear;
 }
 .lines p.active {
-  color: var(--md-sys-color-primary);
+  color: #fff;
+}
+.unsynced {
+  padding-block: 32px;
 }
 .lines p.plain {
   white-space: pre-wrap;
@@ -207,6 +212,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   gap: 5px;
   padding: 18px;
   font-size: 12px;
