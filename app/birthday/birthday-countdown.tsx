@@ -88,7 +88,7 @@ export default function BirthdayCountdown() {
           : t("Until my birthday.", "นับถอยหลังถึงวันเกิด")}
       </h1>
       <p
-        className="birthday-description [margin:18px_0_0] [color:var(--ink-soft)] [font-size:15px] [line-height:1.6]"
+        className="birthday-description [margin:18px_0_0] [color:var(--text-muted)] [font-size:15px] [line-height:1.6]"
         aria-live="polite"
       >
         {countdown
@@ -114,7 +114,7 @@ export default function BirthdayCountdown() {
       >
         {units.map((unit) => (
           <div
-            className="birthday-unit [font-size:clamp(40px,_8vw,_104px)] [min-width:0] flex flex-col items-center [gap:26px] [.birthday-unit_+_&]:[border-left:1px_solid_var(--line)] max-[601px]:[font-size:clamp(54px,_15vw,_80px)] max-[601px]:[gap:20px] max-[601px]:[&:nth-child(3)]:[border-left:0]"
+            className="birthday-unit [font-size:clamp(40px,_8vw,_104px)] [min-width:0] flex flex-col items-center [gap:26px] [.birthday-unit_+_&]:[border-left:1px_solid_var(--border)] max-[601px]:[font-size:clamp(54px,_15vw,_80px)] max-[601px]:[gap:20px] max-[601px]:[&:nth-child(3)]:[border-left:0]"
             key={unit}
           >
             {countdown && pageReady ? (
@@ -134,19 +134,19 @@ export default function BirthdayCountdown() {
               />
             ) : (
               <span
-                className="birthday-number [font-weight:600] [line-height:1] [letter-spacing:-0.045em] birthday-placeholder [color:var(--ink-soft)]"
+                className="birthday-number [font-weight:600] [line-height:1] [letter-spacing:-0.045em] birthday-placeholder [color:var(--text-muted)]"
                 aria-label="Loading"
               >
                 --
               </span>
             )}
-            <span className="birthday-unit-label [color:var(--ink-soft)] [font-size:11px] [letter-spacing:2px] uppercase">
+            <span className="birthday-unit-label [color:var(--text-muted)] [font-size:11px] [letter-spacing:2px] uppercase">
               {unitLabels[unit]}
             </span>
           </div>
         ))}
       </div>
-      <p className="birthday-date [margin:0] [color:var(--ink-soft)] [font-size:12px] [line-height:1.8] [text-wrap:balance] [&_>_span]:[padding-inline:10px] [&_>_span]:[color:var(--md-sys-color-outline)]">
+      <p className="birthday-date [margin:0] [color:var(--text-muted)] [font-size:12px] [line-height:1.8] [text-wrap:balance] [&_>_span]:[padding-inline:10px] [&_>_span]:[color:var(--text-faint)]">
         {countdown ? (
           <time dateTime={new Date(countdown.target).toISOString()}>
             {new Intl.DateTimeFormat(
