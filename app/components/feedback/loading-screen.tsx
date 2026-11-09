@@ -29,7 +29,7 @@ export default function LoadingScreen({
 }: LoadingScreenProps) {
   const { t } = useSiteSettings();
   const layout =
-    "isolate grid min-h-svh place-items-center overflow-hidden bg-(--md-sys-color-surface) p-4 min-[601px]:p-7";
+    "isolate grid min-h-svh place-items-center overflow-hidden bg-(--page-background) p-4 min-[601px]:p-7";
   const content = (
     <>
       <div
@@ -37,7 +37,7 @@ export default function LoadingScreen({
         aria-hidden="true"
       />
       <section
-        className={`w-full rounded-(--md-shape-extra-large) border-0 bg-(--md-sys-color-surface-container-high) shadow-(--md-elevation-2) transition-transform duration-[180ms] ease-out motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:transition-none ${
+        className={`w-full rounded-(--radius-xl) border-0 bg-(--surface-raised) shadow-(--shadow-md) transition-transform duration-[180ms] ease-out motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:transition-none ${
           overlay
             ? "max-w-[660px] p-[clamp(30px,5.5vw,58px)]"
             : "max-w-[760px] px-[22px] py-10 min-[601px]:p-[clamp(34px,7vw,72px)]"
@@ -49,9 +49,7 @@ export default function LoadingScreen({
           role="img"
           aria-label={t("Loading animation", "ภาพเคลื่อนไหวขณะโหลด")}
         >
-          <span
-            className={`${symbolMask} bg-(--md-sys-color-surface-container-highest)`}
-          />
+          <span className={`${symbolMask} bg-(--surface-hover)`} />
           <span className={symbolMask}>
             <span
               className="absolute inset-0 [animation:loading-symbol-fill_1.5s_ease-in-out_both] [will-change:clip-path] motion-reduce:[animation:none]"
@@ -64,12 +62,12 @@ export default function LoadingScreen({
         </div>
         <div className={`text-center ${overlay ? "mt-7" : "mt-[34px]"}`}>
           <h2
-            className={`m-0 leading-[1.05] tracking-[-0.045em] text-(--md-sys-color-on-surface) ${overlay ? "text-[clamp(23px,3.4vw,34px)]" : "text-[clamp(25px,4vw,38px)]"}`}
+            className={`m-0 leading-[1.05] tracking-[-0.045em] text-(--text) ${overlay ? "text-[clamp(23px,3.4vw,34px)]" : "text-[clamp(25px,4vw,38px)]"}`}
           >
             {heading ?? t("Loading into My Sekai", "กำลังเข้าสู่ My Sekai")}
           </h2>
           {message ? (
-            <p className="m-0 mt-[11px] text-sm italic text-(--ink-soft) [overflow-wrap:anywhere]">
+            <p className="m-0 mt-[11px] text-sm italic text-(--text-muted) [overflow-wrap:anywhere]">
               {message}
             </p>
           ) : (
