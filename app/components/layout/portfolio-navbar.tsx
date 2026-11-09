@@ -5,9 +5,9 @@ import { createPortal } from "react-dom";
 import {
   IconHomeFilled,
   IconCake,
-  IconHeadphones,
-  IconMessageQuestion,
-  IconBrandGithub,
+  IconMusic,
+  IconMailFilled,
+  IconBrandGithubFilled,
   IconLink,
   IconLanguage,
 } from "@tabler/icons-react";
@@ -35,10 +35,10 @@ export default function PortfolioNavbar() {
     {
       name: t("Listening", "เพลงที่ฟัง"),
       href: "/listen",
-      icon: IconHeadphones,
+      icon: IconMusic,
     },
     { name: t("Birthday", "วันเกิด"), href: "/birthday", icon: IconCake },
-    { name: t("Ask", "ถามเรา"), href: "/ask", icon: IconMessageQuestion },
+    { name: t("Ask", "ถามเรา"), href: "/ask", icon: IconMailFilled },
   ];
   const languageLabel = t("Switch to Thai", "เปลี่ยนเป็น English");
   const navigation = (
@@ -59,13 +59,12 @@ export default function PortfolioNavbar() {
             aria-label={name}
             aria-current={pathname === href ? "page" : undefined}
           >
-            <Icon size={23} stroke={1.8} aria-hidden="true" />
+            <Icon size={18} stroke={2} aria-hidden="true" />
             <span className={styles.tooltip} aria-hidden="true">
               {name}
             </span>
           </Link>
         ))}
-        <span className={styles.separator} aria-hidden="true" />
         <a
           className={styles.item}
           href="https://github.com/rnnve"
@@ -76,7 +75,7 @@ export default function PortfolioNavbar() {
             "GitHub (เปิดในแท็บใหม่)",
           )}
         >
-          <IconBrandGithub size={23} stroke={1.8} aria-hidden="true" />
+          <IconBrandGithubFilled size={18} stroke={2} aria-hidden="true" />
           <span className={styles.tooltip} aria-hidden="true">
             GitHub
           </span>
@@ -91,19 +90,18 @@ export default function PortfolioNavbar() {
             "โซเชียล (เปิดในแท็บใหม่)",
           )}
         >
-          <IconLink size={23} stroke={1.8} aria-hidden="true" />
+          <IconLink size={18} stroke={2} aria-hidden="true" />
           <span className={styles.tooltip} aria-hidden="true">
             {t("Socials", "โซเชียล")}
           </span>
         </a>
-        <span className={styles.separator} aria-hidden="true" />
         <button
           type="button"
           className={styles.item}
           onClick={() => setLanguage(language === "en" ? "th" : "en")}
           aria-label={languageLabel}
         >
-          <IconLanguage size={23} stroke={1.8} aria-hidden="true" />
+          <IconLanguage size={18} stroke={2} aria-hidden="true" />
           <span className={styles.tooltip} aria-hidden="true">
             {languageLabel}
           </span>
