@@ -96,7 +96,12 @@ test("Spotify IDs are extracted only from valid track URLs", () => {
 });
 
 test("lyrics route uses server-side Spicy Lyrics authentication and falls back to LRCLIB", async (context) => {
+  // Keep this test's cooldown in the past once the mock clock is restored.
+  const testTime = Date.now() - 300_000;
+  context.mock.method(Date, "now", () => testTime);
   const savedKey = process.env.SPICYLYRICS_API_KEY;
+  const savedContact = process.env.LRC_RED_CONTACT_EMAIL;
+  delete process.env.LRC_RED_CONTACT_EMAIL;
   process.env.SPICYLYRICS_API_KEY = "test-server-secret";
   const request = () =>
     new Request(
@@ -167,6 +172,8 @@ test("lyrics route uses server-side Spicy Lyrics authentication and falls back t
     const unconfigured = await GET(request());
     assert.equal((await unconfigured.json()).lyrics.plainLyrics, "Fallback");
   } finally {
+    if (savedContact === undefined) delete process.env.LRC_RED_CONTACT_EMAIL;
+    else process.env.LRC_RED_CONTACT_EMAIL = savedContact;
     if (savedKey === undefined) delete process.env.SPICYLYRICS_API_KEY;
     else process.env.SPICYLYRICS_API_KEY = savedKey;
   }
