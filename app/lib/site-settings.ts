@@ -2,7 +2,7 @@ export type Language = "en" | "th";
 export type SiteSettings = { language: Language };
 export const SETTINGS_KEY = "rynnie.site-settings.v1";
 export const DEFAULT_SETTINGS: SiteSettings = {
-  language: "th",
+  language: "en",
 };
 
 export function languageFromHash(hash: string): Language | null {
