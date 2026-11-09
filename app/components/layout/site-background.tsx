@@ -4,7 +4,7 @@ import FallingStars from "../effects/falling-stars";
 export default function SiteBackground() {
   return (
     <div
-      className="site-background fixed [inset:0] [z-index:0] overflow-hidden pointer-events-none [background:var(--paper)]"
+      className="site-background fixed [inset:0] [z-index:0] overflow-hidden pointer-events-none [background:var(--page-background)]"
       aria-hidden="true"
     >
       <ShapeGrid
