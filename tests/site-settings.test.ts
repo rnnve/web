@@ -7,7 +7,7 @@ import {
 } from "../app/lib/site-settings";
 
 test("missing or corrupt preferences restore safe defaults", () => {
-  assert.equal(DEFAULT_SETTINGS.language, "th");
+  assert.equal(DEFAULT_SETTINGS.language, "en");
   for (const value of [null, "", "{bad", "null", "false", '"en"']) {
     assert.deepEqual(parseSettings(value), DEFAULT_SETTINGS);
   }
@@ -23,13 +23,13 @@ test("saved Thai preference survives parsing", () => {
 test("invalid language falls back safely", () => {
   assert.deepEqual(
     parseSettings('{"language":"fr","backgroundAnimation":false}'),
-    { language: "th" },
+    { language: "en" },
   );
 });
 
 test("explicit saved English preferences are preserved", () => {
   assert.deepEqual(parseSettings('{"language":"en"}'), { language: "en" });
-  assert.deepEqual(parseSettings("{}"), { language: "th" });
+  assert.deepEqual(parseSettings("{}"), { language: "en" });
 });
 
 test("language hashes accept Thai and English without consuming section anchors", () => {
