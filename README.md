@@ -1,131 +1,126 @@
 # Rynnie
 
-A personal corner of the web: a portfolio, live activity, and a browser start page. Built with Next.js, React, TypeScript, and Tailwind CSS.
+My personal website: a portfolio, live listening activity, synchronized lyrics, and a browser start page. Built with Next.js 16, React 19, TypeScript, and Tailwind CSS 4.
 
-[Visit the site](https://rynni.cc) · [Open New Tab](https://rynni.cc/newtab) · [Previous versions](https://git.rynni.cc/rinne/site-archived)
+[Website](https://rynni.cc) · [New Tab](https://rynni.cc/newtab) · [Previous versions](https://git.rynni.cc/rinne/site-archived)
 
-## Todo
-[] Currently playing status Lyrics viewer
+## Pages
 
-## Explore
+| Route       | What it does                                                                                                  |
+| ----------- | ------------------------------------------------------------------------------------------------------------- |
+| `/`         | Introduction, live Spotify and Discord status, GitHub activity, selected repositories, and technology stack.  |
+| `/listen`   | Last.fm listening history, current or last played track, and track/artist rankings across selectable periods. |
+| `/lyrics`   | Experimental lyrics viewer for the currently playing Spotify song.                                            |
+| `/birthday` | Birthday countdown in Bangkok time and anonymous wishes during the birthday window.                           |
+| `/ask`      | Anonymous questions delivered to Discord.                                                                     |
+| `/newtab`   | Clock, search, shortcuts, and a video wallpaper for a browser start page.                                     |
+| `/redirect` | Redirect screen for named destinations or a URL supplied through `?url=`.                                     |
 
-| Page      | URL         | Features                                                                                                         |
-| --------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
-| Home      | `/`         | Introduction, Discord presence, Spotify playback, GitHub activity, featured repositories, and technology stacks. |
-| Birthday  | `/birthday` | Birthday countdown using Bangkok time and anonymous birthday wishes.                                             |
-| Listening | `/listen`   | Current track, recent listening, and weekly favorites from Last.fm.                                              |
-| Ask       | `/ask`      | Send an anonymous question to Discord.                                                                           |
-| Lyrics    | `/lyrics`   | Timed lyrics following live Spotify playback, with plain lyrics fallback.                                        |
-| New Tab   | `/newtab`   | Local clock, web search, personal shortcuts, and a live video wallpaper.                                         |
+The portfolio supports English and Thai, with a compact navigation rail on the left on desktop and a dock at the bottom on mobile. Only the current page has a background highlight; other icons brighten on hover. Page changes have no fade or slide animation. Background and cursor effects respect motion preferences.
 
-The portfolio includes English and Thai text, Material 3 styling, and scroll snapping between the homepage’s three sections. Background and cursor effects adapt to motion preferences and device capabilities.
+## Development
 
-Navigation uses a compact icon rail on the left on desktop and a bottom dock on mobile. Only the current page has a background highlight; other icons brighten on hover.
-
-## A new home for your tabs
-
-Use **[rynni.cc/newtab](https://rynni.cc/newtab)** or **[rynni.cc/nt](https://rynni.cc/nt)** as your browser’s custom new-tab URL. Some browsers require an extension to change this setting.
-
-- Local time and date, with a greeting for the time of day.
-- Google, DuckDuckGo, or Bing search.
-- Up to eight shortcuts, edited through **Customize**.
-- A full-screen live wallpaper with a play/pause control.
-- Desktop and phone layouts that fit the screen without page scrolling.
-
-Search preferences and shortcuts stay in the current browser’s local storage. The shortcut editor scrolls independently when needed.
-
-The page uses system fonts and skips the portfolio loading screen, navigation, effects, and status requests. A local still image appears before the wallpaper streams from the CDN. Video playback is muted, loops inline, and pauses when the tab is hidden. Reduced-motion preferences keep the still image until you choose to play the video. The clock also pauses its timer in hidden tabs.
-
-## Run locally
-
-Use the Bun version specified in `package.json`.
+Use Bun **1.4.4**, as specified in [package.json](package.json).
 
 ```bash
 bun install
 bun run dev
 ```
 
-Open `http://localhost:3000`. For access from another device or a different port:
+Open [localhost:3000](http://localhost:3000). To use another port or access the site from another device:
 
 ```bash
 bun run dev --hostname 0.0.0.0 --port 3001
 ```
 
-If needed, add the accessing hostname or IP to `allowedDevOrigins` in `next.config.ts`. Use the hostname or IP alone, without a scheme or port.
+Add the accessing hostname or IP to `allowedDevOrigins` in [next.config.ts](next.config.ts) when needed. Development and production builds regenerate the profile image manifest from `public/pfp/`.
 
-For a production server:
+Read [AGENTS.md](AGENTS.md) before changing code. This project uses the Next.js guides bundled in `node_modules/next/dist/docs/`.
 
-```bash
-bun run build
-bun run start
-```
+## Server configuration
 
-Development and build commands generate the profile-picture manifest automatically from `public/pfp`.
+Set these optional variables in `.env.local` or your hosting provider's environment. Restart the server after changing them. Keep secret keys and webhook URLs out of client code and Git.
 
-## Configure
+| Variable                       | Purpose                                                                       |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| `GITHUB_TOKEN`                 | Optional read-only token to increase GitHub API rate limits.                  |
+| `SPICYLYRICS_API_KEY`          | Spicy Lyrics secret key, used only by the lyrics API route.                   |
+| `LRC_RED_CONTACT_EMAIL`        | Public contact email included in requests to lrc.red, as required by its API. |
+| `ASK_DISCORD_WEBHOOK_URL`      | Override the webhook for anonymous questions.                                 |
+| `BIRTHDAY_DISCORD_WEBHOOK_URL` | Override the webhook for birthday wishes.                                     |
 
-Optional server environment variables can be set in `.env.local` or through your hosting provider:
+Configure your own webhooks when deploying a copy. The built-in webhook defaults are Base64-encoded, not encrypted.
 
-| Variable                       | Purpose                                                                                      |
-| ------------------------------ | -------------------------------------------------------------------------------------------- |
-| `GITHUB_TOKEN`                 | Increase GitHub API rate limits for repository and activity requests. Use a read-only token. |
-| `ASK_DISCORD_WEBHOOK_URL`      | Set the Discord webhook that receives anonymous questions. Overrides the built-in fallback.  |
-| `BIRTHDAY_DISCORD_WEBHOOK_URL` | Override the built-in webhook for anonymous birthday wishes from `/birthday`.                |
+Spotify, Discord, and Last.fm data currently come from configured public endpoints at `api.rynni.cc`; GitHub data comes from GitHub's API. Change the corresponding handlers under `app/api/` to use different accounts or services.
 
-The experimental `/lyrics` page looks up lyrics in this order: **Spicy Lyrics → lrc.red → LRCLIB**. Set `SPICYLYRICS_API_KEY` to your Spicy Lyrics **secret** key in `.env.local` (or your host's server environment). Set `LRC_RED_CONTACT_EMAIL` to a public contact email to enable lrc.red; its API requires that email and the site URL in client identification. Unconfigured or unavailable providers are skipped. Restart the local server after adding the key. It stays on the server; the browser receives normalized lyrics and provider/contributor credits. Spotify track IDs come from the currently playing track's URL.
+## Lyrics
 
-When deploying your own copy, configure your own webhooks. The defaults in the server source are Base64-encoded, not encrypted.
+The `/lyrics` viewer follows live Spotify playback and looks up providers in this order:
 
-Common changes:
+1. **[Spicy Lyrics](https://developers.spicylyrics.org/docs)** when `SPICYLYRICS_API_KEY` and a Spotify track ID are available.
+2. **[lrc.red](https://lrc.red/api)** when `LRC_RED_CONTACT_EMAIL` is configured.
+3. **[LRCLIB](https://lrclib.net/docs.txt)** as the final fallback; no API key is needed.
 
-| Change                                  | Location                                                                  |
-| --------------------------------------- | ------------------------------------------------------------------------- |
-| Homepage content                        | `app/page.tsx`                                                            |
-| Featured GitHub repositories            | `app/config/portfolio.ts`                                                 |
-| Discord, Spotify, and Last.fm endpoints | `app/api/`                                                                |
-| Profile images                          | `public/pfp/`                                                             |
-| Portfolio navigation                    | `app/components/portfolio-navbar.tsx`                                     |
-| Portfolio background and cursor         | `app/components/site-background.tsx`, `app/components/cursor-effects.tsx` |
-| New-tab interface and styles            | `app/newtab/new-tab.tsx`, `app/newtab/new-tab.module.css`                 |
-| Wallpaper video and still image         | `app/newtab/live-wallpaper.tsx`, `public/newtab-wallpaper.webp`           |
-| Routes and development origins          | `next.config.ts`                                                          |
+Unavailable or unconfigured providers are skipped. lrc.red results are matched by title, artist, and duration when available to avoid covers and differently timed versions. Its timed LRC files feed the viewer; an unusable result continues to LRCLIB. Successful lookups are cached, and provider rate-limit cooldowns are respected.
 
-Shared portfolio settings, fonts, navigation, and effects live in `app/components/portfolio-shell.tsx`. `app/components/route-shell.tsx` gives the new-tab page its separate, lightweight layout. Data adapters and request utilities live in `app/lib/`; widget polling lives in `app/hooks/use-portfolio-status.ts`.
+Timed lyrics highlight the current line in white and other lines in gray. **Following song** toggles automatic scrolling. The playback clock filters repeated samples and small timing differences while handling seeks and song changes. Plain lyrics are shown when timing is unavailable, with separate states for instrumental tracks, missing lyrics, and service failures.
 
-## Routes and discovery
+The browser receives normalized lyrics and provider/contributor credits. Provider credentials stay on the server. `/lyrics` is experimental, has `noindex` metadata, and is omitted from the sitemap.
 
-| Alias                            | Redirects to   |
+## Browser start page
+
+Set [rynni.cc/newtab](https://rynni.cc/newtab) or [rynni.cc/nt](https://rynni.cc/nt) as your browser's new-tab URL. Some browsers require an extension to customize this.
+
+The page includes a local clock, greeting, Google/DuckDuckGo/Bing search, and up to eight shortcuts managed through **Customize**. Preferences stay in browser local storage.
+
+A local still image appears before the wallpaper video loads. The video is muted, loops inline, and pauses when the tab is hidden. Reduced-motion preferences keep the still image until playback is requested. This route uses its own layout without portfolio navigation, effects, or status polling.
+
+## Project map
+
+| Area                                | Files                                                                                              |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Homepage                            | `app/page.tsx`, `app/home.tsx`                                                                     |
+| Portfolio shell and route selection | `app/components/layout/portfolio-shell.tsx`, `app/components/layout/route-shell.tsx`               |
+| Navigation                          | `app/components/layout/portfolio-navbar.tsx`, `app/components/layout/portfolio-navbar.module.css`  |
+| Background and effects              | `app/components/layout/site-background.tsx`, `app/components/effects/`                             |
+| Language and preferences            | `app/components/settings/`, `app/lib/site-settings.ts`                                             |
+| Status polling and adapters         | `app/hooks/use-portfolio-status.ts`, `app/lib/spotify.ts`, `app/lib/status-handler.ts`             |
+| Listening dashboard                 | `app/listen/`, `app/api/listen/route.ts`, `app/lib/lastfm.ts`                                      |
+| Lyrics UI and API                   | `app/lyrics/`, `app/api/lyrics/route.ts`                                                           |
+| Lyrics providers and timing         | `app/lib/spicy-lyrics.ts`, `app/lib/lrc-red.ts`, `app/lib/lyrics.ts`, `app/lib/lyrics-playback.ts` |
+| Featured repositories               | `app/config/portfolio.ts`                                                                          |
+| Profile images and manifest         | `public/pfp/`, `scripts/generate-pfp-manifest.mjs`, `app/generated/pfp-images.ts`                  |
+| New-tab page and wallpaper          | `app/newtab/`, `public/newtab-wallpaper.webp`                                                      |
+| Named redirect destinations         | `app/redirect/destinations.ts`                                                                     |
+| Shared colors and typography        | `app/globals.css`                                                                                  |
+
+## Routes and metadata
+
+Permanent redirects:
+
+| Alias                            | Destination    |
 | -------------------------------- | -------------- |
 | `/nt`                            | `/newtab`      |
 | `/listening`, `/songs`, `/music` | `/listen`      |
 | `/sitemap`, `/sm.xml`            | `/sitemap.xml` |
 
-All aliases use permanent redirects.
+`/r/:path*` rewrites to `/redirect/:path*`. Named destinations are configured in `app/redirect/destinations.ts`; `/redirect?url=` accepts an HTTP or HTTPS destination.
 
-Next.js generates `/sitemap.xml` from `app/sitemap.ts` and `/robots.txt` from `app/robots.ts`. The sitemap includes the canonical home, birthday, listening, and ask pages at `https://rynni.cc`. The new-tab page has `noindex` metadata and is omitted, as are API endpoints and aliases.
+The sitemap in [app/sitemap.ts](app/sitemap.ts) includes home, birthday, listening, and ask. New-tab and lyrics pages have `noindex` metadata and are omitted. Update the canonical site URL and sitemap configuration when deploying under a different domain.
 
-Update the sitemap entries and the sitemap URL in `app/robots.ts` when changing the production domain or adding indexable pages.
+Open Graph images are rendered at `/internal/og?path=/`, with the same page metadata used by the site. The registry lives in `app/lib/og/resolver.ts`, metadata generation in `app/lib/og/metadata.ts`, and the image template in `app/components/og/og-template.tsx`. Register additional public pages in `PUBLIC_PAGES` to give them matching previews. Unknown paths receive the generic preview.
 
-## Markdown for agents
+## Markdown responses
 
-Public pages support content negotiation. Request the same URL with `Accept: text/markdown` to receive Markdown with `Content-Type: text/markdown; charset=utf-8` and `Vary: Accept`. Browsers keep HTML by default; API responses, assets, sitemaps, and React navigation requests keep their original formats.
+Request a public page with `Accept: text/markdown` to receive its server-rendered main content as Markdown:
 
 ```bash
-curl -i -H 'Accept: text/markdown' https://rynni.cc/
-curl -i -H 'Accept: text/html' https://rynni.cc/
+curl -H 'Accept: text/markdown' https://rynni.cc/
 ```
 
-`proxy.ts` fetches the page's server-rendered HTML and converts its main content, preserving headings, links, and page metadata while omitting scripts, navigation, and form controls. Live widgets remain limited to the content present in server-rendered HTML. Markdown responses use `private, no-store` so shared caches do not mix them with browser pages. Token counts are not emitted because a model-specific tokenizer is not configured.
+[proxy.ts](proxy.ts) handles negotiation and conversion. Browser and React navigation requests retain HTML. Markdown responses use `private, no-store` and vary by `Accept`; live widget data is limited to what is available in the server-rendered page.
 
-This runs in the application and does not require Cloudflare. If the domain is later proxied through Cloudflare, its optional [Markdown for Agents setting](https://developers.cloudflare.com/fundamentals/reference/markdown-for-agents/) can provide conversion at the edge instead.
-
-## Performance and accessibility
-
-The portfolio loading screen uses a static CSS pattern and the existing symbol artwork, without a canvas renderer. It starts a 180 ms fade on the first hydrated frame, with no minimum display timer and no wait for live widgets. The heading renders directly instead of animating individual letters. The dotted page background uses a small SVG texture with a CSS transform animation; touch devices and reduced-motion preferences get a static texture instead of a full-screen WebGL renderer.
-
-The GitHub showcase and technology stack are memoized so Spotify polling does not rebuild them every second. GitHub date labels share one formatter per language. Discord avatars use Next.js image optimization, and page zoom remains enabled.
-
-## Check changes
+## Checks
 
 ```bash
 bun run lint
@@ -135,20 +130,16 @@ bun run format:check
 bun run build
 ```
 
-Use `bun run format` to apply Prettier. Tests cover data normalization, API behavior, browser preferences, and date calculations. Generated files, dependencies, and build output are excluded from formatting.
+`bun run format` applies Prettier. Tests cover API behavior, provider fallbacks, lyric parsing and playback timing, status normalization, browser preferences, redirects, metadata, Markdown conversion, and date calculations.
 
-## Open Graph previews
+## Deployment
 
-Public pages share their metadata with the PNG renderer at `/internal/og?path=/birthday` (1200×630). `app/lib/og/resolver.ts` is the source for page titles and descriptions, `app/lib/og/metadata.ts` builds absolute Open Graph and Twitter image URLs, and `app/components/og/og-template.tsx` controls the dark grid design. The home page's interactive content lives in `app/home.tsx` so its server page can export metadata.
+Use a host with a Next.js server runtime, such as Vercel. API handlers and server-rendered responses require server execution; a static export does not provide the full site.
 
-When adding a public route, register its pattern and content loader in `PUBLIC_PAGES` and call `generatePageMetadata()` from the page's `generateMetadata()`. Patterns such as `/projects/[slug]` receive decoded route parameters; reuse the same public data loader as the page. Only registered routes can supply image content. No user-specific preferences, anonymous messages, arbitrary URLs, or private routes are loaded.
+```bash
+bun install
+bun run build
+bun run start
+```
 
-Try `/internal/og?path=/`, `/internal/og?path=/birthday`, or `/internal/og?path=/listen`. Unknown routes receive the generic site image; malformed paths or unsupported query parameters receive a fallback PNG with HTTP 400. Successful images use a one-day shared cache, unknown routes a one-minute cache, and errors are not cached. Images render locally with `next/og` and the existing Geist fonts; the endpoint needs the Node.js server runtime. `SITE_URL` in the resolver is the canonical origin for all social image URLs.
-
-The project currently has no dynamic content pages. Resolver tests cover `[slug]` sources, missing records, and loader failures without adding placeholder routes.
-
-## Deploy
-
-Deploy to Vercel or another host with a Next.js server runtime. Install dependencies with Bun, set any environment variables, and run `bun run build`. API routes need server execution, so a static-only export does not provide the full site.
-
-The portfolio footer displays the deployment commit when available, falling back to the local Git commit at build time.
+Configure the required environment variables on the host, including `LRC_RED_CONTACT_EMAIL` if lrc.red should be enabled. Local `.env.local` settings are not committed. The footer shows the deployment commit hash when available, falling back to the local Git commit at build time.
