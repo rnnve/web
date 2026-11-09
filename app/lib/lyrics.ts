@@ -4,7 +4,13 @@ export type LyricsRecord = {
   plainLyrics: string | null;
   syncedLyrics: string | null;
   lines?: LyricLine[];
-  source?: "lrclib" | "spicy_lyrics" | "apple_music" | "spotify" | "unknown";
+  source?:
+    | "lrclib"
+    | "lrc_red"
+    | "spicy_lyrics"
+    | "apple_music"
+    | "spotify"
+    | "unknown";
   contributors?: { role: "uploader" | "maker"; name: string; url?: string }[];
 };
 
