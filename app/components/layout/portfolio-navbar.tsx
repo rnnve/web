@@ -1,162 +1,117 @@
 "use client";
 
-import { useCallback, useState, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import {
-  IconHome2,
+  IconHomeFilled,
   IconCake,
   IconHeadphones,
   IconMessageQuestion,
+  IconBrandGithub,
+  IconLink,
+  IconLanguage,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MotionConfig } from "motion/react";
-import ExternalLinkIcon from "../ui/external-link-icon";
-import useRandomProfileImage from "./use-random-profile-image";
-import LanguageSwitcher from "../settings/language-switcher";
 import { useSiteSettings } from "../settings/site-settings-provider";
 import { usePageReady } from "../../page-transition";
-import {
-  Navbar,
-  NavBody,
-  NavItems,
-  MobileNav,
-  MobileNavHeader,
-  MobileNavMenu,
-  MobileNavToggle,
-  NavbarLogo,
-  NavbarButton,
-} from "../ui/resizable-navbar";
+import styles from "./portfolio-navbar.module.css";
+
 const subscribeToMount = () => () => {};
 const clientMounted = () => true;
 const serverMounted = () => false;
+
 export default function PortfolioNavbar() {
-  const { t } = useSiteSettings();
+  const { t, language, setLanguage } = useSiteSettings();
   const pageReady = usePageReady();
   const mounted = useSyncExternalStore(
     subscribeToMount,
     clientMounted,
     serverMounted,
   );
+  const pathname = usePathname();
   const navItems = [
-    {
-      name: t("Home", "หน้าแรก"),
-      link: "/",
-      icon: <IconHome2 size={18} />,
-    },
+    { name: t("Home", "หน้าแรก"), href: "/", icon: IconHomeFilled },
     {
       name: t("Listening", "เพลงที่ฟัง"),
-      link: "/listen",
-      icon: <IconHeadphones size={18} />,
+      href: "/listen",
+      icon: IconHeadphones,
     },
-    {
-      name: t("Birthday", "วันเกิด"),
-      link: "/birthday",
-      icon: <IconCake size={18} />,
-    },
-    {
-      name: t("Ask", "ถามเรา"),
-      link: "/ask",
-      icon: <IconMessageQuestion size={18} />,
-    },
+    { name: t("Birthday", "วันเกิด"), href: "/birthday", icon: IconCake },
+    { name: t("Ask", "ถามเรา"), href: "/ask", icon: IconMessageQuestion },
   ];
-  const activeLink = usePathname();
-  const profileImage = useRandomProfileImage();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
+  const languageLabel = t("Switch to Thai", "เปลี่ยนเป็น English");
   const navigation = (
-    <MotionConfig reducedMotion="user">
-      <header
-        className="portfolio-navbar-root fixed [inset-inline:env(safe-area-inset-left,_0px)_env(safe-area-inset-right,_0px)] [top:max(16px,_env(safe-area-inset-top))] [z-index:60] [transform:translateZ(0)]"
-        inert={!pageReady || undefined}
-        aria-hidden={!pageReady || undefined}
+    <header
+      className={`portfolio-navbar-root ${styles.position}`}
+      inert={!pageReady || undefined}
+      aria-hidden={!pageReady || undefined}
+    >
+      <nav
+        className={styles.rail}
+        aria-label={t("Primary navigation", "เมนูหลัก")}
       >
-        <nav aria-label={t("Primary navigation", "เมนูหลัก")}>
-          <Navbar>
-            <NavBody>
-              <NavbarLogo imageSrc={profileImage ?? undefined} />
-              <NavItems items={navItems} activeLink={activeLink} />
-              <div className="m3-navbar-actions [justify-self:end] flex [min-width:0] [flex-shrink:0] items-center [gap:8px]">
-                <NavbarButton
-                  href="https://github.com/rnnve"
-                  target="_blank"
-                  rel="noreferrer"
-                  variant="secondary"
-                >
-                  GitHub
-                </NavbarButton>
-                <NavbarButton
-                  href="https://haunt.gg/rnn"
-                  target="_blank"
-                  rel="noreferrer"
-                  variant="primary"
-                >
-                  {t("Socials", "โซเชียล")} <ExternalLinkIcon size={15} />
-                </NavbarButton>
-                <LanguageSwitcher />
-              </div>
-            </NavBody>
-
-            <MobileNav>
-              <MobileNavHeader>
-                <NavbarLogo imageSrc={profileImage ?? undefined} />
-                <div className="m3-navbar-mobile-controls flex items-center [gap:4px]">
-                  <LanguageSwitcher />
-                  <MobileNavToggle
-                    isOpen={isMobileMenuOpen}
-                    onClick={() => setIsMobileMenuOpen((open) => !open)}
-                  />
-                </div>
-              </MobileNavHeader>
-              <MobileNavMenu
-                isOpen={isMobileMenuOpen}
-                onClose={closeMobileMenu}
-              >
-                {navItems.map((item) => (
-                  <Link
-                    key={item.link}
-                    href={item.link}
-                    onClick={closeMobileMenu}
-                    aria-current={activeLink === item.link ? "page" : undefined}
-                    className="m3-navbar-link [.m3-navbar-more-menu_&]:flex [.m3-navbar-more-menu_&]:[min-height:48px] [.m3-navbar-desktop:has(.m3-navbar-more)_&]:[padding-inline:12px] [min-height:44px] [padding:0_16px] inline-flex items-center [gap:8px] [border-radius:20px] [color:var(--md-sys-color-on-surface-variant)] [font-size:14px] [font-weight:550] [line-height:20px] [letter-spacing:0.1px] [text-decoration:none] whitespace-nowrap [transition:color_0.2s_var(--md-motion-standard),_background-color_0.2s_var(--md-motion-standard)] [&:hover]:[color:var(--md-sys-color-on-surface)] [&:hover]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-surface)_8%,_transparent_)] [&:focus-visible]:[color:var(--md-sys-color-on-surface)] [&:focus-visible]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-surface)_8%,_transparent_)] [&[aria-current]]:[color:var(--md-sys-color-on-secondary-container)] [&[aria-current]]:[background:var(--md-sys-color-secondary-container)] [&[aria-current]]:[font-weight:650] [&[aria-current]:hover]:[background:color-mix(_in_srgb,_var(--md-sys-color-on-secondary-container)_8%,_var(--md-sys-color-secondary-container)_)] [.m3-navbar-menu_&]:[width:100%] [.m3-navbar-menu_&]:[min-height:48px] [.m3-navbar-menu_&]:[border-radius:24px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[padding-inline:10px] [@media(min-width:_1024px)_and_(max-width:_1199px)]:[gap:6px] motion-reduce:[transition:none]"
-                  >
-                    <span
-                      className="m3-navbar-icon inline-flex [flex-shrink:0] items-center"
-                      aria-hidden="true"
-                    >
-                      {item.icon}
-                    </span>
-                    <span>{item.name}</span>
-                  </Link>
-                ))}
-                <div className="m3-navbar-menu-actions [margin-top:8px] [padding-top:12px] [width:100%] [min-width:0] flex [gap:8px] [border-top:1px_solid_var(--md-sys-color-outline-variant)] [&_>_a]:[min-height:48px] [&_>_a]:[min-width:0] [&_>_a]:[flex:1] [&_>_a]:[padding-inline:12px] max-[1024px]:flex-col max-[1024px]:[&_>_a]:[width:100%] max-[1024px]:[&_>_a]:[flex:none]">
-                  <NavbarButton
-                    href="https://github.com/rnnve"
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={closeMobileMenu}
-                    variant="secondary"
-                  >
-                    GitHub
-                  </NavbarButton>
-                  <NavbarButton
-                    href="https://haunt.gg/rnn"
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={closeMobileMenu}
-                    variant="primary"
-                  >
-                    {t("Socials", "โซเชียล")} <ExternalLinkIcon size={15} />
-                  </NavbarButton>
-                </div>
-              </MobileNavMenu>
-            </MobileNav>
-          </Navbar>
-        </nav>
-      </header>
-    </MotionConfig>
+        {navItems.map(({ name, href, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className={styles.item}
+            aria-label={name}
+            aria-current={pathname === href ? "page" : undefined}
+          >
+            <Icon size={23} stroke={1.8} aria-hidden="true" />
+            <span className={styles.tooltip} aria-hidden="true">
+              {name}
+            </span>
+          </Link>
+        ))}
+        <span className={styles.separator} aria-hidden="true" />
+        <a
+          className={styles.item}
+          href="https://github.com/rnnve"
+          target="_blank"
+          rel="noreferrer"
+          aria-label={t(
+            "GitHub (opens in a new tab)",
+            "GitHub (เปิดในแท็บใหม่)",
+          )}
+        >
+          <IconBrandGithub size={23} stroke={1.8} aria-hidden="true" />
+          <span className={styles.tooltip} aria-hidden="true">
+            GitHub
+          </span>
+        </a>
+        <a
+          className={styles.item}
+          href="https://haunt.gg/rnn"
+          target="_blank"
+          rel="noreferrer"
+          aria-label={t(
+            "Socials (opens in a new tab)",
+            "โซเชียล (เปิดในแท็บใหม่)",
+          )}
+        >
+          <IconLink size={23} stroke={1.8} aria-hidden="true" />
+          <span className={styles.tooltip} aria-hidden="true">
+            {t("Socials", "โซเชียล")}
+          </span>
+        </a>
+        <span className={styles.separator} aria-hidden="true" />
+        <button
+          type="button"
+          className={styles.item}
+          onClick={() => setLanguage(language === "en" ? "th" : "en")}
+          aria-label={languageLabel}
+        >
+          <IconLanguage size={23} stroke={1.8} aria-hidden="true" />
+          <span className={styles.tooltip} aria-hidden="true">
+            {languageLabel}
+          </span>
+        </button>
+      </nav>
+    </header>
   );
 
-  // Anchor navigation to the viewport, outside the page's scrolling/paint layers.
+  // Keep the dock anchored to the viewport during page transitions.
   return mounted ? createPortal(navigation, document.body) : navigation;
 }
