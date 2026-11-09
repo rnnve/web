@@ -16,11 +16,11 @@ My personal website: a portfolio, live listening activity, synchronized lyrics, 
 | `/newtab`   | Clock, search, shortcuts, and a video wallpaper for a browser start page.                                     |
 | `/redirect` | Redirect screen for named destinations or a URL supplied through `?url=`.                                     |
 
-The portfolio uses a custom glassmorphism theme with translucent panels, fine borders, Geist typography, and plain CSS controls. It defaults to Thai and supports English through URL language selection, with a compact navigation rail on the left on desktop and a dock at the bottom on mobile. Only the current page has a background highlight; other icons brighten on hover. Page changes have no fade or slide animation. The background uses React Bits’ `PatternWaves` silk preset with subtle white marks and interactive cursor ripples. Background and cursor effects respect motion preferences; the wave renderer pauses while the tab is hidden.
+The portfolio uses a custom glassmorphism theme with translucent panels, fine borders, Geist typography, and plain CSS controls. It defaults to English and supports Thai through URL language selection, with a compact navigation rail on the left on desktop and a dock at the bottom on mobile. Only the current page has a background highlight; other icons brighten on hover. Page changes have no fade or slide animation. The background uses React Bits’ `PatternWaves` silk preset with subtle white marks and interactive cursor ripples. Background and cursor effects respect motion preferences; the wave renderer pauses while the tab is hidden.
 
 ## Language
 
-Thai is the default language. Use a URL fragment to choose explicitly:
+English is the default language. Use a URL fragment to choose explicitly:
 
 - `/#th` or `/ask#th` for Thai.
 - `/#en` or `/ask#en` for English.
