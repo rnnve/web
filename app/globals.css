@@ -2,64 +2,39 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* Shared design tokens and animation primitives. Layouts live in Tailwind utilities. */
+/* Shared theme for the portfolio's custom glass components. */
 :root {
-  --font-site: "Google Sans Variable", "Segoe UI", sans-serif;
-  --md-sys-color-primary: #e2e2e2;
-  --md-sys-color-on-primary: #181818;
-  --md-sys-color-primary-container: #363636;
-  --md-sys-color-on-primary-container: #f0f0f0;
-  --md-sys-color-secondary: #c6c6c6;
-  --md-sys-color-secondary-container: #303030;
-  --md-sys-color-on-secondary-container: #e8e8e8;
-  --md-sys-color-tertiary: #bdbdbd;
-  --md-sys-color-tertiary-container: #323232;
-  --md-sys-color-on-tertiary-container: #ededed;
-  --md-sys-color-surface: #121212;
-  --md-sys-color-surface-dim: #0e0e0e;
-  --md-sys-color-surface-bright: #393939;
-  --md-sys-color-surface-container-lowest: #080808;
-  --md-sys-color-surface-container-low: #191919;
-  --md-sys-color-surface-container: #202020;
-  --md-sys-color-surface-container-high: #292929;
-  --md-sys-color-surface-container-highest: #343434;
-  --md-sys-color-on-surface: #eeeeee;
-  --md-sys-color-on-surface-variant: #c4c4c4;
-  --md-sys-color-outline: #909090;
-  --md-sys-color-outline-variant: #454545;
-  --ink: var(--md-sys-color-on-surface);
-  --ink-soft: var(--md-sys-color-on-surface-variant);
-  --paper: var(--md-sys-color-surface);
-  --paper-deep: var(--md-sys-color-surface-container-low);
-  --surface: var(--md-sys-color-surface-container);
-  --line: var(--md-sys-color-outline-variant);
-  --purple: var(--md-sys-color-primary);
-  --purple-bright: var(--md-sys-color-primary);
-  --purple-soft: var(--md-sys-color-primary-container);
-  --coral: var(--md-sys-color-tertiary);
-  --coral-soft: var(--md-sys-color-tertiary-container);
-  --lime: var(--md-sys-color-secondary);
-  --blue: var(--md-sys-color-tertiary);
-  --shadow: rgba(0, 0, 0, 0.38);
+  color-scheme: dark;
+  --font-site: var(--font-geist-sans), system-ui, "Segoe UI", sans-serif;
+  --page-background: #121212;
+  --surface-sunken: rgb(0 0 0 / 18%);
+  --surface-panel: rgb(255 255 255 / 4%);
+  --surface-raised: rgb(255 255 255 / 6%);
+  --surface-hover: rgb(255 255 255 / 9%);
+  --surface-selected: rgb(255 255 255 / 10%);
+  --accent: #ededed;
+  --on-accent: #151515;
+  --accent-subtle: rgb(255 255 255 / 8%);
+  --text: #ededed;
+  --text-secondary: #cecece;
+  --text-muted: #a6a6a6;
+  --text-faint: #777;
+  --border: rgb(255 255 255 / 11%);
+  --glass-blur: 20px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --ease-out: cubic-bezier(0.2, 0, 0.2, 1);
+  --ease-standard: ease;
+  --shadow: rgb(0 0 0 / 25%);
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 12%);
+  --shadow-md: 0 12px 36px rgb(0 0 0 / 20%);
+  --glass-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 5%), 0 12px 36px rgb(0 0 0 / 16%);
   --max-width: 1240px;
-  --ease: cubic-bezier(0.2, 0.8, 0.2, 1.15);
-}
-
-[data-theme="dark"] {
-  --shadow: rgba(0, 0, 0, 0.38);
-}
-
-:root {
-  --md-shape-extra-small: 8px;
-  --md-shape-small: 12px;
-  --md-shape-medium: 16px;
-  --md-shape-large: 24px;
-  --md-shape-extra-large: 28px;
-  --md-motion-emphasized: cubic-bezier(0.2, 0, 0, 1);
-  --md-motion-standard: cubic-bezier(0.2, 0, 0, 1);
-  --md-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.18);
-  --md-elevation-2:
-    0 2px 6px rgba(0, 0, 0, 0.28), 0 8px 24px rgba(0, 0, 0, 0.2);
+  --ease: ease-out;
 }
 
 @keyframes loading-pattern-drift {
