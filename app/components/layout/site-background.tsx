@@ -1,5 +1,4 @@
-import ShapeGrid from "../effects/shape-grid";
-import FallingStars from "../effects/falling-stars";
+import PatternWaves from "../effects/pattern-waves";
 
 export default function SiteBackground() {
   return (
@@ -7,22 +6,16 @@ export default function SiteBackground() {
       className="site-background fixed [inset:0] [z-index:0] overflow-hidden pointer-events-none [background:var(--page-background)]"
       aria-hidden="true"
     >
-      <ShapeGrid
-        shape="square"
-        direction="diagonal"
-        lineColor="#2a2734"
-        hoverColor="#ffffff"
-        hoverFillColor="#ffffff"
-        fillOpacity={0.15}
-        cellSize={40}
-        speed={0.5}
-        trail={0.2}
-        tiltX={0}
-        tiltY={0}
-        rainbow={false}
-        clickCascade={false}
+      <PatternWaves
+        preset="silk"
+        color="#ffffff"
+        backgroundColor="transparent"
+        opacity={0.35}
+        fade="edges"
+        interactive
+        cursorSize={50}
+        cursorStrength={0.6}
       />
-      <FallingStars />
     </div>
   );
 }
