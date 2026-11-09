@@ -1,19 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { IconArrowUpRight, IconMusic, IconRefresh } from "@tabler/icons-react";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
-import { normalizeSpotify } from "../lib/spotify";
-import type { SpotifyView } from "../lib/status-types";
+import {
+  lyricsProgress,
+  reconcileLyricsPlayback,
+  type LyricsPlayback,
+} from "../lib/lyrics-playback";
 import { requestWidget } from "../lib/widget-request";
 import {
   activeLyricIndex,
   parseSyncedLyrics,
+  spotifyTrackId,
   type LyricsRecord,
 } from "../lib/lyrics";
 import styles from "./lyrics.module.css";
 
-type Playback = { track: SpotifyView; syncedAt: number };
 function createLyricsSession() {
   const cache = new Map<string, LyricsRecord | null>();
   let retryAt = 0;
@@ -54,6 +57,7 @@ function Lyrics({
   const [follow, setFollow] = useState(true);
   const viewport = useRef<HTMLDivElement>(null);
   const activeLine = useRef<HTMLParagraphElement>(null);
+  const previousIndex = useRef(-1);
   const [now, setNow] = useState(0);
   const [retryAt, setRetryAt] = useState(0);
 
@@ -100,20 +104,66 @@ function Lyrics({
   }, [query, retry, session]);
 
   const lines = useMemo(
-    () => parseSyncedLyrics(lyrics?.syncedLyrics ?? ""),
+    () => lyrics?.lines ?? parseSyncedLyrics(lyrics?.syncedLyrics ?? ""),
     [lyrics],
   );
   const index = activeLyricIndex(lines, progress);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = viewport.current;
     const line = activeLine.current;
     if (!follow || !container || !line) return;
-    container.scrollTo({
-      top: line.offsetTop - container.clientHeight / 2 + line.clientHeight / 2,
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "instant"
-        : "smooth",
+    const from = container.scrollTop;
+    const target = () =>
+      Math.max(
+        0,
+        Math.min(
+          container.scrollHeight - container.clientHeight,
+          container.scrollTop +
+            line.getBoundingClientRect().top -
+            container.getBoundingClientRect().top -
+            (container.clientHeight - line.clientHeight) / 2,
+        ),
+      );
+    const to = target();
+    const jump =
+      previousIndex.current < 0 ||
+      Math.abs(index - previousIndex.current) > 1 ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    previousIndex.current = index;
+    let frame = 0;
+    const start = performance.now();
+    const animate = (now: number) => {
+      const amount = Math.min(1, (now - start) / 140);
+      container.scrollTo({
+        top: from + (to - from) * (1 - (1 - amount) ** 3),
+        behavior: "instant",
+      });
+      if (amount < 1) frame = window.requestAnimationFrame(animate);
+    };
+    if (jump) container.scrollTo({ top: to, behavior: "instant" });
+    else frame = window.requestAnimationFrame(animate);
+    let width = container.clientWidth;
+    let height = container.clientHeight;
+    let lineHeight = line.clientHeight;
+    const observer = new ResizeObserver(() => {
+      if (
+        width === container.clientWidth &&
+        height === container.clientHeight &&
+        lineHeight === line.clientHeight
+      )
+        return;
+      width = container.clientWidth;
+      height = container.clientHeight;
+      lineHeight = line.clientHeight;
+      window.cancelAnimationFrame(frame);
+      container.scrollTo({ top: target(), behavior: "instant" });
     });
+    observer.observe(container);
+    observer.observe(line);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, [index, follow]);
 
   const waiting = now < retryAt;
@@ -179,7 +229,7 @@ function Lyrics({
       ) : (
         <div
           ref={viewport}
-          className={styles.lines}
+          className={`${styles.lines} ${lines.length ? "" : styles.unsynced}`}
           tabIndex={0}
           aria-label={t("Scrollable lyrics", "เลื่อนอ่านเนื้อเพลง")}
         >
@@ -209,9 +259,41 @@ function Lyrics({
       )}
       <footer className={styles.credit}>
         {t("Lyrics from", "เนื้อเพลงจาก")}{" "}
-        <a href="https://lrclib.net" target="_blank" rel="noreferrer">
-          LRCLIB <IconArrowUpRight size={13} aria-hidden="true" />
+        <a
+          href={
+            lyrics?.source && lyrics.source !== "lrclib"
+              ? "https://spicylyrics.org"
+              : "https://lrclib.net"
+          }
+          target="_blank"
+          rel="noreferrer"
+        >
+          {lyrics?.source === "spicy_lyrics"
+            ? "Spicy Lyrics"
+            : lyrics?.source === "apple_music"
+              ? "Apple Music via Spicy Lyrics"
+              : lyrics?.source === "spotify"
+                ? "Spotify via Spicy Lyrics"
+                : lyrics?.source === "unknown"
+                  ? "Spicy Lyrics"
+                  : "LRCLIB"}{" "}
+          <IconArrowUpRight size={13} aria-hidden="true" />
         </a>
+        {lyrics?.contributors?.map((person) => (
+          <span key={person.role}>
+            ·{" "}
+            {person.role === "uploader"
+              ? t("Uploaded by", "อัปโหลดโดย")
+              : t("Synced by", "จับเวลาโดย")}{" "}
+            {person.url ? (
+              <a href={person.url} target="_blank" rel="noreferrer">
+                {person.name}
+              </a>
+            ) : (
+              person.name
+            )}
+          </span>
+        ))}
       </footer>
     </section>
   );
@@ -219,7 +301,7 @@ function Lyrics({
 
 export default function LyricsViewer() {
   const { t } = useSiteSettings();
-  const [playback, setPlayback] = useState<Playback | null>(null);
+  const [playback, setPlayback] = useState<LyricsPlayback | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [clock, setClock] = useState(0);
@@ -240,10 +322,16 @@ export default function LyricsViewer() {
         }>("/api/status/spotify", { cache: "no-store" });
         if (!active) return;
         if (data.error) throw new Error("Unavailable");
-        setPlayback({
-          track: normalizeSpotify(data.spotify),
-          syncedAt: data.updatedAt || Date.now(),
-        });
+        const receivedAt = Date.now();
+        setClock(receivedAt);
+        setPlayback((previous) =>
+          reconcileLyricsPlayback(
+            previous,
+            data.spotify,
+            data.updatedAt,
+            receivedAt,
+          ),
+        );
         setError(false);
       } catch {
         if (active) {
@@ -276,19 +364,13 @@ export default function LyricsViewer() {
   }, []);
 
   const track = playback?.track;
-  const progress = track
-    ? Math.min(
-        track.duration || Infinity,
-        Math.max(
-          0,
-          track.progress + Math.max(0, clock - (playback?.syncedAt ?? clock)),
-        ),
-      )
-    : 0;
+  const progress = playback ? lyricsProgress(playback, clock) : 0;
   const query = new URLSearchParams();
   if (track?.isPlaying) {
     query.set("track_name", track.title);
     query.set("artist_name", track.artist);
+    const id = spotifyTrackId(track.url);
+    if (id) query.set("spotify_id", id);
     if (track.album) query.set("album_name", track.album);
     const seconds = Math.round(track.duration / 1000);
     if (seconds >= 1 && seconds <= 3600) query.set("duration", String(seconds));
