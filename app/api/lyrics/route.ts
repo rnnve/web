@@ -1,4 +1,5 @@
 import { isRecord } from "@/app/lib/json";
+import { fetchSpicyLyrics } from "@/app/lib/spicy-lyrics";
 
 export async function GET(request: Request) {
   const input = new URL(request.url).searchParams;
@@ -6,7 +7,9 @@ export async function GET(request: Request) {
   const artist = input.get("artist_name")?.trim();
   const album = input.get("album_name")?.trim();
   const duration = input.get("duration");
+  const spotifyId = input.get("spotify_id");
   if (
+    (spotifyId !== null && !/^[A-Za-z0-9]{22}$/.test(spotifyId)) ||
     !title ||
     !artist ||
     title.length > 500 ||
@@ -31,6 +34,12 @@ export async function GET(request: Request) {
   if (duration !== null) params.set("duration", duration);
 
   try {
+    const spicy = spotifyId ? await fetchSpicyLyrics(spotifyId) : null;
+    if (spicy)
+      return Response.json(
+        { lyrics: spicy },
+        { headers: { "Cache-Control": "public, max-age=86400" } },
+      );
     const response = await fetch(`https://lrclib.net/api/get?${params}`, {
       headers: {
         Accept: "application/json",
