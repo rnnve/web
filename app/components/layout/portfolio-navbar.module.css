@@ -14,7 +14,7 @@
   padding: 4px;
   border: 1px solid rgb(255 255 255 / 7%);
   border-radius: 12px;
-  background: rgb(19 21 19 / 92%);
+  background: rgb(0 0 0 / 92%);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 2%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -32,7 +32,7 @@
   border: 1px solid transparent;
   border-radius: 9px;
   background: transparent;
-  color: #858a85;
+  color: #888888;
   text-decoration: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -44,17 +44,17 @@
 }
 
 .item[aria-current="page"] {
-  color: #f5f7f3;
+  color: #ffffff;
   border-color: rgb(255 255 255 / 15%);
-  background: #2b2e2a;
+  background: #222222;
   box-shadow:
     inset 0 1px 2px rgb(255 255 255 / 8%),
     0 2px 5px rgb(0 0 0 / 20%);
 }
 
 .item:focus-visible {
-  color: #f5f7f3;
-  outline: 2px solid #c8cec4;
+  color: #ffffff;
+  outline: 2px solid #cccccc;
   outline-offset: 3px;
 }
 
@@ -70,9 +70,9 @@
   padding: 5px 9px;
   border: 1px solid rgb(255 255 255 / 10%);
   border-radius: 9px;
-  background: #191c18;
+  background: #111111;
   box-shadow: 0 4px 14px rgb(0 0 0 / 20%);
-  color: #ecefe9;
+  color: #eeeeee;
   font-size: 11px;
   font-weight: 500;
   line-height: 16px;
