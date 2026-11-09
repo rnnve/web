@@ -258,7 +258,6 @@ function Lyrics({
         </p>
       )}
       <footer className={styles.credit}>
-        {t("Lyrics from", "เนื้อเพลงจาก")}{" "}
         <a
           href={
             lyrics?.source === "lrc_red"
