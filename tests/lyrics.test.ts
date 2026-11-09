@@ -1,7 +1,16 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test, type TestContext } from "node:test";
 import { activeLyricIndex, parseSyncedLyrics } from "../app/lib/lyrics";
 import { GET } from "../app/api/lyrics/route";
+
+function isolateLrclib(context: TestContext) {
+  const saved = process.env.LRC_RED_CONTACT_EMAIL;
+  delete process.env.LRC_RED_CONTACT_EMAIL;
+  context.after(() => {
+    if (saved === undefined) delete process.env.LRC_RED_CONTACT_EMAIL;
+    else process.env.LRC_RED_CONTACT_EMAIL = saved;
+  });
+}
 
 test("LRC supports fractions, repeated timestamps, offsets, and silent intervals", () => {
   const lines = parseSyncedLyrics(
@@ -24,6 +33,7 @@ test("LRC supports fractions, repeated timestamps, offsets, and silent intervals
 });
 
 test("Lyrics endpoint validates input before contacting LRCLIB", async (context) => {
+  isolateLrclib(context);
   const mock = context.mock.method(globalThis, "fetch", async () =>
     Response.json({}),
   );
@@ -43,6 +53,7 @@ test("Lyrics endpoint validates input before contacting LRCLIB", async (context)
 });
 
 test("Lyrics endpoint sends the track signature and identifies the client", async (context) => {
+  isolateLrclib(context);
   const mock = context.mock.method(globalThis, "fetch", async () =>
     Response.json({
       id: 1,
@@ -82,6 +93,7 @@ test("Lyrics endpoint sends the track signature and identifies the client", asyn
 });
 
 test("Lyrics endpoint handles missing, instrumental, throttled, and malformed records", async (context) => {
+  isolateLrclib(context);
   const mock = context.mock.method(
     globalThis,
     "fetch",
