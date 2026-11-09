@@ -261,22 +261,26 @@ function Lyrics({
         {t("Lyrics from", "เนื้อเพลงจาก")}{" "}
         <a
           href={
-            lyrics?.source && lyrics.source !== "lrclib"
-              ? "https://spicylyrics.org"
-              : "https://lrclib.net"
+            lyrics?.source === "lrc_red"
+              ? "https://lrc.red"
+              : lyrics?.source && lyrics.source !== "lrclib"
+                ? "https://spicylyrics.org"
+                : "https://lrclib.net"
           }
           target="_blank"
           rel="noreferrer"
         >
-          {lyrics?.source === "spicy_lyrics"
-            ? "Spicy Lyrics"
-            : lyrics?.source === "apple_music"
-              ? "Apple Music via Spicy Lyrics"
-              : lyrics?.source === "spotify"
-                ? "Spotify via Spicy Lyrics"
-                : lyrics?.source === "unknown"
-                  ? "Spicy Lyrics"
-                  : "LRCLIB"}{" "}
+          {lyrics?.source === "lrc_red"
+            ? "lrc.red"
+            : lyrics?.source === "spicy_lyrics"
+              ? "Spicy Lyrics"
+              : lyrics?.source === "apple_music"
+                ? "Apple Music via Spicy Lyrics"
+                : lyrics?.source === "spotify"
+                  ? "Spotify via Spicy Lyrics"
+                  : lyrics?.source === "unknown"
+                    ? "Spicy Lyrics"
+                    : "LRCLIB"}{" "}
           <IconArrowUpRight size={13} aria-hidden="true" />
         </a>
         {lyrics?.contributors?.map((person) => (
