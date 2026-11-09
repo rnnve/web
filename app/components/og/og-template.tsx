@@ -35,7 +35,7 @@ export default function OGTemplate({
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        background: "#121212",
+        background: "#000000",
         color: "#eeeeee",
         padding: "52px 64px",
         fontFamily: "Geist",
