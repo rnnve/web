@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import "@fontsource-variable/google-sans";
 import SiteSettingsProvider from "../components/settings/site-settings-provider";
 
 export const metadata: Metadata = {
