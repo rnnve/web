@@ -4,6 +4,9 @@ A personal corner of the web: a portfolio, live activity, and a browser start pa
 
 [Visit the site](https://rynni.cc) · [Open New Tab](https://rynni.cc/newtab) · [Previous versions](https://git.rynni.cc/rinne/site-archived)
 
+## Todo
+[] Currently playing status Lyrics viewer
+
 ## Explore
 
 | Page      | URL         | Features                                                                                                         |
