@@ -159,20 +159,6 @@ export default function SpotifyWidget({
       className={`${styles.card} ${compact ? styles.compact : ""}`}
       aria-labelledby="spotify-widget-title"
     >
-      <div className={styles.track}>
-        <div className={styles.artwork}>
-          <SpotifyArtwork src={spotify.artwork} />
-        </div>
-        <div className={styles.copy}>
-          <span className={styles.label}>
-            {spotify.isPlaying ? t("Now playing", "กำลังฟัง") : "Spotify"}
-          </span>
-          <h2 id="spotify-widget-title" title={title}>
-            {title}
-          </h2>
-          {spotify.isPlaying && <p title={spotify.artist}>{spotify.artist}</p>}
-        </div>
-      </div>
       <Link
         href={`/lyrics#${language}`}
         className={styles.preview}
@@ -194,6 +180,26 @@ export default function SpotifyWidget({
           />
         ))}
       </Link>
+      <div className={styles.track}>
+        <div className={styles.artwork}>
+          <SpotifyArtwork src={spotify.artwork} />
+        </div>
+        <div className={styles.copy}>
+          <h2
+            id="spotify-widget-title"
+            title={spotify.isPlaying ? `${title} — ${spotify.artist}` : title}
+          >
+            {spotify.isPlaying ? (
+              <>
+                {t("Listening", "กำลังฟัง")} <strong>{title}</strong>{" "}
+                {t("by", "โดย")} <span>{spotify.artist}</span>
+              </>
+            ) : (
+              title
+            )}
+          </h2>
+        </div>
+      </div>
       {error && (
         <p className={styles.error} role="status">
           {error}
