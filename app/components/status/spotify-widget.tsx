@@ -140,6 +140,7 @@ export default function SpotifyWidget({
     [lyrics],
   );
   const rows = lyricPreviewLines(lines, progress);
+  const artist = spotify.primaryArtist || spotify.artist.split(/,\s+/)[0];
   const title = spotify.isPlaying
     ? spotify.title
     : t("Nothing is playing", "ยังไม่มีเพลงที่กำลังเล่น");
@@ -187,12 +188,18 @@ export default function SpotifyWidget({
         <div className={styles.copy}>
           <h2
             id="spotify-widget-title"
-            title={spotify.isPlaying ? `${title} — ${spotify.artist}` : title}
+            className={title.length > 45 ? styles.longTitle : undefined}
+            title={spotify.isPlaying ? `${title} — ${artist}` : title}
           >
             {spotify.isPlaying ? (
               <>
-                {t("Listening", "กำลังฟัง")} <strong>{title}</strong>{" "}
-                {t("by", "โดย")} <span>{spotify.artist}</span>
+                <span className={styles.listening}>
+                  {t("Listening", "กำลังฟัง")}
+                </span>{" "}
+                <strong className={styles.songTitle}>{title}</strong>{" "}
+                <span className={styles.artist}>
+                  {t("by", "โดย")} <span>{artist}</span>
+                </span>
               </>
             ) : (
               title
