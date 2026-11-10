@@ -2,10 +2,66 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   accentFromPixels,
+  accentFromArtwork,
   coverAccent,
   DEFAULT_SITE_ACCENT,
   interpolateAccent,
 } from "../app/lib/cover-accent";
+
+function sampleArtwork(
+  patches: Array<{ x: number; y: number; color: number[] }>,
+) {
+  const pixels = new Array(21 * 21).fill([0, 0, 0, 255]).flat();
+  for (const { x, y, color } of patches) {
+    for (let row = y; row < y + 7; row++) {
+      for (let column = x; column < x + 7; column++) {
+        pixels.splice((row * 21 + column) * 4, 4, ...color, 255);
+      }
+    }
+  }
+  return pixels;
+}
+
+test("artwork compares all four corners and the center", () => {
+  for (const [x, y] of [
+    [14, 0],
+    [0, 0],
+    [0, 14],
+    [14, 14],
+    [7, 7],
+  ]) {
+    const pixels = sampleArtwork([{ x, y, color: [40, 220, 100] }]);
+    assert.equal(accentFromArtwork(pixels, 21, 21), "#28dc64");
+  }
+});
+
+test("five-region sampling excludes colors outside the requested patches", () => {
+  const pixels = sampleArtwork([{ x: 7, y: 0, color: [40, 220, 100] }]);
+  assert.equal(accentFromArtwork(pixels, 21, 21), DEFAULT_SITE_ACCENT);
+});
+
+test("regional ranking prefers a readable vivid color over neutrals and dark colors", () => {
+  const pixels = sampleArtwork([
+    { x: 0, y: 0, color: [240, 240, 240] },
+    { x: 14, y: 0, color: [140, 140, 140] },
+    { x: 0, y: 14, color: [0, 0, 120] },
+    { x: 14, y: 14, color: [0, 0, 0] },
+    { x: 7, y: 7, color: [40, 220, 100] },
+  ]);
+  assert.equal(accentFromArtwork(pixels, 21, 21), "#28dc64");
+});
+
+test("black artwork and invalid image dimensions use the default accent", () => {
+  assert.equal(
+    accentFromArtwork(sampleArtwork([]), 21, 21),
+    DEFAULT_SITE_ACCENT,
+  );
+  assert.equal(accentFromArtwork([], 0, 0), DEFAULT_SITE_ACCENT);
+  assert.equal(
+    accentFromArtwork([255, 0, 0, 255], 21, 21),
+    DEFAULT_SITE_ACCENT,
+  );
+});
 
 test("accent fades interpolate colors and clamp their endpoints", () => {
   assert.equal(interpolateAccent("#000000", "#ffffff", 0.5), "#808080");
