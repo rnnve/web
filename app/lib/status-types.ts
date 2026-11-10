@@ -29,6 +29,7 @@ export type SpotifyView = {
   isPlaying: boolean;
   title: string;
   artist: string;
+  primaryArtist?: string;
   album: string;
   artwork: string;
   progress: number;
