@@ -54,3 +54,56 @@ export function spotifyTrackId(url: string): string | null {
   );
   return match?.[1] ?? null;
 }
+import type { SpotifyView } from "./status-types";
+
+export function lyricsQuery(track: SpotifyView | undefined): string {
+  if (!track?.isPlaying) return "";
+  const query = new URLSearchParams({
+    track_name: track.title,
+    artist_name: track.artist,
+  });
+  const id = spotifyTrackId(track.url);
+  if (id) query.set("spotify_id", id);
+  if (track.album) query.set("album_name", track.album);
+  const duration = Math.round(track.duration / 1000);
+  if (duration >= 1 && duration <= 3600)
+    query.set("duration", String(duration));
+  return query.toString();
+}
+
+export function lyricPreviewLines(
+  lines: LyricLine[],
+  progress: number,
+): [LyricLine | null, LyricLine | null, LyricLine | null] {
+  const index = activeLyricIndex(lines, progress);
+  if (index >= 0)
+    return [lines[index - 1] ?? null, lines[index], lines[index + 1] ?? null];
+  const next = lines.findIndex((line) => line.time > progress);
+  return [
+    lines[next < 0 ? lines.length - 1 : next - 1] ?? null,
+    null,
+    next < 0 ? null : lines[next],
+  ];
+}
+
+export function lyricsProvider(lyrics: LyricsRecord) {
+  switch (lyrics.source) {
+    case "lrc_red":
+      return { name: "lrc.red", url: "https://lrc.red" };
+    case "spicy_lyrics":
+    case "unknown":
+      return { name: "Spicy Lyrics", url: "https://spicylyrics.org" };
+    case "apple_music":
+      return {
+        name: "Apple Music via Spicy Lyrics",
+        url: "https://spicylyrics.org",
+      };
+    case "spotify":
+      return {
+        name: "Spotify via Spicy Lyrics",
+        url: "https://spicylyrics.org",
+      };
+    default:
+      return { name: "LRCLIB", url: "https://lrclib.net" };
+  }
+}
