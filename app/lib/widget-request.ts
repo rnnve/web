@@ -3,6 +3,20 @@ import { isRecord } from "./json";
 const REQUEST_TIMEOUT_MS = 6_000;
 const SNAPSHOT_MAX_AGE_MS = 5 * 60_000;
 const pendingRequests = new Map<string, Promise<unknown>>();
+const listeners = new Map<string, Set<(data: unknown) => void>>();
+
+export function subscribeWidget(
+  url: string,
+  listener: (data: unknown) => void,
+) {
+  const subscribers = listeners.get(url) ?? new Set();
+  subscribers.add(listener);
+  listeners.set(url, subscribers);
+  return () => {
+    subscribers.delete(listener);
+    if (!subscribers.size) listeners.delete(url);
+  };
+}
 
 function storageKey(url: string) {
   return `ryn:widget:${url}`;
@@ -52,6 +66,7 @@ export function requestWidget<T>(
           throw new Error(`Widget request failed: ${response.status}`);
         const data: unknown = await response.json();
         saveWidgetSnapshot(url, data);
+        listeners.get(url)?.forEach((listener) => listener(data));
         return data;
       })
       .finally(() => pendingRequests.delete(requestKey));
