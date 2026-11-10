@@ -122,21 +122,32 @@
 
 .actions {
   display: flex;
+  width: 100%;
+  min-width: 0;
   align-items: center;
   gap: clamp(12px, 3cqi, 20px);
   margin-top: clamp(12px, 2.5svh, 20px);
 }
 
 .socials {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  flex: 0 0 min(40%, 240px);
+  min-width: 0;
   gap: 12px;
 }
 
 .socials a {
-  display: grid;
-  place-items: center;
-  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
   height: 44px;
+  padding: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+  text-decoration: none;
   border: 1px solid var(--border);
   border-radius: 12px;
   color: var(--text-muted);
@@ -204,6 +215,9 @@
   }
   .actions {
     flex-wrap: wrap;
+  }
+  .socials {
+    flex-basis: 100%;
   }
   .music {
     flex-basis: 100%;
