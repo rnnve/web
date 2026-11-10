@@ -2,9 +2,10 @@
   position: relative;
   display: grid;
   grid-template-rows: 1fr auto;
-  gap: clamp(16px, 4svh, 32px);
+  gap: clamp(12px, 3svh, 24px);
   align-items: center;
-  width: min(760px, calc(100% - clamp(32px, 8vw, 80px)));
+  width: min(640px, calc(100% - clamp(40px, 10vw, 96px)));
+  container-type: inline-size;
   min-height: 100svh;
   margin-inline: auto;
   padding: clamp(24px, 8svh, 96px) 0 clamp(24px, 5svh, 48px);
@@ -16,28 +17,28 @@
 }
 
 .identity {
-  margin-bottom: clamp(16px, 3svh, 24px);
+  margin-bottom: clamp(12px, 2.5svh, 20px);
 }
 
 .greeting {
   display: flex;
   align-items: center;
-  gap: clamp(12px, 2vw, 16px);
-  margin: 0 0 clamp(8px, 2svh, 16px);
+  gap: clamp(8px, 2cqi, 12px);
+  margin: 0 0 clamp(8px, 1.5svh, 12px);
   color: var(--text-muted);
-  font-size: clamp(14px, min(4vw, 2.5svh), 18px);
+  font-size: clamp(12px, min(3.5cqi, 2svh), 15px);
 }
 
 .greeting::before {
   content: "";
-  width: 28px;
+  width: 24px;
   height: 1px;
   background: var(--text-faint);
 }
 
 .identity h1 {
   margin: 0 0 clamp(8px, 1.5svh, 12px);
-  font-size: clamp(32px, min(10vw, 7svh), 56px);
+  font-size: clamp(28px, min(8.5cqi, 5.8svh), 44px);
   font-weight: 600;
   line-height: 1.05;
   letter-spacing: -0.04em;
@@ -46,9 +47,9 @@
 .profile {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   color: var(--text-muted);
-  font-size: clamp(13px, min(4vw, 2.3svh), 16px);
+  font-size: clamp(12px, min(3.5cqi, 2svh), 14px);
   overflow-wrap: anywhere;
 }
 
@@ -56,8 +57,8 @@
   position: relative;
   display: grid;
   place-items: center;
-  flex: 0 0 28px;
-  height: 28px;
+  flex: 0 0 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--surface-raised);
 }
@@ -89,9 +90,9 @@
 }
 
 .bio {
-  padding: clamp(16px, 3svh, 28px) clamp(16px, 4vw, 32px);
+  padding: clamp(12px, min(3cqi, 2.5svh), 20px) clamp(16px, 3.5cqi, 24px);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 16px;
   background: var(--surface-panel);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
@@ -100,8 +101,8 @@
 .bio p {
   margin: 0;
   color: var(--text-muted);
-  font-size: clamp(14px, min(4.1vw, 2.5svh), 18px);
-  line-height: 1.8;
+  font-size: clamp(13px, min(3.8cqi, 2.1svh), 16px);
+  line-height: 1.65;
 }
 
 .bio strong,
@@ -122,8 +123,8 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: clamp(12px, 3svh, 32px);
-  margin-top: clamp(16px, 3svh, 32px);
+  gap: clamp(12px, 3cqi, 20px);
+  margin-top: clamp(12px, 2.5svh, 20px);
 }
 
 .socials {
@@ -134,7 +135,7 @@
 .socials a {
   display: grid;
   place-items: center;
-  width: clamp(44px, 6vw, 52px);
+  width: 44px;
   height: 44px;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -156,17 +157,20 @@
 }
 
 .music {
+  container-type: inline-size;
   flex: 1;
   min-width: 0;
 }
 
 .music > section {
-  min-height: 84px;
+  min-height: 76px;
+  padding: 10px 12px;
+  column-gap: 10px;
   border-radius: 12px;
 }
 
 .skeleton {
-  height: 84px;
+  height: 76px;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface-panel);
@@ -196,7 +200,7 @@
     border-radius: 16px;
   }
   .bio p {
-    line-height: 1.7;
+    line-height: 1.6;
   }
   .actions {
     flex-wrap: wrap;
