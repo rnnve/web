@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { test, type TestContext } from "node:test";
-import { activeLyricIndex, parseSyncedLyrics } from "../app/lib/lyrics";
+import {
+  activeLyricIndex,
+  lyricPreviewLines,
+  lyricsQuery,
+  parseSyncedLyrics,
+} from "../app/lib/lyrics";
+import { normalizeSpotify } from "../app/lib/spotify";
 import { GET } from "../app/api/lyrics/route";
 
 function isolateLrclib(context: TestContext) {
@@ -30,6 +36,46 @@ test("LRC supports fractions, repeated timestamps, offsets, and silent intervals
   assert.equal(activeLyricIndex(lines, 1500), 0);
   assert.deepEqual(parseSyncedLyrics("Plain lyrics\n[ti:Title]"), []);
   assert.equal(activeLyricIndex([], 0), -1);
+});
+
+test("three-line preview keeps the current lyric in the second row at boundaries and after seeks", () => {
+  const lines = parseSyncedLyrics("[00:01]First\n[00:03]Second\n[00:05]Last");
+  assert.deepEqual(lyricPreviewLines(lines, 0), [null, null, lines[0]]);
+  assert.deepEqual(lyricPreviewLines(lines, 1000), [null, lines[0], lines[1]]);
+  assert.deepEqual(lyricPreviewLines(lines, 3000), [
+    lines[0],
+    lines[1],
+    lines[2],
+  ]);
+  assert.deepEqual(lyricPreviewLines(lines, 5000), [lines[1], lines[2], null]);
+  assert.deepEqual(lyricPreviewLines(lines, 1500), [null, lines[0], lines[1]]);
+  assert.deepEqual(lyricPreviewLines([], 0), [null, null, null]);
+  const timed = [
+    { time: 1000, text: "First", endTime: 2000 },
+    { time: 4000, text: "Next", endTime: 5000 },
+  ];
+  assert.deepEqual(lyricPreviewLines(timed, 3000), [timed[0], null, timed[1]]);
+  assert.deepEqual(lyricPreviewLines(timed, 6000), [timed[1], null, null]);
+});
+
+test("the widget and full viewer use the same track signature without playback progress", () => {
+  const track = normalizeSpotify({
+    isPlaying: true,
+    title: "Song",
+    artist: "Artist",
+    album: "Album",
+    duration: 180_000,
+    url: "https://open.spotify.com/track/1QV6tiMFM6fSOKOGLMHYYg",
+    progress: 1000,
+  });
+  const query = lyricsQuery(track);
+  assert.equal(lyricsQuery({ ...track, progress: 10_000 }), query);
+  assert.equal(
+    new URLSearchParams(query).get("spotify_id"),
+    "1QV6tiMFM6fSOKOGLMHYYg",
+  );
+  assert.equal(new URLSearchParams(query).get("duration"), "180");
+  assert.equal(lyricsQuery({ ...track, isPlaying: false }), "");
 });
 
 test("Lyrics endpoint validates input before contacting LRCLIB", async (context) => {
