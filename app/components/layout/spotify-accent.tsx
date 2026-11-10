@@ -5,6 +5,7 @@ import {
   coverAccent,
   DEFAULT_SITE_ACCENT,
   interpolateAccent,
+  randomAccentPosition,
 } from "@/app/lib/cover-accent";
 import { isRecord } from "@/app/lib/json";
 import { normalizeSpotify } from "@/app/lib/spotify";
@@ -22,6 +23,8 @@ export default function SpotifyAccent() {
     let pending = false;
     let colorFrame = 0;
     let retryAt = 0;
+    let track = "";
+    let position = 0;
     const root = document.documentElement;
     const paint = (color: string) => {
       if (color === DEFAULT_SITE_ACCENT) {
@@ -69,7 +72,20 @@ export default function SpotifyAccent() {
         isRecord(data) && !data.error ? data.spotify : null,
       );
       const next = spotify.isPlaying ? spotify.artwork : "";
-      if (next === artwork && (!retryAt || Date.now() < retryAt)) return;
+      const nextTrack = spotify.isPlaying
+        ? JSON.stringify([spotify.url, spotify.title, spotify.artist])
+        : "";
+      const trackChanged = Boolean(nextTrack) && nextTrack !== track;
+      if (trackChanged) {
+        track = nextTrack;
+        position = randomAccentPosition();
+      }
+      if (
+        !trackChanged &&
+        next === artwork &&
+        (!retryAt || Date.now() < retryAt)
+      )
+        return;
       artwork = next;
       retryAt = 0;
       const version = ++generation;
@@ -77,7 +93,7 @@ export default function SpotifyAccent() {
         apply(DEFAULT_SITE_ACCENT);
         return;
       }
-      void coverAccent(next).then((color) => {
+      void coverAccent(next, position).then((color) => {
         if (active && version === generation) {
           retryAt = color === DEFAULT_SITE_ACCENT ? Date.now() + 30_000 : 0;
           apply(color);
