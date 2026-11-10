@@ -104,7 +104,8 @@ export default function Home() {
                 aria-label="Discord (opens in a new tab)"
                 title="Discord"
               >
-                <StatusIcon name="discord" size={22} />
+                <StatusIcon name="discord" size={18} />
+                <span>Discord</span>
               </a>
               <a
                 href="https://github.com/rnnve"
@@ -113,7 +114,8 @@ export default function Home() {
                 aria-label="GitHub (opens in a new tab)"
                 title="GitHub"
               >
-                <StatusIcon name="github" size={22} />
+                <StatusIcon name="github" size={18} />
+                <span>GitHub</span>
               </a>
             </nav>
             <div className={styles.music} aria-label="Live Spotify status">
