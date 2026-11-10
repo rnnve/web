@@ -6,6 +6,7 @@ import {
   coverAccent,
   DEFAULT_SITE_ACCENT,
   interpolateAccent,
+  randomAccentPosition,
 } from "../app/lib/cover-accent";
 
 function sampleArtwork(
@@ -22,33 +23,45 @@ function sampleArtwork(
   return pixels;
 }
 
-test("artwork compares all four corners and the center", () => {
-  for (const [x, y] of [
+test("random selection can choose each of the five positions", () => {
+  assert.deepEqual(
+    [0, 0.2, 0.4, 0.6, 0.8].map((value) => randomAccentPosition(() => value)),
+    [0, 1, 2, 3, 4],
+  );
+  assert.equal(
+    randomAccentPosition(() => 0.99999),
+    4,
+  );
+});
+
+test("artwork samples only the selected corner or center", () => {
+  const positions = [
     [14, 0],
     [0, 0],
     [0, 14],
     [14, 14],
     [7, 7],
-  ]) {
+  ];
+  positions.forEach(([x, y], selected) => {
     const pixels = sampleArtwork([{ x, y, color: [40, 220, 100] }]);
-    assert.equal(accentFromArtwork(pixels, 21, 21), "#28dc64");
-  }
+    assert.equal(accentFromArtwork(pixels, 21, 21, selected), "#28dc64");
+    assert.equal(
+      accentFromArtwork(pixels, 21, 21, (selected + 1) % 5),
+      DEFAULT_SITE_ACCENT,
+    );
+  });
 });
 
-test("five-region sampling excludes colors outside the requested patches", () => {
-  const pixels = sampleArtwork([{ x: 7, y: 0, color: [40, 220, 100] }]);
-  assert.equal(accentFromArtwork(pixels, 21, 21), DEFAULT_SITE_ACCENT);
-});
-
-test("regional ranking prefers a readable vivid color over neutrals and dark colors", () => {
+test("a selected dark patch is used even when another position is brighter", () => {
   const pixels = sampleArtwork([
-    { x: 0, y: 0, color: [240, 240, 240] },
-    { x: 14, y: 0, color: [140, 140, 140] },
-    { x: 0, y: 14, color: [0, 0, 120] },
-    { x: 14, y: 14, color: [0, 0, 0] },
+    { x: 14, y: 0, color: [0, 0, 120] },
     { x: 7, y: 7, color: [40, 220, 100] },
   ]);
-  assert.equal(accentFromArtwork(pixels, 21, 21), "#28dc64");
+  assert.equal(
+    accentFromArtwork(pixels, 21, 21, 0),
+    accentFromPixels([0, 0, 120, 255]),
+  );
+  assert.equal(accentFromArtwork(pixels, 21, 21, 4), "#28dc64");
 });
 
 test("black artwork and invalid image dimensions use the default accent", () => {
