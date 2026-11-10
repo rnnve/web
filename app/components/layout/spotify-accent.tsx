@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { coverAccent, DEFAULT_SITE_ACCENT } from "@/app/lib/cover-accent";
+import {
+  coverAccent,
+  DEFAULT_SITE_ACCENT,
+  interpolateAccent,
+} from "@/app/lib/cover-accent";
 import { isRecord } from "@/app/lib/json";
 import { normalizeSpotify } from "@/app/lib/spotify";
 import { requestWidget, subscribeWidget } from "@/app/lib/widget-request";
@@ -16,8 +20,9 @@ export default function SpotifyAccent() {
     let artwork: string | undefined;
     let lastStatusAt = 0;
     let pending = false;
+    let colorFrame = 0;
     const root = document.documentElement;
-    const apply = (color: string) => {
+    const paint = (color: string) => {
       if (color === DEFAULT_SITE_ACCENT) {
         properties.forEach((property) => root.style.removeProperty(property));
         return;
@@ -31,6 +36,31 @@ export default function SpotifyAccent() {
         "--surface-selected",
         `color-mix(in srgb, ${color} 10%, transparent)`,
       );
+    };
+    const apply = (color: string) => {
+      window.cancelAnimationFrame(colorFrame);
+      const from = getComputedStyle(root).getPropertyValue("--accent").trim();
+      if (
+        document.hidden ||
+        from === color ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        paint(color);
+        return;
+      }
+      const startedAt = performance.now();
+      const step = (now: number) => {
+        if (!active) return;
+        const progress = Math.min(1, (now - startedAt) / 450);
+        const eased = progress * progress * (3 - 2 * progress);
+        paint(interpolateAccent(from, color, eased));
+        if (progress < 1) colorFrame = window.requestAnimationFrame(step);
+        else {
+          colorFrame = 0;
+          paint(color);
+        }
+      };
+      colorFrame = window.requestAnimationFrame(step);
     };
     const receive = (data: unknown) => {
       lastStatusAt = Date.now();
@@ -72,6 +102,7 @@ export default function SpotifyAccent() {
       generation++;
       unsubscribe();
       window.clearInterval(timer);
+      window.cancelAnimationFrame(colorFrame);
       document.removeEventListener("visibilitychange", resume);
       properties.forEach((property) => root.style.removeProperty(property));
     };
