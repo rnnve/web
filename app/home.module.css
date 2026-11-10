@@ -11,12 +11,16 @@
 }
 
 .content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  align-items: end;
+  gap: 14px;
   width: 100%;
   min-width: 0;
 }
 
 .identity {
-  margin-bottom: 1.25rem;
+  min-width: 0;
 }
 
 .greeting {
@@ -89,6 +93,7 @@
 }
 
 .bio {
+  grid-column: 1 / -1;
   padding: 1rem;
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -120,12 +125,13 @@
 }
 
 .actions {
+  grid-column: 1 / -1;
   display: flex;
   width: 100%;
   min-width: 0;
   align-items: center;
   gap: 0.75rem;
-  margin-top: 1.25rem;
+  margin-top: 6px;
 }
 
 .socials {
@@ -167,7 +173,8 @@
 }
 
 .music {
-  flex: 1;
+  grid-column: 2;
+  grid-row: 1;
   min-width: 0;
 }
 
@@ -216,9 +223,6 @@
     margin-inline: auto;
     left: calc(-32px - env(safe-area-inset-left, 0px) / 2);
   }
-  .identity {
-    margin-bottom: 14px;
-  }
   .greeting {
     gap: 8px;
     margin-bottom: 8px;
@@ -257,7 +261,7 @@
   }
   .actions {
     gap: 12px;
-    margin-top: 24px;
+    margin-top: 10px;
   }
   .socials {
     flex-basis: min(32%, 208px);
@@ -286,6 +290,9 @@
 }
 
 @media (max-width: 767px) {
+  .content {
+    grid-template-columns: minmax(0, 1fr);
+  }
   .hero {
     padding-top: calc(80px + env(safe-area-inset-top));
     padding-bottom: calc(80px + env(safe-area-inset-bottom));
@@ -303,7 +310,8 @@
     flex-basis: 100%;
   }
   .music {
-    flex-basis: 100%;
+    grid-column: 1;
+    grid-row: auto;
   }
   .scrollCue {
     bottom: calc(80px + env(safe-area-inset-bottom));
@@ -320,7 +328,7 @@
   }
   .actions {
     gap: 12px;
-    margin-top: 16px;
+    margin-top: 2px;
   }
 }
 
