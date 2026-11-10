@@ -55,8 +55,6 @@ function paletteCandidate(pixels: ArrayLike<number>) {
   if (!dominant) return null;
   return {
     rgb: dominant.sum.map((value) => value / dominant.count),
-    coverage: dominant.count / total,
-    saturation: saturation(dominant),
   };
 }
 
@@ -87,10 +85,15 @@ export function accentFromPixels(pixels: ArrayLike<number>): string {
   return readableAccent(paletteCandidate(pixels)?.rgb);
 }
 
+export function randomAccentPosition(random = Math.random): number {
+  return Math.max(0, Math.min(4, Math.floor(random() * 5)));
+}
+
 export function accentFromArtwork(
   pixels: ArrayLike<number>,
   width: number,
   height: number,
+  position = 0,
 ): string {
   if (
     !Number.isInteger(width) ||
@@ -114,42 +117,29 @@ export function accentFromArtwork(
       Math.floor((height - patchHeight) / 2),
     ],
   ];
-  let best: number[] | undefined;
-  let bestScore = -1;
-  const background = luminance([18, 18, 18]);
-  for (const [left, top] of positions) {
-    const region: number[] = [];
-    for (let y = top; y < top + patchHeight; y++) {
-      for (let x = left; x < left + patchWidth; x++) {
-        const index = (y * width + x) * 4;
-        region.push(
-          pixels[index],
-          pixels[index + 1],
-          pixels[index + 2],
-          pixels[index + 3],
-        );
-      }
-    }
-    const candidate = paletteCandidate(region);
-    if (!candidate || Math.max(...candidate.rgb) < 48) continue;
-    const contrast = (luminance(candidate.rgb) + 0.05) / (background + 0.05);
-    // Prefer a vivid, representative patch that needs less brightening to read.
-    const score =
-      candidate.saturation * 0.5 +
-      candidate.coverage * 0.3 +
-      Math.min(1, contrast / 4.8) * 0.2;
-    if (score > bestScore) {
-      bestScore = score;
-      best = candidate.rgb;
+  const selected =
+    Number.isInteger(position) && position >= 0 && position < 5 ? position : 0;
+  const [left, top] = positions[selected];
+  const region: number[] = [];
+  for (let y = top; y < top + patchHeight; y++) {
+    for (let x = left; x < left + patchWidth; x++) {
+      const index = (y * width + x) * 4;
+      region.push(
+        pixels[index],
+        pixels[index + 1],
+        pixels[index + 2],
+        pixels[index + 3],
+      );
     }
   }
-  return readableAccent(best);
+  return accentFromPixels(region);
 }
 
 const covers = new Map<string, Promise<string>>();
 
-export function coverAccent(url: string): Promise<string> {
-  const cached = covers.get(url);
+export function coverAccent(url: string, position = 0): Promise<string> {
+  const cacheKey = `${position}:${url}`;
+  const cached = covers.get(cacheKey);
   if (cached) return cached;
   const result = (async () => {
     let bitmap: ImageBitmap | undefined;
@@ -184,16 +174,21 @@ export function coverAccent(url: string): Promise<string> {
       const context = canvas.getContext("2d", { willReadFrequently: true });
       if (!context) throw new Error("Canvas unavailable");
       context.drawImage(source, 0, 0, 48, 48);
-      return accentFromArtwork(context.getImageData(0, 0, 48, 48).data, 48, 48);
+      return accentFromArtwork(
+        context.getImageData(0, 0, 48, 48).data,
+        48,
+        48,
+        position,
+      );
     } catch {
-      covers.delete(url);
+      covers.delete(cacheKey);
       return DEFAULT_SITE_ACCENT;
     } finally {
       bitmap?.close();
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     }
   })();
-  covers.set(url, result);
+  covers.set(cacheKey, result);
   if (covers.size > 24) covers.delete(covers.keys().next().value!);
   return result;
 }
