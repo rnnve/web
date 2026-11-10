@@ -75,7 +75,7 @@ Unavailable or unconfigured providers are skipped. lrc.red results are matched b
 
 Timed lyrics highlight the current line in white and other lines in gray. **Following song** toggles automatic scrolling. The playback clock filters repeated samples and small timing differences while handling seeks and song changes. Plain lyrics are shown when timing is unavailable, with separate states for instrumental tracks, missing lyrics, and service failures.
 
-The homepage Spotify widget shows the previous, current, and next lyric on the right, with the current lyric always in the middle. It omits playback device details, the progress bar, and provider text. Long lyric lines pan horizontally instead of being cut off; reduced-motion users can scroll them manually. The preview opens `/lyrics` for the full view, and both views share cached lyrics requests.
+The homepage Spotify widget sits above the about panel on the right. It shows three lyric lines above a cover-and-text row reading “Listening [song] by [artist],” with the current lyric always in the middle. It omits playback device details, the progress bar, and provider text. Long lyric lines pan horizontally instead of being cut off; reduced-motion users can scroll them manually. The preview opens `/lyrics` for the full view, and both views share cached lyrics requests.
 
 The browser receives normalized lyrics and provider/contributor credits. Provider credentials stay on the server. `/lyrics` is experimental, has `noindex` metadata, and is omitted from the sitemap.
 
