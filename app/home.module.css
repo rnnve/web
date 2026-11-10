@@ -115,7 +115,8 @@
   font-weight: 600;
 }
 
-.bio a {
+.bio p a,
+.bio p a:visited {
   color: var(--accent);
   text-decoration: none;
 }
