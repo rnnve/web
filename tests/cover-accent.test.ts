@@ -4,7 +4,18 @@ import {
   accentFromPixels,
   coverAccent,
   DEFAULT_SITE_ACCENT,
+  interpolateAccent,
 } from "../app/lib/cover-accent";
+
+test("accent fades interpolate colors and clamp their endpoints", () => {
+  assert.equal(interpolateAccent("#000000", "#ffffff", 0.5), "#808080");
+  assert.equal(interpolateAccent("#28dc64", "#64b4fa", 0), "#28dc64");
+  assert.equal(interpolateAccent("#28dc64", "#64b4fa", 2), "#64b4fa");
+  assert.equal(
+    interpolateAccent("#28dc64", DEFAULT_SITE_ACCENT, 1),
+    DEFAULT_SITE_ACCENT,
+  );
+});
 
 test("unreadable covers safely fall back and repeated covers share extraction", async (context) => {
   const fetchMock = context.mock.method(globalThis, "fetch", async () => {
