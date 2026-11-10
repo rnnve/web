@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { normalizeSpotify } from "../app/lib/spotify";
+import { normalizeSpotify, spotifyPageUrl } from "../app/lib/spotify";
 import { normalizeRepos, activityCells } from "../app/lib/github";
 import { createStatusHandler } from "../app/lib/status-handler";
 import { GET as getSpotifyStatus } from "../app/api/status/spotify/route";
@@ -112,6 +112,50 @@ test("Spotify display uses the first artist without changing lyrics metadata", (
     track: { artist: "25時、ナイトコードで。, 初音ミク" },
   });
   assert.equal(japanese.primaryArtist, "25時、ナイトコードで。");
+});
+
+test("Spotify keeps the first artist's canonical link or derives it from an ID", () => {
+  const linked = normalizeSpotify({
+    isPlaying: true,
+    track: {
+      artists: [
+        {
+          name: "First",
+          external_urls: { spotify: "https://open.spotify.com/artist/first" },
+        },
+        { name: "Second", id: "second" },
+      ],
+    },
+  });
+  assert.equal(
+    linked.primaryArtistUrl,
+    "https://open.spotify.com/artist/first",
+  );
+  const identified = normalizeSpotify({
+    isPlaying: true,
+    track: { artists: [{ name: "First", id: "first" }] },
+  });
+  assert.equal(
+    identified.primaryArtistUrl,
+    "https://open.spotify.com/artist/first",
+  );
+});
+
+test("Spotify links prefer canonical destinations and search when links are missing", () => {
+  assert.equal(
+    spotifyPageUrl("https://open.spotify.com/track/song", "Song"),
+    "https://open.spotify.com/track/song",
+  );
+  for (const url of [
+    undefined,
+    "",
+    "javascript:alert(1)",
+    "https://example.com/song",
+  ])
+    assert.equal(
+      spotifyPageUrl(url, "First artist"),
+      "https://open.spotify.com/search/First%20artist",
+    );
 });
 
 test("Repository selection follows configured order, excluding forks and invalid entries", () => {
