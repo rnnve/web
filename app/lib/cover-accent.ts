@@ -86,7 +86,7 @@ export function accentFromPixels(pixels: ArrayLike<number>): string {
 }
 
 export function randomAccentPosition(random = Math.random): number {
-  return Math.max(0, Math.min(4, Math.floor(random() * 5)));
+  return Math.max(0, Math.min(1, Math.floor(random() * 2)));
 }
 
 export function accentFromArtwork(
@@ -108,17 +108,13 @@ export function accentFromArtwork(
   const patchWidth = Math.max(1, Math.floor(width / 3));
   const patchHeight = Math.max(1, Math.floor(height / 3));
   const positions = [
-    [width - patchWidth, 0],
     [0, 0],
-    [0, height - patchHeight],
     [width - patchWidth, height - patchHeight],
-    [
-      Math.floor((width - patchWidth) / 2),
-      Math.floor((height - patchHeight) / 2),
-    ],
   ];
   const selected =
-    Number.isInteger(position) && position >= 0 && position < 5 ? position : 0;
+    Number.isInteger(position) && position >= 0 && position < positions.length
+      ? position
+      : 0;
   const [left, top] = positions[selected];
   const region: number[] = [];
   for (let y = top; y < top + patchHeight; y++) {
