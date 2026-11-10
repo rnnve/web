@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import Link from "next/link";
 import { useSiteSettings } from "../settings/site-settings-provider";
 import { StatusIcon } from "./status-icon";
 import type { SpotifyView } from "@/app/lib/status-types";
 import {
   lyricPreviewLines,
-  lyricsProvider,
   lyricsQuery,
   parseSyncedLyrics,
 } from "@/app/lib/lyrics";
@@ -31,6 +36,60 @@ function SpotifyArtwork({ src }: { src: string }) {
       referrerPolicy="no-referrer"
       onError={() => setFailedSrc(src)}
     />
+  );
+}
+
+function LyricPreviewLine({
+  text,
+  active,
+  empty,
+  availableMs,
+}: {
+  text: string;
+  active: boolean;
+  empty: boolean;
+  availableMs: number;
+}) {
+  const row = useRef<HTMLParagraphElement>(null);
+  const content = useRef<HTMLSpanElement>(null);
+  const [overflow, setOverflow] = useState(0);
+  const [windowMs] = useState(availableMs);
+  useEffect(() => {
+    const element = row.current;
+    const span = content.current;
+    if (!element || !span) return;
+    let mounted = true;
+    const measure = () => {
+      if (mounted)
+        setOverflow(
+          Math.max(0, Math.ceil(span.scrollWidth - element.clientWidth)),
+        );
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    observer.observe(span);
+    void document.fonts.ready.then(measure);
+    return () => {
+      mounted = false;
+      observer.disconnect();
+    };
+  }, [text]);
+  return (
+    <p
+      ref={row}
+      className={`${active ? styles.current : ""} ${overflow > 1 ? styles.overflowing : ""}`}
+      aria-current={active ? "true" : undefined}
+      aria-hidden={empty || undefined}
+      title={empty ? undefined : text}
+      style={
+        {
+          "--lyric-overflow": `${overflow}px`,
+          "--lyric-duration": `${Math.max(0.8, Math.min(12, overflow / 35, (windowMs - 200) / 1000))}s`,
+        } as CSSProperties
+      }
+    >
+      <span ref={content}>{text}</span>
+    </p>
   );
 }
 
@@ -84,7 +143,6 @@ export default function SpotifyWidget({
   const title = spotify.isPlaying
     ? spotify.title
     : t("Nothing is playing", "ยังไม่มีเพลงที่กำลังเล่น");
-  const provider = lyrics ? lyricsProvider(lyrics) : null;
   let message = "";
   if (!spotify.isPlaying) message = t("Waiting for music", "รอเพลงถัดไป");
   else if (loading) message = t("Finding lyrics…", "กำลังค้นหาเนื้อเพลง…");
@@ -121,44 +179,21 @@ export default function SpotifyWidget({
         aria-label={t("Open full lyrics", "เปิดเนื้อเพลงทั้งหมด")}
       >
         {rows.map((line, index) => (
-          <p
-            key={index}
-            className={
-              index === 1 && !message && line ? styles.current : undefined
+          <LyricPreviewLine
+            key={`${index}-${line?.time ?? message}`}
+            active={index === 1 && !message && Boolean(line)}
+            empty={(!line || Boolean(message)) && index !== 1}
+            availableMs={rows[2] ? Math.max(0, rows[2].time - progress) : 5000}
+            text={
+              message
+                ? index === 1
+                  ? message
+                  : "\u00a0"
+                : line?.text || (index === 1 ? "♪" : "\u00a0")
             }
-            aria-current={index === 1 && !message && line ? "true" : undefined}
-            aria-hidden={!line && index !== 1 ? true : undefined}
-          >
-            {message
-              ? index === 1
-                ? message
-                : "\u00a0"
-              : line?.text || (index === 1 ? "♪" : "\u00a0")}
-          </p>
+          />
         ))}
       </Link>
-      {provider && (
-        <footer className={styles.credits}>
-          <a href={provider.url} target="_blank" rel="noreferrer">
-            {provider.name}
-          </a>
-          {lyrics?.contributors?.map((person) => (
-            <span key={person.role}>
-              ·{" "}
-              {person.role === "uploader"
-                ? t("Uploaded by", "อัปโหลดโดย")
-                : t("Synced by", "จับเวลาโดย")}{" "}
-              {person.url ? (
-                <a href={person.url} target="_blank" rel="noreferrer">
-                  {person.name}
-                </a>
-              ) : (
-                person.name
-              )}
-            </span>
-          ))}
-        </footer>
-      )}
       {error && (
         <p className={styles.error} role="status">
           {error}
