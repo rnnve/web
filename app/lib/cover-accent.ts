@@ -1,5 +1,19 @@
 export const DEFAULT_SITE_ACCENT = "#ededed";
 
+export function interpolateAccent(from: string, to: string, progress: number) {
+  const start = /^#[a-f\d]{6}$/i.test(from) ? from : DEFAULT_SITE_ACCENT;
+  const amount = Math.max(0, Math.min(1, progress));
+  return `#${[1, 3, 5]
+    .map((offset) => {
+      const a = parseInt(start.slice(offset, offset + 2), 16);
+      const b = parseInt(to.slice(offset, offset + 2), 16);
+      return Math.round(a + (b - a) * amount)
+        .toString(16)
+        .padStart(2, "0");
+    })
+    .join("")}`;
+}
+
 function luminance(rgb: number[]) {
   const linear = rgb.map((value) => {
     const channel = value / 255;
