@@ -1,11 +1,11 @@
 .card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   column-gap: 18px;
   row-gap: 8px;
   min-width: 0;
-  min-height: 132px;
+  min-height: 0;
   padding: 20px;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -16,7 +16,7 @@
   color: var(--text);
 }
 .compact {
-  min-height: 112px;
+  min-height: 0;
   padding: 16px;
 }
 .track {
@@ -24,6 +24,8 @@
   align-items: center;
   gap: 12px;
   min-width: 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
 }
 .artwork {
   position: relative;
@@ -41,40 +43,29 @@
   object-fit: cover;
 }
 .copy {
+  flex: 1;
   min-width: 0;
-}
-.label {
-  display: block;
-  margin-bottom: 5px;
-  color: var(--text-muted);
-  font-size: 9px;
-  line-height: 1.2;
 }
 .copy h2 {
   margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 15px;
-  line-height: 1.3;
-  font-weight: 600;
-}
-.copy > p {
-  margin: 5px 0 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   color: var(--text-muted);
-  font-size: 11px;
-  line-height: 1.3;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.copy h2 strong,
+.copy h2 span {
+  color: var(--text);
+}
+.copy h2 strong {
+  font-weight: 600;
 }
 .preview {
   display: grid;
   grid-template-rows: repeat(3, 20px);
   align-items: center;
   min-width: 0;
-  padding-left: 16px;
-  border-left: 1px solid var(--border);
   text-decoration: none;
   color: #858585;
 }
@@ -130,8 +121,8 @@
   border-radius: 2px;
 }
 .compact .artwork {
-  flex-basis: 2rem;
-  height: 2rem;
+  flex-basis: 1.5rem;
+  height: 1.5rem;
 }
 .compact .track {
   gap: 0.5rem;
@@ -141,7 +132,6 @@
 }
 .compact .preview {
   grid-template-rows: repeat(3, 18px);
-  padding-left: 0.5rem;
 }
 .compact .preview p {
   font-size: 0.6875rem;
@@ -168,12 +158,6 @@
   }
   .copy h2 {
     font-size: clamp(11px, 3vw, 13px);
-  }
-  .copy > p {
-    font-size: 11px;
-  }
-  .preview {
-    padding-left: clamp(6px, 2.2vw, 10px);
   }
   .preview p {
     font-size: 11px;
