@@ -202,7 +202,91 @@
   rotate: 90deg;
 }
 
-@media (max-width: 760px) {
+@media (min-width: 768px) {
+  .hero {
+    width: min(680px, calc(100% - 96px));
+    margin-left: max(48px, calc((100% - 840px) / 2));
+    margin-right: auto;
+    grid-template-rows: 1fr;
+    padding-top: clamp(64px, 20svh, 160px);
+    padding-bottom: clamp(24px, 5svh, 48px);
+  }
+  .identity {
+    margin-bottom: 14px;
+  }
+  .greeting {
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .greeting::before {
+    width: 16px;
+  }
+  .identity h1 {
+    margin-bottom: 4px;
+    font-size: clamp(24px, 2vw, 28px);
+    letter-spacing: -0.03em;
+  }
+  .profile {
+    gap: 6px;
+    font-size: 12px;
+  }
+  .avatar {
+    flex-basis: 14px;
+    height: 14px;
+  }
+  .presence {
+    right: -1px;
+    bottom: -1px;
+    width: 6px;
+    height: 6px;
+    border-width: 1px;
+  }
+  .bio {
+    padding: 16px;
+    border-radius: 10px;
+  }
+  .bio p {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .actions {
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .socials {
+    flex-basis: min(32%, 208px);
+    gap: 10px;
+  }
+  .socials a {
+    height: 28px;
+    gap: 6px;
+    font-size: 12px;
+    border-radius: 7px;
+  }
+  .socials svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+  .music > section {
+    min-height: 64px;
+    padding: 4px 10px;
+    border-radius: 8px;
+  }
+  .skeleton {
+    height: 64px;
+    border-radius: 8px;
+  }
+  .scrollCue {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 767px) {
   .hero {
     padding-top: calc(clamp(24px, 7svh, 64px) + env(safe-area-inset-top));
     padding-bottom: calc(80px + env(safe-area-inset-bottom));
@@ -224,7 +308,7 @@
   }
 }
 
-@media (max-height: 680px) {
+@media (max-width: 767px) and (max-height: 680px) {
   .bio p {
     line-height: 1.55;
   }
@@ -238,7 +322,7 @@
   }
 }
 
-@media (max-width: 760px) and (max-height: 680px) {
+@media (max-width: 767px) and (max-height: 680px) {
   .hero {
     grid-template-rows: 1fr;
     gap: 0;
