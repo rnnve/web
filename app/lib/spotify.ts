@@ -46,15 +46,17 @@ export function normalizeSpotify(value: unknown): SpotifyView {
   const rawDevice = firstRecord(root.device, track.device);
   const deviceName = readString(rawDevice, "name");
   const deviceType = readString(rawDevice, "type");
+  const artist =
+    artists.join(", ") ||
+    readString(root, "artist", "artists") ||
+    readString(track, "artist") ||
+    "Spotify is quiet right now";
 
   return {
     isPlaying,
     title: readString(track, "name", "title", "track") || "Nothing playing",
-    artist:
-      artists.join(", ") ||
-      readString(root, "artist", "artists") ||
-      readString(track, "artist") ||
-      "Spotify is quiet right now",
+    artist,
+    primaryArtist: artists[0] || artist.split(/,\s+/)[0],
     album:
       readString(album, "name", "title") ||
       readString(track, "album") ||
