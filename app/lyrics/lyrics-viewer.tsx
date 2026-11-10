@@ -12,96 +12,23 @@ import { requestWidget } from "../lib/widget-request";
 import {
   activeLyricIndex,
   parseSyncedLyrics,
-  spotifyTrackId,
-  type LyricsRecord,
+  lyricsQuery,
 } from "../lib/lyrics";
 import styles from "./lyrics.module.css";
-
-function createLyricsSession() {
-  const cache = new Map<string, LyricsRecord | null>();
-  let retryAt = 0;
-  return {
-    has: (query: string) => cache.has(query),
-    get: (query: string) => cache.get(query),
-    save(query: string, lyrics: LyricsRecord | null) {
-      if (cache.size >= 20) cache.clear();
-      cache.set(query, lyrics);
-    },
-    getRetryAt: () => retryAt,
-    deferRetry(seconds: number) {
-      retryAt = Date.now() + seconds * 1000 + Math.random() * 1000;
-    },
-  };
-}
-type LyricsSession = ReturnType<typeof createLyricsSession>;
+import useTrackLyrics from "../hooks/use-track-lyrics";
 
 function formatTime(ms: number) {
   const seconds = Math.floor(Math.max(0, ms) / 1000);
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
-function Lyrics({
-  query,
-  progress,
-  session,
-}: {
-  query: string;
-  progress: number;
-  session: LyricsSession;
-}) {
+function Lyrics({ query, progress }: { query: string; progress: number }) {
   const { t } = useSiteSettings();
-  const [lyrics, setLyrics] = useState<LyricsRecord | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [retry, setRetry] = useState(0);
+  const { lyrics, loading, error, retry, waiting } = useTrackLyrics(query);
   const [follow, setFollow] = useState(true);
   const viewport = useRef<HTMLDivElement>(null);
   const activeLine = useRef<HTMLParagraphElement>(null);
   const previousIndex = useRef(-1);
-  const [now, setNow] = useState(0);
-  const [retryAt, setRetryAt] = useState(0);
-
-  useEffect(() => {
-    let active = true;
-    const controller = new AbortController();
-    async function load() {
-      setLoading(true);
-      setError(false);
-      setRetryAt(session.getRetryAt());
-      try {
-        if (session.has(query)) {
-          setLyrics(session.get(query) ?? null);
-          return;
-        }
-        if (Date.now() < session.getRetryAt())
-          throw new Error("Wait before retrying");
-        const response = await fetch(`/api/lyrics?${query}`, {
-          signal: controller.signal,
-        });
-        if (response.status === 429 || response.status === 503) {
-          const seconds = Number(response.headers.get("Retry-After")) || 60;
-          session.deferRetry(seconds);
-          setRetryAt(session.getRetryAt());
-        }
-        if (!response.ok) throw new Error("Unavailable");
-        const data = (await response.json()) as { lyrics: LyricsRecord | null };
-        if (!active) return;
-        session.save(query, data.lyrics);
-        setLyrics(data.lyrics);
-      } catch {
-        if (active) setError(true);
-      } finally {
-        if (active) setLoading(false);
-      }
-    }
-    void load();
-    const timer = window.setInterval(() => setNow(Date.now()), 500);
-    return () => {
-      active = false;
-      controller.abort();
-      window.clearInterval(timer);
-    };
-  }, [query, retry, session]);
 
   const lines = useMemo(
     () => lyrics?.lines ?? parseSyncedLyrics(lyrics?.syncedLyrics ?? ""),
@@ -166,7 +93,6 @@ function Lyrics({
     };
   }, [index, follow]);
 
-  const waiting = now < retryAt;
   let message = "";
   if (loading) message = t("Finding the words…", "กำลังค้นหาเนื้อเพลง…");
   else if (error)
@@ -214,11 +140,7 @@ function Lyrics({
           <IconMusic size={32} stroke={1.3} aria-hidden="true" />
           <p>{message}</p>
           {error && (
-            <button
-              type="button"
-              disabled={waiting}
-              onClick={() => setRetry((value) => value + 1)}
-            >
+            <button type="button" disabled={waiting} onClick={retry}>
               <IconRefresh size={16} aria-hidden="true" />
               {waiting
                 ? t("Please wait before retrying", "กรุณารอก่อนลองอีกครั้ง")
@@ -308,7 +230,6 @@ export default function LyricsViewer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [clock, setClock] = useState(0);
-  const [session] = useState(createLyricsSession);
 
   useEffect(() => {
     let active = true;
@@ -368,16 +289,7 @@ export default function LyricsViewer() {
 
   const track = playback?.track;
   const progress = playback ? lyricsProgress(playback, clock) : 0;
-  const query = new URLSearchParams();
-  if (track?.isPlaying) {
-    query.set("track_name", track.title);
-    query.set("artist_name", track.artist);
-    const id = spotifyTrackId(track.url);
-    if (id) query.set("spotify_id", id);
-    if (track.album) query.set("album_name", track.album);
-    const seconds = Math.round(track.duration / 1000);
-    if (seconds >= 1 && seconds <= 3600) query.set("duration", String(seconds));
-  }
+  const query = lyricsQuery(track);
 
   return (
     <main className={styles.page}>
@@ -454,12 +366,7 @@ export default function LyricsViewer() {
               </a>
             )}
           </aside>
-          <Lyrics
-            key={query.toString()}
-            query={query.toString()}
-            progress={progress}
-            session={session}
-          />
+          <Lyrics key={query} query={query} progress={progress} />
         </div>
       ) : (
         <div className={styles.idle} role="status">
