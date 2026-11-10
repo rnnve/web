@@ -10,7 +10,6 @@ import {
 import {
   DEFAULT_SETTINGS,
   SETTINGS_KEY,
-  parseSettings,
   languageFromHash,
   type Language,
   type SiteSettings,
@@ -20,13 +19,10 @@ const CHANGE_EVENT = "rynnie-settings-change";
 let snapshot: SiteSettings | undefined;
 function getSnapshot() {
   if (!snapshot) {
-    try {
-      snapshot = parseSettings(window.localStorage.getItem(SETTINGS_KEY));
-    } catch {
-      snapshot = DEFAULT_SETTINGS;
-    }
-    const language = languageFromHash(window.location.hash);
-    if (language) snapshot = { ...snapshot, language };
+    snapshot = {
+      language:
+        languageFromHash(window.location.hash) ?? DEFAULT_SETTINGS.language,
+    };
   }
   return snapshot;
 }
