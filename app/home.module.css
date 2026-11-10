@@ -183,13 +183,15 @@
   padding: 10px 12px;
   column-gap: 10px;
   border-radius: 12px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 .skeleton {
   height: 76px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface-panel);
 }
 
 .scrollCue {
