@@ -36,6 +36,7 @@ test("Spotify supports nested tracks and mixed artist formats", () => {
       isPlaying: true,
       title: "Track",
       artist: "First, Second",
+      primaryArtist: "First",
       album: "Album",
       artwork: "https://example.com/art.webp",
       progress: 15_000,
@@ -68,6 +69,7 @@ test("Spotify supports the v2 response envelope and playback device", () => {
       isPlaying: true,
       title: "Track",
       artist: "Artist",
+      primaryArtist: "Artist",
       album: "Album",
       artwork: "https://example.com/cover.webp",
       progress: 15_000,
@@ -93,6 +95,23 @@ test("Spotify preserves provider key priority and ignores non-finite progress", 
   assert.equal(view.artist, "Artist");
   assert.equal(view.artwork, "preferred.webp");
   assert.equal(view.progress, 20);
+});
+
+test("Spotify display uses the first artist without changing lyrics metadata", () => {
+  const view = normalizeSpotify({
+    isPlaying: true,
+    track: {
+      name: "Song",
+      artists: [{ name: "Tyler, The Creator" }, { name: "Featured artist" }],
+    },
+  });
+  assert.equal(view.primaryArtist, "Tyler, The Creator");
+  assert.equal(view.artist, "Tyler, The Creator, Featured artist");
+  const japanese = normalizeSpotify({
+    isPlaying: true,
+    track: { artist: "25時、ナイトコードで。, 初音ミク" },
+  });
+  assert.equal(japanese.primaryArtist, "25時、ナイトコードで。");
 });
 
 test("Repository selection follows configured order, excluding forks and invalid entries", () => {
