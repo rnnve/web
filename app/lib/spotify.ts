@@ -11,6 +11,20 @@ function firstRecord(...values: unknown[]) {
   return values.find(isRecord);
 }
 
+export function spotifyPageUrl(
+  url: string | undefined,
+  search: string,
+): string {
+  try {
+    const destination = new URL(url ?? "");
+    if (destination.origin === "https://open.spotify.com")
+      return destination.href;
+  } catch {
+    // Providers may omit canonical links; Spotify search still opens the item.
+  }
+  return `https://open.spotify.com/search/${encodeURIComponent(search)}`;
+}
+
 export function normalizeSpotify(value: unknown): SpotifyView {
   const envelope = isRecord(value) ? value : {};
   const root = isRecord(envelope.data) ? envelope.data : envelope;
@@ -51,12 +65,30 @@ export function normalizeSpotify(value: unknown): SpotifyView {
     readString(root, "artist", "artists") ||
     readString(track, "artist") ||
     "Spotify is quiet right now";
+  const firstArtist = rawArtists.find((value) => readArtistName(value));
+  const artistId =
+    readString(firstArtist, "id") ||
+    readString(firstArtist, "uri").match(
+      /^spotify:artist:([a-zA-Z0-9]+)$/,
+    )?.[1];
+  const artistExternal = firstRecord(
+    isRecord(firstArtist) ? firstArtist.external_urls : undefined,
+  );
+  const primaryArtistUrl =
+    readString(artistExternal, "spotify") ||
+    readString(firstArtist, "url", "spotifyUrl", "externalUrl") ||
+    readString(track, "artistUrl", "artist_url") ||
+    readString(root, "artistUrl", "artist_url") ||
+    (artistId
+      ? `https://open.spotify.com/artist/${encodeURIComponent(artistId)}`
+      : "");
 
   return {
     isPlaying,
     title: readString(track, "name", "title", "track") || "Nothing playing",
     artist,
     primaryArtist: artists[0] || artist.split(/,\s+/)[0],
+    ...(primaryArtistUrl ? { primaryArtistUrl } : {}),
     album:
       readString(album, "name", "title") ||
       readString(track, "album") ||
