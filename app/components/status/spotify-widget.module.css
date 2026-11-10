@@ -129,6 +129,24 @@
   outline-offset: 4px;
   border-radius: 2px;
 }
+.compact .artwork {
+  flex-basis: clamp(28px, 9cqi, 40px);
+  height: clamp(28px, 9cqi, 40px);
+}
+.compact .track {
+  gap: clamp(6px, 2cqi, 10px);
+}
+.compact .copy h2 {
+  font-size: clamp(11px, 3cqi, 13px);
+}
+.compact .preview {
+  grid-template-rows: repeat(3, 18px);
+  padding-left: clamp(6px, 2cqi, 10px);
+}
+.compact .preview p {
+  font-size: clamp(11px, 2.7cqi, 12px);
+  line-height: 18px;
+}
 .error {
   grid-column: 1 / -1;
   margin: 0;
