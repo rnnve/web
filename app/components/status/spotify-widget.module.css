@@ -24,8 +24,6 @@
   align-items: center;
   gap: 12px;
   min-width: 0;
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
 }
 .artwork {
   position: relative;
@@ -94,6 +92,7 @@
   min-width: 0;
   text-decoration: none;
   color: #858585;
+  text-align: right;
 }
 .preview p {
   min-width: 0;
