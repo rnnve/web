@@ -147,7 +147,7 @@ export default function SpotifyWidget({
     : t("Nothing is playing", "ยังไม่มีเพลงที่กำลังเล่น");
   let message = "";
   if (!spotify.isPlaying) message = t("Waiting for music", "รอเพลงถัดไป");
-  else if (loading) message = t("Finding lyrics…", "กำลังค้นหาเนื้อเพลง…");
+  else if (loading) message = "\u00a0";
   else if (lyricsError)
     message = t("Lyrics unavailable", "โหลดเนื้อเพลงไม่ได้");
   else if (lyrics?.instrumental) message = t("Instrumental", "เพลงบรรเลง");
