@@ -324,6 +324,9 @@
     grid-row: auto;
     height: 9rem;
   }
+  .music[aria-hidden="true"] {
+    display: none;
+  }
   .scrollCue {
     bottom: calc(80px + env(safe-area-inset-bottom));
   }
