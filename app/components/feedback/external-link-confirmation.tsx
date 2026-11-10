@@ -66,14 +66,14 @@ export default function ExternalLinkConfirmation() {
   };
   return (
     <div
-      className="external-confirmation [background:color-mix(in_srgb,_var(--page-background)_38%,_transparent)] [backdrop-filter:blur(18px)_saturate(125%)] [-webkit-backdrop-filter:none] fixed [inset:0] [z-index:12000] grid [place-items:center] [padding:22px] [animation:external-backdrop-in_0.24s_ease_both] max-[481px]:[padding:max(14px,_env(safe-area-inset-top))_14px_max(14px,_env(safe-area-inset-bottom))]"
+      className="external-confirmation [background:rgb(0_0_0_/_50%)] [backdrop-filter:blur(18px)_saturate(125%)] [-webkit-backdrop-filter:blur(18px)_saturate(125%)] fixed [inset:0] [z-index:12000] grid [place-items:center] [padding:22px] [animation:external-backdrop-in_0.24s_ease_both] max-[481px]:[padding:max(14px,_env(safe-area-inset-top))_14px_max(14px,_env(safe-area-inset-bottom))]"
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) setPendingLink(null);
       }}
     >
       <section
-        className="external-confirmation__modal [border:1px_solid_color-mix(in_srgb,_var(--accent)_28%,_var(--border))] [border-radius:24px_24px_10px_24px] [background:color-mix(in_srgb,_var(--surface-panel)_78%,_transparent)] [box-shadow:inset_0_1px_0_color-mix(in_srgb,_white_12%,_transparent),_0_28px_80px_color-mix(in_srgb,_var(--shadow)_90%,_transparent)] [backdrop-filter:blur(30px)_saturate(145%)] [-webkit-backdrop-filter:none] [width:min(440px,_100%)] [padding:30px] [color:var(--text)] [animation:external-modal-in_0.34s_var(--ease)_both] [&_h2]:[margin:0] [&_h2]:[font-size:clamp(29px,_6vw,_38px)] [&_h2]:[line-height:1] [&_h2]:[letter-spacing:-1.6px] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[margin:15px_0_0] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[color:var(--text-muted)] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[font-size:13px] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[line-height:1.65] max-[481px]:[max-height:calc(100dvh_-_28px)] max-[481px]:[overflow-y:auto] max-[481px]:[padding:22px] max-[481px]:[border-radius:20px_20px_8px_20px]"
+        className="external-confirmation__modal [border:1px_solid_color-mix(in_srgb,_var(--accent)_28%,_var(--border))] [border-radius:24px_24px_10px_24px] [background:rgb(24_24_24_/_90%)] [box-shadow:inset_0_1px_0_color-mix(in_srgb,_white_12%,_transparent),_0_28px_80px_color-mix(in_srgb,_var(--shadow)_90%,_transparent)] [backdrop-filter:blur(30px)_saturate(145%)] [-webkit-backdrop-filter:blur(30px)_saturate(145%)] [width:min(440px,_100%)] [padding:30px] [color:var(--text)] [animation:external-modal-in_0.34s_var(--ease)_both] [&_h2]:[margin:0] [&_h2]:[font-size:clamp(29px,_6vw,_38px)] [&_h2]:[line-height:1] [&_h2]:[letter-spacing:-1.6px] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[margin:15px_0_0] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[color:var(--text-muted)] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[font-size:13px] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[line-height:1.65] max-[481px]:[max-height:calc(100dvh_-_28px)] max-[481px]:[overflow-y:auto] max-[481px]:[padding:22px] max-[481px]:[border-radius:20px_20px_8px_20px]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="external-confirmation-title"
