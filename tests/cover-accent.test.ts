@@ -26,6 +26,8 @@ test("unreadable covers safely fall back and repeated covers share extraction", 
   assert.equal(first, second);
   assert.equal(await first, DEFAULT_SITE_ACCENT);
   assert.equal(fetchMock.mock.calls.length, 1);
+  await coverAccent("https://example.com/unreadable-test-cover");
+  assert.equal(fetchMock.mock.calls.length, 2);
 });
 
 test("black and nearly black covers use the default white accent", () => {
@@ -41,13 +43,25 @@ test("empty and transparent artwork uses the default accent", () => {
   assert.equal(accentFromPixels([255, 0, 0, 0]), DEFAULT_SITE_ACCENT);
 });
 
-test("the dominant region wins over smaller contrasting details", () => {
+test("meaningful colored regions win over neutral borders and shadows", () => {
   const pixels = [40, 220, 100, 255, 40, 220, 100, 255, 240, 20, 50, 255];
   assert.equal(accentFromPixels(pixels), "#28dc64");
   assert.equal(
     accentFromPixels([0, 0, 0, 255, 0, 0, 0, 255, 40, 220, 100, 255]),
-    DEFAULT_SITE_ACCENT,
+    "#28dc64",
   );
+  assert.equal(
+    accentFromPixels([
+      240, 240, 240, 255, 240, 240, 240, 255, 40, 220, 100, 255,
+    ]),
+    "#28dc64",
+  );
+});
+
+test("tiny isolated color specks do not color an otherwise black cover", () => {
+  const pixels = new Array(200).fill([0, 0, 0, 255]).flat();
+  pixels.push(40, 220, 100, 255);
+  assert.equal(accentFromPixels(pixels), DEFAULT_SITE_ACCENT);
 });
 
 test("dark saturated cover colors retain their hue and become legible", () => {
