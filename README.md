@@ -26,7 +26,7 @@ English is the default language. Use a URL fragment to choose explicitly:
 - `/#en` or `/ask#en` for English.
 - `/#lang=th` and `/#lang=en` are also accepted.
 
-URL language selection overrides the saved browser preference. The choice is remembered locally, and navbar links carry the current language between pages. Section anchors such as `/#more` still work. The navbar has no language switcher button.
+URLs without a language fragment display English, including when an older browser preference selected Thai. Navbar links carry the current language between pages. Section anchors such as `/#more` still work. The navbar has no language switcher button.
 
 ## Development
 
