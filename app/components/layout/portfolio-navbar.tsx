@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import {
   IconHomeFilled,
@@ -39,6 +39,7 @@ export default function PortfolioNavbar() {
     { name: t("Birthday", "วันเกิด"), href: "/birthday", icon: IconCake },
     { name: t("Ask", "ถามเรา"), href: "/ask", icon: IconMailFilled },
   ];
+  const activeIndex = navItems.findIndex(({ href }) => pathname === href);
   const navigation = (
     <header
       className={`portfolio-navbar-root ${styles.position}`}
@@ -47,6 +48,8 @@ export default function PortfolioNavbar() {
     >
       <nav
         className={styles.rail}
+        data-active={activeIndex >= 0 || undefined}
+        style={{ "--active-index": Math.max(0, activeIndex) } as CSSProperties}
         aria-label={t("Primary navigation", "เมนูหลัก")}
       >
         {navItems.map(({ name, href, icon: Icon }) => (
