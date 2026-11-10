@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useSiteSettings } from "../settings/site-settings-provider";
 import { StatusIcon } from "./status-icon";
 import type { SpotifyView } from "@/app/lib/status-types";
+import { spotifyPageUrl } from "@/app/lib/spotify";
 import {
   lyricPreviewLines,
   lyricsQuery,
@@ -196,9 +197,33 @@ export default function SpotifyWidget({
                 <span className={styles.listening}>
                   {t("Listening", "กำลังฟัง")}
                 </span>{" "}
-                <strong className={styles.songTitle}>{title}</strong>{" "}
+                <a
+                  className={styles.songTitle}
+                  href={spotifyPageUrl(spotify.url, `${title} ${artist}`)}
+                  target="_blank"
+                  rel="noreferrer"
+                  title={title}
+                  aria-label={t(
+                    `Open ${title} on Spotify (opens in a new tab)`,
+                    `เปิด ${title} บน Spotify (แท็บใหม่)`,
+                  )}
+                >
+                  {title}
+                </a>{" "}
                 <span className={styles.artist}>
-                  {t("by", "โดย")} <span>{artist}</span>
+                  {t("by", "โดย")}{" "}
+                  <a
+                    href={spotifyPageUrl(spotify.primaryArtistUrl, artist)}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={artist}
+                    aria-label={t(
+                      `Open ${artist} on Spotify (opens in a new tab)`,
+                      `เปิด ${artist} บน Spotify (แท็บใหม่)`,
+                    )}
+                  >
+                    {artist}
+                  </a>
                 </span>
               </>
             ) : (
