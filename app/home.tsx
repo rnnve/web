@@ -51,6 +51,21 @@ export default function Home() {
               <span>@{discord?.username || "melrynni"}</span>
             </div>
           </header>
+          <div className={styles.music} aria-label="Live Spotify status">
+            {spotifyLoading ? (
+              <div
+                className={styles.skeleton}
+                aria-label="Loading Spotify status"
+              />
+            ) : (
+              <SpotifyWidget
+                spotify={spotify}
+                error={payload.errors?.spotify}
+                syncedAt={spotifySyncedAt}
+                compact
+              />
+            )}
+          </div>
           <article className={styles.bio}>
             <p>
               {language === "th" ? (
@@ -118,21 +133,6 @@ export default function Home() {
                 <span>GitHub</span>
               </a>
             </nav>
-            <div className={styles.music} aria-label="Live Spotify status">
-              {spotifyLoading ? (
-                <div
-                  className={styles.skeleton}
-                  aria-label="Loading Spotify status"
-                />
-              ) : (
-                <SpotifyWidget
-                  spotify={spotify}
-                  error={payload.errors?.spotify}
-                  syncedAt={spotifySyncedAt}
-                  compact
-                />
-              )}
-            </div>
           </div>
         </div>
         <a className={styles.scrollCue} href="#more">
