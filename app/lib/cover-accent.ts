@@ -35,7 +35,23 @@ export function accentFromPixels(pixels: ArrayLike<number>): string {
     rgb.forEach((value, channel) => (bucket.sum[channel] += value));
     buckets.set(key, bucket);
   }
-  const dominant = [...buckets.values()].sort((a, b) => b.count - a.count)[0];
+  const ranked = [...buckets.values()].sort((a, b) => b.count - a.count);
+  const total = ranked.reduce((sum, bucket) => sum + bucket.count, 0);
+  const saturation = (bucket: { count: number; sum: number[] }) => {
+    const rgb = bucket.sum.map((value) => value / bucket.count);
+    const max = Math.max(...rgb);
+    return max ? (max - Math.min(...rgb)) / max : 0;
+  };
+  // Ignore neutral borders and shadows when the cover has a meaningful color.
+  const colored = ranked
+    .filter(
+      (bucket) =>
+        bucket.count >= Math.max(1, total * 0.01) &&
+        saturation(bucket) >= 0.2 &&
+        Math.max(...bucket.sum.map((value) => value / bucket.count)) >= 48,
+    )
+    .sort((a, b) => b.count * saturation(b) - a.count * saturation(a));
+  const dominant = colored[0] ?? ranked[0];
   if (!dominant) return DEFAULT_SITE_ACCENT;
   const rgb = dominant.sum.map((value) => value / dominant.count);
   if (Math.max(...rgb) < 48) return DEFAULT_SITE_ACCENT;
@@ -67,6 +83,7 @@ export function coverAccent(url: string): Promise<string> {
   if (cached) return cached;
   const result = (async () => {
     let bitmap: ImageBitmap | undefined;
+    let objectUrl: string | undefined;
     try {
       const response = await fetch(url, {
         mode: "cors",
@@ -74,18 +91,36 @@ export function coverAccent(url: string): Promise<string> {
         cache: "force-cache",
         signal: AbortSignal.timeout(6000),
       });
-      if (!response.ok) return DEFAULT_SITE_ACCENT;
-      bitmap = await createImageBitmap(await response.blob());
+      if (!response.ok) throw new Error("Artwork unavailable");
+      const blob = await response.blob();
+      if (typeof createImageBitmap === "function") {
+        try {
+          bitmap = await createImageBitmap(blob);
+        } catch {
+          // Some browsers cannot decode every artwork format as a bitmap.
+        }
+      }
+      let source: CanvasImageSource;
+      if (bitmap) source = bitmap;
+      else {
+        const artwork = new Image();
+        objectUrl = URL.createObjectURL(blob);
+        artwork.src = objectUrl;
+        await artwork.decode();
+        source = artwork;
+      }
       const canvas = document.createElement("canvas");
       canvas.width = canvas.height = 48;
       const context = canvas.getContext("2d", { willReadFrequently: true });
-      if (!context) return DEFAULT_SITE_ACCENT;
-      context.drawImage(bitmap, 0, 0, 48, 48);
+      if (!context) throw new Error("Canvas unavailable");
+      context.drawImage(source, 0, 0, 48, 48);
       return accentFromPixels(context.getImageData(0, 0, 48, 48).data);
     } catch {
+      covers.delete(url);
       return DEFAULT_SITE_ACCENT;
     } finally {
       bitmap?.close();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
     }
   })();
   covers.set(url, result);
