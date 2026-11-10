@@ -51,16 +51,20 @@ export default function Home() {
               <span>@{discord?.username || "melrynni"}</span>
             </div>
           </header>
-          {!spotifyLoading && spotify.isPlaying && (
-            <div className={styles.music} aria-label="Live Spotify status">
+          <div
+            className={styles.music}
+            aria-label="Live Spotify status"
+            aria-hidden={spotifyLoading || !spotify.isPlaying || undefined}
+          >
+            {!spotifyLoading && spotify.isPlaying && (
               <SpotifyWidget
                 spotify={spotify}
                 error={payload.errors?.spotify}
                 syncedAt={spotifySyncedAt}
                 compact
               />
-            </div>
-          )}
+            )}
+          </div>
           <article className={styles.bio}>
             <p>
               {language === "th" ? (
