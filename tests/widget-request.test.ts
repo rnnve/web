@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { test, type TestContext } from "node:test";
-import { readWidgetSnapshot, requestWidget } from "../app/lib/widget-request";
+import {
+  readWidgetSnapshot,
+  requestWidget,
+  subscribeWidget,
+} from "../app/lib/widget-request";
 
 function installStorage(context: TestContext) {
   const entries = new Map<string, string>();
@@ -22,6 +26,21 @@ function installStorage(context: TestContext) {
   });
   return entries;
 }
+
+test("shared widget results reach subscribers and stop after unsubscribe", async (context) => {
+  installStorage(context);
+  const received: unknown[] = [];
+  const unsubscribe = subscribeWidget("/test/subscribed", (data) =>
+    received.push(data),
+  );
+  await requestWidget("/test/other");
+  assert.equal(received.length, 0);
+  await requestWidget("/test/subscribed");
+  assert.deepEqual(received, [{}]);
+  unsubscribe();
+  await requestWidget("/test/subscribed");
+  assert.equal(received.length, 1);
+});
 
 test("Overlapping browser loads share a request and save a return-visit snapshot", async (context) => {
   installStorage(context);
