@@ -23,45 +23,43 @@ function sampleArtwork(
   return pixels;
 }
 
-test("random selection can choose each of the five positions", () => {
+test("random selection only chooses top left or bottom right", () => {
   assert.deepEqual(
-    [0, 0.2, 0.4, 0.6, 0.8].map((value) => randomAccentPosition(() => value)),
-    [0, 1, 2, 3, 4],
-  );
-  assert.equal(
-    randomAccentPosition(() => 0.99999),
-    4,
+    [0, 0.1, 0.49, 0.5, 0.9, 0.99999].map((value) =>
+      randomAccentPosition(() => value),
+    ),
+    [0, 0, 0, 1, 1, 1],
   );
 });
 
-test("artwork samples only the selected corner or center", () => {
+test("artwork samples only the selected diagonal corner", () => {
   const positions = [
-    [14, 0],
     [0, 0],
-    [0, 14],
     [14, 14],
-    [7, 7],
   ];
   positions.forEach(([x, y], selected) => {
     const pixels = sampleArtwork([{ x, y, color: [40, 220, 100] }]);
     assert.equal(accentFromArtwork(pixels, 21, 21, selected), "#28dc64");
     assert.equal(
-      accentFromArtwork(pixels, 21, 21, (selected + 1) % 5),
+      accentFromArtwork(pixels, 21, 21, 1 - selected),
       DEFAULT_SITE_ACCENT,
     );
   });
+  const center = sampleArtwork([{ x: 7, y: 7, color: [40, 220, 100] }]);
+  assert.equal(accentFromArtwork(center, 21, 21, 0), DEFAULT_SITE_ACCENT);
+  assert.equal(accentFromArtwork(center, 21, 21, 1), DEFAULT_SITE_ACCENT);
 });
 
-test("a selected dark patch is used even when another position is brighter", () => {
+test("the selected corner is used even when the other corner is brighter", () => {
   const pixels = sampleArtwork([
-    { x: 14, y: 0, color: [0, 0, 120] },
-    { x: 7, y: 7, color: [40, 220, 100] },
+    { x: 0, y: 0, color: [0, 0, 120] },
+    { x: 14, y: 14, color: [40, 220, 100] },
   ]);
   assert.equal(
     accentFromArtwork(pixels, 21, 21, 0),
     accentFromPixels([0, 0, 120, 255]),
   );
-  assert.equal(accentFromArtwork(pixels, 21, 21, 4), "#28dc64");
+  assert.equal(accentFromArtwork(pixels, 21, 21, 1), "#28dc64");
 });
 
 test("black artwork and invalid image dimensions use the default accent", () => {
