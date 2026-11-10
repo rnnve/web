@@ -36,7 +36,7 @@ export default function SiteBackground() {
     >
       <PatternWaves
         preset="silk"
-        color={accent === DEFAULT_SITE_ACCENT ? "#ffffff" : accent}
+        color={accent}
         backgroundColor="transparent"
         opacity={0.35}
         fade="edges"
