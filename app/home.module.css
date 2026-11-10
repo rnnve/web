@@ -176,6 +176,9 @@
   grid-column: 2;
   grid-row: 1;
   min-width: 0;
+  height: 8rem;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .music > section {
@@ -313,6 +316,7 @@
   .music {
     grid-column: 1;
     grid-row: auto;
+    height: 9rem;
   }
   .scrollCue {
     bottom: calc(80px + env(safe-area-inset-bottom));
