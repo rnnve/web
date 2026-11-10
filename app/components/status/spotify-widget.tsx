@@ -145,43 +145,37 @@ export default function SpotifyWidget({
   const title = spotify.isPlaying
     ? spotify.title
     : t("Nothing is playing", "ยังไม่มีเพลงที่กำลังเล่น");
-  let message = "";
-  if (!spotify.isPlaying) message = t("Waiting for music", "รอเพลงถัดไป");
-  else if (loading) message = "\u00a0";
-  else if (lyricsError)
-    message = t("Lyrics unavailable", "โหลดเนื้อเพลงไม่ได้");
-  else if (lyrics?.instrumental) message = t("Instrumental", "เพลงบรรเลง");
-  else if (!lines.length)
-    message = lyrics?.plainLyrics
-      ? t("Unsynced lyrics", "เนื้อเพลงไม่มีเวลา")
-      : t("No lyrics found", "ไม่พบเนื้อเพลง");
+  const showLyrics =
+    spotify.isPlaying &&
+    !loading &&
+    !lyricsError &&
+    !lyrics?.instrumental &&
+    lines.length > 0;
 
   return (
     <section
       className={`${styles.card} ${compact ? styles.compact : ""}`}
       aria-labelledby="spotify-widget-title"
     >
-      <Link
-        href={`/lyrics#${language}`}
-        className={styles.preview}
-        aria-label={t("Open full lyrics", "เปิดเนื้อเพลงทั้งหมด")}
-      >
-        {rows.map((line, index) => (
-          <LyricPreviewLine
-            key={`${index}-${line?.time ?? message}`}
-            active={index === 1 && !message && Boolean(line)}
-            empty={(!line || Boolean(message)) && index !== 1}
-            availableMs={rows[2] ? Math.max(0, rows[2].time - progress) : 5000}
-            text={
-              message
-                ? index === 1
-                  ? message
-                  : "\u00a0"
-                : line?.text || (index === 1 ? "♪" : "\u00a0")
-            }
-          />
-        ))}
-      </Link>
+      {showLyrics && (
+        <Link
+          href={`/lyrics#${language}`}
+          className={styles.preview}
+          aria-label={t("Open full lyrics", "เปิดเนื้อเพลงทั้งหมด")}
+        >
+          {rows.map((line, index) => (
+            <LyricPreviewLine
+              key={`${index}-${line?.time ?? "empty"}`}
+              active={index === 1 && Boolean(line)}
+              empty={!line && index !== 1}
+              availableMs={
+                rows[2] ? Math.max(0, rows[2].time - progress) : 5000
+              }
+              text={line?.text || (index === 1 ? "♪" : "\u00a0")}
+            />
+          ))}
+        </Link>
+      )}
       <div className={styles.track}>
         <div className={styles.artwork}>
           <SpotifyArtwork src={spotify.artwork} />
