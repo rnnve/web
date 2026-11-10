@@ -21,6 +21,7 @@ export default function SpotifyAccent() {
     let lastStatusAt = 0;
     let pending = false;
     let colorFrame = 0;
+    let retryAt = 0;
     const root = document.documentElement;
     const paint = (color: string) => {
       if (color === DEFAULT_SITE_ACCENT) {
@@ -68,15 +69,19 @@ export default function SpotifyAccent() {
         isRecord(data) && !data.error ? data.spotify : null,
       );
       const next = spotify.isPlaying ? spotify.artwork : "";
-      if (next === artwork) return;
+      if (next === artwork && (!retryAt || Date.now() < retryAt)) return;
       artwork = next;
+      retryAt = 0;
       const version = ++generation;
       if (!next) {
         apply(DEFAULT_SITE_ACCENT);
         return;
       }
       void coverAccent(next).then((color) => {
-        if (active && version === generation) apply(color);
+        if (active && version === generation) {
+          retryAt = color === DEFAULT_SITE_ACCENT ? Date.now() + 30_000 : 0;
+          apply(color);
+        }
       });
     };
     const unsubscribe = subscribeWidget(STATUS_URL, receive);
