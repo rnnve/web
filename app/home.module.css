@@ -188,7 +188,7 @@
 .music > section {
   flex: 0 0 auto;
   margin-top: auto;
-  min-height: 76px;
+  min-height: 0;
   padding: 10px 12px;
   column-gap: 10px;
   border-radius: 12px;
@@ -289,7 +289,7 @@
     flex-shrink: 0;
   }
   .music > section {
-    min-height: 64px;
+    min-height: 0;
     padding: 4px 10px;
     border-radius: 8px;
   }
