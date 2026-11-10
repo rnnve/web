@@ -116,6 +116,7 @@
 }
 
 .bio a {
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -168,7 +169,7 @@
 }
 
 .socials a:hover {
-  color: var(--text);
+  color: var(--accent);
   background: var(--surface-hover);
 }
 
