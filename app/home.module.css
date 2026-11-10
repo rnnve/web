@@ -1,13 +1,13 @@
 .hero {
   position: relative;
   display: grid;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 1fr;
   gap: 1.5rem;
   align-items: center;
   width: min(42.5rem, calc(100% - 2.5rem));
   min-height: 100svh;
   margin-inline: auto;
-  padding: 4rem 0 3rem;
+  padding: 4rem 0;
 }
 
 .content {
@@ -186,6 +186,10 @@
 }
 
 .scrollCue {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
   display: grid;
   justify-self: center;
   justify-items: center;
@@ -209,11 +213,8 @@
 @media (min-width: 768px) {
   .hero {
     width: min(42.5rem, calc(100% - 6rem));
-    margin-left: max(3rem, calc((100% - 52.5rem) / 2));
-    margin-right: auto;
-    grid-template-rows: 1fr;
-    padding-top: clamp(64px, 20svh, 160px);
-    padding-bottom: clamp(24px, 5svh, 48px);
+    margin-inline: auto;
+    left: calc(-32px - env(safe-area-inset-left, 0px) / 2);
   }
   .identity {
     margin-bottom: 14px;
@@ -282,17 +283,11 @@
     height: 64px;
     border-radius: 8px;
   }
-  .scrollCue {
-    position: absolute;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
 }
 
 @media (max-width: 767px) {
   .hero {
-    padding-top: calc(3rem + env(safe-area-inset-top));
+    padding-top: calc(80px + env(safe-area-inset-top));
     padding-bottom: calc(80px + env(safe-area-inset-bottom));
   }
   .bio {
@@ -309,6 +304,9 @@
   }
   .music {
     flex-basis: 100%;
+  }
+  .scrollCue {
+    bottom: calc(80px + env(safe-area-inset-bottom));
   }
 }
 
