@@ -57,8 +57,17 @@
   font-weight: 400;
 }
 .songTitle,
-.artist > span {
+.artist > a {
   color: var(--text);
+}
+.copy a {
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+.copy a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 .songTitle {
   flex: 0 1 auto;
