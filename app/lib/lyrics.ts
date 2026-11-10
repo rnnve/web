@@ -85,25 +85,3 @@ export function lyricPreviewLines(
     next < 0 ? null : lines[next],
   ];
 }
-
-export function lyricsProvider(lyrics: LyricsRecord) {
-  switch (lyrics.source) {
-    case "lrc_red":
-      return { name: "lrc.red", url: "https://lrc.red" };
-    case "spicy_lyrics":
-    case "unknown":
-      return { name: "Spicy Lyrics", url: "https://spicylyrics.org" };
-    case "apple_music":
-      return {
-        name: "Apple Music via Spicy Lyrics",
-        url: "https://spicylyrics.org",
-      };
-    case "spotify":
-      return {
-        name: "Spotify via Spicy Lyrics",
-        url: "https://spicylyrics.org",
-      };
-    default:
-      return { name: "LRCLIB", url: "https://lrclib.net" };
-  }
-}
