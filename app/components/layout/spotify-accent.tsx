@@ -55,7 +55,7 @@ export default function SpotifyAccent() {
       const startedAt = performance.now();
       const step = (now: number) => {
         if (!active) return;
-        const progress = Math.min(1, (now - startedAt) / 450);
+        const progress = Math.min(1, (now - startedAt) / 2000);
         const eased = progress * progress * (3 - 2 * progress);
         paint(interpolateAccent(from, color, eased));
         if (progress < 1) colorFrame = window.requestAnimationFrame(step);
