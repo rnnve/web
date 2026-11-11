@@ -7,7 +7,6 @@ import {
   useState,
   type CSSProperties,
 } from "react";
-import Link from "next/link";
 import { useSiteSettings } from "../settings/site-settings-provider";
 import { StatusIcon } from "./status-icon";
 import type { SpotifyView } from "@/app/lib/status-types";
@@ -105,7 +104,7 @@ export default function SpotifyWidget({
   compact?: boolean;
   syncedAt?: number;
 }) {
-  const { t, language } = useSiteSettings();
+  const { t } = useSiteSettings();
   const [clock, setClock] = useState(0);
   const [playback, setPlayback] = useState<LyricsPlayback | null>(null);
   useEffect(() => {
@@ -158,11 +157,7 @@ export default function SpotifyWidget({
       aria-labelledby="spotify-widget-title"
     >
       {showLyrics && (
-        <Link
-          href={`/lyrics#${language}`}
-          className={styles.preview}
-          aria-label={t("Open full lyrics", "เปิดเนื้อเพลงทั้งหมด")}
-        >
+        <div className={styles.preview}>
           {rows.map((line, index) => (
             <LyricPreviewLine
               key={`${index}-${line?.time ?? "empty"}`}
@@ -174,7 +169,7 @@ export default function SpotifyWidget({
               text={line?.text || (index === 1 ? "♪" : "\u00a0")}
             />
           ))}
-        </Link>
+        </div>
       )}
       <div className={styles.track}>
         <div className={styles.artwork}>
