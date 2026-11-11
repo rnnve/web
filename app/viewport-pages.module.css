@@ -293,3 +293,150 @@
   backdrop-filter: blur(var(--glass-blur));
   box-shadow: var(--glass-shadow);
 }
+
+/* Secondary pages: airy glass panels, independent of the home page. */
+:global(.page-transition-content):has(> .page) {
+  height: auto;
+  min-height: 100dvh;
+}
+
+.page {
+  min-height: 0;
+  padding-bottom: 48px;
+}
+
+.page h1 {
+  font-size: clamp(40px, 5vw, 70px);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+}
+
+.eyebrow {
+  color: #d8b7ca;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.description,
+.birthday :global(.birthday-description) {
+  max-width: 32rem;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.icon {
+  width: 54px;
+  height: 54px;
+  color: #f0c9dd;
+  border-color: rgb(255 255 255 / 14%);
+  border-radius: 18px;
+  background: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 13%),
+    rgb(255 255 255 / 3%)
+  );
+}
+
+.countdown,
+.wishCard,
+.page :global(.ask-form) {
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 24px;
+  background: linear-gradient(
+    145deg,
+    rgb(255 255 255 / 9%),
+    rgb(255 255 255 / 2%)
+  );
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 9%),
+    0 24px 70px rgb(0 0 0 / 24%);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+
+.countdown {
+  padding: clamp(28px, 4vw, 52px) 24px;
+}
+
+.birthday :global(.birthday-description) {
+  margin-inline: auto;
+}
+
+.birthday :global(.birthday-countdown) {
+  gap: 8px;
+}
+
+.birthday :global(.birthday-unit) {
+  padding: 20px 4px;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 4%);
+}
+
+.birthday :global(.birthday-unit + .birthday-unit) {
+  border-left: 1px solid rgb(255 255 255 / 8%);
+}
+
+.wishCard,
+.page :global(.ask-form) {
+  padding: clamp(24px, 3vw, 36px);
+}
+
+.page .wishCard :global(.ask-form) {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.page :global(.ask-form) textarea {
+  height: clamp(120px, 20dvh, 190px);
+  padding: 16px;
+  border-color: rgb(255 255 255 / 11%);
+  border-radius: 14px;
+  background: rgb(0 0 0 / 23%);
+}
+
+.page :global(.ask-form) button {
+  border-radius: 12px;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.page :global(.ask-form) button:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 800px) {
+  .page {
+    padding-bottom: 32px;
+  }
+  .birthday {
+    align-content: start;
+  }
+  .askContent {
+    padding-block: 32px;
+  }
+  .countdown {
+    padding: 28px 16px;
+  }
+  .birthday :global(.birthday-unit) {
+    padding: 16px 4px;
+  }
+}
+
+@media (max-width: 800px) and (max-height: 740px) {
+  .birthday :global(.birthday-description),
+  .wishDescription {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page :global(.ask-form) button {
+    transition: none;
+  }
+}
