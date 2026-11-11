@@ -10,7 +10,6 @@ My personal website: a portfolio, live listening activity, synchronized lyrics, 
 | ----------- | ------------------------------------------------------------------------------------------------------------- |
 | `/`         | Introduction, live Spotify and Discord status, GitHub activity, selected repositories, and technology stack.  |
 | `/listen`   | Last.fm listening history, current or last played track, and track/artist rankings across selectable periods. |
-| `/lyrics`   | Experimental lyrics viewer for the currently playing Spotify song.                                            |
 | `/birthday` | Birthday countdown in Bangkok time and anonymous wishes during the birthday window.                           |
 | `/ask`      | Anonymous questions delivered to Discord.                                                                     |
 | `/newtab`   | Clock, search, shortcuts, and a video wallpaper for a browser start page.                                     |
@@ -65,19 +64,17 @@ Spotify, Discord, and Last.fm data currently come from configured public endpoin
 
 ## Lyrics
 
-The `/lyrics` viewer follows live Spotify playback and looks up providers in this order:
+The Spotify widget follows live playback and looks up lyrics providers in this order:
 
 1. **[Spicy Lyrics](https://developers.spicylyrics.org/docs)** when `SPICYLYRICS_API_KEY` and a Spotify track ID are available.
 2. **[lrc.red](https://lrc.red/api)** when `LRC_RED_CONTACT_EMAIL` is configured.
 3. **[LRCLIB](https://lrclib.net/docs.txt)** as the final fallback; no API key is needed.
 
-Unavailable or unconfigured providers are skipped. lrc.red results are matched by title, artist, and duration when available to avoid covers and differently timed versions. Its timed LRC files feed the viewer; an unusable result continues to LRCLIB. Successful lookups are cached, and provider rate-limit cooldowns are respected.
+Unavailable or unconfigured providers are skipped. lrc.red results are matched by title, artist, and duration when available to avoid covers and differently timed versions. Its timed LRC files feed the widget; an unusable result continues to LRCLIB. Successful lookups are cached, and provider rate-limit cooldowns are respected.
 
-Timed lyrics highlight the current line in white and other lines in gray. **Following song** toggles automatic scrolling. The playback clock filters repeated samples and small timing differences while handling seeks and song changes. Plain lyrics are shown when timing is unavailable, with separate states for instrumental tracks, missing lyrics, and service failures.
+The homepage Spotify widget sits above the about panel on the right. It shows three lyric lines above a cover-and-text row reading “Listening [song] by [artist],” with the current lyric always in the middle. Only the first artist is displayed; long titles use smaller text and an ellipsis, with the full title available on hover. Song titles and artist names open their Spotify pages, falling back to Spotify search when the provider omits a direct link. It omits playback device details, the progress bar, and provider text. Long lyric lines pan horizontally instead of being cut off; reduced-motion users can scroll them manually. Missing, loading, instrumental, unavailable, or unsynced lyrics leave the lyric area blank.
 
-The homepage Spotify widget sits above the about panel on the right. It shows three lyric lines above a cover-and-text row reading “Listening [song] by [artist],” with the current lyric always in the middle. Only the first artist is displayed; long titles use smaller text and an ellipsis, with the full title available on hover. Song titles and artist names open their Spotify pages, falling back to Spotify search when the provider omits a direct link. It omits playback device details, the progress bar, and provider text. Long lyric lines pan horizontally instead of being cut off; reduced-motion users can scroll them manually. Missing, loading, instrumental, unavailable, or unsynced lyrics leave the lyric area blank. The preview opens `/lyrics` for the full view, and both views share cached lyrics requests.
-
-The browser receives normalized lyrics and provider/contributor credits. Provider credentials stay on the server. `/lyrics` is experimental, has `noindex` metadata, and is omitted from the sitemap.
+The browser receives normalized lyrics and provider/contributor credits. Provider credentials stay on the server.
 
 ## Browser start page
 
@@ -98,7 +95,7 @@ A local still image appears before the wallpaper video loads. The video is muted
 | Language and preferences            | `app/components/settings/`, `app/lib/site-settings.ts`                                             |
 | Status polling and adapters         | `app/hooks/use-portfolio-status.ts`, `app/lib/spotify.ts`, `app/lib/status-handler.ts`             |
 | Listening dashboard                 | `app/listen/`, `app/api/listen/route.ts`, `app/lib/lastfm.ts`                                      |
-| Lyrics UI and API                   | `app/lyrics/`, `app/api/lyrics/route.ts`                                                           |
+| Lyrics UI and API                   | `app/components/status/spotify-widget.tsx`, `app/api/lyrics/route.ts`                                                           |
 | Lyrics providers and timing         | `app/lib/spicy-lyrics.ts`, `app/lib/lrc-red.ts`, `app/lib/lyrics.ts`, `app/lib/lyrics-playback.ts` |
 | Featured repositories               | `app/config/portfolio.ts`                                                                          |
 | Profile images and manifest         | `public/pfp/`, `scripts/generate-pfp-manifest.mjs`, `app/generated/pfp-images.ts`                  |
@@ -118,7 +115,7 @@ Permanent redirects:
 
 `/r/:path*` rewrites to `/redirect/:path*`. Named destinations are configured in `app/redirect/destinations.ts`; `/redirect?url=` accepts an HTTP or HTTPS destination.
 
-The sitemap in [app/sitemap.ts](app/sitemap.ts) includes home, birthday, listening, and ask. New-tab and lyrics pages have `noindex` metadata and are omitted. Update the canonical site URL and sitemap configuration when deploying under a different domain.
+The sitemap in [app/sitemap.ts](app/sitemap.ts) includes home, birthday, listening, and ask. The new-tab page has `noindex` metadata and is omitted. Update the canonical site URL and sitemap configuration when deploying under a different domain.
 
 Open Graph images are rendered at `/internal/og?path=/`, with the same page metadata used by the site. The registry lives in `app/lib/og/resolver.ts`, metadata generation in `app/lib/og/metadata.ts`, and the image template in `app/components/og/og-template.tsx`. Register additional public pages in `PUBLIC_PAGES` to give them matching previews. Unknown paths receive the generic preview.
 
