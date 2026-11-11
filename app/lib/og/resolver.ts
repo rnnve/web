@@ -1,3 +1,5 @@
+import type { MetadataRoute } from "next";
+
 export const SITE_URL = "https://rynni.cc";
 export const SITE_NAME = "Rynnie";
 
@@ -11,6 +13,7 @@ export type PageContent = {
 
 export type PublicPageRoute = {
   pattern: string;
+  sitemap?: Pick<MetadataRoute.Sitemap[number], "changeFrequency" | "priority">;
   // Dynamic routes should reuse their existing public content loader here.
   load: (
     params: Record<string, string>,
@@ -25,9 +28,14 @@ export const HOME_CONTENT: PageContent = {
 // One source for the existing page metadata and the generated images.
 // Only explicitly registered public content is accessible to the image endpoint.
 export const PUBLIC_PAGES: readonly PublicPageRoute[] = [
-  { pattern: "/", load: () => HOME_CONTENT },
+  {
+    pattern: "/",
+    sitemap: { changeFrequency: "weekly", priority: 1 },
+    load: () => HOME_CONTENT,
+  },
   {
     pattern: "/birthday",
+    sitemap: { changeFrequency: "yearly", priority: 0.5 },
     load: () => ({
       title: "Birthday · Rynnie",
       description: "Counting down to Rynnie’s next birthday on December 31.",
@@ -35,6 +43,7 @@ export const PUBLIC_PAGES: readonly PublicPageRoute[] = [
   },
   {
     pattern: "/listen",
+    sitemap: { changeFrequency: "daily", priority: 0.5 },
     load: () => ({
       title: "Listening · Rynnie",
       description: "A little look at what Rynnie has been listening to.",
@@ -42,6 +51,7 @@ export const PUBLIC_PAGES: readonly PublicPageRoute[] = [
   },
   {
     pattern: "/ask",
+    sitemap: { changeFrequency: "monthly", priority: 0.5 },
     load: () => ({
       title: "Ask · Rynnie",
       description: "Send Rynnie an anonymous question.",
