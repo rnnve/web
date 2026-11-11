@@ -1,12 +1,10 @@
 import type { MetadataRoute } from "next";
-
-const SITE_URL = "https://rynni.cc";
+import { PUBLIC_PAGES, SITE_URL } from "./lib/og/resolver";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    { url: SITE_URL, changeFrequency: "weekly", priority: 1 },
-    { url: `${SITE_URL}/birthday`, changeFrequency: "yearly", priority: 0.5 },
-    { url: `${SITE_URL}/listen`, changeFrequency: "daily", priority: 0.5 },
-    { url: `${SITE_URL}/ask`, changeFrequency: "monthly", priority: 0.5 },
-  ];
+  return PUBLIC_PAGES.flatMap(({ pattern, sitemap }) =>
+    sitemap && !pattern.includes("[")
+      ? [{ url: new URL(pattern, SITE_URL).href, ...sitemap }]
+      : [],
+  );
 }
