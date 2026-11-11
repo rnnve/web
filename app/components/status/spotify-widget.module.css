@@ -123,8 +123,7 @@
 .preview p.overflowing > span {
   animation: lyric-pan var(--lyric-duration) linear 150ms infinite alternate;
 }
-.preview:hover p > span,
-.preview:focus-visible p > span {
+.preview:hover p > span {
   animation-play-state: paused;
 }
 @keyframes lyric-pan {
@@ -140,11 +139,6 @@
 .preview p.current {
   color: #fff;
   font-weight: 600;
-}
-.preview:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 4px;
-  border-radius: 2px;
 }
 .compact .artwork {
   flex-basis: 1.5rem;
