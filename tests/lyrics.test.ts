@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import { test, type TestContext } from "node:test";
 import {
   activeLyricIndex,
-  lyricPreviewLines,
   lyricsQuery,
   parseSyncedLyrics,
   preparePreviewLyrics,
@@ -39,35 +38,20 @@ test("LRC supports fractions, repeated timestamps, offsets, and silent intervals
   assert.equal(activeLyricIndex([], 0), -1);
 });
 
-test("three-line preview keeps the current lyric in the second row at boundaries and after seeks", () => {
-  const lines = parseSyncedLyrics("[00:01]First\n[00:03]Second\n[00:05]Last");
-  assert.deepEqual(lyricPreviewLines(lines, 0), [null, null, lines[0]]);
-  assert.deepEqual(lyricPreviewLines(lines, 1000), [null, lines[0], lines[1]]);
-  assert.deepEqual(lyricPreviewLines(lines, 3000), [
-    lines[0],
-    lines[1],
-    lines[2],
+test("the preview holds one lyric until the next words start, including across seeks", () => {
+  const lines = preparePreviewLyrics([
+    { time: 1000, endTime: 1500, text: "♪ First" },
+    { time: 2000, text: "🎶" },
+    { time: 3000, text: "" },
+    { time: 4000, endTime: 4500, text: "Second ♫" },
   ]);
-  assert.deepEqual(lyricPreviewLines(lines, 5000), [lines[1], lines[2], null]);
-  assert.deepEqual(lyricPreviewLines(lines, 1500), [null, lines[0], lines[1]]);
-  assert.deepEqual(lyricPreviewLines([], 0), [null, null, null]);
-  const timed = [
-    { time: 1000, text: "First", endTime: 2000 },
-    { time: 4000, text: "Next", endTime: 5000 },
-  ];
-  assert.deepEqual(lyricPreviewLines(timed, 3000), [timed[0], null, timed[1]]);
-  assert.deepEqual(lyricPreviewLines(timed, 6000), [timed[1], null, null]);
-});
-
-test("note-only and empty cues leave adjacent lyrics visible through a silent interval", () => {
-  const lines = preparePreviewLyrics(
-    parseSyncedLyrics("[00:01]♪ First\n[00:02]🎶\n[00:03]\n[00:04]Second ♫"),
-  );
-  const first = { time: 1000, text: "First", endTime: 2000 };
-  const second = { time: 4000, text: "Second" };
-  assert.deepEqual(lines, [first, second]);
-  assert.deepEqual(lyricPreviewLines(lines, 2500), [first, null, second]);
-  assert.deepEqual(lyricPreviewLines(lines, 4000), [first, second, null]);
+  const current = (ms: number) => lines[activeLyricIndex(lines, ms)]?.text;
+  assert.equal(current(999), undefined);
+  assert.equal(current(1000), "First");
+  assert.equal(current(3999), "First");
+  assert.equal(current(4000), "Second");
+  assert.equal(current(8000), "Second");
+  assert.equal(current(2000), "First");
 });
 
 test("the widget and full viewer use the same track signature without playback progress", () => {
