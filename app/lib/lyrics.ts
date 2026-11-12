@@ -75,29 +75,8 @@ export function preparePreviewLyrics(lines: LyricLine[]): LyricLine[] {
   const visible: LyricLine[] = [];
   for (const line of lines) {
     const text = line.text.replace(/[♩♪♫♬🎵🎶][\uFE0E\uFE0F]?/gu, "").trim();
-    if (text) {
-      visible.push({ ...line, text });
-    } else {
-      // A silent cue still ends the preceding lyric's highlight.
-      const previous = visible[visible.length - 1];
-      if (previous)
-        previous.endTime = Math.min(previous.endTime ?? line.time, line.time);
-    }
+    // Each visible line stays current until the next visible start time.
+    if (text) visible.push({ time: line.time, text });
   }
   return visible;
-}
-
-export function lyricPreviewLines(
-  lines: LyricLine[],
-  progress: number,
-): [LyricLine | null, LyricLine | null, LyricLine | null] {
-  const index = activeLyricIndex(lines, progress);
-  if (index >= 0)
-    return [lines[index - 1] ?? null, lines[index], lines[index + 1] ?? null];
-  const next = lines.findIndex((line) => line.time > progress);
-  return [
-    lines[next < 0 ? lines.length - 1 : next - 1] ?? null,
-    null,
-    next < 0 ? null : lines[next],
-  ];
 }
