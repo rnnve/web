@@ -14,7 +14,6 @@ import {
   IconMicrophone2,
   IconMusic,
   IconRefresh,
-  IconVinyl,
 } from "@tabler/icons-react";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
 import {
@@ -45,11 +44,11 @@ function Artwork({
   item,
   variant = "track",
 }: {
-  item: ListenItem | null;
-  variant?: "hero" | "track" | "artist";
+  item: ListenItem;
+  variant?: "track" | "artist";
 }) {
   const [failed, setFailed] = useState(false);
-  const image = item?.image ?? "";
+  const image = item.image;
   const hasImage = image && !image.includes(LASTFM_PLACEHOLDER) && !failed;
   const FallbackIcon = variant === "artist" ? IconMicrophone2 : IconMusic;
 
@@ -61,13 +60,13 @@ function Artwork({
         <img
           src={image}
           alt=""
-          loading={variant === "hero" ? "eager" : "lazy"}
+          loading="lazy"
           decoding="async"
           onError={() => setFailed(true)}
         />
       ) : (
         <span className={styles.artworkFallback} aria-hidden="true">
-          <FallbackIcon size={variant === "hero" ? 34 : 18} stroke={1.6} />
+          <FallbackIcon size={18} stroke={1.6} />
         </span>
       )}
     </span>
@@ -86,14 +85,12 @@ function ItemRow({
   const { t, language } = useSiteSettings();
   const metadata =
     kind === "recent"
-      ? item.nowPlaying
-        ? t("Playing", "กำลังเล่น")
-        : item.timestamp
-          ? new Intl.DateTimeFormat(language === "th" ? "th-TH" : "en", {
-              month: "short",
-              day: "numeric",
-            }).format(new Date(item.timestamp * 1000))
-          : ""
+      ? item.timestamp
+        ? new Intl.DateTimeFormat(language === "th" ? "th-TH" : "en", {
+            month: "short",
+            day: "numeric",
+          }).format(new Date(item.timestamp * 1000))
+        : ""
       : item.plays === null
         ? ""
         : t(`${item.plays} plays`, `${item.plays} ครั้ง`);
@@ -111,15 +108,12 @@ function ItemRow({
           <small title={item.artist}>{item.artist}</small>
         )}
       </span>
-      <span className={styles.itemMeta}>
-        {item.nowPlaying && <i aria-hidden="true" />}
-        {metadata}
-      </span>
+      <span className={styles.itemMeta}>{metadata}</span>
     </>
   );
 
   return (
-    <li className={item.nowPlaying ? styles.activeRow : undefined}>
+    <li>
       {item.url ? (
         <a href={item.url} target="_blank" rel="noreferrer">
           {content}
@@ -186,19 +180,6 @@ function SectionHeader({
   );
 }
 
-function Equalizer({ active }: { active: boolean }) {
-  return (
-    <span
-      className={`${styles.equalizer} ${active ? styles.equalizerActive : ""}`}
-      aria-hidden="true"
-    >
-      <i />
-      <i />
-      <i />
-    </span>
-  );
-}
-
 function ListeningSkeleton() {
   const { t } = useSiteSettings();
   return (
@@ -207,15 +188,6 @@ function ListeningSkeleton() {
       role="status"
       aria-label={t("Loading listening activity", "กำลังโหลดข้อมูลการฟัง")}
     >
-      <div className={styles.skeletonHero} aria-hidden="true">
-        <span className={`${styles.skeletonBlock} ${styles.skeletonCover}`} />
-        <div className={styles.skeletonCopy}>
-          <span className={`${styles.skeletonBlock} ${styles.skeletonLabel}`} />
-          <span className={`${styles.skeletonBlock} ${styles.skeletonTitle}`} />
-          <span className={`${styles.skeletonBlock} ${styles.skeletonText}`} />
-        </div>
-        <span className={`${styles.skeletonBlock} ${styles.skeletonStat}`} />
-      </div>
       <div className={styles.skeletonPanels} aria-hidden="true">
         {[0, 1, 2].map((panel) => (
           <div className={styles.skeletonPanel} key={panel}>
@@ -278,9 +250,6 @@ export default function ListenDashboard() {
             previous
               ? {
                   ...previous,
-                  current: result.unavailable.includes("current")
-                    ? previous.current
-                    : result.current,
                   recent: result.unavailable.includes("recent")
                     ? previous.recent
                     : result.recent,
@@ -389,7 +358,7 @@ export default function ListenDashboard() {
     overall: t("Overall", "ทั้งหมด"),
   };
   const activeRankings = rankings;
-  const current = data?.current ?? null;
+  const playcount = data?.profile?.playcount;
 
   return (
     <main className={styles.page}>
@@ -458,76 +427,6 @@ export default function ListenDashboard() {
 
       {data && (
         <div className={styles.dashboard}>
-          <section
-            className={`${styles.hero} ${current ? "" : styles.heroEmpty}`}
-            aria-labelledby="listen-current"
-          >
-            <Artwork
-              key={`hero-${current?.image ?? "empty"}`}
-              item={current}
-              variant="hero"
-            />
-            <div
-              className={styles.heroCopy}
-              key={current?.url || current?.name || "empty"}
-            >
-              <span className={styles.liveLabel}>
-                <Equalizer active={current?.nowPlaying === true} />
-                {data.unavailable.includes("current")
-                  ? t("LISTENING STATUS", "สถานะการฟัง")
-                  : current?.nowPlaying
-                    ? t("NOW PLAYING", "กำลังฟัง")
-                    : t("LAST PLAYED", "ฟังล่าสุด")}
-              </span>
-              {current ? (
-                <>
-                  <h2 id="listen-current" title={current.name}>
-                    {current.url ? (
-                      <a href={current.url} target="_blank" rel="noreferrer">
-                        {current.name}
-                      </a>
-                    ) : (
-                      current.name
-                    )}
-                  </h2>
-                  <p className={styles.heroArtist}>{current.artist}</p>
-                  {current.album && (
-                    <p className={styles.heroAlbum} title={current.album}>
-                      <IconVinyl size={15} aria-hidden="true" />
-                      {current.album}
-                    </p>
-                  )}
-                </>
-              ) : (
-                <>
-                  <h2 id="listen-current">
-                    {data.unavailable.includes("current")
-                      ? t(
-                          "Listening status is unavailable.",
-                          "ยังไม่สามารถโหลดสถานะการฟังได้",
-                        )
-                      : t("Quiet for now.", "ตอนนี้ยังเงียบอยู่")}
-                  </h2>
-                  <p className={styles.heroArtist}>
-                    {t(
-                      "The next track will appear here.",
-                      "เพลงถัดไปจะแสดงตรงนี้",
-                    )}
-                  </p>
-                </>
-              )}
-            </div>
-            <div className={styles.scrobbleStat}>
-              <span>{t("TOTAL SCROBBLES", "เพลงที่บันทึกไว้")}</span>
-              <strong>
-                {data.profile?.playcount?.toLocaleString(
-                  language === "th" ? "th-TH" : "en-US",
-                ) ?? "—"}
-              </strong>
-              <small>{t("and counting", "และเพิ่มขึ้นเรื่อย ๆ")}</small>
-            </div>
-          </section>
-
           <div className={styles.dashboardToolbar}>
             <div>
               <IconChartBar size={17} aria-hidden="true" />
@@ -579,7 +478,10 @@ export default function ListenDashboard() {
                   )}
                 </EmptyState>
               ) : (
-                <ItemList items={data.recent} kind="recent" />
+                <ItemList
+                  items={data.recent.filter((item) => !item.nowPlaying)}
+                  kind="recent"
+                />
               )}
             </section>
 
@@ -631,6 +533,13 @@ export default function ListenDashboard() {
       )}
 
       <footer className={styles.dataFooter}>
+        {playcount != null && (
+          <>
+            {t("Total scrobbles", "เพลงที่บันทึกไว้")} ·{" "}
+            {playcount.toLocaleString(language === "th" ? "th-TH" : "en-US")}{" "}
+            ·{" "}
+          </>
+        )}
         {t("Listening data from Last.fm", "ข้อมูลการฟังจาก Last.fm")}
       </footer>
     </main>
