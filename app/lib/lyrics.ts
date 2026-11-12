@@ -71,6 +71,22 @@ export function lyricsQuery(track: SpotifyView | undefined): string {
   return query.toString();
 }
 
+export function preparePreviewLyrics(lines: LyricLine[]): LyricLine[] {
+  const visible: LyricLine[] = [];
+  for (const line of lines) {
+    const text = line.text.replace(/[♩♪♫♬🎵🎶][\uFE0E\uFE0F]?/gu, "").trim();
+    if (text) {
+      visible.push({ ...line, text });
+    } else {
+      // A silent cue still ends the preceding lyric's highlight.
+      const previous = visible[visible.length - 1];
+      if (previous)
+        previous.endTime = Math.min(previous.endTime ?? line.time, line.time);
+    }
+  }
+  return visible;
+}
+
 export function lyricPreviewLines(
   lines: LyricLine[],
   progress: number,
