@@ -9,7 +9,7 @@ My personal website: a portfolio, live listening activity, synchronized lyrics, 
 | Route       | What it does                                                                                                  |
 | ----------- | ------------------------------------------------------------------------------------------------------------- |
 | `/`         | Introduction, live Spotify and Discord status, GitHub activity, selected repositories, and technology stack.  |
-| `/listen`   | Last.fm listening history, current or last played track, and track/artist rankings across selectable periods. |
+| `/listen`   | Last.fm listening history and track/artist rankings across selectable periods. |
 | `/birthday` | Birthday countdown in Bangkok time and anonymous wishes during the birthday window.                           |
 | `/ask`      | Anonymous questions delivered to Discord.                                                                     |
 | `/newtab`   | Clock, search, shortcuts, and a video wallpaper for a browser start page.                                     |
