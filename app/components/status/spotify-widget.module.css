@@ -91,7 +91,6 @@
 }
 .preview {
   display: grid;
-  grid-template-rows: repeat(3, 22px);
   align-items: center;
   min-width: 0;
   text-decoration: none;
@@ -152,9 +151,6 @@
 }
 .copy h2.longTitle {
   font-size: 0.6875rem;
-}
-.compact .preview {
-  grid-template-rows: repeat(3, 22px);
 }
 .compact .preview p {
   font-size: 0.875rem;
