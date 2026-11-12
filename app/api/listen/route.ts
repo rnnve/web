@@ -1,7 +1,6 @@
 import { normalizeListenData, parseListenPeriod } from "@/app/lib/lastfm";
 
 const activityEndpoints = {
-  current: "/api/v2/lastfm",
   recent: "/api/v2/lastfm/recent?limit=8",
   profile: "/api/v2/lastfm/profile",
 };
