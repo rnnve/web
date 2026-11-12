@@ -42,9 +42,11 @@ function SpotifyArtwork({ src }: { src: string }) {
 
 function LyricPreviewLine({
   text,
+  current,
   availableMs,
 }: {
   text: string;
+  current: boolean;
   availableMs: number;
 }) {
   const row = useRef<HTMLParagraphElement>(null);
@@ -75,7 +77,7 @@ function LyricPreviewLine({
     <p
       ref={row}
       className={overflow > 1 ? styles.overflowing : undefined}
-      aria-current="true"
+      aria-current={current || undefined}
       title={text}
       style={
         {
@@ -156,12 +158,17 @@ export default function SpotifyWidget({
       aria-labelledby="spotify-widget-title"
     >
       {showLyrics && (
-        <div className={styles.preview}>
-          <LyricPreviewLine
-            key={`${currentLine.time}-${currentLine.text}`}
-            availableMs={(nextLine?.time ?? spotify.duration) - progress}
-            text={currentLine.text}
-          />
+        <div className={styles.preview} key={`${index}-${currentLine.text}`}>
+          {[lines[index - 1], currentLine, nextLine].map((line, slot) =>
+            line ? (
+              <LyricPreviewLine
+                key={slot}
+                current={slot === 1}
+                availableMs={(nextLine?.time ?? spotify.duration) - progress}
+                text={line.text}
+              />
+            ) : null,
+          )}
         </div>
       )}
       <div className={styles.track}>
