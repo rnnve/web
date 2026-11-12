@@ -1,84 +1,33 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { isRecord } from "@/app/lib/json";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { discordStream, spotifyStream } from "@/app/lib/status-stream";
 import { readWidgetSnapshot, requestWidget } from "@/app/lib/widget-request";
 import { normalizeSpotify } from "@/app/lib/spotify";
 import type { DiscordProfile } from "@/app/lib/status-types";
 
-type StatusPayload = {
-  discord: unknown;
-  spotify: unknown;
-  githubRepos: unknown;
-  githubEvents: unknown;
-  errors?: { discord?: string | null; spotify?: string | null };
-};
-type DiscordPayload = { discord: unknown; error?: string | null };
-type SpotifyPayload = {
-  spotify: unknown;
-  error?: string | null;
-  updatedAt?: number;
-};
 type GitHubPayload = { repos: unknown; events: unknown };
 
 export default function usePortfolioStatus() {
-  const [payload, setPayload] = useState<StatusPayload>({
-    discord: null,
-    spotify: null,
-    githubRepos: [],
-    githubEvents: [],
+  const discord = useSyncExternalStore(
+    discordStream.subscribe,
+    discordStream.getSnapshot,
+    discordStream.getServerSnapshot,
+  );
+  const spotify = useSyncExternalStore(
+    spotifyStream.subscribe,
+    spotifyStream.getSnapshot,
+    spotifyStream.getServerSnapshot,
+  );
+  const [github, setGitHub] = useState<GitHubPayload>({
+    repos: [],
+    events: [],
   });
-  const [discordLoading, setDiscordLoading] = useState(true);
-  const [spotifyLoading, setSpotifyLoading] = useState(true);
   const [githubLoading, setGitHubLoading] = useState(true);
-  const [spotifySyncedAt, setSpotifySyncedAt] = useState(0);
-  const loadDiscord = useCallback(async () => {
-    try {
-      const next = await requestWidget<DiscordPayload>("/api/status");
-      setPayload((current) => ({
-        ...current,
-        discord: next.error ? current.discord : next.discord,
-        errors: { ...current.errors, discord: next.error ?? null },
-      }));
-    } catch {
-      setPayload((current) => ({
-        ...current,
-        errors: { ...current.errors, discord: "Could not load Discord" },
-      }));
-    } finally {
-      setDiscordLoading(false);
-    }
-  }, []);
-
-  const loadSpotify = useCallback(async () => {
-    try {
-      const next = await requestWidget<SpotifyPayload>("/api/status/spotify", {
-        cache: "no-store",
-      });
-      setSpotifySyncedAt(next.updatedAt || Date.now());
-      setPayload((current) => ({
-        ...current,
-        spotify: next.error ? current.spotify : next.spotify,
-        errors: { ...current.errors, spotify: next.error ?? null },
-      }));
-    } catch {
-      setPayload((current) => ({
-        ...current,
-        errors: { ...current.errors, spotify: "Could not load Spotify" },
-      }));
-    } finally {
-      setSpotifyLoading(false);
-    }
-  }, []);
-
   const loadGitHub = useCallback(async () => {
     try {
       const next = await requestWidget<GitHubPayload>("/api/status/github");
-      setPayload((current) => ({
-        ...current,
-        githubRepos: next.repos,
-        githubEvents: next.events,
-      }));
+      setGitHub(next);
     } catch {
       // The showcase falls back to its empty state when GitHub is unavailable.
     } finally {
@@ -87,71 +36,39 @@ export default function usePortfolioStatus() {
   }, []);
 
   useEffect(() => {
-    const pollers = [
-      { load: loadDiscord, intervalMs: 15_000 },
-      { load: loadSpotify, intervalMs: 1_000 },
-      { load: loadGitHub, intervalMs: 300_000 },
-    ];
-    let intervals: number[] = [];
-
-    const stopPolling = () => {
-      intervals.forEach((interval) => window.clearInterval(interval));
-      intervals = [];
-    };
-
-    const startPolling = () => {
-      stopPolling();
+    let interval: number | undefined;
+    const refresh = () => {
+      window.clearInterval(interval);
       if (document.hidden) return;
-
-      intervals = pollers.map(({ load, intervalMs }) => {
-        void load();
-        return window.setInterval(() => void load(), intervalMs);
-      });
+      void loadGitHub();
+      interval = window.setInterval(loadGitHub, 300_000);
     };
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) stopPolling();
-      else startPolling();
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    // Restore after hydration so server and initial client markup stay identical.
-    const restoreFrame = window.requestAnimationFrame(() => {
-      const discord = readWidgetSnapshot<DiscordPayload>("/api/status");
-      const github = readWidgetSnapshot<GitHubPayload>("/api/status/github");
-      setPayload((current) => ({
-        ...current,
-        discord: discord?.discord ?? current.discord,
-        githubRepos: github?.repos ?? current.githubRepos,
-        githubEvents: github?.events ?? current.githubEvents,
-      }));
-      if (discord) setDiscordLoading(false);
-      if (github) setGitHubLoading(false);
-      startPolling();
+    document.addEventListener("visibilitychange", refresh);
+    const frame = window.requestAnimationFrame(() => {
+      const cached = readWidgetSnapshot<GitHubPayload>("/api/status/github");
+      if (cached) {
+        setGitHub(cached);
+        setGitHubLoading(false);
+      }
+      refresh();
     });
-
     return () => {
-      window.cancelAnimationFrame(restoreFrame);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      stopPolling();
+      window.cancelAnimationFrame(frame);
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", refresh);
     };
-  }, [loadDiscord, loadGitHub, loadSpotify]);
-
-  const rawDiscord = payload.discord;
-  const discord = isRecord(rawDiscord)
-    ? ((isRecord(rawDiscord.data)
-        ? rawDiscord.data
-        : rawDiscord) as DiscordProfile)
-    : null;
-  const spotify = normalizeSpotify(payload.spotify);
+  }, [loadGitHub]);
 
   return {
-    payload,
-    discord,
-    spotify,
-    discordLoading,
-    spotifyLoading,
+    payload: {
+      githubRepos: github.repos,
+      githubEvents: github.events,
+      errors: { spotify: spotify.error },
+    },
+    discord: discord.data as DiscordProfile | null,
+    spotify: normalizeSpotify(spotify.data),
+    spotifyLoading: !spotify.updatedAt && !spotify.error,
     githubLoading,
-    spotifySyncedAt,
+    spotifySyncedAt: spotify.updatedAt,
   };
 }
