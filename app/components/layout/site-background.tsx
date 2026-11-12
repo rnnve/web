@@ -7,11 +7,12 @@ export default function SiteBackground() {
       aria-hidden="true"
     >
       <ShapeGrid
-        shape="tile"
+        shape="hexagon"
         direction="diagonal"
         lineColor="#2a2734"
-        hoverColor="#ffffff"
-        hoverFillColor="#ffffff"
+        style={{ color: "var(--accent)" }}
+        hoverColor="currentColor"
+        hoverFillColor="currentColor"
         fillOpacity={0.15}
         cellSize={41}
         speed={0.5}
