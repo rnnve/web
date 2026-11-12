@@ -12,7 +12,7 @@ import { StatusIcon } from "./status-icon";
 import type { SpotifyView } from "@/app/lib/status-types";
 import { spotifyPageUrl } from "@/app/lib/spotify";
 import {
-  lyricPreviewLines,
+  activeLyricIndex,
   lyricsQuery,
   parseSyncedLyrics,
   preparePreviewLyrics,
@@ -42,11 +42,9 @@ function SpotifyArtwork({ src }: { src: string }) {
 
 function LyricPreviewLine({
   text,
-  active,
   availableMs,
 }: {
   text: string;
-  active: boolean;
   availableMs: number;
 }) {
   const row = useRef<HTMLParagraphElement>(null);
@@ -76,8 +74,8 @@ function LyricPreviewLine({
   return (
     <p
       ref={row}
-      className={`${active ? styles.current : ""} ${overflow > 1 ? styles.overflowing : ""}`}
-      aria-current={active ? "true" : undefined}
+      className={overflow > 1 ? styles.overflowing : undefined}
+      aria-current="true"
       title={text}
       style={
         {
@@ -138,7 +136,9 @@ export default function SpotifyWidget({
       lyrics?.lines ?? parseSyncedLyrics(lyrics?.syncedLyrics ?? "");
     return preparePreviewLyrics(timedLines);
   }, [lyrics]);
-  const rows = lyricPreviewLines(lines, progress);
+  const index = activeLyricIndex(lines, progress);
+  const currentLine = lines[index];
+  const nextLine = lines[index + 1];
   const artist = spotify.primaryArtist || spotify.artist.split(/,\s+/)[0];
   const title = spotify.isPlaying
     ? spotify.title
@@ -148,7 +148,7 @@ export default function SpotifyWidget({
     !loading &&
     !lyricsError &&
     !lyrics?.instrumental &&
-    lines.length > 0;
+    currentLine;
 
   return (
     <section
@@ -157,19 +157,11 @@ export default function SpotifyWidget({
     >
       {showLyrics && (
         <div className={styles.preview}>
-          {rows.map(
-            (line, index) =>
-              line && (
-                <LyricPreviewLine
-                  key={`${index}-${line.time}`}
-                  active={index === 1}
-                  availableMs={
-                    rows[2] ? Math.max(0, rows[2].time - progress) : 5000
-                  }
-                  text={line.text}
-                />
-              ),
-          )}
+          <LyricPreviewLine
+            key={`${currentLine.time}-${currentLine.text}`}
+            availableMs={(nextLine?.time ?? spotify.duration) - progress}
+            text={currentLine.text}
+          />
         </div>
       )}
       <div className={styles.track}>
