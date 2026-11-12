@@ -92,6 +92,7 @@
 .preview {
   display: grid;
   height: 88px;
+  translate: 0 5px;
   grid-template-rows: repeat(3, max-content);
   align-content: center;
   overflow: hidden;
