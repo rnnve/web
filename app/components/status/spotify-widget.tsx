@@ -15,6 +15,7 @@ import {
   lyricPreviewLines,
   lyricsQuery,
   parseSyncedLyrics,
+  preparePreviewLyrics,
 } from "@/app/lib/lyrics";
 import {
   lyricsProgress,
@@ -42,12 +43,10 @@ function SpotifyArtwork({ src }: { src: string }) {
 function LyricPreviewLine({
   text,
   active,
-  empty,
   availableMs,
 }: {
   text: string;
   active: boolean;
-  empty: boolean;
   availableMs: number;
 }) {
   const row = useRef<HTMLParagraphElement>(null);
@@ -79,8 +78,7 @@ function LyricPreviewLine({
       ref={row}
       className={`${active ? styles.current : ""} ${overflow > 1 ? styles.overflowing : ""}`}
       aria-current={active ? "true" : undefined}
-      aria-hidden={empty || undefined}
-      title={empty ? undefined : text}
+      title={text}
       style={
         {
           "--lyric-overflow": `${overflow}px`,
@@ -138,10 +136,7 @@ export default function SpotifyWidget({
   const lines = useMemo(() => {
     const timedLines =
       lyrics?.lines ?? parseSyncedLyrics(lyrics?.syncedLyrics ?? "");
-    return timedLines.map((line) => ({
-      ...line,
-      text: line.text.replace(/[♩♪♫♬🎵🎶][\uFE0E\uFE0F]?/gu, "").trim(),
-    }));
+    return preparePreviewLyrics(timedLines);
   }, [lyrics]);
   const rows = lyricPreviewLines(lines, progress);
   const artist = spotify.primaryArtist || spotify.artist.split(/,\s+/)[0];
@@ -162,17 +157,19 @@ export default function SpotifyWidget({
     >
       {showLyrics && (
         <div className={styles.preview}>
-          {rows.map((line, index) => (
-            <LyricPreviewLine
-              key={`${index}-${line?.time ?? "empty"}`}
-              active={index === 1 && Boolean(line?.text)}
-              empty={!line?.text}
-              availableMs={
-                rows[2] ? Math.max(0, rows[2].time - progress) : 5000
-              }
-              text={line?.text || "\u00a0"}
-            />
-          ))}
+          {rows.map(
+            (line, index) =>
+              line && (
+                <LyricPreviewLine
+                  key={`${index}-${line.time}`}
+                  active={index === 1}
+                  availableMs={
+                    rows[2] ? Math.max(0, rows[2].time - progress) : 5000
+                  }
+                  text={line.text}
+                />
+              ),
+          )}
         </div>
       )}
       <div className={styles.track}>
