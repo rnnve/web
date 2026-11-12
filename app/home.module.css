@@ -197,9 +197,7 @@
   grid-column: 2;
   grid-row: 1;
   min-width: 0;
-  height: 8rem;
-  overflow-y: auto;
-  scrollbar-width: none;
+  min-height: 8rem;
 }
 
 .music > section {
@@ -339,7 +337,7 @@
   .music {
     grid-column: 1;
     grid-row: auto;
-    height: 9rem;
+    min-height: 9rem;
   }
   .music[aria-hidden="true"] {
     display: none;
