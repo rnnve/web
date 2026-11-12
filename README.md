@@ -60,7 +60,7 @@ Set these optional variables in `.env.local` or your hosting provider's environm
 
 Configure your own webhooks when deploying a copy. The built-in webhook defaults are Base64-encoded, not encrypted.
 
-Spotify, Discord, and Last.fm data currently come from configured public endpoints at `api.rynni.cc`; GitHub data comes from GitHub's API. Change the corresponding handlers under `app/api/` to use different accounts or services.
+The browser subscribes to `wss://api.rynni.cc/ws/spotify` for playback and `wss://api.rynni.cc/ws/discord` for presence. The subscriptions are managed in `app/lib/status-stream.ts`. Last.fm and GitHub use the HTTP handlers under `app/api/`.
 
 ## Lyrics
 
