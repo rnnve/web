@@ -5,6 +5,7 @@ import {
   lyricPreviewLines,
   lyricsQuery,
   parseSyncedLyrics,
+  preparePreviewLyrics,
 } from "../app/lib/lyrics";
 import { normalizeSpotify } from "../app/lib/spotify";
 import { GET } from "../app/api/lyrics/route";
@@ -56,6 +57,17 @@ test("three-line preview keeps the current lyric in the second row at boundaries
   ];
   assert.deepEqual(lyricPreviewLines(timed, 3000), [timed[0], null, timed[1]]);
   assert.deepEqual(lyricPreviewLines(timed, 6000), [timed[1], null, null]);
+});
+
+test("note-only and empty cues leave adjacent lyrics visible through a silent interval", () => {
+  const lines = preparePreviewLyrics(
+    parseSyncedLyrics("[00:01]♪ First\n[00:02]🎶\n[00:03]\n[00:04]Second ♫"),
+  );
+  const first = { time: 1000, text: "First", endTime: 2000 };
+  const second = { time: 4000, text: "Second" };
+  assert.deepEqual(lines, [first, second]);
+  assert.deepEqual(lyricPreviewLines(lines, 2500), [first, null, second]);
+  assert.deepEqual(lyricPreviewLines(lines, 4000), [first, second, null]);
 });
 
 test("the widget and full viewer use the same track signature without playback progress", () => {
