@@ -3,5 +3,5 @@ export const FEATURED_REPOSITORY_WHITELIST: string[] = [
   "rnnve",
   "web",
   "api",
-  "dcutils",
+  "jp-trainer",
 ];
