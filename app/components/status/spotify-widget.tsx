@@ -104,7 +104,11 @@ export default function SpotifyWidget({
         <div className={styles.preview} key={`${index}-${currentLine.text}`}>
           {[lines[index - 1], currentLine, nextLine].map((line, slot) =>
             line ? (
-              <p key={slot} aria-current={slot === 1 || undefined}>
+              <p
+                key={slot}
+                aria-current={slot === 1 || undefined}
+                title={line.text}
+              >
                 {line.text}
               </p>
             ) : null,
