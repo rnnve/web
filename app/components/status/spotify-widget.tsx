@@ -135,10 +135,14 @@ export default function SpotifyWidget({
     loading,
     error: lyricsError,
   } = useTrackLyrics(lyricsQuery(spotify));
-  const lines = useMemo(
-    () => lyrics?.lines ?? parseSyncedLyrics(lyrics?.syncedLyrics ?? ""),
-    [lyrics],
-  );
+  const lines = useMemo(() => {
+    const timedLines =
+      lyrics?.lines ?? parseSyncedLyrics(lyrics?.syncedLyrics ?? "");
+    return timedLines.map((line) => ({
+      ...line,
+      text: line.text.replace(/[♩♪♫♬🎵🎶][\uFE0E\uFE0F]?/gu, "").trim(),
+    }));
+  }, [lyrics]);
   const rows = lyricPreviewLines(lines, progress);
   const artist = spotify.primaryArtist || spotify.artist.split(/,\s+/)[0];
   const title = spotify.isPlaying
@@ -161,12 +165,12 @@ export default function SpotifyWidget({
           {rows.map((line, index) => (
             <LyricPreviewLine
               key={`${index}-${line?.time ?? "empty"}`}
-              active={index === 1 && Boolean(line)}
-              empty={!line && index !== 1}
+              active={index === 1 && Boolean(line?.text)}
+              empty={!line?.text}
               availableMs={
                 rows[2] ? Math.max(0, rows[2].time - progress) : 5000
               }
-              text={line?.text || (index === 1 ? "♪" : "\u00a0")}
+              text={line?.text || "\u00a0"}
             />
           ))}
         </div>
