@@ -683,6 +683,14 @@ export default function ShapeGrid({
         s.twinkle > 0 ||
         (s.intro && !reduce && !s.paused && state.time - state.startedAt < 1)
       ) {
+        const canvasColor =
+          s.hoverColor === "currentColor" || s.hoverFillColor === "currentColor"
+            ? getComputedStyle(canvas).color
+            : "";
+        const hoverStroke =
+          s.hoverColor === "currentColor" ? canvasColor : s.hoverColor;
+        const hoverFill =
+          s.hoverFillColor === "currentColor" ? canvasColor : s.hoverFillColor;
         for (let i = i0; i <= i1; i++)
           for (let j = j0; j <= j1; j++) {
             const [cx, cy] = centerOf(s.shape, layout, i, j),
@@ -718,7 +726,7 @@ export default function ShapeGrid({
               }
             }
             if (value <= 0.01) continue;
-            const color = s.rainbow ? tint(hue, s.tone) : s.hoverColor,
+            const color = s.rainbow ? tint(hue, s.tone) : hoverStroke,
               x = cx - state.offsetX,
               y = cy - state.offsetY;
             ctx.beginPath();
@@ -752,7 +760,7 @@ export default function ShapeGrid({
             }
             if (s.fillOpacity > 0) {
               ctx.globalAlpha = Math.min(1, value) * s.fillOpacity;
-              ctx.fillStyle = s.rainbow ? color : s.hoverFillColor;
+              ctx.fillStyle = s.rainbow ? color : hoverFill;
               ctx.fill();
             }
             ctx.globalAlpha = Math.min(1, value) * 0.85;
