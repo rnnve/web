@@ -94,7 +94,8 @@
   align-items: center;
   min-width: 0;
   text-decoration: none;
-  color: #858585;
+  color: #fff;
+  font-weight: 600;
   text-align: right;
 }
 .preview p {
@@ -104,15 +105,6 @@
   white-space: nowrap;
   font-size: 14px;
   line-height: 22px;
-  animation: lyric-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes lyric-enter {
-  from {
-    transform: translateY(12px);
-  }
-  to {
-    transform: translateY(0);
-  }
 }
 .preview p > span {
   display: block;
@@ -134,10 +126,6 @@
   100% {
     transform: translateX(calc(-1 * var(--lyric-overflow)));
   }
-}
-.preview p.current {
-  color: #fff;
-  font-weight: 600;
 }
 .compact .artwork {
   flex-basis: 1.5rem;
