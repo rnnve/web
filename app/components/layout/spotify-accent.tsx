@@ -7,11 +7,9 @@ import {
   interpolateAccent,
   randomAccentPosition,
 } from "@/app/lib/cover-accent";
-import { isRecord } from "@/app/lib/json";
 import { normalizeSpotify } from "@/app/lib/spotify";
-import { requestWidget, subscribeWidget } from "@/app/lib/widget-request";
+import { spotifyStream } from "@/app/lib/status-stream";
 
-const STATUS_URL = "/api/status/spotify";
 const properties = ["--accent", "--accent-subtle", "--surface-selected"];
 
 export default function SpotifyAccent() {
@@ -19,8 +17,6 @@ export default function SpotifyAccent() {
     let active = true;
     let generation = 0;
     let artwork: string | undefined;
-    let lastStatusAt = 0;
-    let pending = false;
     let colorFrame = 0;
     let retryAt = 0;
     let track = "";
@@ -66,11 +62,9 @@ export default function SpotifyAccent() {
       };
       colorFrame = window.requestAnimationFrame(step);
     };
-    const receive = (data: unknown) => {
-      lastStatusAt = Date.now();
-      const spotify = normalizeSpotify(
-        isRecord(data) && !data.error ? data.spotify : null,
-      );
+    const receive = () => {
+      const { data, error } = spotifyStream.getSnapshot();
+      const spotify = normalizeSpotify(error ? null : data);
       const next = spotify.isPlaying ? spotify.artwork : "";
       const nextTrack = spotify.isPlaying
         ? JSON.stringify([spotify.url, spotify.title, spotify.artist])
@@ -100,31 +94,13 @@ export default function SpotifyAccent() {
         }
       });
     };
-    const unsubscribe = subscribeWidget(STATUS_URL, receive);
-    const poll = async () => {
-      // Home and lyrics already poll Spotify; reuse their results when available.
-      if (document.hidden || pending || Date.now() - lastStatusAt < 1500)
-        return;
-      pending = true;
-      try {
-        await requestWidget(STATUS_URL, { cache: "no-store" });
-      } catch {
-        if (active) receive(null);
-      } finally {
-        pending = false;
-      }
-    };
-    void poll();
-    const timer = window.setInterval(() => void poll(), 1000);
-    const resume = () => void poll();
-    document.addEventListener("visibilitychange", resume);
+    const unsubscribe = spotifyStream.subscribe(receive);
+    receive();
     return () => {
       active = false;
       generation++;
       unsubscribe();
-      window.clearInterval(timer);
       window.cancelAnimationFrame(colorFrame);
-      document.removeEventListener("visibilitychange", resume);
       properties.forEach((property) => root.style.removeProperty(property));
     };
   }, []);
