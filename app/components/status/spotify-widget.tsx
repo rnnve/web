@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-} from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSiteSettings } from "../settings/site-settings-provider";
 import { StatusIcon } from "./status-icon";
 import type { SpotifyView } from "@/app/lib/status-types";
@@ -37,57 +31,6 @@ function SpotifyArtwork({ src }: { src: string }) {
       referrerPolicy="no-referrer"
       onError={() => setFailedSrc(src)}
     />
-  );
-}
-
-function LyricPreviewLine({
-  text,
-  current,
-  availableMs,
-}: {
-  text: string;
-  current: boolean;
-  availableMs: number;
-}) {
-  const row = useRef<HTMLParagraphElement>(null);
-  const content = useRef<HTMLSpanElement>(null);
-  const [overflow, setOverflow] = useState(0);
-  const [windowMs] = useState(availableMs);
-  useEffect(() => {
-    const element = row.current;
-    const span = content.current;
-    if (!element || !span) return;
-    let mounted = true;
-    const measure = () => {
-      if (mounted)
-        setOverflow(
-          Math.max(0, Math.ceil(span.scrollWidth - element.clientWidth)),
-        );
-    };
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    observer.observe(span);
-    void document.fonts.ready.then(measure);
-    return () => {
-      mounted = false;
-      observer.disconnect();
-    };
-  }, [text]);
-  return (
-    <p
-      ref={row}
-      className={overflow > 1 ? styles.overflowing : undefined}
-      aria-current={current || undefined}
-      title={text}
-      style={
-        {
-          "--lyric-overflow": `${overflow}px`,
-          "--lyric-duration": `${Math.max(0.8, Math.min(12, overflow / 35, (windowMs - 200) / 1000))}s`,
-        } as CSSProperties
-      }
-    >
-      <span ref={content}>{text}</span>
-    </p>
   );
 }
 
@@ -161,12 +104,9 @@ export default function SpotifyWidget({
         <div className={styles.preview} key={`${index}-${currentLine.text}`}>
           {[lines[index - 1], currentLine, nextLine].map((line, slot) =>
             line ? (
-              <LyricPreviewLine
-                key={slot}
-                current={slot === 1}
-                availableMs={(nextLine?.time ?? spotify.duration) - progress}
-                text={line.text}
-              />
+              <p key={slot} aria-current={slot === 1 || undefined}>
+                {line.text}
+              </p>
             ) : null,
           )}
         </div>
