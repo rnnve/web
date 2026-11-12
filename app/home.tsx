@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence } from "motion/react";
 import WidgetPreloads from "./components/status/widget-preloads";
 import AgeCalculator from "./components/home/age-calculator";
 import Stacks from "./components/home/stacks";
@@ -54,16 +55,20 @@ export default function Home() {
           <div
             className={styles.music}
             aria-label="Live Spotify status"
+            inert={spotifyLoading || !spotify.isPlaying}
             aria-hidden={spotifyLoading || !spotify.isPlaying || undefined}
           >
-            {!spotifyLoading && spotify.isPlaying && (
-              <SpotifyWidget
-                spotify={spotify}
-                error={payload.errors?.spotify}
-                syncedAt={spotifySyncedAt}
-                compact
-              />
-            )}
+            <AnimatePresence>
+              {!spotifyLoading && spotify.isPlaying && (
+                <SpotifyWidget
+                  key="spotify"
+                  spotify={spotify}
+                  error={payload.errors?.spotify}
+                  syncedAt={spotifySyncedAt}
+                  compact
+                />
+              )}
+            </AnimatePresence>
           </div>
           <article className={styles.bio}>
             <p>
