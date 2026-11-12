@@ -339,7 +339,7 @@
     grid-row: auto;
     min-height: 9rem;
   }
-  .music[aria-hidden="true"] {
+  .music:empty {
     display: none;
   }
   .scrollCue {
