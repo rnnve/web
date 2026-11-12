@@ -115,14 +115,31 @@
   font-weight: 600;
 }
 
-.bio p a,
-.bio p a:visited {
-  color: var(--accent);
+.bio p a {
+  color: transparent;
+  background-size: 160% 100%;
+  background-position: 50% 0;
   text-decoration: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bio p a {
+    animation: profile-gradient 3s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes profile-gradient {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 100% 0;
+  }
 }
 
 .bio a:hover {
   text-decoration: underline;
+  text-decoration-color: var(--color-purple-300);
   text-underline-offset: 4px;
 }
 
