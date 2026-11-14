@@ -1,4 +1,4 @@
-import ShapeGrid from "../effects/shape-grid";
+import DotGrid from "../effects/dot-grid";
 
 export default function SiteBackground() {
   return (
@@ -6,21 +6,25 @@ export default function SiteBackground() {
       className="site-background fixed [inset:0] [z-index:0] overflow-hidden pointer-events-none [background:var(--page-background)]"
       aria-hidden="true"
     >
-      <ShapeGrid
-        shape="hexagon"
-        direction="diagonal"
-        lineColor="#2a2734"
-        style={{ color: "var(--accent)" }}
-        hoverColor="currentColor"
-        hoverFillColor="currentColor"
-        fillOpacity={0.15}
-        cellSize={41}
-        speed={0.5}
-        tiltX={0}
-        tiltY={0}
-        rainbow={false}
-        radius={1}
-        trail={0.4}
+      <DotGrid
+        baseColor="#1e1e1e"
+        activeColor="var(--accent)"
+        shape="circle"
+        dotSize={3}
+        gap={10}
+        proximity={95}
+        strength={1}
+        bounce={0}
+        tension={0.2}
+        returnDuration={0.8}
+        shockRadius={180}
+        shockStrength={4}
+        swell={0.35}
+        stretch={0.25}
+        glow={0.6}
+        fade={0}
+        intro
+        clickShock={false}
       />
     </div>
   );
