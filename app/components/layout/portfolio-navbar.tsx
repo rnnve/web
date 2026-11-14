@@ -9,6 +9,7 @@ import {
   IconMailFilled,
   IconBrandGithubFilled,
   IconLink,
+  IconCode,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -31,6 +32,7 @@ export default function PortfolioNavbar() {
   const pathname = usePathname();
   const navItems = [
     { name: t("Home", "หน้าแรก"), href: "/", icon: IconHomeFilled },
+    { name: t("Developing", "งานพัฒนา"), href: "/developing", icon: IconCode },
     {
       name: t("Listening", "เพลงที่ฟัง"),
       href: "/listen",
