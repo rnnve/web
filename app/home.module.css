@@ -5,9 +5,11 @@
   gap: 1.5rem;
   align-items: center;
   width: min(42.5rem, calc(100% - 2.5rem));
-  min-height: 100svh;
+  height: 100dvh;
+  min-height: 0;
   margin-inline: auto;
-  padding: 4rem 0;
+  padding: max(24px, env(safe-area-inset-top)) 0
+    max(24px, env(safe-area-inset-bottom));
 }
 
 .content {
@@ -149,7 +151,7 @@
   justify-content: center;
   gap: 8px;
   min-width: 0;
-  height: 36px;
+  height: 28px;
   padding: 4px 8px;
   font-size: 13px;
   white-space: nowrap;
@@ -200,32 +202,10 @@
   height: 76px;
 }
 
-.scrollCue {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: grid;
-  justify-self: center;
-  justify-items: center;
-  gap: 8px;
-  padding: 8px;
-  color: var(--text-muted);
-  font-size: 11px;
-  text-decoration: none;
-}
-
-@media (max-height: 600px) {
-  .scrollCue {
-    display: none;
-  }
-}
-
 @media (min-width: 768px) {
   .hero {
     width: min(42.5rem, calc(100% - 6rem));
     margin-inline: auto;
-    left: calc(-32px - env(safe-area-inset-left, 0px) / 2);
   }
   .greeting {
     gap: 8px;
@@ -299,8 +279,8 @@
   }
   .hero {
     width: min(24rem, calc(100% - 2.5rem));
-    padding-top: calc(40px + env(safe-area-inset-top));
-    padding-bottom: calc(112px + env(safe-area-inset-bottom));
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
   .greeting {
     font-size: 11px;
@@ -354,9 +334,6 @@
   .music[aria-hidden="true"] {
     display: none;
   }
-  .scrollCue {
-    bottom: calc(80px + env(safe-area-inset-bottom));
-  }
 }
 
 @media (max-width: 767px) and (max-height: 680px) {
@@ -373,8 +350,5 @@
   .hero {
     grid-template-rows: 1fr;
     gap: 0;
-  }
-  .scrollCue {
-    display: none;
   }
 }
