@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, type ReactNode } from "react";
+import styles from "../../developing/developing.module.css";
 import LogoLoop from "../effects/logo-loop";
 import { useSiteSettings } from "../settings/site-settings-provider";
 type Tool = {
@@ -212,30 +213,29 @@ function Stacks() {
   return (
     <section
       id="developer"
-      className="developer-tools [.home-page_.home-last-section_>_&]:[flex:1] [.home-page_.home-last-section_>_&]:[min-height:0] [width:min(960px,_calc(100%_-_48px))] [min-height:100svh] [margin-inline:auto] [padding:126px_0_92px] flex flex-col justify-center [padding-block:112px_84px] max-[761px]:[width:calc(100%_-_28px)] max-[761px]:[min-height:auto] max-[761px]:[padding:84px_0_56px] [.root-empty_&]:[width:min(960px,_calc(100%_-_48px))] [.root-empty_&]:[padding-block:112px_84px] max-[761px]:[.root-empty_&]:[width:calc(100%_-_24px)] max-[761px]:[.root-empty_&]:[padding-block:84px_56px] stacks"
+      className={styles.stack}
       aria-labelledby="stacks-title"
-      data-reveal
     >
-      <div className="developer-tools__heading [max-width:680px] [margin-bottom:40px] [&_>_p:first-child]:[margin:0_0_8px] [&_>_p:first-child]:[color:var(--accent)] [&_>_p:first-child]:[font-size:12px] [&_>_p:first-child]:[font-weight:600] [&_>_p:first-child]:[letter-spacing:0.2px] [&_>_p:first-child]:[text-transform:none] [&_>_p:first-child]:[margin-bottom:8px] [&_h2]:[margin:0] [&_h2]:[font-size:clamp(38px,_6vw,_64px)] [&_h2]:[line-height:1] [&_h2]:[letter-spacing:-2.6px] [&_h2]:[color:var(--text)] [&_h2]:[font-weight:620] [&_h2_span]:[color:var(--accent)] [&_>_p:last-child]:[max-width:520px] [&_>_p:last-child]:[margin:17px_0_0] [&_>_p:last-child]:[color:var(--text-muted)] [&_>_p:last-child]:[font-size:14px] [&_>_p:last-child]:[line-height:1.65] max-[761px]:[margin-bottom:28px] max-[421px]:[&_h2]:[font-size:36px] [.root-empty_&_>_p:first-child]:[color:var(--accent)] [.root-empty_&_>_p:first-child]:[font-size:12px] [.root-empty_&_>_p:first-child]:[font-weight:600] [.root-empty_&_>_p:first-child]:[letter-spacing:0.2px] [.root-empty_&_>_p:first-child]:[text-transform:none] [.root-empty_&_h2]:[color:var(--text)] [.root-empty_&_h2]:[font-size:clamp(38px,_6vw,_64px)] [.root-empty_&_h2]:[font-weight:620] [.root-empty_&_h2]:[line-height:1] [.root-empty_&_h2]:[letter-spacing:-2.6px]">
+      <div className={styles.stackHeading}>
         <p>{t("Stacks", "เทคโนโลยีที่ใช้")}</p>
         <h2 id="stacks-title">
           {t("Tools I build with", "เครื่องมือที่เราใช้")}
           <span>.</span>
         </h2>
-        <p>
+        <p className={styles.stackDescription}>
           {t(
             "My everyday stack for designing, developing, and shipping projects.",
             "เครื่องมือที่เราใช้ทุกวันในการออกแบบ พัฒนา และเผยแพร่โปรเจกต์",
           )}
         </p>
       </div>
-      <div className="stacks__loop [min-width:0] [margin-top:32px] [padding-block:32px] [border-block:1px_solid_var(--border)] max-[761px]:[margin-top:24px] max-[761px]:[padding-block:24px]">
+      <div className={styles.stackLoop}>
         <LogoLoop
           logos={stackLogos}
           speed={80}
           direction="left"
-          logoHeight={40}
-          gap={56}
+          logoHeight={28}
+          gap={40}
           hoverSpeed={0}
           labels="inline"
           muted={0.5}
