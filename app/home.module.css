@@ -328,6 +328,9 @@
     font-size: 11px;
     margin-bottom: 6px;
   }
+  .content:has(.music:not([aria-hidden="true"]):not(:empty)) .identity {
+    translate: 0 16px;
+  }
   .identity h1 {
     font-size: 24px;
     margin-bottom: 6px;
