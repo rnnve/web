@@ -114,10 +114,6 @@ export default function Home() {
             </nav>
           </div>
         </div>
-        <Link className={styles.scrollCue} href={`/developing#${language}`}>
-          <span>{t("Explore my work", "ดูผลงานของเรา")}</span>
-          <StatusIcon name="arrow" size={18} />
-        </Link>
       </section>
     </main>
   );
