@@ -34,6 +34,15 @@ export const PUBLIC_PAGES: readonly PublicPageRoute[] = [
     load: () => HOME_CONTENT,
   },
   {
+    pattern: "/developing",
+    sitemap: { changeFrequency: "weekly", priority: 0.7 },
+    load: () => ({
+      title: "Developing · Rynnie",
+      description:
+        "Rynnie’s GitHub projects, recent activity, and development stack.",
+    }),
+  },
+  {
     pattern: "/birthday",
     sitemap: { changeFrequency: "yearly", priority: 0.5 },
     load: () => ({
