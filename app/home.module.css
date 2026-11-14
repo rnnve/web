@@ -317,15 +317,35 @@
 @media (max-width: 767px) {
   .content {
     grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
   }
   .hero {
-    padding-top: calc(80px + env(safe-area-inset-top));
-    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    width: min(24rem, calc(100% - 2.5rem));
+    padding-top: calc(40px + env(safe-area-inset-top));
+    padding-bottom: calc(112px + env(safe-area-inset-bottom));
+  }
+  .greeting {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .identity h1 {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+  .profile {
+    font-size: 11px;
+    gap: 6px;
+  }
+  .avatar {
+    flex-basis: 20px;
+    height: 20px;
   }
   .bio {
-    border-radius: 16px;
+    padding: 12px;
+    border-radius: 12px;
   }
   .bio p {
+    font-size: 12px;
     line-height: 1.6;
   }
   .actions {
@@ -333,13 +353,27 @@
   }
   .socials {
     flex-basis: 100%;
+    gap: 8px;
+  }
+  .socials a {
+    font-size: 12px;
+    border-radius: 9px;
+  }
+  .socials svg {
+    width: 15px;
+    height: 15px;
   }
   .music {
     grid-column: 1;
     grid-row: auto;
-    min-height: 9rem;
+    min-height: 0;
   }
-  .music:empty {
+  .music > section {
+    margin-top: 0;
+    padding: 4px 0;
+  }
+  .music:empty,
+  .music[aria-hidden="true"] {
     display: none;
   }
   .scrollCue {
@@ -350,10 +384,6 @@
 @media (max-width: 767px) and (max-height: 680px) {
   .bio p {
     line-height: 1.55;
-  }
-  .avatar {
-    flex-basis: 24px;
-    height: 24px;
   }
   .actions {
     gap: 12px;
