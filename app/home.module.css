@@ -233,10 +233,6 @@
   text-decoration: none;
 }
 
-.scrollCue svg {
-  rotate: 90deg;
-}
-
 @media (max-height: 600px) {
   .scrollCue {
     display: none;
