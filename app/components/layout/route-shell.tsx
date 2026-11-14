@@ -16,6 +16,6 @@ export default function RouteShell({ children }: { children: ReactNode }) {
     pathname === "/r" ||
     pathname.startsWith("/r/")
   )
-    return <div className="[&_.site-footer]:hidden">{children}</div>;
+    return children;
   return <PortfolioShell>{children}</PortfolioShell>;
 }
