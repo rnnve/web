@@ -13,7 +13,7 @@ test("redirect destinations preserve URL paths, queries, and fragments", () => {
     "https://example.com/path?q=hello%20world#section",
   );
   assert.equal(parseRedirectUrl("http://example.com"), "http://example.com/");
-  assert.equal(REDIRECT_DESTINATIONS.test, "https://example.com/");
+  assert.equal(REDIRECT_DESTINATIONS["prsk-bot"], "https://prsk-bot.rynni.cc");
 });
 
 test("named redirect endpoints accept hyphens and underscores", () => {
@@ -21,7 +21,7 @@ test("named redirect endpoints accept hyphens and underscores", () => {
     assert.equal(REDIRECT_NAME_PATTERN.test(name), true, name);
   for (const name of ["my/link", "my.link", "my link", ""])
     assert.equal(REDIRECT_NAME_PATTERN.test(name), false, name);
-  assert.equal(getRedirectDestination("test"), "https://example.com/");
+  assert.equal(getRedirectDestination("prsk-bot"), "https://prsk-bot.rynni.cc");
   assert.equal(getRedirectDestination("missing-route"), null);
 });
 
