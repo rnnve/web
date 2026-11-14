@@ -1,12 +1,9 @@
 "use client";
 
 import { AnimatePresence } from "motion/react";
-import WidgetPreloads from "./components/status/widget-preloads";
 import AgeCalculator from "./components/home/age-calculator";
-import Stacks from "./components/home/stacks";
-import GitHubShowcase from "./components/status/github-showcase";
-import SectionRevealController from "./components/effects/section-reveal-controller";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./home.module.css";
 import SpotifyWidget from "./components/status/spotify-widget";
 import { StatusIcon } from "./components/status/status-icon";
@@ -15,21 +12,10 @@ import { BIRTH_DATE } from "./lib/birthday";
 import { useSiteSettings } from "./components/settings/site-settings-provider";
 export default function Home() {
   const { language, t } = useSiteSettings();
-  const {
-    payload,
-    discord,
-    spotify,
-    spotifyLoading,
-    githubLoading,
-    spotifySyncedAt,
-  } = usePortfolioStatus();
+  const { payload, discord, spotify, spotifyLoading, spotifySyncedAt } =
+    usePortfolioStatus();
   return (
-    <main
-      className="root-empty home-page [.root-empty&_>_:is(section,_.home-last-section)]:[min-height:100svh] [.reveal-ready_&_section[data-reveal]]:[transform:none] [.reveal-ready_&_section[data-reveal]]:[will-change:opacity]"
-      aria-label="Home"
-    >
-      <WidgetPreloads />
-      <SectionRevealController />
+    <main className="root-empty home-page" aria-label="Home">
       <section id="top" className={styles.hero}>
         <div className={styles.content}>
           <header className={styles.identity}>
@@ -141,19 +127,11 @@ export default function Home() {
             </nav>
           </div>
         </div>
-        <a className={styles.scrollCue} href="#more">
-          <span>{t("Scroll for more", "เลื่อนเพื่อดูเพิ่มเติม")}</span>
+        <Link className={styles.scrollCue} href={`/developing#${language}`}>
+          <span>{t("Explore my work", "ดูผลงานของเรา")}</span>
           <StatusIcon name="arrow" size={18} />
-        </a>
+        </Link>
       </section>
-      <GitHubShowcase
-        repos={payload.githubRepos}
-        events={payload.githubEvents}
-        loading={githubLoading}
-      />
-      <div className="home-last-section flex flex-col">
-        <Stacks />
-      </div>
     </main>
   );
 }
