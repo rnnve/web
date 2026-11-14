@@ -67,14 +67,12 @@ export default function Home() {
                   </strong>{" "}
                   ทำงานเกี่ยวกับ <strong>บอท Discord และเว็บไซต์</strong>{" "}
                   เป็นหลัก และออกแบบได้นิดหน่อย ดูโปรเจกต์ส่วนใหญ่ของเราได้ที่{" "}
-                  <a
+                  <Link
                     className="bg-gradient-to-r from-purple-200 to-purple-500 bg-clip-text"
-                    href="https://github.com/rnnve"
-                    target="_blank"
-                    rel="noreferrer"
+                    href={`/developing#${language}`}
                   >
-                    โปรไฟล์ GitHub
-                  </a>
+                    หน้าผลงานและงานพัฒนา
+                  </Link>
                 </>
               ) : (
                 <>
@@ -86,14 +84,12 @@ export default function Home() {
                   . I mainly build <strong>Discord bots and websites</strong>,
                   with a little design work too. You can find most of my
                   projects on my{" "}
-                  <a
+                  <Link
                     className="bg-gradient-to-r from-purple-200 to-purple-500 bg-clip-text"
-                    href="https://github.com/rnnve"
-                    target="_blank"
-                    rel="noreferrer"
+                    href={`/developing#${language}`}
                   >
-                    GitHub profile
-                  </a>
+                    developer/projects page
+                  </Link>
                   .
                 </>
               )}
