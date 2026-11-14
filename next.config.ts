@@ -48,6 +48,7 @@ const nextConfig: NextConfig = {
         destination: "/sitemap.xml",
         permanent: true,
       })),
+      { source: "/dev", destination: "/developing", permanent: true },
       { source: "/nt", destination: "/newtab", permanent: true },
       ...["listening", "songs", "music"].map((alias) => ({
         source: `/${alias}`,
