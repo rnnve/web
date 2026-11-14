@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Stacks from "../components/home/stacks";
 import GitHubShowcase from "../components/status/github-showcase";
 import WidgetPreloads from "../components/status/widget-preloads";
-import SectionRevealController from "../components/effects/section-reveal-controller";
+import styles from "./developing.module.css";
 import { readWidgetSnapshot, requestWidget } from "../lib/widget-request";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
 
@@ -53,13 +53,22 @@ export default function Developing() {
   }, [loadGitHub]);
 
   return (
-    <main
-      className="root-empty [&_section[data-reveal]]:!transform-none [&_section[data-reveal]]:!will-change-[opacity]"
-      aria-label={t("Developing", "งานพัฒนา")}
-    >
-      <h1 className="sr-only">{t("Developing", "งานพัฒนา")}</h1>
+    <main className={styles.page} aria-label={t("Developing", "งานพัฒนา")}>
+      <header className={styles.intro}>
+        <div>
+          <p className={styles.eyebrow}>
+            {t("Code & craft", "โค้ดและงานสร้างสรรค์")}
+          </p>
+          <h1>{t("Developing", "งานพัฒนา")}</h1>
+        </div>
+        <p>
+          {t(
+            "Discord bots, websites, and the tools I use to bring ideas to life.",
+            "บอท Discord เว็บไซต์ และเครื่องมือที่เราใช้สร้างไอเดียให้เป็นจริง",
+          )}
+        </p>
+      </header>
       <WidgetPreloads />
-      <SectionRevealController />
       <GitHubShowcase
         repos={github.repos}
         events={github.events}
