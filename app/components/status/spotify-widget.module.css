@@ -60,7 +60,7 @@
 }
 .songTitle,
 .artist > a {
-  color: var(--text);
+  color: var(--accent);
 }
 .copy a {
   text-decoration: none;
