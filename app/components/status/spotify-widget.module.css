@@ -175,14 +175,9 @@
   }
 }
 @media (max-width: 767px) {
-  .compact .track,
-  .compact .copy h2 {
-    justify-content: flex-start;
-  }
   .compact .preview {
     height: 76px;
     translate: none;
-    text-align: left;
   }
   .compact .preview p {
     font-size: 12px;
