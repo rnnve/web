@@ -3,11 +3,15 @@ import { test } from "node:test";
 import { createWindow } from "@mixmark-io/domino";
 import { act } from "react";
 import SiteSettingsProvider from "../app/components/settings/site-settings-provider";
-import LanguageSwitcher from "../app/components/settings/language-switcher";
-import LetterGlitch from "../app/components/effects/letter-glitch";
+import PortfolioNavbar from "../app/components/layout/portfolio-navbar";
+import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
+import GradientASCII from "../app/components/effects/gradient-ascii";
+import { createRequire } from "node:module";
+
+const { mock } = createRequire(import.meta.url)("bun:test");
 import { SETTINGS_KEY } from "../app/lib/site-settings";
 
-test("locale detection, manual switching, and legacy URL cleanup work without WebGL", async (context) => {
+test("language controls, locale preferences, and accent-driven background work without WebGL", async (context) => {
   const browser = createWindow(
     '<!doctype html><html><body><div id="root"></div></body></html>',
   );
@@ -42,11 +46,23 @@ test("locale detection, manual switching, and legacy URL cleanup work without We
       return element;
     },
   });
+  let accentChanged = () => {};
+  let disconnected = false;
   const globals = {
     window: browser,
     document: browser.document,
     navigator,
     Event: browser.Event,
+    getComputedStyle: (element: HTMLElement) => element.style,
+    MutationObserver: class {
+      constructor(callback: () => void) {
+        accentChanged = callback;
+      }
+      observe() {}
+      disconnect() {
+        disconnected = true;
+      }
+    },
     IS_REACT_ACT_ENVIRONMENT: true,
   };
   const previous = new Map(
@@ -57,10 +73,14 @@ test("locale detection, manual switching, and legacy URL cleanup work without We
   );
   for (const [key, value] of Object.entries(globals))
     Object.defineProperty(globalThis, key, { configurable: true, value });
+  const originalGradient = GradientASCII;
   const { createRoot } = await import("react-dom/client");
   const root = createRoot(browser.document.getElementById("root")!);
   context.after(async () => {
     await act(async () => root.unmount());
+    mock.module("../app/components/effects/gradient-ascii", () => ({
+      default: originalGradient,
+    }));
     for (const [key, descriptor] of previous) {
       if (descriptor) Object.defineProperty(globalThis, key, descriptor);
       else Reflect.deleteProperty(globalThis, key);
@@ -69,8 +89,10 @@ test("locale detection, manual switching, and legacy URL cleanup work without We
   await act(async () =>
     root.render(
       <SiteSettingsProvider>
-        <LanguageSwitcher />
-        <LetterGlitch />
+        <PathnameContext.Provider value="/">
+          <PortfolioNavbar />
+        </PathnameContext.Provider>
+        <GradientASCII />
       </SiteSettingsProvider>,
     ),
   );
@@ -82,6 +104,16 @@ test("locale detection, manual switching, and legacy URL cleanup work without We
     "automatic selection must not become an explicit preference",
   );
   assert.ok(browser.document.querySelector('canvas[aria-hidden="true"]'));
+  const toggle = browser.document.querySelector<HTMLButtonElement>(
+    'button[aria-controls="site-language-controls"]',
+  )!;
+  const panel = browser.document.getElementById("site-language-controls")!;
+  await act(async () => toggle.click());
+  assert.equal(toggle.getAttribute("aria-expanded"), "false");
+  assert.equal(panel.hidden, true);
+  await act(async () => toggle.click());
+  assert.equal(toggle.getAttribute("aria-expanded"), "true");
+  assert.equal(panel.hidden, false);
   const english = browser.document.querySelector('button[lang="en"]')!;
   await act(async () => {
     (english as HTMLButtonElement).click();
@@ -111,4 +143,36 @@ test("locale detection, manual switching, and legacy URL cleanup work without We
   });
   assert.equal(browser.document.documentElement.lang, "th");
   assert.equal(url.hash, "#work", "section anchors are preserved");
+  mock.module("geist/font/mono", () => ({
+    GeistMono: { className: "mono", style: { fontFamily: "monospace" } },
+  }));
+  mock.module("../app/components/effects/gradient-ascii", () => ({
+    default: ({ colors }: { colors: string[] }) => (
+      <div data-palette={JSON.stringify(colors)} />
+    ),
+  }));
+  const { default: SiteBackground } =
+    await import("../app/components/layout/site-background");
+  await act(async () => root.render(<SiteBackground />));
+  const palette = () =>
+    JSON.parse(
+      browser.document
+        .querySelector("[data-palette]")!
+        .getAttribute("data-palette")!,
+    );
+  assert.deepEqual(palette(), ["#ededed", "#919191"]);
+  await act(async () => {
+    browser.document.documentElement.style.setProperty(
+      "--site-accent",
+      "#ff0000",
+    );
+    accentChanged();
+  });
+  assert.deepEqual(palette(), ["#ff0000", "#9c0000"]);
+  await act(async () => root.render(null));
+  assert.equal(
+    disconnected,
+    true,
+    "accent observer is disconnected on unmount",
+  );
 });
