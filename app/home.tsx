@@ -67,9 +67,7 @@ export default function Home() {
                   </strong>{" "}
                   ทำงานเกี่ยวกับ <strong>บอท Discord และเว็บไซต์</strong>{" "}
                   เป็นหลัก และออกแบบได้นิดหน่อย ดูโปรเจกต์ส่วนใหญ่ของเราได้ที่{" "}
-                  <Link href={`/developing#${language}`}>
-                    หน้าผลงานและงานพัฒนา
-                  </Link>
+                  <Link href="/developing">หน้าผลงานและงานพัฒนา</Link>
                 </>
               ) : (
                 <>
@@ -80,8 +78,8 @@ export default function Home() {
                   </strong>
                   . I mainly build <strong>Discord bots and websites</strong>,
                   with a little design work too. You can find most of my
-                  projects on my{" "}
-                  <Link href={`/developing#${language}`}>Developing page</Link>.
+                  projects on my <Link href="/developing">Developing page</Link>
+                  .
                 </>
               )}
             </p>
