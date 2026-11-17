@@ -2,14 +2,14 @@
   position: relative;
   width: min(600px, 100%);
   margin-inline: 0;
-  padding: 24px 24px 64px;
+  padding: 8px 24px 64px;
 }
 
 .content {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 24px;
+  gap: 8px;
   min-width: 0;
 }
 
@@ -41,6 +41,7 @@
 }
 
 .profile {
+  flex: 1 1 0;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -124,15 +125,37 @@
   font-weight: 500;
 }
 
+.status {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  min-width: 0;
+}
+
+.nowPlaying {
+  display: flex;
+  flex: 1 1 0;
+  align-items: stretch;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.nowPlaying > section {
+  width: min(360px, 100%);
+  height: 100%;
+  margin: 0;
+}
+
 @media (max-width: 767px) {
   .hero {
     padding-inline: 16px;
+    padding-bottom: 96px;
   }
 }
 
 :global(html:has(.home-page)),
 :global(body:has(.home-page)) {
-  height: 100dvh;
-  overflow: hidden;
+  min-height: 100dvh;
+  overflow-x: hidden;
   overscroll-behavior: none;
 }
