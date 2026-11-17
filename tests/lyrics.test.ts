@@ -38,7 +38,7 @@ test("LRC supports fractions, repeated timestamps, offsets, and silent intervals
   assert.equal(activeLyricIndex([], 0), -1);
 });
 
-test("the preview holds one lyric until the next words start, including across seeks", () => {
+test("the preview preserves vocal end times and clears highlights in silent gaps", () => {
   const lines = preparePreviewLyrics([
     { time: 1000, endTime: 1500, text: "♪ First" },
     { time: 2000, text: "🎶" },
@@ -48,10 +48,16 @@ test("the preview holds one lyric until the next words start, including across s
   const current = (ms: number) => lines[activeLyricIndex(lines, ms)]?.text;
   assert.equal(current(999), undefined);
   assert.equal(current(1000), "First");
-  assert.equal(current(3999), "First");
+  assert.equal(current(1499), "First");
+  assert.equal(current(1500), undefined);
+  assert.equal(current(3999), undefined);
   assert.equal(current(4000), "Second");
-  assert.equal(current(8000), "Second");
-  assert.equal(current(2000), "First");
+  assert.equal(current(4499), "Second");
+  assert.equal(current(4500), undefined);
+  assert.equal(current(8000), undefined);
+  assert.equal(current(2000), undefined);
+  assert.equal(current(1250), "First");
+  assert.equal(lines[0].endTime, 1500);
 });
 
 test("the widget and full viewer use the same track signature without playback progress", () => {
@@ -173,4 +179,34 @@ test("Lyrics endpoint handles missing, instrumental, throttled, and malformed re
     throw new Error("offline");
   });
   assert.equal((await GET(request())).status, 502);
+});
+
+test("blank LRC markers end the preceding preview line without highlighting the silence", () => {
+  const lines = preparePreviewLyrics(
+    parseSyncedLyrics("[00:01.00]First\n[00:02.00]♫\n[00:04.00]Second"),
+  );
+  assert.equal(lines[0].endTime, 2000);
+  assert.equal(activeLyricIndex(lines, 1999), 0);
+  assert.equal(activeLyricIndex(lines, 2000), -1);
+  assert.equal(activeLyricIndex(lines, 3999), -1);
+  assert.equal(activeLyricIndex(lines, 4000), 1);
+});
+
+test("highlight grace lasts two seconds but never delays the next line", () => {
+  const lines = [
+    { time: 1000, endTime: 2000, text: "First" },
+    { time: 6000, endTime: 7000, text: "Second" },
+    { time: 8000, endTime: 8500, text: "Third" },
+  ];
+  assert.equal(activeLyricIndex(lines, 999, 2000), -1);
+  assert.equal(activeLyricIndex(lines, 2000, 2000), 0);
+  assert.equal(activeLyricIndex(lines, 3999, 2000), 0);
+  assert.equal(activeLyricIndex(lines, 4000, 2000), -1);
+  assert.equal(activeLyricIndex(lines, 5999, 2000), -1);
+  assert.equal(activeLyricIndex(lines, 6000, 2000), 1);
+  assert.equal(activeLyricIndex(lines, 7999, 2000), 1);
+  assert.equal(activeLyricIndex(lines, 8000, 2000), 2);
+  assert.equal(activeLyricIndex(lines, 10499, 2000), 2);
+  assert.equal(activeLyricIndex(lines, 10500, 2000), -1);
+  assert.equal(activeLyricIndex(lines, 1250, 2000), 0);
 });
