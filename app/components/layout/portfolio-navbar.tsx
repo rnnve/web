@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useId, useState, useSyncExternalStore } from "react";
+import { LayoutGroup, motion, useReducedMotion } from "motion/react";
 import { createPortal } from "react-dom";
 import {
   IconHomeFilled,
@@ -19,13 +20,21 @@ import LanguageSwitcher from "../settings/language-switcher";
 import SocialLinks from "./social-links";
 import styles from "./portfolio-navbar.module.css";
 
+const AnimatedLink = motion.create(Link);
+
 const subscribeToMount = () => () => {};
 const clientMounted = () => true;
 const serverMounted = () => false;
 
 export default function PortfolioNavbar() {
   const { t } = useSiteSettings();
-  const [languageVisible, setLanguageVisible] = useState(true);
+  const layoutId = useId();
+  const reducedMotion = useReducedMotion();
+  const transition = {
+    duration: reducedMotion ? 0 : 0.5,
+    ease: [0.22, 1, 0.36, 1] as const,
+  };
+  const [languageVisible, setLanguageVisible] = useState(false);
   const pageReady = usePageReady();
   const mounted = useSyncExternalStore(
     subscribeToMount,
@@ -50,68 +59,90 @@ export default function PortfolioNavbar() {
       inert={!pageReady || undefined}
       aria-hidden={!pageReady || undefined}
     >
-      <nav
-        className={styles.rail}
-        aria-label={t("Primary navigation", "เมนูหลัก")}
-      >
-        {navItems.map(({ name, href, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={styles.item}
-            aria-label={name}
-            aria-current={pathname === href ? "page" : undefined}
+      <div className={styles.navigationGroup}>
+        <LayoutGroup id={layoutId}>
+          <motion.nav
+            layout
+            transition={transition}
+            className={styles.rail}
+            aria-label={t("Primary navigation", "เมนูหลัก")}
           >
-            <Icon size={16} stroke={2} aria-hidden="true" />
-            {pathname === href && (
-              <span
-                className={styles.currentLabel}
-                data-current-page
-                aria-hidden="true"
+            {navItems.map(({ name, href, icon: Icon }) => (
+              <AnimatedLink
+                layout
+                transition={transition}
+                key={href}
+                href={href}
+                className={styles.item}
+                aria-label={name}
+                aria-current={pathname === href ? "page" : undefined}
               >
-                {name}
+                {pathname === href && (
+                  <motion.span
+                    layoutId="active-page"
+                    transition={transition}
+                    className={styles.activeHighlight}
+                    data-active-highlight
+                    aria-hidden="true"
+                  />
+                )}
+                <motion.span
+                  layout="position"
+                  transition={transition}
+                  className={styles.icon}
+                >
+                  <Icon size={16} stroke={2} aria-hidden="true" />
+                </motion.span>
+                {pathname === href && (
+                  <motion.span
+                    layout="position"
+                    transition={transition}
+                    className={styles.currentLabel}
+                    data-current-page
+                    aria-hidden="true"
+                  >
+                    {name}
+                  </motion.span>
+                )}
+                <span className={styles.tooltip} aria-hidden="true">
+                  {name}
+                </span>
+              </AnimatedLink>
+            ))}
+            <a
+              className={styles.item}
+              href="https://haunt.gg/rnn"
+              target="_blank"
+              rel="noreferrer"
+              aria-label={t(
+                "Socials (opens in a new tab)",
+                "โซเชียล (เปิดในแท็บใหม่)",
+              )}
+            >
+              <IconLink size={16} stroke={2} aria-hidden="true" />
+              <span className={styles.tooltip} aria-hidden="true">
+                {t("Socials", "โซเชียล")}
               </span>
-            )}
-            <span className={styles.tooltip} aria-hidden="true">
-              {name}
-            </span>
-          </Link>
-        ))}
-        <a
-          className={styles.item}
-          href="https://haunt.gg/rnn"
-          target="_blank"
-          rel="noreferrer"
-          aria-label={t(
-            "Socials (opens in a new tab)",
-            "โซเชียล (เปิดในแท็บใหม่)",
-          )}
-        >
-          <IconLink size={16} stroke={2} aria-hidden="true" />
-          <span className={styles.tooltip} aria-hidden="true">
-            {t("Socials", "โซเชียล")}
-          </span>
-        </a>
-        <button
-          type="button"
-          className={styles.item}
-          aria-label={
-            languageVisible
-              ? t("Hide language switcher", "ซ่อนตัวเลือกภาษา")
-              : t("Show language switcher", "แสดงตัวเลือกภาษา")
-          }
-          aria-expanded={languageVisible}
-          aria-controls="site-language-controls"
-          onClick={() => setLanguageVisible((visible) => !visible)}
-        >
-          <IconLanguage size={16} aria-hidden="true" />
-          <span className={styles.tooltip} aria-hidden="true">
-            {t("Language", "ภาษา")}
-          </span>
-        </button>
-      </nav>
-      <div className={styles.utilities}>
-        <SocialLinks />
+            </a>
+            <button
+              type="button"
+              className={styles.item}
+              aria-label={
+                languageVisible
+                  ? t("Hide language switcher", "ซ่อนตัวเลือกภาษา")
+                  : t("Show language switcher", "แสดงตัวเลือกภาษา")
+              }
+              aria-expanded={languageVisible}
+              aria-controls="site-language-controls"
+              onClick={() => setLanguageVisible((visible) => !visible)}
+            >
+              <IconLanguage size={16} aria-hidden="true" />
+              <span className={styles.tooltip} aria-hidden="true">
+                {t("Language", "ภาษา")}
+              </span>
+            </button>
+          </motion.nav>
+        </LayoutGroup>
         <div
           id="site-language-controls"
           hidden={!languageVisible}
@@ -119,6 +150,9 @@ export default function PortfolioNavbar() {
         >
           <LanguageSwitcher />
         </div>
+      </div>
+      <div className={styles.utilities}>
+        <SocialLinks />
       </div>
     </header>
   );
