@@ -26,8 +26,8 @@
   position: absolute;
   top: 4px;
   left: 4px;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border: 1px solid color-mix(in srgb, var(--site-accent) 25%, transparent);
   border-radius: 9px;
   background: color-mix(in srgb, var(--site-accent) 16%, transparent);
@@ -36,7 +36,7 @@
     0 2px 5px rgb(0 0 0 / 20%);
   pointer-events: none;
   opacity: 0;
-  transform: translateY(calc(var(--active-index, 0) * 38px));
+  transform: translateY(calc(var(--active-index, 0) * 34px));
   transition:
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
     opacity 160ms ease;
@@ -52,8 +52,8 @@
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: 1px solid transparent;
   border-radius: 9px;
@@ -70,8 +70,8 @@
 }
 
 .item > svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .item[aria-current="page"] {
@@ -131,7 +131,7 @@
 
 /* Reserve space for the fixed rail across every portfolio page. */
 .content {
-  padding-left: calc(64px + env(safe-area-inset-left, 0px));
+  padding-left: calc(56px + env(safe-area-inset-left, 0px));
 }
 .content :global(.page-transition-content) > main:not(:global(.home-page)) {
   padding-top: max(48px, env(safe-area-inset-top, 0px));
@@ -157,12 +157,12 @@
     pointer-events: auto;
   }
   .rail::before {
-    transform: translateX(calc(var(--active-index, 0) * 38px));
+    transform: translateX(calc(var(--active-index, 0) * 34px));
   }
   .item {
-    flex: 0 0 36px;
-    width: 36px;
-    height: 36px;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
   }
   .tooltip {
     top: auto;
@@ -188,10 +188,10 @@
   }
   .content {
     padding-left: 0;
-    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
   }
   .content :global(.page-transition-content) > main:not(:global(.home-page)) {
-    padding-top: calc(32px + env(safe-area-inset-top, 0px));
+    padding-top: calc(56px + env(safe-area-inset-top, 0px));
   }
   @media (hover: hover) {
     .item:hover .tooltip {
