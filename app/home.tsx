@@ -11,7 +11,7 @@ import usePortfolioStatus from "./hooks/use-portfolio-status";
 import { BIRTH_DATE } from "./lib/birthday";
 import { useSiteSettings } from "./components/settings/site-settings-provider";
 export default function Home() {
-  const { language } = useSiteSettings();
+  const { language, t } = useSiteSettings();
   const { payload, discord, spotify, spotifyLoading, spotifySyncedAt } =
     usePortfolioStatus();
   return (
@@ -20,30 +20,6 @@ export default function Home() {
         <div className={styles.content}>
           <header className={styles.identity}>
             <h1>Rynnie{language === "en" ? "." : ""}</h1>
-            <div className={styles.profile}>
-              <span className={styles.avatar}>
-                {discord?.avatar ? (
-                  <Image src={discord.avatar} alt="" fill sizes="32px" />
-                ) : (
-                  <StatusIcon name="discord" size={18} />
-                )}
-                <span
-                  className={styles.presence}
-                  data-status={discord?.status ?? "offline"}
-                  role="img"
-                  aria-label={`Discord: ${discord?.status ?? "offline"}`}
-                />
-              </span>
-              <span className={styles.profileText}>
-                <strong>
-                  {discord?.displayName ||
-                    discord?.globalName ||
-                    discord?.username ||
-                    "Rynnie"}
-                </strong>
-                <span>@{discord?.username || "melrynni"}</span>
-              </span>
-            </div>
           </header>
           <article className={styles.bio}>
             <p>
@@ -73,23 +49,53 @@ export default function Home() {
               )}
             </p>
           </article>
-          <div
-            className={styles.music}
-            aria-label="Live Spotify status"
-            inert={spotifyLoading || !spotify.isPlaying}
-            aria-hidden={spotifyLoading || !spotify.isPlaying || undefined}
-          >
-            <AnimatePresence>
-              {!spotifyLoading && spotify.isPlaying && (
-                <SpotifyWidget
-                  key="spotify"
-                  spotify={spotify}
-                  error={payload.errors?.spotify}
-                  syncedAt={spotifySyncedAt}
-                  compact
+          <div className={styles.statusRow}>
+            <div
+              className={styles.profile}
+              role="group"
+              aria-label={t("Discord profile", "โปรไฟล์ Discord")}
+            >
+              <span className={styles.avatar}>
+                {discord?.avatar ? (
+                  <Image src={discord.avatar} alt="" fill sizes="32px" />
+                ) : (
+                  <StatusIcon name="discord" size={18} />
+                )}
+                <span
+                  className={styles.presence}
+                  data-status={discord?.status ?? "offline"}
+                  role="img"
+                  aria-label={`Discord: ${discord?.status ?? "offline"}`}
                 />
-              )}
-            </AnimatePresence>
+              </span>
+              <span className={styles.profileText}>
+                <strong>
+                  {discord?.displayName ||
+                    discord?.globalName ||
+                    discord?.username ||
+                    "Rynnie"}
+                </strong>
+                <span>@{discord?.username || "melrynni"}</span>
+              </span>
+            </div>
+            <div
+              className={styles.music}
+              aria-label="Live Spotify status"
+              inert={spotifyLoading || !spotify.isPlaying}
+              aria-hidden={spotifyLoading || !spotify.isPlaying || undefined}
+            >
+              <AnimatePresence>
+                {!spotifyLoading && spotify.isPlaying && (
+                  <SpotifyWidget
+                    key="spotify"
+                    spotify={spotify}
+                    error={payload.errors?.spotify}
+                    syncedAt={spotifySyncedAt}
+                    compact
+                  />
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </section>
