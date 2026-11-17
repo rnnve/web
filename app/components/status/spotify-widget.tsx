@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSiteSettings } from "../settings/site-settings-provider";
 import { StatusIcon } from "./status-icon";
 import type { SpotifyView } from "@/app/lib/status-types";
@@ -19,6 +19,69 @@ import {
 } from "@/app/lib/lyrics-playback";
 import useTrackLyrics from "@/app/hooks/use-track-lyrics";
 import styles from "./spotify-widget.module.css";
+
+const largestLyricSize = 14;
+const smallestLyricSize = 8;
+
+export function fittedLyricSize(
+  textWidth: number,
+  maxWidth: number,
+  maxSize = largestLyricSize,
+) {
+  if (textWidth <= maxWidth || textWidth <= 0 || maxWidth <= 0) return maxSize;
+  return Math.max(
+    smallestLyricSize,
+    Math.floor((maxSize * maxWidth) / textWidth),
+  );
+}
+
+function LyricLine({
+  text,
+  current = false,
+  center = false,
+  gridRow,
+}: {
+  text: string;
+  current?: boolean;
+  center?: boolean;
+  gridRow: number;
+}) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const fit = () => {
+      const maxWidth = element.clientWidth;
+      if (maxWidth <= 0) return;
+      element.style.fontSize = "";
+      const maxSize =
+        Number.parseFloat(getComputedStyle(element).fontSize) ||
+        largestLyricSize;
+      let size = fittedLyricSize(element.scrollWidth, maxWidth, maxSize);
+      element.style.fontSize = `${size}px`;
+      while (element.scrollWidth > maxWidth && size > smallestLyricSize) {
+        size -= 1;
+        element.style.fontSize = `${size}px`;
+      }
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    const parent = element.parentElement;
+    if (parent) observer.observe(parent);
+    return () => observer.disconnect();
+  }, [text]);
+  return (
+    <p
+      ref={ref}
+      aria-current={current || undefined}
+      data-center={center || undefined}
+      style={{ gridRow }}
+      title={text}
+    >
+      {text}
+    </p>
+  );
+}
 
 function SpotifyArtwork({ src }: { src: string }) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
@@ -158,20 +221,18 @@ export default function SpotifyWidget({
       {showLyrics && (
         <div className={styles.preview} key={previewIndex}>
           {[
-            lines[previewIndex + 1],
-            lines[previewIndex],
             lines[previewIndex - 1],
+            lines[previewIndex],
+            lines[previewIndex + 1],
           ].map((line, slot) =>
             line ? (
-              <p
-                key={slot}
-                aria-current={previewIndex + 1 - slot === index || undefined}
-                data-center={slot === 1 || undefined}
-                style={{ gridRow: slot + 1 }}
-                title={line.text}
-              >
-                {line.text}
-              </p>
+              <LyricLine
+                key={`${previewIndex}-${slot}`}
+                text={line.text}
+                current={previewIndex + slot - 1 === index}
+                center={slot === 1}
+                gridRow={slot + 1}
+              />
             ) : null,
           )}
         </div>
