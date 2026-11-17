@@ -1,6 +1,8 @@
 import { isRecord } from "@/app/lib/json";
 import { fetchSpicyLyrics } from "@/app/lib/spicy-lyrics";
 import { fetchLrcRedLyrics } from "@/app/lib/lrc-red";
+import { selectLyricsMatch, titleVariants } from "@/app/lib/lyrics-match";
+import { setTimeout as delay } from "node:timers/promises";
 
 export async function GET(request: Request) {
   const input = new URL(request.url).searchParams;
@@ -52,7 +54,7 @@ export async function GET(request: Request) {
         { lyrics: lrcRed },
         { headers: { "Cache-Control": "public, max-age=86400" } },
       );
-    const response = await fetch(`https://lrclib.net/api/get?${params}`, {
+    let response = await fetch(`https://lrclib.net/api/get?${params}`, {
       headers: {
         Accept: "application/json",
         "User-Agent": "RynLyrics/0.1.0 (https://rynni.cc)",
@@ -60,6 +62,51 @@ export async function GET(request: Request) {
       next: { revalidate: 86_400 },
       signal: AbortSignal.timeout(10_000),
     });
+    const exact = response.ok ? await response.clone().json() : null;
+    const empty =
+      isRecord(exact) &&
+      exact.instrumental === false &&
+      !(typeof exact.plainLyrics === "string" && exact.plainLyrics.trim()) &&
+      !(typeof exact.syncedLyrics === "string" && exact.syncedLyrics.trim());
+    if (response.status === 404 || empty) {
+      const variants = titleVariants(title);
+      const searchTitle = (variants[1] ?? variants[0])
+        .normalize("NFKC")
+        .replace(/[\u200b-\u200d\ufeff]/g, "");
+      const searchParams = new URLSearchParams({
+        track_name: searchTitle,
+        artist_name: artist.split(",")[0].trim(),
+      });
+      for (let attempt = 0; attempt < 2; attempt++) {
+        await delay(250);
+        if (attempt) searchParams.delete("artist_name");
+        response = await fetch(
+          `https://lrclib.net/api/search?${searchParams}`,
+          {
+            headers: {
+              Accept: "application/json",
+              "User-Agent": "RynLyrics/0.1.0 (https://rynni.cc)",
+            },
+            next: { revalidate: 86_400 },
+            signal: AbortSignal.timeout(5000),
+          },
+        );
+        if (!response.ok && response.status !== 404) break;
+        const match = response.ok
+          ? selectLyricsMatch(await response.json(), {
+              title,
+              artist,
+              album: album ?? undefined,
+              ...(duration !== null ? { duration: Number(duration) } : {}),
+            })
+          : null;
+        if (match) {
+          response = Response.json(match);
+          break;
+        }
+        response = new Response(null, { status: 404 });
+      }
+    }
     if (response.status === 404) {
       return Response.json(
         { lyrics: null },
