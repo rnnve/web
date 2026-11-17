@@ -1,19 +1,16 @@
 "use client";
 
-import { AnimatePresence } from "motion/react";
 import AgeCalculator from "./components/home/age-calculator";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./home.module.css";
-import SpotifyWidget from "./components/status/spotify-widget";
 import { StatusIcon } from "./components/status/status-icon";
 import usePortfolioStatus from "./hooks/use-portfolio-status";
 import { BIRTH_DATE } from "./lib/birthday";
 import { useSiteSettings } from "./components/settings/site-settings-provider";
 export default function Home() {
   const { language, t } = useSiteSettings();
-  const { payload, discord, spotify, spotifyLoading, spotifySyncedAt } =
-    usePortfolioStatus();
+  const { discord } = usePortfolioStatus();
   return (
     <main className="home-page" aria-label="Home">
       <section id="top" className={styles.hero}>
@@ -80,24 +77,6 @@ export default function Home() {
                   )}
                 </p>
               </article>
-            </div>
-            <div
-              className={styles.music}
-              aria-label="Live Spotify status"
-              inert={spotifyLoading || !spotify.isPlaying}
-              aria-hidden={spotifyLoading || !spotify.isPlaying || undefined}
-            >
-              <AnimatePresence>
-                {!spotifyLoading && spotify.isPlaying && (
-                  <SpotifyWidget
-                    key="spotify"
-                    spotify={spotify}
-                    error={payload.errors?.spotify}
-                    syncedAt={spotifySyncedAt}
-                    compact
-                  />
-                )}
-              </AnimatePresence>
             </div>
           </div>
         </div>
