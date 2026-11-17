@@ -1,5 +1,5 @@
 .content {
-  --navbar-space: calc(72px + env(safe-area-inset-top, 0px));
+  --navbar-space: calc(104px + env(safe-area-inset-top, 0px));
   padding-top: var(--navbar-space);
 }
 
