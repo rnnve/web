@@ -1,6 +1,6 @@
 .hero {
   position: relative;
-  width: min(600px, 100%);
+  width: min(900px, 100%);
   margin-inline: 0;
   padding: 24px 24px 64px;
 }
@@ -26,17 +26,22 @@
   text-wrap: balance;
 }
 
-.statusRow {
-  display: flex;
-  align-items: flex-start;
+.overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: center;
   gap: 24px;
   min-width: 0;
 }
 
-.profile {
-  flex: 0 1 auto;
+.about {
+  display: grid;
+  gap: 16px;
   min-width: 0;
-  max-width: 45%;
+}
+
+.profile {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -120,7 +125,6 @@
 }
 
 .music {
-  flex: 1 1 0;
   min-width: 0;
 }
 
@@ -145,15 +149,8 @@
   }
 }
 
-@media (max-width: 380px) {
-  .statusRow {
-    flex-direction: column;
-    gap: 16px;
-  }
-  .profile {
-    max-width: 100%;
-  }
-  .music {
-    width: 100%;
+@media (max-width: 639px) {
+  .overview {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
