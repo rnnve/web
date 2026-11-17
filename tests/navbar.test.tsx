@@ -3,15 +3,19 @@ import { test } from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import SiteSettingsProvider from "../app/components/settings/site-settings-provider";
-import { Header } from "../components/ui/header-2";
+import PortfolioNavbar from "../app/components/layout/portfolio-navbar";
 import { Button } from "../components/ui/button";
-import { MenuToggleIcon } from "../components/ui/menu-toggle-icon";
+import {
+  MobileNavMenu,
+  MobileNavToggle,
+  NavbarButton,
+} from "../components/ui/resizable-navbar";
 
 test("header preserves portfolio routes, language hashes, and the active page", () => {
   const html = renderToStaticMarkup(
     <PathnameContext.Provider value="/developing">
       <SiteSettingsProvider>
-        <Header />
+        <PortfolioNavbar />
       </SiteSettingsProvider>
     </PathnameContext.Provider>,
   );
@@ -25,24 +29,52 @@ test("header preserves portfolio routes, language hashes, and the active page", 
   assert.match(html, /aria-label="Open menu"/);
   assert.match(html, /aria-expanded="false"/);
   assert.match(html, /aria-controls="mobile-navigation"/);
-  assert.match(html, /<dialog[^>]*id="mobile-navigation"/);
-  assert.doesNotMatch(html, /<dialog[^>]*\sopen(?:=|\s|>)/);
+  assert.doesNotMatch(html, /id="mobile-navigation"/);
   assert.ok(html.includes('href="https://github.com/rnnve"'));
   assert.ok(html.includes('href="https://haunt.gg/rnn"'));
 });
 
-test("slotted buttons remain links and the menu icon reflects its state", () => {
+test("navbar actions keep link and button semantics", () => {
   const link = renderToStaticMarkup(
-    <Button asChild variant="outline">
-      <a href="/ask">Ask</a>
-    </Button>,
+    <NavbarButton href="/ask">Ask</NavbarButton>,
   );
   assert.match(link, /^<a /);
   assert.match(link, /href="\/ask"/);
   assert.doesNotMatch(link, /<button/);
-  const closed = renderToStaticMarkup(<MenuToggleIcon open={false} />);
-  const open = renderToStaticMarkup(<MenuToggleIcon open />);
-  assert.doesNotMatch(closed, /rotate\(/);
-  assert.match(open, /rotate\(45deg\)/);
-  assert.match(open, /rotate\(-45deg\)/);
+  const toggle = renderToStaticMarkup(
+    <MobileNavToggle
+      isOpen
+      onClick={() => {}}
+      label="Close menu"
+      controls="mobile-navigation"
+    />,
+  );
+  assert.match(toggle, /^<button /);
+  assert.match(toggle, /type="button"/);
+  assert.match(toggle, /aria-expanded="true"/);
+  assert.match(toggle, /aria-label="Close menu"/);
+  const button = renderToStaticMarkup(
+    <NavbarButton as="button" type="button">
+      Action
+    </NavbarButton>,
+  );
+  assert.match(button, /^<button /);
+  const slottedLink = renderToStaticMarkup(
+    <Button asChild>
+      <a href="/ask">Ask</a>
+    </Button>,
+  );
+  assert.match(slottedLink, /^<a /);
+});
+
+test("mobile navigation exposes its content only while open", () => {
+  const menu = (isOpen: boolean) =>
+    renderToStaticMarkup(
+      <MobileNavMenu id="mobile-navigation" isOpen={isOpen} onClose={() => {}}>
+        <a href="/ask">Ask</a>
+      </MobileNavMenu>,
+    );
+  assert.equal(menu(false), "");
+  assert.match(menu(true), /id="mobile-navigation"/);
+  assert.match(menu(true), /href="\/ask"/);
 });
