@@ -1,30 +1,19 @@
-import DotGrid from "../effects/dot-grid";
+import { GeistMono } from "geist/font/mono";
+import LetterGlitch from "../effects/letter-glitch";
 
 export default function SiteBackground() {
   return (
     <div
-      className="site-background fixed [inset:0] [z-index:0] overflow-hidden pointer-events-none [background:var(--page-background)]"
+      className={`site-background fixed inset-0 z-0 overflow-hidden pointer-events-none bg-background ${GeistMono.className}`}
       aria-hidden="true"
     >
-      <DotGrid
-        baseColor="#1e1e1e"
-        activeColor="var(--site-accent)"
-        shape="circle"
-        dotSize={3}
-        gap={10}
-        proximity={95}
-        strength={1}
-        bounce={0}
-        tension={0.2}
-        returnDuration={0.8}
-        shockRadius={180}
-        shockStrength={4}
-        swell={0.35}
-        stretch={0.25}
-        glow={0.6}
-        fade={0}
-        intro
-        clickShock={false}
+      <LetterGlitch
+        glitchColors={["#ffffff", "#ffffff"]}
+        glitchAmount={0.5}
+        speed={0.55}
+        flow={0.5}
+        clickEffect="tear"
+        fontFamily={GeistMono.style.fontFamily}
       />
     </div>
   );
