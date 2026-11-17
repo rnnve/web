@@ -43,12 +43,12 @@
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
   transition:
-    transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
     color 300ms cubic-bezier(0.22, 1, 0.36, 1),
     background-color 300ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.item > svg {
+.item > svg,
+.icon {
   flex: 0 0 18px;
   width: 18px;
   height: 18px;
@@ -59,12 +59,12 @@
   width: auto;
   min-width: 32px;
   padding-inline: 8px;
-  border-color: color-mix(in srgb, var(--site-accent) 25%, transparent);
-  background: color-mix(in srgb, var(--site-accent) 12%, transparent);
   color: var(--site-accent);
 }
 
 .currentLabel {
+  position: relative;
+  z-index: 1;
   min-width: 0;
   overflow: hidden;
   font-size: 12px;
@@ -72,7 +72,6 @@
   line-height: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  animation: page-label-enter 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .item:focus-visible {
@@ -128,7 +127,6 @@
 
 @media (hover: hover) {
   .item:hover {
-    transform: translateY(-2px);
     color: var(--text);
     background: var(--surface-hover);
   }
@@ -140,6 +138,9 @@
 }
 
 .utilities {
+  margin-left: auto;
+  flex-shrink: 0;
+  max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -182,9 +183,6 @@
   .position {
     flex-wrap: wrap;
     top: calc(16px + env(safe-area-inset-top, 0px));
-  }
-  .utilities {
-    width: 100%;
   }
   .content {
     --header-space: calc(144px + env(safe-area-inset-top, 0px));
@@ -236,8 +234,38 @@
   cursor: not-allowed;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .item:hover {
-    transform: none;
+.navigationGroup {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}
+
+.icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.activeHighlight {
+  position: absolute;
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--site-accent) 25%, transparent);
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--site-accent) 12%, transparent);
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .content {
+    --header-space: calc(192px + env(safe-area-inset-top, 0px));
   }
 }
