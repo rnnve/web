@@ -138,6 +138,7 @@
 }
 
 .utilities {
+  position: relative;
   margin-left: auto;
   flex-shrink: 0;
   max-width: 100%;
@@ -211,6 +212,7 @@
 
 @media (max-width: 380px) {
   .utilities {
+    position: relative;
     flex-wrap: wrap;
   }
   .content {
@@ -268,4 +270,22 @@
   .content {
     --header-space: calc(192px + env(safe-area-inset-top, 0px));
   }
+}
+
+.music {
+  position: absolute;
+  top: calc(100% + 16px);
+  right: 0;
+  width: min(360px, calc(100vw - 32px));
+}
+
+.music > section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
