@@ -234,7 +234,9 @@ const DotGrid = ({
     gl.bindVertexArray(null);
 
     const root = document.documentElement;
-    let siteAccent = getComputedStyle(root).getPropertyValue("--accent").trim();
+    let siteAccent = getComputedStyle(root)
+      .getPropertyValue("--site-accent")
+      .trim();
 
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -548,7 +550,7 @@ const DotGrid = ({
       }
       const base = toRgb(s.baseColor);
       const accent = toRgb(
-        s.activeColor === "var(--accent)" ? siteAccent : s.activeColor,
+        s.activeColor === "var(--site-accent)" ? siteAccent : s.activeColor,
       );
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.clearColor(0, 0, 0, 0);
@@ -686,7 +688,9 @@ const DotGrid = ({
 
     // Accent transitions update the root style without re-rendering React.
     const accentObserver = new MutationObserver(() => {
-      const next = getComputedStyle(root).getPropertyValue("--accent").trim();
+      const next = getComputedStyle(root)
+        .getPropertyValue("--site-accent")
+        .trim();
       if (next === siteAccent) return;
       siteAccent = next;
       render(performance.now());
