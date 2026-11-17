@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { createDocument } from "@mixmark-io/domino";
 import { renderToStaticMarkup } from "react-dom/server";
 import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import SiteSettingsProvider from "../app/components/settings/site-settings-provider";
@@ -24,7 +25,15 @@ test("header preserves portfolio routes without language hashes and the active p
   assert.doesNotMatch(html, /href="[^"]*#(?:en|th)"/);
   assert.match(html, /aria-label="Primary navigation"/);
   assert.match(html, /aria-label="Developing"/);
-  assert.match(html, /--active-index:1/);
+  const active = createDocument(html).querySelector('a[aria-current="page"]');
+  assert.equal(
+    active?.querySelector("[data-current-page]")?.textContent,
+    "Developing",
+  );
+  assert.equal(
+    createDocument(html).querySelectorAll("[data-current-page]").length,
+    1,
+  );
   assert.ok(html.includes('href="https://github.com/rnnve"'));
   assert.ok(html.includes('href="https://haunt.gg/rnn"'));
 });
@@ -38,4 +47,20 @@ test("shared buttons continue to support links", () => {
   assert.match(link, /^<a /);
   assert.match(link, /href="\/ask"/);
   assert.doesNotMatch(link, /<button/);
+});
+
+test("the top navigation shows the home page label on the root route", () => {
+  const html = renderToStaticMarkup(
+    <PathnameContext.Provider value="/">
+      <SiteSettingsProvider>
+        <PortfolioNavbar />
+      </SiteSettingsProvider>
+    </PathnameContext.Provider>,
+  );
+  const active = createDocument(html).querySelector('a[aria-current="page"]');
+  assert.equal(active?.getAttribute("href"), "/");
+  assert.equal(
+    active?.querySelector("[data-current-page]")?.textContent,
+    "Home",
+  );
 });
