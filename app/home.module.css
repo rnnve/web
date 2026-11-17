@@ -18,7 +18,7 @@
 }
 
 .identity h1 {
-  margin: 0 0 16px;
+  margin: 0;
   font-size: 24px;
   font-weight: 600;
   line-height: 32px;
@@ -26,7 +26,17 @@
   text-wrap: balance;
 }
 
+.statusRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  min-width: 0;
+}
+
 .profile {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 45%;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -110,6 +120,7 @@
 }
 
 .music {
+  flex: 1 1 0;
   min-width: 0;
 }
 
@@ -131,5 +142,18 @@
 @media (max-width: 767px) {
   .hero {
     padding-inline: 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .statusRow {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .profile {
+    max-width: 100%;
+  }
+  .music {
+    width: 100%;
   }
 }
