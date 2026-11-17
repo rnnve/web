@@ -5,6 +5,7 @@
 @theme inline {
   --color-background: var(--page-background);
   --color-foreground: var(--text);
+  --color-muted-foreground: var(--text-muted);
   --color-primary: var(--accent);
   --color-primary-foreground: var(--on-accent);
   --color-secondary: var(--surface-raised);
