@@ -1,122 +1,107 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useSyncExternalStore, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
+import {
+  IconHomeFilled,
+  IconCake,
+  IconMusic,
+  IconMailFilled,
+  IconBrandGithubFilled,
+  IconLink,
+  IconCode,
+} from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Navbar,
-  NavBody,
-  NavItems,
-  MobileNav,
-  NavbarLogo,
-  NavbarButton,
-  MobileNavHeader,
-  MobileNavToggle,
-  MobileNavMenu,
-} from "@/components/ui/resizable-navbar";
 import { useSiteSettings } from "../settings/site-settings-provider";
+import { usePageReady } from "../../page-transition";
+import styles from "./portfolio-navbar.module.css";
 
-function PortfolioNavigation() {
-  const pathname = usePathname();
-  const { t, language } = useSiteSettings();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const closeMenu = useCallback(() => setIsMobileMenuOpen(false), []);
-  const navItems = [
-    { name: t("Home", "หน้าแรก"), link: `/#${language}` },
-    { name: t("Developing", "งานพัฒนา"), link: `/developing#${language}` },
-    { name: t("Listening", "เพลงที่ฟัง"), link: `/listen#${language}` },
-    { name: t("Birthday", "วันเกิด"), link: `/birthday#${language}` },
-    { name: t("Ask", "ถามเรา"), link: `/ask#${language}` },
-  ];
-  const logo = (
-    <NavbarLogo
-      href={`/#${language}`}
-      label={t("Ryn — home", "Ryn — หน้าแรก")}
-    />
-  );
-  const socialLinks = (
-    <>
-      <NavbarButton
-        href="https://github.com/rnnve"
-        variant="secondary"
-        target="_blank"
-        rel="noreferrer"
-        aria-label={t("GitHub (opens in a new tab)", "GitHub (เปิดในแท็บใหม่)")}
-        onClick={closeMenu}
-      >
-        GitHub
-      </NavbarButton>
-      <NavbarButton
-        href="https://haunt.gg/rnn"
-        variant="primary"
-        target="_blank"
-        rel="noreferrer"
-        aria-label={t(
-          "Socials (opens in a new tab)",
-          "โซเชียล (เปิดในแท็บใหม่)",
-        )}
-        onClick={closeMenu}
-      >
-        {t("Socials", "โซเชียล")}
-      </NavbarButton>
-    </>
-  );
-  return (
-    <Navbar>
-      <NavBody>
-        {logo}
-        <nav aria-label={t("Primary navigation", "เมนูหลัก")}>
-          <NavItems items={navItems} activeLink={`${pathname}#${language}`} />
-        </nav>
-        <div className="relative z-20 flex items-center gap-2">
-          {socialLinks}
-        </div>
-      </NavBody>
-      <MobileNav>
-        <MobileNavHeader>
-          {logo}
-          <MobileNavToggle
-            isOpen={isMobileMenuOpen}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            label={
-              isMobileMenuOpen
-                ? t("Close menu", "ปิดเมนู")
-                : t("Open menu", "เปิดเมนู")
-            }
-            controls="mobile-navigation"
-          />
-        </MobileNavHeader>
-        <MobileNavMenu
-          id="mobile-navigation"
-          isOpen={isMobileMenuOpen}
-          onClose={closeMenu}
-        >
-          <nav
-            aria-label={t("Primary navigation", "เมนูหลัก")}
-            className="grid w-full gap-2"
-          >
-            {navItems.map((item) => (
-              <Link
-                key={item.link}
-                href={item.link}
-                onClick={closeMenu}
-                aria-current={
-                  item.link === `${pathname}#${language}` ? "page" : undefined
-                }
-                className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent aria-[current=page]:bg-accent aria-[current=page]:text-foreground"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-          <div className="flex w-full flex-col gap-4">{socialLinks}</div>
-        </MobileNavMenu>
-      </MobileNav>
-    </Navbar>
-  );
-}
+const subscribeToMount = () => () => {};
+const clientMounted = () => true;
+const serverMounted = () => false;
 
 export default function PortfolioNavbar() {
+  const { t, language } = useSiteSettings();
+  const pageReady = usePageReady();
+  const mounted = useSyncExternalStore(
+    subscribeToMount,
+    clientMounted,
+    serverMounted,
+  );
   const pathname = usePathname();
-  return <PortfolioNavigation key={pathname} />;
+  const navItems = [
+    { name: t("Home", "หน้าแรก"), href: "/", icon: IconHomeFilled },
+    { name: t("Developing", "งานพัฒนา"), href: "/developing", icon: IconCode },
+    {
+      name: t("Listening", "เพลงที่ฟัง"),
+      href: "/listen",
+      icon: IconMusic,
+    },
+    { name: t("Birthday", "วันเกิด"), href: "/birthday", icon: IconCake },
+    { name: t("Ask", "ถามเรา"), href: "/ask", icon: IconMailFilled },
+  ];
+  const activeIndex = navItems.findIndex(({ href }) => pathname === href);
+  const navigation = (
+    <header
+      className={`portfolio-navbar-root ${styles.position}`}
+      inert={!pageReady || undefined}
+      aria-hidden={!pageReady || undefined}
+    >
+      <nav
+        className={styles.rail}
+        data-active={activeIndex >= 0 || undefined}
+        style={{ "--active-index": Math.max(0, activeIndex) } as CSSProperties}
+        aria-label={t("Primary navigation", "เมนูหลัก")}
+      >
+        {navItems.map(({ name, href, icon: Icon }) => (
+          <Link
+            key={href}
+            href={`${href}#${language}`}
+            className={styles.item}
+            aria-label={name}
+            aria-current={pathname === href ? "page" : undefined}
+          >
+            <Icon size={18} stroke={2} aria-hidden="true" />
+            <span className={styles.tooltip} aria-hidden="true">
+              {name}
+            </span>
+          </Link>
+        ))}
+        <a
+          className={styles.item}
+          href="https://github.com/rnnve"
+          target="_blank"
+          rel="noreferrer"
+          aria-label={t(
+            "GitHub (opens in a new tab)",
+            "GitHub (เปิดในแท็บใหม่)",
+          )}
+        >
+          <IconBrandGithubFilled size={18} stroke={2} aria-hidden="true" />
+          <span className={styles.tooltip} aria-hidden="true">
+            GitHub
+          </span>
+        </a>
+        <a
+          className={styles.item}
+          href="https://haunt.gg/rnn"
+          target="_blank"
+          rel="noreferrer"
+          aria-label={t(
+            "Socials (opens in a new tab)",
+            "โซเชียล (เปิดในแท็บใหม่)",
+          )}
+        >
+          <IconLink size={18} stroke={2} aria-hidden="true" />
+          <span className={styles.tooltip} aria-hidden="true">
+            {t("Socials", "โซเชียล")}
+          </span>
+        </a>
+      </nav>
+    </header>
+  );
+
+  // Keep the dock anchored to the viewport during page transitions.
+  return mounted ? createPortal(navigation, document.body) : navigation;
 }
