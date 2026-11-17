@@ -5,6 +5,8 @@ import { createDocument } from "@mixmark-io/domino";
 import { renderToStaticMarkup } from "react-dom/server";
 import SiteSettingsProvider from "../app/components/settings/site-settings-provider";
 import Home from "../app/home";
+import PortfolioNavbar from "../app/components/layout/portfolio-navbar";
+import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import SpotifyWidget from "../app/components/status/spotify-widget";
 import usePortfolioStatus from "../app/hooks/use-portfolio-status";
 import useTrackLyrics from "../app/hooks/use-track-lyrics";
@@ -23,7 +25,11 @@ test("home removes duplicate social actions and shows Discord display name above
   mock.module("../app/hooks/use-portfolio-status", () => ({
     default: () => ({
       discord,
-      spotify: normalizeSpotify(null),
+      spotify: normalizeSpotify({
+        isPlaying: true,
+        title: "Song",
+        artist: "Artist",
+      }),
       spotifyLoading: false,
       spotifySyncedAt: 0,
       payload: { errors: {} },
@@ -48,12 +54,27 @@ test("home removes duplicate social actions and shows Discord display name above
   assert.ok(!document.querySelector('a[href="https://github.com/rnnve"]'));
   assert.ok(!document.querySelector('a[href^="https://discord.com/users/"]'));
   const profile = document.querySelector('[aria-label="Discord profile"]')!;
-  const music = document.querySelector('[aria-label="Live Spotify status"]')!;
+  assert.ok(!document.querySelector('[aria-label="Live Spotify status"]'));
   assert.equal(profile.nextElementSibling?.tagName, "ARTICLE");
-  assert.equal(profile.parentElement?.nextElementSibling, music);
+
   const name = document.querySelector('[aria-label="Discord profile"] strong')!;
   assert.equal(name.textContent, "Display Name");
   assert.equal(name.nextElementSibling?.textContent, "@handle");
+  const navigation = createDocument(
+    renderToStaticMarkup(
+      <PathnameContext.Provider value="/">
+        <SiteSettingsProvider>
+          <PortfolioNavbar />
+        </SiteSettingsProvider>
+      </PathnameContext.Provider>,
+    ),
+  );
+  assert.equal(
+    navigation
+      .querySelector('[aria-label="Social links"]')
+      ?.nextElementSibling?.getAttribute("aria-label"),
+    "Live Spotify status",
+  );
   discord = { username: "handle", globalName: "Global Name" };
   assert.equal(
     page().querySelector('[aria-label="Discord profile"] strong')?.textContent,
@@ -111,7 +132,22 @@ test("lyrics preload and keep highlights for two seconds before clearing long ga
   const track = before.getElementById("spotify-widget-title")!.parentElement!
     .parentElement!;
   const preview = before.querySelector("p[data-center]")!.parentElement;
-  assert.equal(preview?.nextElementSibling, track);
+  assert.equal(track.nextElementSibling, preview);
+  assert.equal(
+    track.lastElementChild?.querySelector("svg")?.getAttribute("aria-hidden"),
+    "true",
+  );
+  const during = widget(6500);
+  assert.deepEqual(
+    Array.from(during.querySelectorAll("p[title]")).map(
+      (line) => line.textContent,
+    ),
+    ["Third line", "Second line", "First line"],
+  );
+  assert.equal(
+    during.querySelector('p[aria-current="true"]')?.textContent,
+    "Second line",
+  );
   assert.equal(
     before.querySelector(
       'a[title="An exceptionally long artist name that must remain readable"]',
