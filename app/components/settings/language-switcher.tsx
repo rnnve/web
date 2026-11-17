@@ -9,7 +9,7 @@ export default function LanguageSwitcher() {
     <div
       role="group"
       aria-label={t("Language", "ภาษา")}
-      className="fixed right-[max(16px,env(safe-area-inset-right))] top-[max(16px,env(safe-area-inset-top))] z-[60] flex gap-1 rounded-lg border border-border bg-background/90 p-1 text-xs font-semibold backdrop-blur-lg"
+      className="fixed right-[max(16px,env(safe-area-inset-right))] top-[max(16px,env(safe-area-inset-top))] max-md:top-[calc(72px+env(safe-area-inset-top))] z-[60] flex gap-1 rounded-lg border border-border bg-background/90 p-1 text-xs font-semibold backdrop-blur-lg"
     >
       <Button
         type="button"
