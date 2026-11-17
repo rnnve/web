@@ -1,7 +1,7 @@
 .hero {
   position: relative;
   width: min(600px, 100%);
-  margin-inline: auto;
+  margin-inline: 0;
   padding: 24px 24px 64px;
 }
 
@@ -154,5 +154,11 @@
 @media (prefers-reduced-motion: reduce) {
   .socials a {
     transition: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    padding-inline: 16px;
   }
 }
