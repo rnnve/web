@@ -6,7 +6,7 @@ import SiteSettingsProvider from "../app/components/settings/site-settings-provi
 import PortfolioNavbar from "../app/components/layout/portfolio-navbar";
 import { Button } from "../components/ui/button";
 
-test("header preserves portfolio routes, language hashes, and the active page", () => {
+test("header preserves portfolio routes without language hashes and the active page", () => {
   const html = renderToStaticMarkup(
     <PathnameContext.Provider value="/developing">
       <SiteSettingsProvider>
@@ -15,12 +15,13 @@ test("header preserves portfolio routes, language hashes, and the active page", 
     </PathnameContext.Provider>,
   );
   for (const path of ["/", "/developing", "/listen", "/birthday", "/ask"]) {
-    assert.ok(html.includes(`href="${path}#en"`));
+    assert.ok(html.includes(`href="${path}"`));
   }
   assert.match(
     html,
-    /aria-current="page"[^>]*href="\/developing#en"|href="\/developing#en"[^>]*aria-current="page"/,
+    /aria-current="page"[^>]*href="\/developing"|href="\/developing"[^>]*aria-current="page"/,
   );
+  assert.doesNotMatch(html, /href="[^"]*#(?:en|th)"/);
   assert.match(html, /aria-label="Primary navigation"/);
   assert.match(html, /aria-label="Developing"/);
   assert.match(html, /--active-index:1/);
