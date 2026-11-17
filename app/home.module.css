@@ -171,7 +171,7 @@
 }
 
 .socials a:hover {
-  color: var(--accent);
+  color: var(--site-accent);
   background: var(--surface-hover);
 }
 
