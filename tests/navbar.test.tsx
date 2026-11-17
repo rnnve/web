@@ -34,6 +34,27 @@ test("header preserves portfolio routes without language hashes and the active p
     createDocument(html).querySelectorAll("[data-current-page]").length,
     1,
   );
+  const document = createDocument(html);
+  const socials = document.querySelector('[aria-label="Social links"]')!;
+  assert.equal(socials.children.length, 6);
+  assert.ok(
+    socials.querySelector('a[href="https://www.last.fm/user/iqrfumi"]'),
+  );
+  for (const name of [
+    "Discord",
+    "GitHub",
+    "Last.fm",
+    "Instagram",
+    "NameMC",
+    "Mail",
+  ]) {
+    assert.ok(socials.querySelector(`[aria-label^="${name} "]`));
+  }
+  assert.ok(
+    document.querySelector(
+      'button[aria-controls="site-language-controls"][aria-expanded="true"]',
+    ),
+  );
   assert.ok(html.includes('href="https://github.com/rnnve"'));
   assert.ok(html.includes('href="https://haunt.gg/rnn"'));
 });
