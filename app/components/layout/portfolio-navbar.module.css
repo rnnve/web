@@ -192,8 +192,21 @@
 
 @media (max-width: 767px) {
   .position {
-    left: 16px;
-    right: 16px;
+    position: relative;
+    inset: auto;
+    margin: calc(16px + env(safe-area-inset-top, 0px)) 16px 0;
+  }
+  .utilities {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 16px;
+  }
+  .content {
+    --header-space: 0px;
+  }
+  .content :global(.page-transition-content) {
+    min-height: 0;
   }
   .item:first-child .tooltip {
     left: 0;
@@ -214,9 +227,6 @@
   .utilities {
     position: relative;
     flex-wrap: wrap;
-  }
-  .content {
-    --header-space: calc(192px + env(safe-area-inset-top, 0px));
   }
 }
 
@@ -266,12 +276,6 @@
   pointer-events: none;
 }
 
-@media (max-width: 767px) {
-  .content {
-    --header-space: calc(192px + env(safe-area-inset-top, 0px));
-  }
-}
-
 .music {
   position: absolute;
   top: calc(100% + 16px);
@@ -288,4 +292,11 @@
   box-shadow: none;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+}
+
+@media (max-width: 767px) {
+  .music {
+    position: static;
+    width: min(360px, 100%);
+  }
 }

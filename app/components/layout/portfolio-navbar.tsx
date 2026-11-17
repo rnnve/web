@@ -1,13 +1,12 @@
 "use client";
 
-import { useId, useState, useSyncExternalStore } from "react";
+import { useId, useState } from "react";
 import {
   AnimatePresence,
   LayoutGroup,
   motion,
   useReducedMotion,
 } from "motion/react";
-import { createPortal } from "react-dom";
 import {
   IconHomeFilled,
   IconCake,
@@ -30,10 +29,6 @@ import usePortfolioStatus from "../../hooks/use-portfolio-status";
 
 const AnimatedLink = motion.create(Link);
 
-const subscribeToMount = () => () => {};
-const clientMounted = () => true;
-const serverMounted = () => false;
-
 export default function PortfolioNavbar() {
   const { t } = useSiteSettings();
   const layoutId = useId();
@@ -44,11 +39,6 @@ export default function PortfolioNavbar() {
   };
   const [languageVisible, setLanguageVisible] = useState(false);
   const pageReady = usePageReady();
-  const mounted = useSyncExternalStore(
-    subscribeToMount,
-    clientMounted,
-    serverMounted,
-  );
   const pathname = usePathname();
   const { payload, spotify, spotifyLoading, spotifySyncedAt } =
     usePortfolioStatus();
@@ -63,7 +53,7 @@ export default function PortfolioNavbar() {
     { name: t("Birthday", "วันเกิด"), href: "/birthday", icon: IconCake },
     { name: t("Ask", "ถามเรา"), href: "/ask", icon: IconMailFilled },
   ];
-  const navigation = (
+  return (
     <header
       className={`portfolio-navbar-root ${styles.position}`}
       inert={!pageReady || undefined}
@@ -178,7 +168,4 @@ export default function PortfolioNavbar() {
       </div>
     </header>
   );
-
-  // Keep the navigation anchored to the viewport during page transitions.
-  return mounted ? createPortal(navigation, document.body) : navigation;
 }

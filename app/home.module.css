@@ -129,3 +129,10 @@
     padding-inline: 16px;
   }
 }
+
+:global(html:has(.home-page)),
+:global(body:has(.home-page)) {
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
