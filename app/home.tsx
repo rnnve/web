@@ -15,7 +15,7 @@ export default function Home() {
   const { payload, discord, spotify, spotifyLoading, spotifySyncedAt } =
     usePortfolioStatus();
   return (
-    <main className="root-empty home-page" aria-label="Home">
+    <main className="home-page" aria-label="Home">
       <section id="top" className={styles.hero}>
         <div className={styles.content}>
           <header className={styles.identity}>
@@ -24,7 +24,7 @@ export default function Home() {
             <div className={styles.profile}>
               <span className={styles.avatar}>
                 {discord?.avatar ? (
-                  <Image src={discord.avatar} alt="" fill sizes="28px" />
+                  <Image src={discord.avatar} alt="" fill sizes="32px" />
                 ) : (
                   <StatusIcon name="discord" size={18} />
                 )}
@@ -38,24 +38,6 @@ export default function Home() {
               <span>@{discord?.username || "melrynni"}</span>
             </div>
           </header>
-          <div
-            className={styles.music}
-            aria-label="Live Spotify status"
-            inert={spotifyLoading || !spotify.isPlaying}
-            aria-hidden={spotifyLoading || !spotify.isPlaying || undefined}
-          >
-            <AnimatePresence>
-              {!spotifyLoading && spotify.isPlaying && (
-                <SpotifyWidget
-                  key="spotify"
-                  spotify={spotify}
-                  error={payload.errors?.spotify}
-                  syncedAt={spotifySyncedAt}
-                  compact
-                />
-              )}
-            </AnimatePresence>
-          </div>
           <article className={styles.bio}>
             <p>
               {language === "th" ? (
@@ -84,32 +66,48 @@ export default function Home() {
               )}
             </p>
           </article>
-          <div className={styles.actions}>
-            <nav
-              className={styles.socials}
-              aria-label={t("Find me online", "ติดตามเรา")}
+          <nav
+            className={styles.socials}
+            aria-label={t("Find me online", "ติดตามเรา")}
+          >
+            <a
+              href="https://discord.com/users/969088519161139270"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Discord (opens in a new tab)"
+              title="Discord"
             >
-              <a
-                href="https://discord.com/users/969088519161139270"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Discord (opens in a new tab)"
-                title="Discord"
-              >
-                <StatusIcon name="discord" size={18} />
-                <span>Discord</span>
-              </a>
-              <a
-                href="https://github.com/rnnve"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="GitHub (opens in a new tab)"
-                title="GitHub"
-              >
-                <StatusIcon name="github" size={18} />
-                <span>GitHub</span>
-              </a>
-            </nav>
+              <StatusIcon name="discord" size={18} />
+              <span>Discord</span>
+            </a>
+            <a
+              href="https://github.com/rnnve"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="GitHub (opens in a new tab)"
+              title="GitHub"
+            >
+              <StatusIcon name="github" size={18} />
+              <span>GitHub</span>
+            </a>
+          </nav>
+          <div
+            className={styles.music}
+            aria-label="Live Spotify status"
+            inert={spotifyLoading || !spotify.isPlaying}
+            aria-hidden={spotifyLoading || !spotify.isPlaying || undefined}
+          >
+            <AnimatePresence>
+              {!spotifyLoading && spotify.isPlaying && (
+                <SpotifyWidget
+                  key="spotify"
+                  spotify={spotify}
+                  error={payload.errors?.spotify}
+                  syncedAt={spotifySyncedAt}
+                  compact
+                />
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </section>
