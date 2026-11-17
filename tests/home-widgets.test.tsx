@@ -47,16 +47,26 @@ test("home removes duplicate social actions and shows Discord display name above
   assert.ok(!document.querySelector('[aria-label="Find me online"]'));
   assert.ok(!document.querySelector('a[href="https://github.com/rnnve"]'));
   assert.ok(!document.querySelector('a[href^="https://discord.com/users/"]'));
-  const name = document.querySelector("header strong")!;
+  const profile = document.querySelector('[aria-label="Discord profile"]')!;
+  const music = document.querySelector('[aria-label="Live Spotify status"]')!;
+  assert.equal(
+    profile.parentElement?.previousElementSibling?.tagName,
+    "ARTICLE",
+  );
+  assert.equal(profile.nextElementSibling, music);
+  const name = document.querySelector('[aria-label="Discord profile"] strong')!;
   assert.equal(name.textContent, "Display Name");
   assert.equal(name.nextElementSibling?.textContent, "@handle");
   discord = { username: "handle", globalName: "Global Name" };
   assert.equal(
-    page().querySelector("header strong")?.textContent,
+    page().querySelector('[aria-label="Discord profile"] strong')?.textContent,
     "Global Name",
   );
   discord = { username: "handle" };
-  assert.equal(page().querySelector("header strong")?.textContent, "handle");
+  assert.equal(
+    page().querySelector('[aria-label="Discord profile"] strong')?.textContent,
+    "handle",
+  );
 });
 
 test("lyrics preload and keep highlights for two seconds before clearing long gaps", (context) => {
@@ -87,7 +97,8 @@ test("lyrics preload and keep highlights for two seconds before clearing long ga
             spotify={normalizeSpotify({
               isPlaying: true,
               title: "Song",
-              artist: "Artist",
+              artist:
+                "An exceptionally long artist name that must remain readable",
               duration: 20000,
               progress,
             })}
@@ -100,6 +111,16 @@ test("lyrics preload and keep highlights for two seconds before clearing long ga
   assert.match(before.body.textContent!, /Second line/);
   assert.ok(!before.querySelector('p[aria-current="true"]'));
   assert.doesNotMatch(before.body.textContent!, /Listening/);
+  const track = before.getElementById("spotify-widget-title")!.parentElement!
+    .parentElement!;
+  const preview = before.querySelector("p[data-center]")!.parentElement;
+  assert.equal(track.nextElementSibling, preview);
+  assert.equal(
+    before.querySelector(
+      'a[title="An exceptionally long artist name that must remain readable"]',
+    )?.textContent,
+    "An exceptionally long artist name that must remain readable",
+  );
   assert.equal(
     widget(1500).querySelector('p[aria-current="true"]')?.textContent,
     "First line",
