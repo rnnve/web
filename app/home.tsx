@@ -5,12 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./home.module.css";
 import { StatusIcon } from "./components/status/status-icon";
+import SpotifyWidget from "./components/status/spotify-widget";
 import usePortfolioStatus from "./hooks/use-portfolio-status";
 import { BIRTH_DATE } from "./lib/birthday";
 import { useSiteSettings } from "./components/settings/site-settings-provider";
 export default function Home() {
   const { language, t } = useSiteSettings();
-  const { discord } = usePortfolioStatus();
+  const { discord, payload, spotify, spotifyLoading, spotifySyncedAt } =
+    usePortfolioStatus();
   return (
     <main className="home-page" aria-label="Home">
       <section id="top" className={styles.hero}>
@@ -20,34 +22,6 @@ export default function Home() {
           </header>
           <div className={styles.overview}>
             <div className={styles.about}>
-              <div
-                className={styles.profile}
-                role="group"
-                aria-label={t("Discord profile", "โปรไฟล์ Discord")}
-              >
-                <span className={styles.avatar}>
-                  {discord?.avatar ? (
-                    <Image src={discord.avatar} alt="" fill sizes="32px" />
-                  ) : (
-                    <StatusIcon name="discord" size={18} />
-                  )}
-                  <span
-                    className={styles.presence}
-                    data-status={discord?.status ?? "offline"}
-                    role="img"
-                    aria-label={`Discord: ${discord?.status ?? "offline"}`}
-                  />
-                </span>
-                <span className={styles.profileText}>
-                  <strong>
-                    {discord?.displayName ||
-                      discord?.globalName ||
-                      discord?.username ||
-                      "Rynnie"}
-                  </strong>
-                  <span>@{discord?.username || "melrynni"}</span>
-                </span>
-              </div>
               <article className={styles.bio}>
                 <p>
                   {language === "th" ? (
@@ -77,6 +51,49 @@ export default function Home() {
                   )}
                 </p>
               </article>
+              <div className={styles.status}>
+                <div
+                  className={styles.profile}
+                  role="group"
+                  aria-label={t("Discord profile", "โปรไฟล์ Discord")}
+                >
+                  <span className={styles.avatar}>
+                    {discord?.avatar ? (
+                      <Image src={discord.avatar} alt="" fill sizes="32px" />
+                    ) : (
+                      <StatusIcon name="discord" size={18} />
+                    )}
+                    <span
+                      className={styles.presence}
+                      data-status={discord?.status ?? "offline"}
+                      role="img"
+                      aria-label={`Discord: ${discord?.status ?? "offline"}`}
+                    />
+                  </span>
+                  <span className={styles.profileText}>
+                    <strong>
+                      {discord?.displayName ||
+                        discord?.globalName ||
+                        discord?.username ||
+                        "Rynnie"}
+                    </strong>
+                    <span>@{discord?.username || "melrynni"}</span>
+                  </span>
+                </div>
+                {!spotifyLoading && spotify.isPlaying && (
+                  <div
+                    className={styles.nowPlaying}
+                    aria-label="Live Spotify status"
+                  >
+                    <SpotifyWidget
+                      compact
+                      spotify={spotify}
+                      error={payload.errors?.spotify}
+                      syncedAt={spotifySyncedAt}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
