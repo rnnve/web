@@ -13,7 +13,7 @@
 }
 .eyebrow {
   margin: 0 0 12px;
-  color: var(--accent);
+  color: var(--site-accent);
   font-size: 12px;
 }
 .intro h1 {
@@ -57,7 +57,7 @@
   text-decoration: none;
 }
 .sectionHeading a:hover {
-  color: var(--accent);
+  color: var(--site-accent);
 }
 .activity {
   padding: 24px;
@@ -92,16 +92,16 @@
   background: var(--surface-hover);
 }
 .graph > span[data-level="1"] {
-  background: color-mix(in srgb, var(--accent) 25%, #191919);
+  background: color-mix(in srgb, var(--site-accent) 25%, #191919);
 }
 .graph > span[data-level="2"] {
-  background: color-mix(in srgb, var(--accent) 45%, #191919);
+  background: color-mix(in srgb, var(--site-accent) 45%, #191919);
 }
 .graph > span[data-level="3"] {
-  background: color-mix(in srgb, var(--accent) 70%, #191919);
+  background: color-mix(in srgb, var(--site-accent) 70%, #191919);
 }
 .graph > span[data-level="4"] {
-  background: var(--accent);
+  background: var(--site-accent);
 }
 .graph > span > span {
   display: none;
@@ -140,16 +140,16 @@
   background: var(--surface-hover);
 }
 .legend i:nth-of-type(2) {
-  background: color-mix(in srgb, var(--accent) 25%, #191919);
+  background: color-mix(in srgb, var(--site-accent) 25%, #191919);
 }
 .legend i:nth-of-type(3) {
-  background: color-mix(in srgb, var(--accent) 45%, #191919);
+  background: color-mix(in srgb, var(--site-accent) 45%, #191919);
 }
 .legend i:nth-of-type(4) {
-  background: color-mix(in srgb, var(--accent) 70%, #191919);
+  background: color-mix(in srgb, var(--site-accent) 70%, #191919);
 }
 .legend i:nth-of-type(5) {
-  background: var(--accent);
+  background: var(--site-accent);
 }
 .projectHeading {
   margin-top: 36px;
@@ -187,7 +187,7 @@
     background 180ms ease;
 }
 .project:hover {
-  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  border-color: color-mix(in srgb, var(--site-accent) 40%, transparent);
   background: #202020;
 }
 .projectTop,
@@ -200,7 +200,7 @@
   color: var(--text-muted);
 }
 .projectTop svg {
-  color: var(--accent);
+  color: var(--site-accent);
 }
 .project h3 {
   margin: 24px 0 8px;
@@ -299,7 +299,7 @@
 
 .stackHeading > p:first-child {
   margin: 0 0 12px;
-  color: var(--accent);
+  color: var(--site-accent);
   font-size: 12px;
 }
 
