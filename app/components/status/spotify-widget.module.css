@@ -60,14 +60,14 @@
 }
 .songTitle,
 .artist > a {
-  color: var(--accent);
+  color: var(--site-accent);
 }
 .copy a {
   text-decoration: none;
   transition: color 160ms ease;
 }
 .copy a:hover {
-  color: var(--accent);
+  color: var(--site-accent);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
