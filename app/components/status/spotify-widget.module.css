@@ -97,7 +97,7 @@
   min-width: 0;
   text-decoration: none;
   color: #858585;
-  text-align: left;
+  text-align: right;
 }
 .preview p {
   min-width: 0;
@@ -132,7 +132,11 @@
   height: 1.5rem;
 }
 .compact .track {
+  justify-content: flex-end;
   gap: 0.25rem;
+}
+.compact .copy {
+  flex: 0 1 auto;
 }
 .compact .copy h2 {
   font-size: 0.75rem;
