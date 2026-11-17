@@ -41,6 +41,18 @@ test("language controls, locale preferences, and accent-driven background work w
   Object.defineProperty(browser.document, "createElement", {
     value: (name: string) => {
       const element = createElement(name);
+      Object.defineProperty(element, "getBoundingClientRect", {
+        value: () => ({
+          x: 0,
+          y: 0,
+          left: 0,
+          top: 0,
+          right: 32,
+          bottom: 32,
+          width: 32,
+          height: 32,
+        }),
+      });
       if (name === "canvas")
         Object.defineProperty(element, "getContext", { value: () => null });
       return element;
@@ -108,12 +120,15 @@ test("language controls, locale preferences, and accent-driven background work w
     'button[aria-controls="site-language-controls"]',
   )!;
   const panel = browser.document.getElementById("site-language-controls")!;
-  await act(async () => toggle.click());
   assert.equal(toggle.getAttribute("aria-expanded"), "false");
   assert.equal(panel.hidden, true);
   await act(async () => toggle.click());
   assert.equal(toggle.getAttribute("aria-expanded"), "true");
   assert.equal(panel.hidden, false);
+  await act(async () => toggle.click());
+  assert.equal(toggle.getAttribute("aria-expanded"), "false");
+  assert.equal(panel.hidden, true);
+  await act(async () => toggle.click());
   const english = browser.document.querySelector('button[lang="en"]')!;
   await act(async () => {
     (english as HTMLButtonElement).click();
