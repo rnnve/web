@@ -1,7 +1,12 @@
 "use client";
 
 import { useId, useState, useSyncExternalStore } from "react";
-import { LayoutGroup, motion, useReducedMotion } from "motion/react";
+import {
+  AnimatePresence,
+  LayoutGroup,
+  motion,
+  useReducedMotion,
+} from "motion/react";
 import { createPortal } from "react-dom";
 import {
   IconHomeFilled,
@@ -19,6 +24,9 @@ import { usePageReady } from "../../page-transition";
 import LanguageSwitcher from "../settings/language-switcher";
 import SocialLinks from "./social-links";
 import styles from "./portfolio-navbar.module.css";
+
+import SpotifyWidget from "../status/spotify-widget";
+import usePortfolioStatus from "../../hooks/use-portfolio-status";
 
 const AnimatedLink = motion.create(Link);
 
@@ -42,6 +50,8 @@ export default function PortfolioNavbar() {
     serverMounted,
   );
   const pathname = usePathname();
+  const { payload, spotify, spotifyLoading, spotifySyncedAt } =
+    usePortfolioStatus();
   const navItems = [
     { name: t("Home", "หน้าแรก"), href: "/", icon: IconHomeFilled },
     { name: t("Developing", "งานพัฒนา"), href: "/developing", icon: IconCode },
@@ -153,6 +163,18 @@ export default function PortfolioNavbar() {
       </div>
       <div className={styles.utilities}>
         <SocialLinks />
+        <AnimatePresence>
+          {pathname === "/" && !spotifyLoading && spotify.isPlaying && (
+            <div className={styles.music} aria-label="Live Spotify status">
+              <SpotifyWidget
+                spotify={spotify}
+                error={payload.errors?.spotify}
+                syncedAt={spotifySyncedAt}
+                compact
+              />
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );
