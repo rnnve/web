@@ -7,7 +7,9 @@ import SiteSettingsProvider from "../app/components/settings/site-settings-provi
 import Home from "../app/home";
 import PortfolioNavbar from "../app/components/layout/portfolio-navbar";
 import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
-import SpotifyWidget from "../app/components/status/spotify-widget";
+import SpotifyWidget, {
+  fittedLyricSize,
+} from "../app/components/status/spotify-widget";
 import usePortfolioStatus from "../app/hooks/use-portfolio-status";
 import useTrackLyrics from "../app/hooks/use-track-lyrics";
 import { normalizeSpotify } from "../app/lib/spotify";
@@ -54,8 +56,12 @@ test("home removes duplicate social actions and shows Discord display name above
   assert.ok(!document.querySelector('a[href="https://github.com/rnnve"]'));
   assert.ok(!document.querySelector('a[href^="https://discord.com/users/"]'));
   const profile = document.querySelector('[aria-label="Discord profile"]')!;
-  assert.ok(!document.querySelector('[aria-label="Live Spotify status"]'));
-  assert.equal(profile.nextElementSibling?.tagName, "ARTICLE");
+  const about = document.querySelector("article")!;
+  assert.equal(about.nextElementSibling?.firstElementChild, profile);
+  assert.equal(
+    profile.nextElementSibling?.getAttribute("aria-label"),
+    "Live Spotify status",
+  );
 
   const name = document.querySelector('[aria-label="Discord profile"] strong')!;
   assert.equal(name.textContent, "Display Name");
@@ -70,10 +76,13 @@ test("home removes duplicate social actions and shows Discord display name above
     ),
   );
   assert.equal(
-    navigation
-      .querySelector('[aria-label="Social links"]')
-      ?.nextElementSibling?.getAttribute("aria-label"),
-    "Live Spotify status",
+    navigation.querySelector('[aria-label="Live Spotify status"]'),
+    undefined,
+  );
+  assert.equal(
+    navigation.querySelector('[aria-label="Social links"]')?.parentElement
+      ?.parentElement?.tagName,
+    "HEADER",
   );
   discord = { username: "handle", globalName: "Global Name" };
   assert.equal(
@@ -85,6 +94,13 @@ test("home removes duplicate social actions and shows Discord display name above
     page().querySelector('[aria-label="Discord profile"] strong')?.textContent,
     "handle",
   );
+});
+
+test("long lyrics shrink to stay on one line", () => {
+  assert.equal(fittedLyricSize(120, 240, 14), 14);
+  assert.equal(fittedLyricSize(280, 200, 14), 10);
+  assert.equal(fittedLyricSize(900, 80, 14), 8);
+  assert.equal(fittedLyricSize(40, 0, 14), 14);
 });
 
 test("lyrics preload and keep highlights for two seconds before clearing long gaps", (context) => {
@@ -142,7 +158,7 @@ test("lyrics preload and keep highlights for two seconds before clearing long ga
     Array.from(during.querySelectorAll("p[title]")).map(
       (line) => line.textContent,
     ),
-    ["Third line", "Second line", "First line"],
+    ["First line", "Second line", "Third line"],
   );
   assert.equal(
     during.querySelector('p[aria-current="true"]')?.textContent,
