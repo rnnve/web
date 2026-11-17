@@ -38,12 +38,16 @@ export function parseSyncedLyrics(source: string): LyricLine[] {
   return lines.sort((a, b) => a.time - b.time);
 }
 
-export function activeLyricIndex(lines: LyricLine[], progress: number): number {
+export function activeLyricIndex(
+  lines: LyricLine[],
+  progress: number,
+  endGraceMs = 0,
+): number {
   let index = -1;
   for (let i = 0; i < lines.length && lines[i].time <= progress; i++) index = i;
   return index >= 0 &&
     lines[index].endTime !== undefined &&
-    progress >= lines[index].endTime!
+    progress >= lines[index].endTime! + endGraceMs
     ? -1
     : index;
 }
@@ -73,10 +77,18 @@ export function lyricsQuery(track: SpotifyView | undefined): string {
 
 export function preparePreviewLyrics(lines: LyricLine[]): LyricLine[] {
   const visible: LyricLine[] = [];
-  for (const line of lines) {
+  for (const [index, line] of lines.entries()) {
     const text = line.text.replace(/[♩♪♫♬🎵🎶][\uFE0E\uFE0F]?/gu, "").trim();
-    // Each visible line stays current until the next visible start time.
-    if (text) visible.push({ time: line.time, text });
+    if (!text) continue;
+    const endTime = Math.min(
+      line.endTime ?? Infinity,
+      lines[index + 1]?.time ?? Infinity,
+    );
+    visible.push({
+      ...line,
+      text,
+      ...(Number.isFinite(endTime) ? { endTime } : {}),
+    });
   }
   return visible;
 }
