@@ -49,11 +49,8 @@ test("home removes duplicate social actions and shows Discord display name above
   assert.ok(!document.querySelector('a[href^="https://discord.com/users/"]'));
   const profile = document.querySelector('[aria-label="Discord profile"]')!;
   const music = document.querySelector('[aria-label="Live Spotify status"]')!;
-  assert.equal(
-    profile.parentElement?.previousElementSibling?.tagName,
-    "ARTICLE",
-  );
-  assert.equal(profile.nextElementSibling, music);
+  assert.equal(profile.nextElementSibling?.tagName, "ARTICLE");
+  assert.equal(profile.parentElement?.nextElementSibling, music);
   const name = document.querySelector('[aria-label="Discord profile"] strong')!;
   assert.equal(name.textContent, "Display Name");
   assert.equal(name.nextElementSibling?.textContent, "@handle");
@@ -114,7 +111,7 @@ test("lyrics preload and keep highlights for two seconds before clearing long ga
   const track = before.getElementById("spotify-widget-title")!.parentElement!
     .parentElement!;
   const preview = before.querySelector("p[data-center]")!.parentElement;
-  assert.equal(track.nextElementSibling, preview);
+  assert.equal(preview?.nextElementSibling, track);
   assert.equal(
     before.querySelector(
       'a[title="An exceptionally long artist name that must remain readable"]',
