@@ -2,6 +2,22 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+@theme inline {
+  --color-background: var(--page-background);
+  --color-foreground: var(--text);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--on-accent);
+  --color-secondary: var(--surface-raised);
+  --color-secondary-foreground: var(--text);
+  --color-accent: var(--surface-hover);
+  --color-accent-foreground: var(--text);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--accent);
+  --color-destructive: #b42332;
+  --color-destructive-foreground: #fff;
+}
+
 /* Shared theme for the portfolio's custom glass components. */
 :root {
   color-scheme: dark;
@@ -161,7 +177,6 @@ body:has(.home-page) {
 
 body:has(.home-page) .page-transition-content,
 body:has(.home-page) .home-page {
-  height: 100dvh;
   min-height: 0;
   overflow: hidden;
 }
