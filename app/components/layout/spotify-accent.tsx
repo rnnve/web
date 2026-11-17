@@ -10,7 +10,7 @@ import {
 import { normalizeSpotify } from "@/app/lib/spotify";
 import { spotifyStream } from "@/app/lib/status-stream";
 
-const properties = ["--accent", "--accent-subtle", "--surface-selected"];
+const properties = ["--site-accent", "--accent-subtle", "--surface-selected"];
 
 export default function SpotifyAccent() {
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function SpotifyAccent() {
         properties.forEach((property) => root.style.removeProperty(property));
         return;
       }
-      root.style.setProperty("--accent", color);
+      root.style.setProperty("--site-accent", color);
       root.style.setProperty(
         "--accent-subtle",
         `color-mix(in srgb, ${color} 8%, transparent)`,
@@ -39,7 +39,9 @@ export default function SpotifyAccent() {
     };
     const apply = (color: string) => {
       window.cancelAnimationFrame(colorFrame);
-      const from = getComputedStyle(root).getPropertyValue("--accent").trim();
+      const from = getComputedStyle(root)
+        .getPropertyValue("--site-accent")
+        .trim();
       if (
         document.hidden ||
         from === color ||
