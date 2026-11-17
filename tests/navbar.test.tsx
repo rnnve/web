@@ -35,8 +35,18 @@ test("header preserves portfolio routes without language hashes and the active p
     1,
   );
   const document = createDocument(html);
+  assert.equal(document.querySelectorAll("[data-active-highlight]").length, 1);
+  assert.equal(
+    document.querySelector('[aria-label="Primary navigation"]')
+      ?.nextElementSibling?.id,
+    "site-language-controls",
+  );
   const socials = document.querySelector('[aria-label="Social links"]')!;
   assert.equal(socials.children.length, 6);
+  assert.equal(socials.parentElement?.parentElement?.tagName, "HEADER");
+  assert.ok(
+    document.getElementById("site-language-controls")?.hasAttribute("hidden"),
+  );
   assert.ok(
     socials.querySelector('a[href="https://www.last.fm/user/iqrfumi"]'),
   );
@@ -52,7 +62,7 @@ test("header preserves portfolio routes without language hashes and the active p
   }
   assert.ok(
     document.querySelector(
-      'button[aria-controls="site-language-controls"][aria-expanded="true"]',
+      'button[aria-controls="site-language-controls"][aria-expanded="false"]',
     ),
   );
   assert.ok(html.includes('href="https://github.com/rnnve"'));
