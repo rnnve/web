@@ -76,7 +76,7 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
       }
       style={{ minWidth: "800px" }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full px-4 py-2 lg:flex",
+        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-[10px] px-4 py-2 lg:flex",
         visible ? "bg-background/80" : "bg-transparent",
         className,
       )}
@@ -109,7 +109,7 @@ export const NavItems = ({
             onFocus={() => setHovered(idx)}
             onBlur={() => setHovered(null)}
             onClick={onItemClick}
-            className="pointer-events-auto relative rounded-full px-3 py-2 text-muted-foreground aria-[current=page]:text-foreground"
+            className="pointer-events-auto relative rounded-[5px] px-3 py-2 text-muted-foreground aria-[current=page]:text-foreground"
             key={item.link}
             href={item.link}
             aria-current={activeLink === item.link ? "page" : undefined}
@@ -117,7 +117,7 @@ export const NavItems = ({
             {hovered === idx && (
               <motion.div
                 layoutId="hovered"
-                className="absolute inset-0 h-full w-full rounded-full bg-accent"
+                className="absolute inset-0 h-full w-full rounded-[5px] bg-accent"
               />
             )}
             <span className="relative z-20">{item.name}</span>
@@ -138,7 +138,7 @@ export const MobileNav = ({ children, className, visible }: NavBodyProps) => {
         width: visible ? "90%" : "100%",
         paddingRight: visible ? "12px" : "0px",
         paddingLeft: visible ? "12px" : "0px",
-        borderRadius: visible ? "4px" : "2rem",
+        borderRadius: "10px",
         y: visible ? 20 : 0,
       }}
       transition={
@@ -229,7 +229,7 @@ export const MobileNavMenu = ({
               onClose();
           }}
           className={cn(
-            "absolute inset-x-0 top-16 z-50 flex max-h-[calc(100dvh-9rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full flex-col items-start justify-start gap-4 overflow-y-auto rounded-lg border border-border bg-background px-4 py-8 text-foreground shadow-xl",
+            "absolute inset-x-0 top-16 z-50 flex max-h-[calc(100dvh-9rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full flex-col items-start justify-start gap-4 overflow-y-auto rounded-[10px] border border-border bg-background px-4 py-8 text-foreground shadow-xl",
             className,
           )}
         >
@@ -257,7 +257,7 @@ export const MobileNavToggle = ({
     aria-label={label}
     aria-expanded={isOpen}
     aria-controls={controls}
-    className="relative z-20 flex size-10 items-center justify-center rounded-full text-foreground hover:bg-accent"
+    className="relative z-20 flex size-10 items-center justify-center rounded-[5px] text-foreground hover:bg-accent"
   >
     {isOpen ? <IconX aria-hidden="true" /> : <IconMenu2 aria-hidden="true" />}
   </button>
