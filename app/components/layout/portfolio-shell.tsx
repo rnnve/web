@@ -7,7 +7,6 @@ import PortfolioNavbar from "./portfolio-navbar";
 import SiteSettingsProvider from "../settings/site-settings-provider";
 import ExternalLinkConfirmation from "../feedback/external-link-confirmation";
 import styles from "./portfolio-navbar.module.css";
-import LanguageSwitcher from "../settings/language-switcher";
 import SpotifyAccent from "./spotify-accent";
 export default function PortfolioShell({ children }: { children: ReactNode }) {
   return (
@@ -17,12 +16,7 @@ export default function PortfolioShell({ children }: { children: ReactNode }) {
       <div className={styles.content}>
         <PageTransition
           effects={<SiteBackground />}
-          persistent={
-            <>
-              <PortfolioNavbar />
-              <LanguageSwitcher />
-            </>
-          }
+          persistent={<PortfolioNavbar />}
         >
           {children}
         </PageTransition>
