@@ -44,11 +44,12 @@
   object-fit: cover;
 }
 .copy {
-  flex: 0 1 auto;
+  flex: 1 1 0;
   min-width: 0;
 }
 .copy h2 {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: flex-start;
   gap: 3px;
@@ -80,16 +81,15 @@
   font-weight: 600;
 }
 .artist {
-  flex: 0 0 auto;
-  max-width: 45%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 .preview {
   display: grid;
   height: 88px;
-  translate: 0 5px;
   grid-template-rows: repeat(3, max-content);
   align-content: center;
   overflow: hidden;
@@ -97,7 +97,7 @@
   min-width: 0;
   text-decoration: none;
   color: #858585;
-  text-align: right;
+  text-align: left;
 }
 .preview p {
   min-width: 0;
@@ -173,7 +173,6 @@
 @media (max-width: 767px) {
   .compact .preview {
     height: 76px;
-    translate: none;
   }
   .compact .preview p {
     font-size: 12px;
