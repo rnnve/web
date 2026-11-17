@@ -1,13 +1,13 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import {
   IconHomeFilled,
   IconCake,
   IconMusic,
   IconMailFilled,
-  IconBrandGithubFilled,
+  IconLanguage,
   IconLink,
   IconCode,
 } from "@tabler/icons-react";
@@ -15,6 +15,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSiteSettings } from "../settings/site-settings-provider";
 import { usePageReady } from "../../page-transition";
+import LanguageSwitcher from "../settings/language-switcher";
+import SocialLinks from "./social-links";
 import styles from "./portfolio-navbar.module.css";
 
 const subscribeToMount = () => () => {};
@@ -23,6 +25,7 @@ const serverMounted = () => false;
 
 export default function PortfolioNavbar() {
   const { t } = useSiteSettings();
+  const [languageVisible, setLanguageVisible] = useState(true);
   const pageReady = usePageReady();
   const mounted = useSyncExternalStore(
     subscribeToMount,
@@ -76,21 +79,6 @@ export default function PortfolioNavbar() {
         ))}
         <a
           className={styles.item}
-          href="https://github.com/rnnve"
-          target="_blank"
-          rel="noreferrer"
-          aria-label={t(
-            "GitHub (opens in a new tab)",
-            "GitHub (เปิดในแท็บใหม่)",
-          )}
-        >
-          <IconBrandGithubFilled size={16} stroke={2} aria-hidden="true" />
-          <span className={styles.tooltip} aria-hidden="true">
-            GitHub
-          </span>
-        </a>
-        <a
-          className={styles.item}
           href="https://haunt.gg/rnn"
           target="_blank"
           rel="noreferrer"
@@ -104,7 +92,34 @@ export default function PortfolioNavbar() {
             {t("Socials", "โซเชียล")}
           </span>
         </a>
+        <button
+          type="button"
+          className={styles.item}
+          aria-label={
+            languageVisible
+              ? t("Hide language switcher", "ซ่อนตัวเลือกภาษา")
+              : t("Show language switcher", "แสดงตัวเลือกภาษา")
+          }
+          aria-expanded={languageVisible}
+          aria-controls="site-language-controls"
+          onClick={() => setLanguageVisible((visible) => !visible)}
+        >
+          <IconLanguage size={16} aria-hidden="true" />
+          <span className={styles.tooltip} aria-hidden="true">
+            {t("Language", "ภาษา")}
+          </span>
+        </button>
       </nav>
+      <div className={styles.utilities}>
+        <SocialLinks />
+        <div
+          id="site-language-controls"
+          hidden={!languageVisible}
+          className={styles.languagePanel}
+        >
+          <LanguageSwitcher />
+        </div>
+      </div>
     </header>
   );
 
