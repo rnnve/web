@@ -108,27 +108,6 @@ export default function SpotifyWidget({
       className={`${styles.card} ${compact ? styles.compact : ""}`}
       aria-labelledby="spotify-widget-title"
     >
-      {showLyrics && (
-        <div className={styles.preview} key={previewIndex}>
-          {[
-            lines[previewIndex - 1],
-            lines[previewIndex],
-            lines[previewIndex + 1],
-          ].map((line, slot) =>
-            line ? (
-              <p
-                key={slot}
-                aria-current={previewIndex + slot - 1 === index || undefined}
-                data-center={slot === 1 || undefined}
-                style={{ gridRow: slot + 1 }}
-                title={line.text}
-              >
-                {line.text}
-              </p>
-            ) : null,
-          )}
-        </div>
-      )}
       <div className={styles.track}>
         <div className={styles.artwork}>
           <SpotifyArtwork src={spotify.artwork} />
@@ -176,6 +155,27 @@ export default function SpotifyWidget({
           </h2>
         </div>
       </div>
+      {showLyrics && (
+        <div className={styles.preview} key={previewIndex}>
+          {[
+            lines[previewIndex - 1],
+            lines[previewIndex],
+            lines[previewIndex + 1],
+          ].map((line, slot) =>
+            line ? (
+              <p
+                key={slot}
+                aria-current={previewIndex + slot - 1 === index || undefined}
+                data-center={slot === 1 || undefined}
+                style={{ gridRow: slot + 1 }}
+                title={line.text}
+              >
+                {line.text}
+              </p>
+            ) : null,
+          )}
+        </div>
+      )}
       {error && (
         <p className={styles.error} role="status">
           {error}
