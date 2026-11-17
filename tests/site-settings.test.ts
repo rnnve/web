@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   DEFAULT_SETTINGS,
+  detectLanguage,
   languageFromHash,
   parseSettings,
 } from "../app/lib/site-settings";
@@ -47,4 +48,32 @@ test("language hashes accept Thai and English without consuming section anchors"
     "#en<script>",
   ])
     assert.equal(languageFromHash(hash), null);
+});
+
+test("browser locales select the first supported language and fall back to English", () => {
+  assert.equal(detectLanguage(["th-TH", "en-US"]), "th");
+  assert.equal(detectLanguage(["en-GB", "th"]), "en");
+  assert.equal(detectLanguage(["ja-JP", "TH-th", "en"]), "th");
+  assert.equal(detectLanguage(["ja-JP", "fr"]), "en");
+  assert.equal(detectLanguage([]), "en");
+});
+
+test("explicit choices override locale detection; missing or corrupt choices use the locale", () => {
+  assert.deepEqual(parseSettings('{"language":"en"}', "th"), {
+    language: "en",
+  });
+  assert.deepEqual(parseSettings('{"language":"th"}', "en"), {
+    language: "th",
+  });
+  for (const value of [
+    null,
+    "",
+    "{bad",
+    "null",
+    "false",
+    "{}",
+    '{"language":"fr"}',
+  ]) {
+    assert.deepEqual(parseSettings(value, "th"), { language: "th" });
+  }
 });
