@@ -83,9 +83,11 @@ export default function SpotifyWidget({
       lyrics?.lines ?? parseSyncedLyrics(lyrics?.syncedLyrics ?? "");
     return preparePreviewLyrics(timedLines);
   }, [lyrics]);
-  const index = activeLyricIndex(lines, progress);
-  const currentLine = lines[index];
-  const nextLine = lines[index + 1];
+  const index = activeLyricIndex(lines, progress, 2_000);
+  const previewIndex = Math.max(
+    0,
+    lines.findLastIndex((line) => line.time <= progress),
+  );
   const artist = spotify.primaryArtist || spotify.artist.split(/,\s+/)[0];
   const title = spotify.isPlaying
     ? spotify.title
@@ -95,7 +97,7 @@ export default function SpotifyWidget({
     !loading &&
     !lyricsError &&
     !lyrics?.instrumental &&
-    currentLine;
+    lines.length > 0;
 
   return (
     <motion.section
@@ -107,12 +109,18 @@ export default function SpotifyWidget({
       aria-labelledby="spotify-widget-title"
     >
       {showLyrics && (
-        <div className={styles.preview} key={`${index}-${currentLine.text}`}>
-          {[lines[index - 1], currentLine, nextLine].map((line, slot) =>
+        <div className={styles.preview} key={previewIndex}>
+          {[
+            lines[previewIndex - 1],
+            lines[previewIndex],
+            lines[previewIndex + 1],
+          ].map((line, slot) =>
             line ? (
               <p
                 key={slot}
-                aria-current={slot === 1 || undefined}
+                aria-current={previewIndex + slot - 1 === index || undefined}
+                data-center={slot === 1 || undefined}
+                style={{ gridRow: slot + 1 }}
                 title={line.text}
               >
                 {line.text}
@@ -133,9 +141,6 @@ export default function SpotifyWidget({
           >
             {spotify.isPlaying ? (
               <>
-                <span className={styles.listening}>
-                  {t("Listening", "กำลังฟัง")}
-                </span>{" "}
                 <a
                   className={styles.songTitle}
                   href={spotifyPageUrl(spotify.url, `${title} ${artist}`)}
