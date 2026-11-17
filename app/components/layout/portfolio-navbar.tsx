@@ -22,7 +22,7 @@ const clientMounted = () => true;
 const serverMounted = () => false;
 
 export default function PortfolioNavbar() {
-  const { t, language } = useSiteSettings();
+  const { t } = useSiteSettings();
   const pageReady = usePageReady();
   const mounted = useSyncExternalStore(
     subscribeToMount,
@@ -57,12 +57,12 @@ export default function PortfolioNavbar() {
         {navItems.map(({ name, href, icon: Icon }) => (
           <Link
             key={href}
-            href={`${href}#${language}`}
+            href={href}
             className={styles.item}
             aria-label={name}
             aria-current={pathname === href ? "page" : undefined}
           >
-            <Icon size={18} stroke={2} aria-hidden="true" />
+            <Icon size={16} stroke={2} aria-hidden="true" />
             <span className={styles.tooltip} aria-hidden="true">
               {name}
             </span>
@@ -78,7 +78,7 @@ export default function PortfolioNavbar() {
             "GitHub (เปิดในแท็บใหม่)",
           )}
         >
-          <IconBrandGithubFilled size={18} stroke={2} aria-hidden="true" />
+          <IconBrandGithubFilled size={16} stroke={2} aria-hidden="true" />
           <span className={styles.tooltip} aria-hidden="true">
             GitHub
           </span>
@@ -93,7 +93,7 @@ export default function PortfolioNavbar() {
             "โซเชียล (เปิดในแท็บใหม่)",
           )}
         >
-          <IconLink size={18} stroke={2} aria-hidden="true" />
+          <IconLink size={16} stroke={2} aria-hidden="true" />
           <span className={styles.tooltip} aria-hidden="true">
             {t("Socials", "โซเชียล")}
           </span>
