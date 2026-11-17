@@ -11,7 +11,7 @@ import usePortfolioStatus from "./hooks/use-portfolio-status";
 import { BIRTH_DATE } from "./lib/birthday";
 import { useSiteSettings } from "./components/settings/site-settings-provider";
 export default function Home() {
-  const { language, t } = useSiteSettings();
+  const { language } = useSiteSettings();
   const { payload, discord, spotify, spotifyLoading, spotifySyncedAt } =
     usePortfolioStatus();
   return (
@@ -19,7 +19,6 @@ export default function Home() {
       <section id="top" className={styles.hero}>
         <div className={styles.content}>
           <header className={styles.identity}>
-            <p className={styles.greeting}>{t("Hey, I’m", "สวัสดี เราชื่อ")}</p>
             <h1>Rynnie{language === "en" ? "." : ""}</h1>
             <div className={styles.profile}>
               <span className={styles.avatar}>
@@ -35,7 +34,15 @@ export default function Home() {
                   aria-label={`Discord: ${discord?.status ?? "offline"}`}
                 />
               </span>
-              <span>@{discord?.username || "melrynni"}</span>
+              <span className={styles.profileText}>
+                <strong>
+                  {discord?.displayName ||
+                    discord?.globalName ||
+                    discord?.username ||
+                    "Rynnie"}
+                </strong>
+                <span>@{discord?.username || "melrynni"}</span>
+              </span>
             </div>
           </header>
           <article className={styles.bio}>
@@ -66,31 +73,6 @@ export default function Home() {
               )}
             </p>
           </article>
-          <nav
-            className={styles.socials}
-            aria-label={t("Find me online", "ติดตามเรา")}
-          >
-            <a
-              href="https://discord.com/users/969088519161139270"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Discord (opens in a new tab)"
-              title="Discord"
-            >
-              <StatusIcon name="discord" size={18} />
-              <span>Discord</span>
-            </a>
-            <a
-              href="https://github.com/rnnve"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub (opens in a new tab)"
-              title="GitHub"
-            >
-              <StatusIcon name="github" size={18} />
-              <span>GitHub</span>
-            </a>
-          </nav>
           <div
             className={styles.music}
             aria-label="Live Spotify status"
