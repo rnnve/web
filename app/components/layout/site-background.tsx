@@ -8,7 +8,7 @@ export default function SiteBackground() {
     >
       <DotGrid
         baseColor="#1e1e1e"
-        activeColor="var(--accent)"
+        activeColor="var(--site-accent)"
         shape="circle"
         dotSize={3}
         gap={10}
