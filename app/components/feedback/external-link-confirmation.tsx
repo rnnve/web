@@ -73,16 +73,16 @@ export default function ExternalLinkConfirmation() {
       }}
     >
       <section
-        className="external-confirmation__modal [border:1px_solid_color-mix(in_srgb,_var(--accent)_28%,_var(--border))] [border-radius:24px_24px_10px_24px] [background:rgb(24_24_24_/_90%)] [box-shadow:inset_0_1px_0_color-mix(in_srgb,_white_12%,_transparent),_0_28px_80px_color-mix(in_srgb,_var(--shadow)_90%,_transparent)] [backdrop-filter:blur(30px)_saturate(145%)] [-webkit-backdrop-filter:blur(30px)_saturate(145%)] [width:min(440px,_100%)] [padding:30px] [color:var(--text)] [animation:external-modal-in_0.34s_var(--ease)_both] [&_h2]:[margin:0] [&_h2]:[font-size:clamp(29px,_6vw,_38px)] [&_h2]:[line-height:1] [&_h2]:[letter-spacing:-1.6px] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[margin:15px_0_0] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[color:var(--text-muted)] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[font-size:13px] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[line-height:1.65] max-[481px]:[max-height:calc(100dvh_-_28px)] max-[481px]:[overflow-y:auto] max-[481px]:[padding:22px] max-[481px]:[border-radius:20px_20px_8px_20px]"
+        className="external-confirmation__modal [border:1px_solid_color-mix(in_srgb,_var(--site-accent)_28%,_var(--border))] [border-radius:24px_24px_10px_24px] [background:rgb(24_24_24_/_90%)] [box-shadow:inset_0_1px_0_color-mix(in_srgb,_white_12%,_transparent),_0_28px_80px_color-mix(in_srgb,_var(--shadow)_90%,_transparent)] [backdrop-filter:blur(30px)_saturate(145%)] [-webkit-backdrop-filter:blur(30px)_saturate(145%)] [width:min(440px,_100%)] [padding:30px] [color:var(--text)] [animation:external-modal-in_0.34s_var(--ease)_both] [&_h2]:[margin:0] [&_h2]:[font-size:clamp(29px,_6vw,_38px)] [&_h2]:[line-height:1] [&_h2]:[letter-spacing:-1.6px] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[margin:15px_0_0] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[color:var(--text-muted)] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[font-size:13px] [&_>_p:not(.external-confirmation\\_\\_eyebrow)]:[line-height:1.65] max-[481px]:[max-height:calc(100dvh_-_28px)] max-[481px]:[overflow-y:auto] max-[481px]:[padding:22px] max-[481px]:[border-radius:20px_20px_8px_20px]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="external-confirmation-title"
         aria-describedby="external-confirmation-description"
       >
-        <div className="external-confirmation__icon [border-radius:15px_15px_6px_15px] [color:var(--page-background)] [background:linear-gradient(145deg,_var(--accent),_var(--accent))] [box-shadow:0_10px_24px_color-mix(in_srgb,_var(--accent)_28%,_transparent)] [width:48px] [height:48px] grid [place-items:center] [font-size:23px] [font-weight:900]">
+        <div className="external-confirmation__icon [border-radius:15px_15px_6px_15px] [color:var(--page-background)] [background:linear-gradient(145deg,_var(--site-accent),_var(--site-accent))] [box-shadow:0_10px_24px_color-mix(in_srgb,_var(--site-accent)_28%,_transparent)] [width:48px] [height:48px] grid [place-items:center] [font-size:23px] [font-weight:900]">
           <ExternalLinkIcon size={25} />
         </div>
-        <p className="external-confirmation__eyebrow [color:var(--accent)] [letter-spacing:1.4px] uppercase [margin:24px_0_8px] [font-size:9px] [font-weight:900]">
+        <p className="external-confirmation__eyebrow [color:var(--site-accent)] [letter-spacing:1.4px] uppercase [margin:24px_0_8px] [font-size:9px] [font-weight:900]">
           {t("External destination", "ลิงก์ภายนอก")}
         </p>
         <h2 id="external-confirmation-title">
@@ -94,7 +94,7 @@ export default function ExternalLinkConfirmation() {
             "คุณกำลังจะไปยังเว็บไซต์ภายนอกเว็บไซต์ส่วนตัวของ Ryn",
           )}
         </p>
-        <div className="external-confirmation__destination [border-radius:14px_14px_6px_14px] [border-color:var(--border)] [background:color-mix(in_srgb,_var(--accent-subtle)_30%,_transparent)] [margin-top:22px] [padding:13px_15px] flex items-center justify-between [gap:16px] [border:1px_solid_color-mix(in_srgb,_var(--accent)_20%,_var(--border))] [&_span]:[color:var(--text-muted)] [&_span]:[font-size:9px] [&_span]:uppercase [&_span]:[letter-spacing:0.7px] [&_strong]:[min-width:0] [&_strong]:[font-size:11px] [&_strong]:[line-height:1.45] [&_strong]:text-right [&_strong]:[overflow-wrap:anywhere]">
+        <div className="external-confirmation__destination [border-radius:14px_14px_6px_14px] [border-color:var(--border)] [background:color-mix(in_srgb,_var(--accent-subtle)_30%,_transparent)] [margin-top:22px] [padding:13px_15px] flex items-center justify-between [gap:16px] [border:1px_solid_color-mix(in_srgb,_var(--site-accent)_20%,_var(--border))] [&_span]:[color:var(--text-muted)] [&_span]:[font-size:9px] [&_span]:uppercase [&_span]:[letter-spacing:0.7px] [&_strong]:[min-width:0] [&_strong]:[font-size:11px] [&_strong]:[line-height:1.45] [&_strong]:text-right [&_strong]:[overflow-wrap:anywhere]">
           <span>{t("Continue to", "ไปยัง")}</span>
           <strong>{pendingLink.displayUrl}</strong>
         </div>
@@ -109,7 +109,7 @@ export default function ExternalLinkConfirmation() {
           </button>
           <button
             type="button"
-            className="external-confirmation__continue [color:var(--page-background)] [background:var(--accent)] flex items-center justify-center [gap:9px] [border:0] [&:hover]:[background:var(--accent)]"
+            className="external-confirmation__continue [color:var(--page-background)] [background:var(--site-accent)] flex items-center justify-center [gap:9px] [border:0] [&:hover]:[background:var(--site-accent)]"
             onClick={continueToDestination}
           >
             {t("Continue", "ดำเนินการต่อ")} <ExternalLinkIcon size={16} />
