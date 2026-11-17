@@ -5,7 +5,7 @@ import { act } from "react";
 import SiteSettingsProvider from "../app/components/settings/site-settings-provider";
 import PortfolioNavbar from "../app/components/layout/portfolio-navbar";
 import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
-import GradientASCII from "../app/components/effects/gradient-ascii";
+import Aurora from "../app/components/effects/aurora";
 import { createRequire } from "node:module";
 
 const { mock } = createRequire(import.meta.url)("bun:test");
@@ -85,13 +85,13 @@ test("language controls, locale preferences, and accent-driven background work w
   );
   for (const [key, value] of Object.entries(globals))
     Object.defineProperty(globalThis, key, { configurable: true, value });
-  const originalGradient = GradientASCII;
+  const originalAurora = Aurora;
   const { createRoot } = await import("react-dom/client");
   const root = createRoot(browser.document.getElementById("root")!);
   context.after(async () => {
     await act(async () => root.unmount());
-    mock.module("../app/components/effects/gradient-ascii", () => ({
-      default: originalGradient,
+    mock.module("../app/components/effects/aurora", () => ({
+      default: originalAurora,
     }));
     for (const [key, descriptor] of previous) {
       if (descriptor) Object.defineProperty(globalThis, key, descriptor);
@@ -104,7 +104,7 @@ test("language controls, locale preferences, and accent-driven background work w
         <PathnameContext.Provider value="/">
           <PortfolioNavbar />
         </PathnameContext.Provider>
-        <GradientASCII />
+        <Aurora />
       </SiteSettingsProvider>,
     ),
   );
@@ -158,12 +158,9 @@ test("language controls, locale preferences, and accent-driven background work w
   });
   assert.equal(browser.document.documentElement.lang, "th");
   assert.equal(url.hash, "#work", "section anchors are preserved");
-  mock.module("geist/font/mono", () => ({
-    GeistMono: { className: "mono", style: { fontFamily: "monospace" } },
-  }));
-  mock.module("../app/components/effects/gradient-ascii", () => ({
-    default: ({ colors }: { colors: string[] }) => (
-      <div data-palette={JSON.stringify(colors)} />
+  mock.module("../app/components/effects/aurora", () => ({
+    default: ({ colorStops }: { colorStops: string[] }) => (
+      <div data-palette={JSON.stringify(colorStops)} />
     ),
   }));
   const { default: SiteBackground } =
@@ -175,7 +172,7 @@ test("language controls, locale preferences, and accent-driven background work w
         .querySelector("[data-palette]")!
         .getAttribute("data-palette")!,
     );
-  assert.deepEqual(palette(), ["#ededed", "#919191"]);
+  assert.deepEqual(palette(), ["#ffffff", "#9aa0ad", "#ffffff"]);
   await act(async () => {
     browser.document.documentElement.style.setProperty(
       "--site-accent",
@@ -183,7 +180,12 @@ test("language controls, locale preferences, and accent-driven background work w
     );
     accentChanged();
   });
-  assert.deepEqual(palette(), ["#ff0000", "#9c0000"]);
+  assert.deepEqual(palette(), ["#ff0000", "#a60000", "#ff0000"]);
+  await act(async () => {
+    browser.document.documentElement.style.removeProperty("--site-accent");
+    accentChanged();
+  });
+  assert.deepEqual(palette(), ["#ffffff", "#9aa0ad", "#ffffff"]);
   await act(async () => root.render(null));
   assert.equal(
     disconnected,
