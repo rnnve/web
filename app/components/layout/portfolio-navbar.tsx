@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore, type CSSProperties } from "react";
+import { useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import {
   IconHomeFilled,
@@ -41,7 +41,6 @@ export default function PortfolioNavbar() {
     { name: t("Birthday", "วันเกิด"), href: "/birthday", icon: IconCake },
     { name: t("Ask", "ถามเรา"), href: "/ask", icon: IconMailFilled },
   ];
-  const activeIndex = navItems.findIndex(({ href }) => pathname === href);
   const navigation = (
     <header
       className={`portfolio-navbar-root ${styles.position}`}
@@ -50,8 +49,6 @@ export default function PortfolioNavbar() {
     >
       <nav
         className={styles.rail}
-        data-active={activeIndex >= 0 || undefined}
-        style={{ "--active-index": Math.max(0, activeIndex) } as CSSProperties}
         aria-label={t("Primary navigation", "เมนูหลัก")}
       >
         {navItems.map(({ name, href, icon: Icon }) => (
@@ -63,6 +60,15 @@ export default function PortfolioNavbar() {
             aria-current={pathname === href ? "page" : undefined}
           >
             <Icon size={16} stroke={2} aria-hidden="true" />
+            {pathname === href && (
+              <span
+                className={styles.currentLabel}
+                data-current-page
+                aria-hidden="true"
+              >
+                {name}
+              </span>
+            )}
             <span className={styles.tooltip} aria-hidden="true">
               {name}
             </span>
@@ -102,6 +108,6 @@ export default function PortfolioNavbar() {
     </header>
   );
 
-  // Keep the dock anchored to the viewport during page transitions.
+  // Keep the navigation anchored to the viewport during page transitions.
   return mounted ? createPortal(navigation, document.body) : navigation;
 }
