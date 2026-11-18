@@ -181,38 +181,73 @@
 
 @media (max-width: 767px) {
   .position {
+    container-type: inline-size;
     top: calc(16px + env(safe-area-inset-top, 0px));
-    right: 16px;
-    left: 16px;
-    justify-content: center;
+    right: max(8px, env(safe-area-inset-right, 0px));
+    left: max(8px, env(safe-area-inset-left, 0px));
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 8px;
     transform: none;
     animation-name: navbar-enter-fade;
   }
+  .navigationGroup,
+  .utilities {
+    flex: 0 1 auto;
+    width: auto;
+    min-width: 0;
+    max-width: max-content;
+    flex-wrap: nowrap;
+  }
   .navigationGroup {
-    justify-content: center;
-    width: 100%;
+    position: relative;
+    justify-content: flex-start;
   }
   .utilities {
-    position: fixed;
-    top: auto;
-    right: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-    left: 16px;
+    position: static;
+    margin-left: auto;
+    justify-content: flex-end;
+  }
+  .rail,
+  .socials {
     width: auto;
-    margin-left: 0;
-    justify-content: center;
+    min-width: 0;
+    max-width: 100%;
+    gap: 0;
+    padding: 2px;
   }
   .socials {
-    padding: 4px;
     border: 1px solid rgb(255 255 255 / 7%);
     border-radius: 12px;
     background: rgb(22 22 22 / 85%);
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
   }
+  .item {
+    --bar-slot: min(32px, calc((100cqi - 20px) / 13));
+    flex: 0 1 var(--bar-slot);
+    width: var(--bar-slot);
+    min-width: 0;
+    max-width: 32px;
+    height: auto;
+    aspect-ratio: 1;
+  }
+  .item > svg,
+  .icon,
+  .icon svg {
+    flex: none;
+    width: min(16px, 57%);
+    height: min(16px, 57%);
+  }
+  .languagePanel {
+    position: absolute;
+    z-index: 2;
+    top: calc(100% + 8px);
+    left: 0;
+  }
   .content {
     --header-space: calc(72px + env(safe-area-inset-top, 0px));
-    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
   .item:first-child .tooltip {
     left: 0;
@@ -226,22 +261,6 @@
   .item:first-child:is(:hover, :focus-visible) .tooltip,
   .item:last-child:is(:hover, :focus-visible) .tooltip {
     transform: translateY(0);
-  }
-  .socials .tooltip {
-    top: auto;
-    bottom: calc(100% + 12px);
-  }
-  .socials .item:first-child .tooltip,
-  .socials .item:last-child .tooltip,
-  .socials .item .tooltip {
-    right: auto;
-    left: 50%;
-    transform: translate(-50%, 4px);
-  }
-  .socials .item:first-child:is(:hover, :focus-visible) .tooltip,
-  .socials .item:last-child:is(:hover, :focus-visible) .tooltip,
-  .socials .item:is(:hover, :focus-visible) .tooltip {
-    transform: translate(-50%, 0);
   }
 }
 
