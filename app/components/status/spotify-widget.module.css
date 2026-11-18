@@ -73,18 +73,18 @@
 }
 .songTitle {
   flex: 0 1 auto;
-  min-width: 0;
+  min-width: min(100%, max-content);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   font-weight: 600;
 }
 .artist {
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
+  width: max-content;
   max-width: 100%;
   white-space: normal;
-  overflow-wrap: anywhere;
+  text-align: right;
 }
 .preview {
   position: absolute;
@@ -130,15 +130,18 @@
   height: 32px;
 }
 .compact .track {
+  width: 100%;
   justify-content: flex-end;
   gap: 8px;
 }
 .compact .copy {
-  flex: 0 1 auto;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .compact .copy h2 {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   justify-content: flex-end;
+  width: 100%;
   text-align: right;
   font-size: 12px;
 }
