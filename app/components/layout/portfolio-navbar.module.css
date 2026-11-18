@@ -55,23 +55,7 @@
 }
 
 .item[aria-current="page"] {
-  flex: 0 1 auto;
-  width: auto;
-  min-width: 32px;
-  padding-inline: 8px;
   color: var(--site-accent);
-}
-
-.currentLabel {
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-  overflow: hidden;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 16px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .item:focus-visible {
@@ -100,10 +84,6 @@
     opacity 300ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
     visibility 300ms;
-}
-
-.item[aria-current="page"] .tooltip {
-  display: none;
 }
 
 .item:focus-visible .tooltip {
@@ -267,7 +247,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .position,
-  .currentLabel,
   .languagePanel,
   .item,
   .tooltip {
