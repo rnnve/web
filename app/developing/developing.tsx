@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { IconCode } from "@tabler/icons-react";
 import Stacks from "../components/home/stacks";
 import GitHubShowcase from "../components/status/github-showcase";
 import WidgetPreloads from "../components/status/widget-preloads";
-import styles from "./developing.module.css";
 import { readWidgetSnapshot, requestWidget } from "../lib/widget-request";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
 
@@ -53,15 +53,19 @@ export default function Developing() {
   }, [loadGitHub]);
 
   return (
-    <main className={styles.page} aria-label={t("Developing", "งานพัฒนา")}>
-      <header className={styles.intro}>
-        <div>
-          <p className={styles.eyebrow}>
-            {t("Code & craft", "โค้ดและงานสร้างสรรค์")}
-          </p>
-          <h1>{t("Developing", "งานพัฒนา")}</h1>
-        </div>
-        <p>
+    <main
+      className="mx-auto w-[min(720px,calc(100%-40px))] pb-24 max-[767px]:pb-32"
+      aria-label={t("Developing", "งานพัฒนา")}
+    >
+      <header className="mb-8 max-w-xl">
+        <p className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <IconCode size={14} stroke={1.75} aria-hidden="true" />
+          {t("Code & craft", "โค้ดและงานสร้างสรรค์")}
+        </p>
+        <h1 className="text-3xl font-medium tracking-tight">
+          {t("Developing", "งานพัฒนา")}
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           {t(
             "Discord bots, websites, and the tools I use to bring ideas to life.",
             "บอท Discord เว็บไซต์ และเครื่องมือที่เราใช้สร้างไอเดียให้เป็นจริง",
