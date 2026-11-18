@@ -1,7 +1,24 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import { useState, useSyncExternalStore, type FormEvent } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import LiveWallpaper from "./live-wallpaper";
 import {
   DEFAULT_PREFERENCES,
@@ -131,7 +148,7 @@ export default function NewTab() {
     getPreferences,
     () => DEFAULT_PREFERENCES,
   );
-  const dialog = useRef<HTMLDialogElement>(null);
+  const [editorOpen, setEditorOpen] = useState(false);
   const [draft, setDraft] = useState<Shortcut[]>([]);
   const [notice, setNotice] = useState("");
   const engine = ENGINES[preferences.engine];
@@ -146,7 +163,7 @@ export default function NewTab() {
         url: "",
       });
     setDraft(shortcuts);
-    dialog.current?.showModal();
+    setEditorOpen(true);
   }
   function updateShortcut(index: number, field: keyof Shortcut, value: string) {
     setDraft((current) =>
@@ -181,7 +198,7 @@ export default function NewTab() {
         ? "Shortcuts saved on this browser."
         : "Updated for this tab. Browser storage is unavailable.",
     );
-    dialog.current?.close();
+    setEditorOpen(false);
   }
   return (
     <>
@@ -196,10 +213,11 @@ export default function NewTab() {
           r<span>.</span>
         </Link>
         <span className={styles.headerLabel}>A LITTLE SPACE TO BEGIN</span>
-        <button
+        <Button
           className={styles.customize}
           onClick={() => openEditor()}
           type="button"
+          variant="outline"
         >
           <svg
             width="16"
@@ -215,7 +233,7 @@ export default function NewTab() {
             <circle cx="15" cy="17" r="3" fill="currentColor" />
           </svg>
           Customize
-        </button>
+        </Button>
       </header>
 
       <div className={styles.content}>
@@ -230,10 +248,10 @@ export default function NewTab() {
             <span className={styles.searchIcon}>
               <SearchIcon />
             </span>
-            <label className={styles.srOnly} htmlFor="newtab-query">
+            <Label className={styles.srOnly} htmlFor="newtab-query">
               Search the web
-            </label>
-            <input
+            </Label>
+            <Input
               id="newtab-query"
               name="q"
               type="search"
@@ -241,17 +259,17 @@ export default function NewTab() {
               required
               autoComplete="off"
               enterKeyHint="search"
+              className="h-auto border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 dark:bg-transparent"
             />
-            <label className={styles.srOnly} htmlFor="newtab-engine">
+            <Label className={styles.srOnly} htmlFor="newtab-engine">
               Search engine
-            </label>
-            <select
-              id="newtab-engine"
+            </Label>
+            <Select
               value={preferences.engine}
-              onChange={(event) => {
+              onValueChange={(engineKey) => {
                 const persisted = savePreferences({
                   ...preferences,
-                  engine: event.target.value as Preferences["engine"],
+                  engine: engineKey as Preferences["engine"],
                 });
                 if (!persisted)
                   setNotice(
@@ -259,19 +277,27 @@ export default function NewTab() {
                   );
               }}
             >
-              {Object.entries(ENGINES).map(([key, value]) => (
-                <option key={key} value={key}>
-                  {value.name}
-                </option>
-              ))}
-            </select>
-            <button
+              <SelectTrigger
+                id="newtab-engine"
+                className="h-11 w-[7.4rem] rounded-none border-0 border-l border-white/12 bg-transparent px-2 text-xs text-[#bcb6c9] shadow-none focus-visible:ring-0 dark:bg-transparent dark:hover:bg-transparent max-[601px]:w-[4.8rem]"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(ENGINES).map(([key, value]) => (
+                  <SelectItem key={key} value={key}>
+                    {value.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
               type="submit"
               aria-label={`Search with ${engine.name}`}
               className={styles.go}
             >
               ↗
-            </button>
+            </Button>
           </form>
 
           <nav className={styles.shortcuts} aria-label="Favorite sites">
@@ -292,8 +318,9 @@ export default function NewTab() {
               </a>
             ))}
             {preferences.shortcuts.length < 8 && (
-              <button
+              <Button
                 className={styles.shortcut}
+                variant="ghost"
                 type="button"
                 onClick={() => openEditor(true)}
               >
@@ -304,7 +331,7 @@ export default function NewTab() {
                   +
                 </span>
                 <span>Add shortcut</span>
-              </button>
+              </Button>
             )}
           </nav>
         </section>
@@ -314,115 +341,123 @@ export default function NewTab() {
         {notice}
       </p>
 
-      <dialog
-        ref={dialog}
-        className={styles.dialog}
-        aria-labelledby="shortcuts-title"
-      >
-        <form onSubmit={saveShortcuts}>
-          <div className={styles.dialogHeading}>
-            <div>
-              <p>MAKE IT YOURS</p>
-              <h2 id="shortcuts-title">Your shortcuts</h2>
-            </div>
-            <button
-              type="button"
-              onClick={() => dialog.current?.close()}
-              aria-label="Close customization"
-            >
-              ×
-            </button>
-          </div>
-          <p className={styles.dialogDescription}>
-            Keep your everyday places close. Saved only in this browser.
-          </p>
-          <div className={styles.editor}>
-            {draft.map((shortcut, index) => (
-              <div className={styles.editorRow} key={index}>
-                <label>
-                  Name
-                  <input
-                    value={shortcut.name}
-                    required
-                    maxLength={24}
-                    onChange={(event) =>
-                      updateShortcut(index, "name", event.target.value)
-                    }
-                  />
-                </label>
-                <label>
-                  Address
-                  <input
-                    value={shortcut.url}
-                    required
-                    type="text"
-                    inputMode="url"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    spellCheck={false}
-                    placeholder="https://example.com"
-                    onChange={(event) => {
-                      event.target.setCustomValidity("");
-                      updateShortcut(index, "url", event.target.value);
-                    }}
-                    onInvalid={(event) =>
-                      event.currentTarget.setCustomValidity(
-                        "Enter a website address.",
+      <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
+        <DialogContent
+          className={`${styles.dialog} sm:max-w-[560px]`}
+          showCloseButton={false}
+          aria-labelledby="shortcuts-title"
+        >
+          <form onSubmit={saveShortcuts}>
+            <DialogHeader className={styles.dialogHeading}>
+              <div>
+                <p>MAKE IT YOURS</p>
+                <DialogTitle id="shortcuts-title">Your shortcuts</DialogTitle>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setEditorOpen(false)}
+                aria-label="Close customization"
+              >
+                ×
+              </Button>
+            </DialogHeader>
+            <DialogDescription className={styles.dialogDescription}>
+              Keep your everyday places close. Saved only in this browser.
+            </DialogDescription>
+            <div className={styles.editor}>
+              {draft.map((shortcut, index) => (
+                <div className={styles.editorRow} key={index}>
+                  <Label>
+                    Name
+                    <Input
+                      value={shortcut.name}
+                      required
+                      maxLength={24}
+                      onChange={(event) =>
+                        updateShortcut(index, "name", event.target.value)
+                      }
+                    />
+                  </Label>
+                  <Label>
+                    Address
+                    <Input
+                      value={shortcut.url}
+                      required
+                      type="text"
+                      inputMode="url"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      placeholder="https://example.com"
+                      onChange={(event) => {
+                        event.target.setCustomValidity("");
+                        updateShortcut(index, "url", event.target.value);
+                      }}
+                      onInvalid={(event) =>
+                        event.currentTarget.setCustomValidity(
+                          "Enter a website address.",
+                        )
+                      }
+                    />
+                  </Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Remove shortcut ${index + 1}`}
+                    onClick={() =>
+                      setDraft((current) =>
+                        current.filter((_, position) => position !== index),
                       )
                     }
-                  />
-                </label>
-                <button
-                  type="button"
-                  aria-label={`Remove shortcut ${index + 1}`}
-                  onClick={() =>
-                    setDraft((current) =>
-                      current.filter((_, position) => position !== index),
-                    )
-                  }
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
-          {draft.length < 8 && (
-            <button
-              className={styles.addRow}
-              type="button"
-              onClick={() =>
-                setDraft((current) => [
-                  ...current,
-                  {
-                    name: "",
-                    url: "",
-                  },
-                ])
-              }
-            >
-              + Add a shortcut
-            </button>
-          )}
-          <p className={styles.editorNotice} role="status">
-            {notice}
-          </p>
-          <div className={styles.dialogActions}>
-            <button
-              type="button"
-              onClick={() =>
-                setDraft(
-                  DEFAULT_PREFERENCES.shortcuts.map((item) => ({
-                    ...item,
-                  })),
-                )
-              }
-            >
-              Reset links
-            </button>
-            <button type="submit">Save changes</button>
-          </div>
-        </form>
-      </dialog>
+                  >
+                    ×
+                  </Button>
+                </div>
+              ))}
+            </div>
+            {draft.length < 8 && (
+              <Button
+                className={styles.addRow}
+                variant="ghost"
+                type="button"
+                onClick={() =>
+                  setDraft((current) => [
+                    ...current,
+                    {
+                      name: "",
+                      url: "",
+                    },
+                  ])
+                }
+              >
+                + Add a shortcut
+              </Button>
+            )}
+            <p className={styles.editorNotice} role="status">
+              {notice}
+            </p>
+            <div className={styles.dialogActions}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() =>
+                  setDraft(
+                    DEFAULT_PREFERENCES.shortcuts.map((item) => ({
+                      ...item,
+                    })),
+                  )
+                }
+              >
+                Reset links
+              </Button>
+              <Button type="submit">Save changes</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
