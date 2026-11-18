@@ -8,11 +8,21 @@ import { StatusIcon } from "./components/status/status-icon";
 import SpotifyWidget from "./components/status/spotify-widget";
 import usePortfolioStatus from "./hooks/use-portfolio-status";
 import { BIRTH_DATE } from "./lib/birthday";
+import type { DiscordProfile } from "./lib/status-types";
 import { useSiteSettings } from "./components/settings/site-settings-provider";
-export default function Home() {
+export default function Home({
+  initialDiscord = null,
+  discordUpdatedAt = 0,
+}: {
+  initialDiscord?: DiscordProfile | null;
+  discordUpdatedAt?: number;
+}) {
   const { language, t } = useSiteSettings();
   const { discord, payload, spotify, spotifyLoading, spotifySyncedAt } =
-    usePortfolioStatus();
+    usePortfolioStatus({
+      profile: initialDiscord,
+      updatedAt: discordUpdatedAt,
+    });
   return (
     <main className="home-page" aria-label="Home">
       <section id="top" className={styles.hero}>
@@ -59,7 +69,13 @@ export default function Home() {
                 >
                   <span className={styles.avatar}>
                     {discord?.avatar ? (
-                      <Image src={discord.avatar} alt="" fill sizes="32px" />
+                      <Image
+                        src={discord.avatar}
+                        alt=""
+                        fill
+                        sizes="32px"
+                        priority
+                      />
                     ) : (
                       <StatusIcon name="discord" size={18} />
                     )}
