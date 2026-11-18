@@ -4,7 +4,9 @@ import { createRequire } from "node:module";
 import { createDocument } from "@mixmark-io/domino";
 import { renderToStaticMarkup } from "react-dom/server";
 import SiteSettingsProvider from "../app/components/settings/site-settings-provider";
+import AgeCalculator from "../app/components/home/age-calculator";
 import Home from "../app/home";
+import { BIRTH_DATE } from "../app/lib/birthday";
 import PortfolioNavbar from "../app/components/layout/portfolio-navbar";
 import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import SpotifyWidget, {
@@ -16,6 +18,17 @@ import { normalizeSpotify } from "../app/lib/spotify";
 import type { DiscordProfile } from "../app/lib/status-types";
 
 const { mock } = createRequire(import.meta.url)("bun:test");
+
+test("the age is calculated in the first render", () => {
+  const document = createDocument(
+    renderToStaticMarkup(<AgeCalculator birthDate={BIRTH_DATE} />),
+  );
+  const integer = document.querySelector(".age-calculator__integer")?.textContent;
+  const precise = document.querySelector("[role='tooltip']")?.textContent;
+  assert.match(integer ?? "", /^[1-9]\d*$/);
+  assert.match(precise ?? "", /^[1-9]\d*\.\d{8}$/);
+  assert.equal(precise?.split(".")[0], integer);
+});
 
 test("home removes duplicate social actions and shows Discord display name above username", (context) => {
   const original = usePortfolioStatus;
