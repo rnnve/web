@@ -41,8 +41,7 @@
 }
 
 .profile {
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -50,7 +49,7 @@
   font-size: 12px;
   font-weight: 400;
   line-height: 16px;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 
 .avatar {
@@ -116,7 +115,13 @@
 .profileText {
   display: grid;
   gap: 2px;
-  min-width: 0;
+  max-width: 12rem;
+}
+.profileText strong,
+.profileText span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .profileText strong {
   color: var(--text);
