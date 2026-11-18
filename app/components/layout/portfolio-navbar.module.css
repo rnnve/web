@@ -215,17 +215,19 @@
     min-width: 0;
     max-width: 100%;
     gap: 0;
+  }
+  .rail {
     padding: 2px;
   }
   .socials {
-    border: 1px solid rgb(255 255 255 / 7%);
-    border-radius: 12px;
-    background: rgb(22 22 22 / 85%);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
+    padding: 0;
+    border: 0;
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
   .item {
-    --bar-slot: min(32px, calc((100cqi - 20px) / 13));
+    --bar-slot: min(32px, calc((100cqi - 14px) / 13));
     flex: 0 1 var(--bar-slot);
     width: var(--bar-slot);
     min-width: 0;
