@@ -41,7 +41,7 @@
 }
 
 .profile {
-  flex: 1 1 0;
+  flex: 0 1 auto;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -127,17 +127,21 @@
 
 .status {
   display: flex;
-  align-items: stretch;
-  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
   min-width: 0;
 }
 
 .nowPlaying {
   display: flex;
-  flex: 1 1 0;
-  align-items: stretch;
+  flex: 1 1 14rem;
+  align-items: center;
   justify-content: flex-end;
-  min-width: 0;
+  /* Stay beside the profile when the title fits. Otherwise take the next row
+     at full width instead of ellipsizing a normal-length song. */
+  min-width: min(100%, 14rem);
+  max-width: 100%;
 }
 
 .nowPlaying > section {
