@@ -55,36 +55,14 @@
 .profileLink,
 .alert button,
 .unavailable button {
-  display: inline-flex;
-  min-height: 40px;
-  align-items: center;
-  justify-content: center;
   gap: 7px;
-  border: 1px solid var(--listen-border);
-  border-radius: 8px;
-  color: var(--text);
-  background: #252525;
-  font: inherit;
   font-size: 12px;
-  font-weight: 680;
+  font-weight: 650;
   text-decoration: none;
-  transition:
-    border-color 180ms ease,
-    background-color 180ms ease,
-    transform 180ms ease;
 }
 
 .profileLink {
   flex: 0 0 auto;
-  padding: 0 16px;
-}
-
-.profileLink:hover,
-.alert button:hover,
-.unavailable button:hover {
-  border-color: rgb(215 163 192 / 42%);
-  background: #2d292c;
-  transform: translateY(-1px);
 }
 
 .profileLink:focus-visible,
@@ -157,41 +135,6 @@
 
 .dashboardToolbar > div svg {
   color: var(--listen-accent);
-}
-
-.periodControl {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--listen-muted);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.periodControl select {
-  min-width: 118px;
-  height: 36px;
-  padding: 0 32px 0 13px;
-  border: 1px solid var(--listen-border);
-  border-radius: 11px;
-  color: var(--text);
-  background: #252525;
-  font: inherit;
-  font-size: 11px;
-  font-weight: 680;
-  letter-spacing: 0;
-  text-transform: none;
-  cursor: pointer;
-  transition:
-    border-color 180ms ease,
-    background-color 180ms ease;
-}
-
-.periodControl select:hover {
-  border-color: rgb(215 163 192 / 36%);
-  background: #2a282a;
 }
 
 .panelGrid {
@@ -380,10 +323,7 @@
 }
 
 .alert button {
-  min-height: 32px;
-  padding: 0 12px;
-  background: rgb(255 255 255 / 5%);
-  cursor: pointer;
+  flex: 0 0 auto;
 }
 
 .rankingsError {
@@ -425,8 +365,6 @@
 
 .unavailable button {
   margin-top: 20px;
-  padding: 0 16px;
-  cursor: pointer;
 }
 
 .skeleton {
@@ -550,15 +488,6 @@
 
   .dashboardToolbar > div {
     display: none;
-  }
-
-  .periodControl {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .periodControl select {
-    min-width: 132px;
   }
 
   .panelGrid,
@@ -696,10 +625,8 @@
 
 .profileLink,
 .alert button,
-.unavailable button,
-.periodControl {
+.unavailable button {
   border-radius: 12px;
-  background: rgb(255 255 255 / 7%);
 }
 
 @media (max-width: 700px) {
