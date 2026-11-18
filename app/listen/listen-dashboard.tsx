@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type ReactNode,
-} from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   IconArrowUpRight,
   IconChartBar,
@@ -15,6 +9,14 @@ import {
   IconMusic,
   IconRefresh,
 } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
 import {
   LISTEN_PERIODS,
@@ -343,8 +345,8 @@ export default function ListenDashboard() {
     };
   }, [period]);
 
-  const handlePeriodChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const nextPeriod = parseListenPeriod(event.target.value);
+  const choosePeriod = (value: string) => {
+    const nextPeriod = parseListenPeriod(value);
     periodRef.current = nextPeriod;
     setPeriod(nextPeriod);
   };
@@ -380,14 +382,16 @@ export default function ListenDashboard() {
           </p>
         </div>
         {data?.profile?.url && (
-          <a
+          <Button
+            variant="outline"
+            size="sm"
             className={styles.profileLink}
-            href={data.profile.url}
-            target="_blank"
-            rel="noreferrer"
+            asChild
           >
-            Last.fm <IconArrowUpRight size={16} aria-hidden="true" />
-          </a>
+            <a href={data.profile.url} target="_blank" rel="noreferrer">
+              Last.fm <IconArrowUpRight size={16} aria-hidden="true" />
+            </a>
+          </Button>
         )}
       </header>
 
@@ -399,10 +403,15 @@ export default function ListenDashboard() {
               "อัปเดตไม่สำเร็จ กำลังแสดงข้อมูลล่าสุด",
             )}
           </span>
-          <button type="button" onClick={() => setRetryKey((key) => key + 1)}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setRetryKey((key) => key + 1)}
+          >
             <IconRefresh size={15} aria-hidden="true" />
             {t("Retry", "ลองอีกครั้ง")}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -418,10 +427,15 @@ export default function ListenDashboard() {
               "ยังเชื่อมต่อ Last.fm ไม่ได้ในตอนนี้ กรุณาลองอีกครั้ง",
             )}
           </p>
-          <button type="button" onClick={() => setRetryKey((key) => key + 1)}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setRetryKey((key) => key + 1)}
+          >
             <IconRefresh size={16} aria-hidden="true" />
             {t("Try again", "ลองอีกครั้ง")}
-          </button>
+          </Button>
         </section>
       )}
 
@@ -432,20 +446,24 @@ export default function ListenDashboard() {
               <IconChartBar size={17} aria-hidden="true" />
               <span>{t("Listening highlights", "ไฮไลต์การฟัง")}</span>
             </div>
-            <label className={styles.periodControl}>
-              <span>{t("Period", "ช่วงเวลา")}</span>
-              <select
-                value={period}
-                onChange={handlePeriodChange}
+            <Select value={period} onValueChange={choosePeriod}>
+              <SelectTrigger
                 aria-label={t("Listening period", "ช่วงเวลาการฟัง")}
+                className="h-9 w-full justify-between gap-3 border-(--listen-border) bg-[#252525] px-3 text-xs font-medium text-(--text) hover:bg-[#2a282a] min-[768px]:w-auto min-[768px]:min-w-52 dark:bg-[#252525] dark:hover:bg-[#2a282a]"
               >
+                <span className="text-[10px] font-bold tracking-[0.08em] text-[#aaa6aa] uppercase">
+                  {t("Period", "ช่วงเวลา")}
+                </span>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" align="end">
                 {LISTEN_PERIODS.map((option) => (
-                  <option value={option} key={option}>
+                  <SelectItem value={option} key={option}>
                     {periodLabels[option]}
-                  </option>
+                  </SelectItem>
                 ))}
-              </select>
-            </label>
+              </SelectContent>
+            </Select>
           </div>
 
           {rankingsError && (
