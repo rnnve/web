@@ -83,17 +83,6 @@ export default function PortfolioNavbar() {
                 >
                   <Icon size={16} stroke={2} aria-hidden="true" />
                 </motion.span>
-                {pathname === href && (
-                  <motion.span
-                    layout="position"
-                    transition={transition}
-                    className={styles.currentLabel}
-                    data-current-page
-                    aria-hidden="true"
-                  >
-                    {name}
-                  </motion.span>
-                )}
                 <span className={styles.tooltip} aria-hidden="true">
                   {name}
                 </span>
