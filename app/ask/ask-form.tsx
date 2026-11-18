@@ -2,6 +2,10 @@
 
 import { useState, useSyncExternalStore, type FormEvent } from "react";
 import { IconArrowUpRight } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
 const MAX_LENGTH = 1000;
 const subscribe = () => () => {};
@@ -73,85 +77,84 @@ export default function AskForm({
     }
   }
   return (
-    <form
-      className="ask-form [backdrop-filter:blur(20px)] [-webkit-backdrop-filter:blur(20px)] [box-shadow:var(--glass-shadow)] [padding:24px] [border:1px_solid_var(--border)] [border-radius:16px] [background:var(--surface-panel)] [&_label]:block [&_label]:[margin-bottom:12px] [&_label]:[font-size:14px] [&_label]:[font-weight:650] [&_textarea]:block [&_textarea]:[width:100%] [&_textarea]:[min-height:150px] [&_textarea]:[padding:16px] [&_textarea]:[resize:vertical] [&_textarea]:[border:1px_solid_var(--border)] [&_textarea]:[border-radius:16px] [&_textarea]:[background:var(--surface-sunken)] [&_textarea]:[color:var(--text)] [&_textarea]:[line-height:1.6] [&_textarea:focus-visible]:[outline:2px_solid_var(--site-accent)] [&_textarea:focus-visible]:[outline-offset:2px] [&_button]:[min-height:48px] [&_button]:[padding:0_20px] [&_button]:inline-flex [&_button]:items-center [&_button]:justify-center [&_button]:[gap:8px] [&_button]:[border:0] [&_button]:[border-radius:12px] [&_button]:[background:var(--site-accent)] [&_button]:[color:var(--on-accent)] [&_button]:[font-weight:650] [&_button]:cursor-pointer [&_button:disabled]:[opacity:0.5] [&_button:disabled]:[cursor:not-allowed] max-[601px]:[padding:20px]"
-      onSubmit={submit}
-    >
-      <label htmlFor={inputId}>
-        {birthday
-          ? t("Your birthday wish", "คำอวยพรวันเกิดของคุณ")
-          : t("Your question", "คำถามของคุณ")}
-      </label>
-      <textarea
-        id={inputId}
-        value={question}
-        disabled={
-          disabled || sentInSession === null || sent || status === "sending"
-        }
-        onChange={(event) => {
-          setQuestion(event.target.value);
-          if (status === "error") setStatus("idle");
-        }}
-        placeholder={
-          birthday
-            ? t(
-                "Leave a little birthday message…",
-                "ฝากคำอวยพรวันเกิดไว้ได้เลย…",
-              )
-            : t("What would you like to ask?", "อยากถามอะไรเราดี?")
-        }
-        maxLength={MAX_LENGTH}
-        rows={5}
-        required
-      />
-      <div className="ask-form-bottom flex items-center justify-between [gap:16px] [margin-top:16px]">
-        <span className="ask-count [color:var(--text-muted)] [font-size:12px] [font-variant-numeric:tabular-nums]">
-          {question.length} / {MAX_LENGTH}
-        </span>
-        <button
-          type="submit"
+    <Card className="ask-form ring-0">
+      <form className="grid gap-3" onSubmit={submit}>
+        <Label htmlFor={inputId}>
+          {birthday
+            ? t("Your birthday wish", "คำอวยพรวันเกิดของคุณ")
+            : t("Your question", "คำถามของคุณ")}
+        </Label>
+        <Textarea
+          id={inputId}
+          value={question}
           disabled={
-            disabled ||
-            sentInSession === null ||
-            sent ||
-            !question.trim() ||
-            status === "sending"
+            disabled || sentInSession === null || sent || status === "sending"
           }
+          onChange={(event) => {
+            setQuestion(event.target.value);
+            if (status === "error") setStatus("idle");
+          }}
+          placeholder={
+            birthday
+              ? t(
+                  "Leave a little birthday message…",
+                  "ฝากคำอวยพรวันเกิดไว้ได้เลย…",
+                )
+              : t("What would you like to ask?", "อยากถามอะไรเราดี?")
+          }
+          maxLength={MAX_LENGTH}
+          rows={5}
+          required
+        />
+        <div className="ask-form-bottom flex items-center justify-between gap-4">
+          <span className="ask-count text-xs text-muted-foreground tabular-nums">
+            {question.length} / {MAX_LENGTH}
+          </span>
+          <Button
+            type="submit"
+            disabled={
+              disabled ||
+              sentInSession === null ||
+              sent ||
+              !question.trim() ||
+              status === "sending"
+            }
+          >
+            {status === "sending"
+              ? t("Sending…", "กำลังส่ง…")
+              : birthday
+                ? t("Send birthday wish", "ส่งคำอวยพร")
+                : t("Send question", "ส่งคำถาม")}
+            <IconArrowUpRight size={16} aria-hidden="true" />
+          </Button>
+        </div>
+        <p
+          className="ask-feedback min-h-6 text-sm text-muted-foreground"
+          role="status"
+          aria-live="polite"
         >
-          {status === "sending"
-            ? t("Sending…", "กำลังส่ง…")
-            : birthday
-              ? t("Send birthday wish", "ส่งคำอวยพร")
-              : t("Send question", "ส่งคำถาม")}
-          <IconArrowUpRight size={18} aria-hidden="true" />
-        </button>
-      </div>
-      <p
-        className="ask-feedback [min-height:1.5em] [margin:16px_0_0] [color:var(--text-muted)] [font-size:13px]"
-        role="status"
-        aria-live="polite"
-      >
-        {sent &&
-          (birthday
-            ? t(
-                "Your birthday wish has been sent. Thank you! You can send one wish per visit.",
-                "ส่งคำอวยพรแล้ว ขอบคุณนะ! ส่งได้หนึ่งคำอวยพรต่อการเข้าชม",
-              )
-            : t(
-                "Your question has been sent. You can send one question per visit.",
-                "ส่งคำถามแล้ว ส่งได้หนึ่งคำถามต่อการเข้าชม ขอบคุณนะ!",
-              ))}
-        {status === "error" &&
-          (birthday
-            ? t(
-                "Couldn’t send your birthday wish. Please try again.",
-                "ส่งคำอวยพรไม่สำเร็จ ลองอีกครั้งนะ",
-              )
-            : t(
-                "Couldn’t send your question. Please try again.",
-                "ส่งคำถามไม่สำเร็จ ลองอีกครั้งนะ",
-              ))}
-      </p>
-    </form>
+          {sent &&
+            (birthday
+              ? t(
+                  "Your birthday wish has been sent. Thank you! You can send one wish per visit.",
+                  "ส่งคำอวยพรแล้ว ขอบคุณนะ! ส่งได้หนึ่งคำอวยพรต่อการเข้าชม",
+                )
+              : t(
+                  "Your question has been sent. You can send one question per visit.",
+                  "ส่งคำถามแล้ว ส่งได้หนึ่งคำถามต่อการเข้าชม ขอบคุณนะ!",
+                ))}
+          {status === "error" &&
+            (birthday
+              ? t(
+                  "Couldn’t send your birthday wish. Please try again.",
+                  "ส่งคำอวยพรไม่สำเร็จ ลองอีกครั้งนะ",
+                )
+              : t(
+                  "Couldn’t send your question. Please try again.",
+                  "ส่งคำถามไม่สำเร็จ ลองอีกครั้งนะ",
+                ))}
+        </p>
+      </form>
+    </Card>
   );
 }
