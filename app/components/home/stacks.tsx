@@ -1,8 +1,7 @@
 "use client";
 
 import { memo, type ReactNode } from "react";
-import styles from "../../developing/developing.module.css";
-import LogoLoop from "../effects/logo-loop";
+import { IconStack2 } from "@tabler/icons-react";
 import { useSiteSettings } from "../settings/site-settings-provider";
 type Tool = {
   name: string;
@@ -202,46 +201,41 @@ const tools: Tool[] = [
     ),
   },
 ];
-const stackLogos = tools.map((tool) => ({
-  node: tool.logo,
-  title: tool.name,
-  href: tool.href,
-  hoverColor: tool.color,
-}));
 function Stacks() {
   const { t } = useSiteSettings();
   return (
-    <section
-      id="developer"
-      className={styles.stack}
-      aria-labelledby="stacks-title"
-    >
-      <div className={styles.stackHeading}>
-        <p>{t("Stacks", "เทคโนโลยีที่ใช้")}</p>
-        <h2 id="stacks-title">
-          {t("Tools I build with", "เครื่องมือที่เราใช้")}
-          <span>.</span>
-        </h2>
-        <p className={styles.stackDescription}>
-          {t(
-            "My everyday stack for designing, developing, and shipping projects.",
-            "เครื่องมือที่เราใช้ทุกวันในการออกแบบ พัฒนา และเผยแพร่โปรเจกต์",
-          )}
-        </p>
-      </div>
-      <div className={styles.stackLoop}>
-        <LogoLoop
-          logos={stackLogos}
-          speed={80}
-          direction="left"
-          logoHeight={28}
-          gap={40}
-          hoverSpeed={0}
-          labels="inline"
-          muted={0.5}
-          ariaLabel={t("My technology stack", "เทคโนโลยีที่เราใช้")}
-        />
-      </div>
+    <section id="developer" className="mt-8" aria-labelledby="stacks-title">
+      <h2
+        id="stacks-title"
+        className="mb-3 flex items-center gap-1.5 text-sm font-medium"
+      >
+        <IconStack2 size={14} stroke={1.75} aria-hidden="true" />
+        {t("Tools I build with", "เครื่องมือที่เราใช้")}
+      </h2>
+      <ul
+        className="flex flex-wrap gap-2"
+        aria-label={t("My technology stack", "เทคโนโลยีที่เราใช้")}
+      >
+        {tools.map((tool) => (
+          <li key={tool.name}>
+            <a
+              href={tool.href}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-8 items-center gap-2 rounded-lg border bg-card px-2.5 text-xs text-foreground no-underline transition-colors hover:bg-muted"
+            >
+              <span
+                className="grid size-4 place-items-center [&>svg]:size-4"
+                style={{ color: tool.color }}
+                aria-hidden="true"
+              >
+                {tool.logo}
+              </span>
+              {tool.name}
+            </a>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
