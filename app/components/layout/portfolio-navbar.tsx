@@ -90,7 +90,7 @@ export default function PortfolioNavbar() {
                         layout
                         transition={transition}
                         href={href}
-                        className={`${styles.item} ${href !== "/" ? styles.labeled : ""}`}
+                        className={styles.item}
                         aria-label={name}
                         aria-current={pathname === href ? "page" : undefined}
                         onClick={() => setLanguageVisible(false)}
@@ -111,11 +111,6 @@ export default function PortfolioNavbar() {
                         >
                           <Icon size={20} stroke={1.8} aria-hidden="true" />
                         </motion.span>
-                        {href !== "/" && (
-                          <span className={styles.label} aria-hidden="true">
-                            {name}
-                          </span>
-                        )}
                       </AnimatedLink>
                     </Button>
                   </TooltipTrigger>
