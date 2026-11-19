@@ -4,7 +4,7 @@ import { buildSitemap } from "../app/lib/sitemap-entries";
 import robots from "../app/robots";
 import { generatePageMetadata } from "../app/lib/og/metadata";
 
-const origin = "https://myosotis.rynni.cc";
+const origin = "https://rynni.cc";
 
 test("sitemap, robots, and page canonicals use the serving production host", async () => {
   const entries = buildSitemap(["/docs", "/docs/desktop"]);
