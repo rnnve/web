@@ -65,7 +65,7 @@ export default function BirthdayCountdown() {
     : t("December 31", "31 ธันวาคม");
 
   return (
-    <section aria-labelledby="birthday-title">
+    <section className="flex h-full flex-col" aria-labelledby="birthday-title">
       {celebrating && (
         <div
           className="pointer-events-none fixed inset-0 z-50 overflow-hidden"
@@ -114,7 +114,7 @@ export default function BirthdayCountdown() {
             : t("Until the next birthday", "นับถอยหลังถึงวันเกิด")}
         </h1>
         <p
-          className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground"
+          className="mt-2 max-w-md text-sm leading-relaxed text-pretty text-muted-foreground"
           aria-live="polite"
         >
           {countdown
@@ -129,9 +129,20 @@ export default function BirthdayCountdown() {
                 )
             : t("The next year is on its way.", "ปีถัดไปกำลังจะมาถึง")}
         </p>
+        <p className="mt-3 text-sm text-pretty text-muted-foreground">
+          {countdown ? (
+            <time dateTime={new Date(countdown.target).toISOString()}>
+              {dateLabel}
+            </time>
+          ) : (
+            dateLabel
+          )}
+          <span aria-hidden="true"> · </span>
+          {t("Bangkok time", "เวลากรุงเทพฯ")}
+        </p>
       </header>
       <div
-        className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4"
+        className="mt-8 grid flex-1 grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2"
         role="timer"
         aria-label={t(
           "Time until the next birthday",
@@ -140,9 +151,9 @@ export default function BirthdayCountdown() {
         aria-busy={!countdown}
       >
         {units.map((unit) => (
-          <Card key={unit} size="sm">
-            <CardContent className="flex flex-col items-center gap-2 px-2 text-center">
-              <div className="text-3xl font-semibold tracking-tight sm:text-4xl">
+          <Card key={unit} size="sm" className="h-full justify-center">
+            <CardContent className="flex flex-col items-center gap-2 px-2 py-2 text-center lg:py-4">
+              <div className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
                 {countdown && pageReady ? (
                   <Counter
                     value={countdown[unit]}
@@ -168,17 +179,6 @@ export default function BirthdayCountdown() {
           </Card>
         ))}
       </div>
-      <p className="mt-4 text-sm text-pretty text-muted-foreground">
-        {countdown ? (
-          <time dateTime={new Date(countdown.target).toISOString()}>
-            {dateLabel}
-          </time>
-        ) : (
-          dateLabel
-        )}
-        <span aria-hidden="true"> · </span>
-        {t("Bangkok time", "เวลากรุงเทพฯ")}
-      </p>
     </section>
   );
 }
