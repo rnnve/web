@@ -162,6 +162,35 @@
     padding-inline: 16px;
     padding-bottom: 96px;
   }
+  .profile {
+    position: fixed;
+    z-index: 70;
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+    height: 36px;
+    min-width: 0;
+    max-width: calc(100vw - 240px);
+  }
+  .profileText {
+    min-width: 0;
+    width: auto;
+    max-width: 100%;
+  }
+  .profileText strong,
+  .profileText span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .status {
+    justify-content: flex-start;
+  }
+  .nowPlaying {
+    justify-content: flex-start;
+    flex-basis: auto;
+  }
+  .nowPlaying > section {
+    width: min(100%, 360px);
+  }
 }
 
 :global(html:has(.home-page)),
