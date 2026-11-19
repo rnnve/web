@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
-// Canonical production origin; rynni.cc redirects to this host.
-export const SITE_URL = "https://myosotis.rynni.cc";
+// Canonical production origin for sitemap URLs, canonicals, and robots.
+export const SITE_URL = "https://rynni.cc";
 export const SITE_NAME = "Rynnie";
 
 export type PageContent = {
