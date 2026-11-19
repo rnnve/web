@@ -133,9 +133,9 @@ Permanent redirects:
 
 `/r/:path*` rewrites to `/redirect/:path*`. Named destinations are configured in `app/redirect/destinations.ts`; `/redirect?url=` accepts an HTTP or HTTPS destination.
 
-The sitemap in [app/sitemap.ts](app/sitemap.ts) uses the Next.js metadata convention and includes home, developing, birthday, listening, ask, and every documentation page. It emits unique absolute URLs on the canonical production origin, `https://myosotis.rynni.cc`. The new-tab page and WebOS are omitted. Sitemap URLs, page canonicals, and the robots declaration share `SITE_URL` in `app/lib/og/resolver.ts`; update that constant when changing the production domain.
+The sitemap in [app/sitemap.ts](app/sitemap.ts) uses the Next.js metadata convention and includes home, developing, birthday, listening, ask, and every documentation page. It emits unique absolute URLs on the canonical production origin, `https://rynni.cc`. The new-tab page and WebOS are omitted. Sitemap URLs, page canonicals, and the robots declaration share `SITE_URL` in `app/lib/og/resolver.ts`; update that constant when changing the production domain.
 
-Submit `https://myosotis.rynni.cc/sitemap.xml` in Search Console under the matching domain or URL-prefix property. The old `rynni.cc` address redirects to this host.
+Submit `https://rynni.cc/sitemap.xml` in Search Console under the matching domain or URL-prefix property.
 
 Open Graph images are rendered at `/internal/og?path=/`, with the same page metadata used by the site. The registry lives in `app/lib/og/resolver.ts`, metadata generation in `app/lib/og/metadata.ts`, and the image template in `app/components/og/og-template.tsx`. Register additional public pages in `PUBLIC_PAGES` to give them matching previews. Unknown paths receive the generic preview.
 
