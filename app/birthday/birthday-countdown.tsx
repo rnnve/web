@@ -1,24 +1,29 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { IconCake } from "@tabler/icons-react";
+import { Card, CardContent } from "@/components/ui/card";
 import Counter from "../components/ui/counter";
 import { getBirthdayCountdown } from "../lib/birthday";
 import { usePageReady } from "../page-transition";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
+
 type Countdown = ReturnType<typeof getBirthdayCountdown>;
 const units = ["days", "hours", "minutes", "seconds"] as const;
+
 export default function BirthdayCountdown() {
   const { language, t } = useSiteSettings();
   const unitLabels = {
-    days: t("days", "วัน"),
-    hours: t("hours", "ชั่วโมง"),
-    minutes: t("minutes", "นาที"),
-    seconds: t("seconds", "วินาที"),
+    days: t("Days", "วัน"),
+    hours: t("Hours", "ชั่วโมง"),
+    minutes: t("Minutes", "นาที"),
+    seconds: t("Seconds", "วินาที"),
   };
   const [countdown, setCountdown] = useState<Countdown | null>(null);
   const [celebrating, setCelebrating] = useState(false);
   const previousCountdown = useRef<Countdown | null>(null);
   const pageReady = usePageReady();
+
   useEffect(() => {
     let celebrationTimer: number | undefined;
     const update = () => {
@@ -46,125 +51,134 @@ export default function BirthdayCountdown() {
       document.removeEventListener("visibilitychange", update);
     };
   }, []);
+
+  const dateLabel = countdown
+    ? new Intl.DateTimeFormat(
+        language === "th" ? "th-TH-u-ca-gregory" : "en-US",
+        {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+          timeZone: "Asia/Bangkok",
+        },
+      ).format(new Date(countdown.target))
+    : t("December 31", "31 ธันวาคม");
+
   return (
-    <>
+    <section aria-labelledby="birthday-title">
       {celebrating && (
         <div
-          className="birthday-confetti fixed [inset:0] [z-index:55] overflow-hidden pointer-events-none [&_span]:absolute [&_span]:[left:50%] [&_span]:[top:48%] [&_span]:[width:9px] [&_span]:[height:14px] [&_span]:[border-radius:2px] [&_span]:[background:var(--confetti-color)] [&_span]:[opacity:0] [&_span]:[animation:birthday-confetti-burst_3.3s_var(--confetti-delay)_ease-out_forwards] [&_span:nth-child(3n)]:[width:10px] [&_span:nth-child(3n)]:[height:10px] [&_span:nth-child(3n)]:[border-radius:50%] motion-reduce:hidden"
+          className="pointer-events-none fixed inset-0 z-50 overflow-hidden"
           aria-hidden="true"
         >
-          {Array.from(
-            {
-              length: 48,
-            },
-            (_, index) => (
-              <span
-                key={index}
-                style={
-                  {
-                    "--confetti-x": `${((index * 73) % 181) - 90}vw`,
-                    "--confetti-mid-x": `${(((index * 73) % 181) - 90) * 0.65}vw`,
-                    "--confetti-mid-y": `${-(30 + ((index * 41) % 45)) * 0.6}vh`,
-                    "--confetti-rotate": `${(index % 2 ? 1 : -1) * (360 + ((index * 137) % 720))}deg`,
-                    "--confetti-mid-rotate": `${(index % 2 ? 1 : -1) * (360 + ((index * 137) % 720)) * 0.45}deg`,
-                    "--confetti-delay": `${(index % 8) * 0.035}s`,
-                    "--confetti-color": [
-                      "#f6c7db",
-                      "#d8c8ff",
-                      "#ffe7a8",
-                      "#b9e4f3",
-                      "#ffffff",
-                    ][index % 5],
-                  } as CSSProperties
-                }
-              />
-            ),
-          )}
+          {Array.from({ length: 48 }, (_, index) => (
+            <span
+              key={index}
+              className="absolute top-[48%] left-1/2 opacity-0 motion-reduce:hidden"
+              style={
+                {
+                  width: index % 3 === 2 ? 10 : 9,
+                  height: index % 3 === 2 ? 10 : 14,
+                  borderRadius: index % 3 === 2 ? 999 : 2,
+                  background: [
+                    "#f6c7db",
+                    "#d8c8ff",
+                    "#ffe7a8",
+                    "#b9e4f3",
+                    "#ffffff",
+                  ][index % 5],
+                  animation: `birthday-confetti-burst 3.3s ${(index % 8) * 0.035}s cubic-bezier(0.22, 1, 0.36, 1) forwards`,
+                  "--confetti-x": `${((index * 73) % 181) - 90}vw`,
+                  "--confetti-mid-x": `${(((index * 73) % 181) - 90) * 0.65}vw`,
+                  "--confetti-mid-y": `${-(30 + ((index * 41) % 45)) * 0.6}vh`,
+                  "--confetti-rotate": `${(index % 2 ? 1 : -1) * (360 + ((index * 137) % 720))}deg`,
+                  "--confetti-mid-rotate": `${(index % 2 ? 1 : -1) * (360 + ((index * 137) % 720)) * 0.45}deg`,
+                } as CSSProperties
+              }
+            />
+          ))}
         </div>
       )}
-      <h1 id="birthday-title" aria-live="polite">
-        {countdown?.isBirthday
-          ? t("Happy birthday, Rynnie!", "สุขสันต์วันเกิดนะ Rynnie!")
-          : t("Until my birthday.", "นับถอยหลังถึงวันเกิด")}
-      </h1>
-      <p
-        className="birthday-description [margin:18px_0_0] [color:var(--text-muted)] [font-size:15px] [line-height:1.6]"
-        aria-live="polite"
-      >
-        {countdown
-          ? countdown.isBirthday
-            ? t(
-                `${countdown.age} years of little moments. Here’s to another year.`,
-                `${countdown.age} ปีแห่งความทรงจำเล็ก ๆ ขอให้เป็นอีกปีที่ดี`,
-              )
-            : t(
-                `Counting down to chapter ${countdown.age}.`,
-                `นับถอยหลังสู่ปีที่ ${countdown.age} ของชีวิต`,
-              )
-          : t("The next chapter is on its way.", "บทต่อไปของชีวิตกำลังมาถึง")}
-      </p>
+      <header className="max-w-xl">
+        <p className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <IconCake size={14} stroke={1.75} aria-hidden="true" />
+          {t("December 31, 13:12 Bangkok", "31 ธันวาคม 13:12 กรุงเทพฯ")}
+        </p>
+        <h1
+          id="birthday-title"
+          className="text-3xl font-medium tracking-tight text-balance"
+          aria-live="polite"
+        >
+          {countdown?.isBirthday
+            ? t("Happy birthday", "สุขสันต์วันเกิด")
+            : t("Until the next birthday", "นับถอยหลังถึงวันเกิด")}
+        </h1>
+        <p
+          className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground"
+          aria-live="polite"
+        >
+          {countdown
+            ? countdown.isBirthday
+              ? t(
+                  `${countdown.age} years of small moments. Another year starts today.`,
+                  `${countdown.age} ปีของช่วงเวลาเล็ก ๆ อีกปีเริ่มต้นวันนี้`,
+                )
+              : t(
+                  `Counting down to year ${countdown.age}.`,
+                  `นับถอยหลังสู่ปีที่ ${countdown.age}`,
+                )
+            : t("The next year is on its way.", "ปีถัดไปกำลังจะมาถึง")}
+        </p>
+      </header>
       <div
-        className="birthday-countdown [width:100%] [max-width:860px] [margin-block:64px_52px] grid [grid-template-columns:repeat(4,_minmax(0,_1fr))] max-[601px]:[max-width:360px] max-[601px]:[grid-template-columns:repeat(2,_minmax(0,_1fr))] max-[601px]:[gap:38px_0] max-[601px]:[margin-block:48px_40px]"
+        className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4"
         role="timer"
         aria-label={t(
-          "Time until Rynnie’s birthday",
-          "เวลาที่เหลือก่อนวันเกิดของ Rynnie",
+          "Time until the next birthday",
+          "เวลาที่เหลือก่อนวันเกิดครั้งถัดไป",
         )}
         aria-busy={!countdown}
       >
         {units.map((unit) => (
-          <div
-            className="birthday-unit [font-size:clamp(40px,_8vw,_104px)] [min-width:0] flex flex-col items-center [gap:26px] [.birthday-unit_+_&]:[border-left:1px_solid_var(--border)] max-[601px]:[font-size:clamp(54px,_15vw,_80px)] max-[601px]:[gap:20px] max-[601px]:[&:nth-child(3)]:[border-left:0]"
-            key={unit}
-          >
-            {countdown && pageReady ? (
-              <Counter
-                value={countdown[unit]}
-                minDigits={2}
-                format={{
-                  useGrouping: false,
-                }}
-                direction="down"
-                duration={0.6}
-                bounce={0.15}
-                stagger={0.025}
-                fontSize="inherit"
-                fontWeight={600}
-                className="birthday-number [font-weight:600] [line-height:1] [letter-spacing:-0.045em]"
-              />
-            ) : (
-              <span
-                className="birthday-number [font-weight:600] [line-height:1] [letter-spacing:-0.045em] birthday-placeholder [color:var(--text-muted)]"
-                aria-label="Loading"
-              >
-                --
+          <Card key={unit} size="sm">
+            <CardContent className="flex flex-col items-center gap-2 px-2 text-center">
+              <div className="text-3xl font-semibold tracking-tight sm:text-4xl">
+                {countdown && pageReady ? (
+                  <Counter
+                    value={countdown[unit]}
+                    minDigits={2}
+                    format={{ useGrouping: false }}
+                    direction="down"
+                    duration={0.6}
+                    bounce={0.15}
+                    stagger={0.025}
+                    fontSize="1em"
+                    fontWeight={600}
+                  />
+                ) : (
+                  <span className="text-muted-foreground" aria-label="Loading">
+                    --
+                  </span>
+                )}
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {unitLabels[unit]}
               </span>
-            )}
-            <span className="birthday-unit-label [color:var(--text-muted)] [font-size:11px] [letter-spacing:2px] uppercase">
-              {unitLabels[unit]}
-            </span>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
-      <p className="birthday-date [margin:0] [color:var(--text-muted)] [font-size:12px] [line-height:1.8] [text-wrap:balance] [&_>_span]:[padding-inline:10px] [&_>_span]:[color:var(--text-faint)]">
+      <p className="mt-4 text-sm text-pretty text-muted-foreground">
         {countdown ? (
           <time dateTime={new Date(countdown.target).toISOString()}>
-            {new Intl.DateTimeFormat(
-              language === "th" ? "th-TH-u-ca-gregory" : "en-US",
-              {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-                timeZone: "Asia/Bangkok",
-              },
-            ).format(new Date(countdown.target))}
+            {dateLabel}
           </time>
         ) : (
-          t("December 31", "31 ธันวาคม")
+          dateLabel
         )}
-        <span aria-hidden="true"> / </span>
-        {t("A day worth waiting for.", "วันที่คุ้มค่าแก่การรอคอย")}
+        <span aria-hidden="true"> · </span>
+        {t("Bangkok time", "เวลากรุงเทพฯ")}
       </p>
-    </>
+    </section>
   );
 }
