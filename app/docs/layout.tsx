@@ -17,7 +17,6 @@ export default function DocumentationLayout({
         themeSwitch={{ enabled: false }}
         links={[
           { text: "Website", url: "/" },
-          { text: "Desktop", url: "/-" },
           {
             text: "GitHub",
             url: "https://github.com/rnnve/web",
