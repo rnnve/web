@@ -43,7 +43,7 @@ export default function BirthdayWishForm() {
     : null;
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle id="birthday-wishes-title">
           {locked
@@ -68,10 +68,10 @@ export default function BirthdayWishForm() {
         </CardDescription>
       </CardHeader>
       {locked ? (
-        <CardContent>
+        <CardContent className="flex flex-1">
           <div
             role="status"
-            className="flex items-center gap-3 rounded-lg bg-muted/60 px-4 py-6 text-sm text-pretty text-muted-foreground"
+            className="flex flex-1 items-center gap-3 rounded-lg bg-muted/60 px-4 py-8 text-sm text-pretty text-muted-foreground"
           >
             <IconLock size={18} stroke={1.75} aria-hidden="true" />
             {date
