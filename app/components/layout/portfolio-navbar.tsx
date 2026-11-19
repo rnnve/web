@@ -85,7 +85,7 @@ export default function PortfolioNavbar() {
               {navItems.map(({ name, href, icon: Icon }) => (
                 <Tooltip key={href}>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon-sm" asChild>
+                    <Button variant="ghost" size="icon" asChild>
                       <AnimatedLink
                         layout
                         transition={transition}
@@ -109,7 +109,7 @@ export default function PortfolioNavbar() {
                           transition={transition}
                           className={styles.icon}
                         >
-                          <Icon size={15} stroke={1.8} aria-hidden="true" />
+                          <Icon size={18} stroke={1.8} aria-hidden="true" />
                         </motion.span>
                       </AnimatedLink>
                     </Button>
@@ -133,7 +133,7 @@ export default function PortfolioNavbar() {
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    size="icon-sm"
+                    size="icon"
                     className={styles.item}
                     asChild
                   >
@@ -146,7 +146,7 @@ export default function PortfolioNavbar() {
                         "โซเชียล (เปิดในแท็บใหม่)",
                       )}
                     >
-                      <IconLink size={15} stroke={1.8} aria-hidden="true" />
+                      <IconLink size={18} stroke={1.8} aria-hidden="true" />
                     </a>
                   </Button>
                 </TooltipTrigger>
@@ -164,7 +164,7 @@ export default function PortfolioNavbar() {
                   <Button
                     ref={languageButton}
                     variant="ghost"
-                    size="icon-sm"
+                    size="icon"
                     className={styles.item}
                     aria-label={
                       languageVisible
@@ -175,7 +175,7 @@ export default function PortfolioNavbar() {
                     aria-controls="site-language-controls"
                     onClick={() => setLanguageVisible((value) => !value)}
                   >
-                    <IconLanguage size={15} stroke={1.8} aria-hidden="true" />
+                    <IconLanguage size={18} stroke={1.8} aria-hidden="true" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent
