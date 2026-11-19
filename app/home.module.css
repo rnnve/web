@@ -166,7 +166,7 @@
     position: fixed;
     z-index: 70;
     top: calc(12px + env(safe-area-inset-top, 0px));
-    right: max(12px, env(safe-area-inset-right, 0px));
+    left: max(12px, env(safe-area-inset-left, 0px));
     height: 36px;
     min-width: 0;
     max-width: calc(100vw - 240px);
