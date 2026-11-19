@@ -142,12 +142,6 @@
     left: auto;
     width: max-content;
   }
-  :global(body:has(.home-page)) .position {
-    right: calc(
-      max(12px, env(safe-area-inset-right, 0px)) +
-        var(--home-profile-offset, 148px)
-    );
-  }
   .navigationGroup {
     position: fixed;
     z-index: 60;
