@@ -115,9 +115,21 @@ export default function AskForm({
 
   const fields = (
     <>
-      <CardContent>
-        <form id={formId} className="grid gap-3" onSubmit={submit}>
-          <div className="grid gap-2">
+      <CardContent
+        className={embedded ? "flex min-h-0 flex-1 flex-col" : undefined}
+      >
+        <form
+          id={formId}
+          className={
+            embedded ? "flex min-h-0 flex-1 flex-col gap-3" : "grid gap-3"
+          }
+          onSubmit={submit}
+        >
+          <div
+            className={
+              embedded ? "flex min-h-0 flex-1 flex-col gap-2" : "grid gap-2"
+            }
+          >
             <Label htmlFor={inputId}>{label}</Label>
             <Textarea
               id={inputId}
@@ -136,7 +148,11 @@ export default function AskForm({
               maxLength={MAX_LENGTH}
               rows={6}
               required
-              className="min-h-36"
+              className={
+                embedded
+                  ? "field-sizing-fixed min-h-36 flex-1 lg:min-h-48"
+                  : "min-h-40 lg:min-h-56"
+              }
             />
           </div>
           {feedback && (
@@ -173,7 +189,7 @@ export default function AskForm({
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="lg:hidden">
         <CardTitle>{label}</CardTitle>
         <CardDescription>{hint}</CardDescription>
       </CardHeader>
