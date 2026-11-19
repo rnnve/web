@@ -63,7 +63,7 @@ export default function SocialLinks() {
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
-                size="icon"
+                size="icon-sm"
                 className={`${styles.item} ${styles.socialItem}`}
                 asChild
               >
@@ -73,7 +73,7 @@ export default function SocialLinks() {
                   rel="noreferrer"
                   aria-label={`${name} ${t("(opens in a new tab)", "(เปิดในแท็บใหม่)")}`}
                 >
-                  <Icon width={18} height={18} aria-hidden="true" />
+                  <Icon width={15} height={15} aria-hidden="true" />
                 </a>
               </Button>
             </TooltipTrigger>
@@ -91,13 +91,13 @@ export default function SocialLinks() {
             key={name}
             type="button"
             variant="ghost"
-            size="icon"
+            size="icon-sm"
             className={`${styles.item} ${styles.socialItem}`}
             disabled
             aria-label={`${name} ${t("(link not configured)", "(ยังไม่ได้ตั้งค่าลิงก์)")}`}
             title={name}
           >
-            <Icon width={18} height={18} aria-hidden="true" />
+            <Icon width={15} height={15} aria-hidden="true" />
           </Button>
         ),
       )}
