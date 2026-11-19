@@ -17,6 +17,12 @@ My personal website: a portfolio, live listening activity, synchronized lyrics, 
 
 The portfolio uses a custom glassmorphism theme with translucent panels, fine borders, Geist typography, and plain CSS controls. The playing song’s cover sets the shared accent across all portfolio pages, including the sliding navbar highlight. Near-black monochrome covers, missing or unreadable artwork, and stopped playback restore the default white accent. Each song change randomly selects either the top-left or bottom-right patch. That position stays fixed for the song, including artwork retries; different songs sharing a cover can choose different positions. Meaningful colored regions take priority over neutral borders and shadows. Dark cover colors are lightened for readable accents, and artwork extraction is cached per cover. Failed reads retry after 30 seconds, with a browser image-decoding fallback for unsupported bitmap formats. Accent changes fade over 2 seconds, with immediate updates for reduced-motion preferences. It defaults to English and supports Thai through URL language selection, with a compact navigation rail on the left on desktop and a dock at the bottom on mobile. Only the current page has a background highlight; other icons brighten on hover. Page changes have no fade or slide animation. The shared portfolio background uses React Bits’ `ShapeGrid` with drifting rounded tiles, a white cursor trail, and click ripples. Reduced-motion preferences disable the drift and intro animation.
 
+## Browser desktop
+
+Visit `/-` for Rynnie OS, a standalone browser desktop with its own taskbar and app launcher. Open Files for portfolio bookmarks, Notes for a local scratchpad, Terminal for a small set of browser commands (`help` lists them), or Settings for three wallpaper themes.
+
+Windows support dragging, focus, minimize, maximize, restore, and close. On mobile, apps fill the available workspace. Notes and appearance are stored in this browser’s local storage; they are not synced between devices. The terminal is a simulated command interface and does not execute shell commands. This route is excluded from search indexing.
+
 ## Language
 
 English is the default language. Use a URL fragment to choose explicitly:
