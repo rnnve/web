@@ -119,7 +119,8 @@
   display: grid;
   min-width: 0;
   gap: 2px;
-  max-width: 12rem;
+  width: max-content;
+  max-width: 100%;
 }
 .profileText strong,
 .profileText span {
@@ -142,7 +143,8 @@
 }
 
 .status:has(.nowPlaying) .profile {
-  max-width: 45%;
+  /* Keep the profile at its natural width, reserving room for Spotify. */
+  max-width: calc(100% - 80px);
 }
 
 .nowPlaying {
