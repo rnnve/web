@@ -1,6 +1,5 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import { StatusIcon } from "./status-icon";
 import SpotifyWidget from "./spotify-widget";
@@ -19,40 +18,14 @@ export default function LiveStatus({
   className?: string;
 }) {
   const { t } = useSiteSettings();
-  const profileRef = useRef<HTMLDivElement>(null);
   const { discord, payload, spotify, spotifyLoading, spotifySyncedAt } =
     usePortfolioStatus({
       profile: initialDiscord,
       updatedAt: discordUpdatedAt,
     });
-  useLayoutEffect(() => {
-    const profile = profileRef.current;
-    if (!profile) return;
-    const mobile = window.matchMedia("(max-width: 767px)");
-    const apply = () => {
-      if (!mobile.matches) {
-        document.documentElement.style.removeProperty("--home-profile-offset");
-        return;
-      }
-      document.documentElement.style.setProperty(
-        "--home-profile-offset",
-        `${profile.offsetWidth + 8}px`,
-      );
-    };
-    apply();
-    const observer = new ResizeObserver(apply);
-    observer.observe(profile);
-    mobile.addEventListener("change", apply);
-    return () => {
-      observer.disconnect();
-      mobile.removeEventListener("change", apply);
-      document.documentElement.style.removeProperty("--home-profile-offset");
-    };
-  }, [discord]);
   return (
     <div className={`${styles.status} ${className}`}>
       <div
-        ref={profileRef}
         className={styles.profile}
         role="group"
         aria-label={t("Discord profile", "โปรไฟล์ Discord")}
