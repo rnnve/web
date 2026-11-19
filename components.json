@@ -20,5 +20,7 @@
   "rtl": false,
   "menuColor": "default",
   "menuAccent": "subtle",
-  "registries": {}
+  "registries": {
+    "@logoforge": "https://logoforge.terravidhal.me/r/{name}.json"
+  }
 }

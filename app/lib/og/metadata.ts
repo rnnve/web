@@ -21,6 +21,7 @@ export async function generatePageMetadata(
   return {
     title: content.title,
     description: content.description,
+    alternates: { canonical: new URL(path, SITE_URL).href },
     openGraph: {
       title: content.title,
       description: content.description,

@@ -1,15 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
-  IconArrowUpRight,
-  IconChartBar,
-  IconHeadphones,
-  IconMicrophone2,
-  IconMusic,
-  IconRefresh,
-} from "@tabler/icons-react";
+  ArrowUpRight,
+  Headphones,
+  Music2,
+  RefreshCw,
+  Mic2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -17,6 +23,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  loadListenSnapshot,
+  clearListenSnapshots,
+  readListenSnapshot,
+} from "../lib/listen-cache";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
 import {
   LISTEN_PERIODS,
@@ -25,13 +36,9 @@ import {
   type ListenItem,
   type ListenPeriod,
 } from "../lib/lastfm";
-import styles from "./listen-dashboard.module.css";
 
 type RankingData = Pick<ListenData, "topTracks" | "topArtists" | "unavailable">;
 type ItemKind = "recent" | "track" | "artist";
-
-const LASTFM_PLACEHOLDER = "2a96cbd8b46e442fc41c2b86b821562f";
-
 function rankingData(result: ListenData): RankingData {
   return {
     topTracks: result.topTracks,
@@ -41,171 +48,162 @@ function rankingData(result: ListenData): RankingData {
     ),
   };
 }
-
 function Artwork({
   item,
-  variant = "track",
+  artist = false,
 }: {
   item: ListenItem;
-  variant?: "track" | "artist";
+  artist?: boolean;
 }) {
   const [failed, setFailed] = useState(false);
-  const image = item.image;
-  const hasImage = image && !image.includes(LASTFM_PLACEHOLDER) && !failed;
-  const FallbackIcon = variant === "artist" ? IconMicrophone2 : IconMusic;
-
+  const valid =
+    item.image &&
+    !item.image.includes("2a96cbd8b46e442fc41c2b86b821562f") &&
+    !failed;
+  const Icon = artist ? Mic2 : Music2;
   return (
-    <span className={`${styles.artwork} ${styles[`${variant}Artwork`]}`}>
-      {hasImage ? (
-        // Last.fm artwork hosts vary, so a native image preserves reliable fallback handling.
+    <span
+      className={`grid size-11 shrink-0 place-items-center overflow-hidden bg-muted text-muted-foreground ${artist ? "rounded-full" : "rounded-md"}`}
+    >
+      {valid ? (
+        // Artwork is served from variable Last.fm hosts.
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={image}
+          src={item.image}
           alt=""
+          className="size-full object-cover"
           loading="lazy"
-          decoding="async"
           onError={() => setFailed(true)}
         />
       ) : (
-        <span className={styles.artworkFallback} aria-hidden="true">
-          <FallbackIcon size={18} stroke={1.6} />
-        </span>
+        <Icon size={19} aria-hidden="true" />
       )}
     </span>
   );
 }
-
-function ItemRow({
-  item,
-  index,
-  kind,
-}: {
-  item: ListenItem;
-  index: number;
-  kind: ItemKind;
-}) {
-  const { t, language } = useSiteSettings();
-  const metadata =
-    kind === "recent"
-      ? item.timestamp
-        ? new Intl.DateTimeFormat(language === "th" ? "th-TH" : "en", {
-            month: "short",
-            day: "numeric",
-          }).format(new Date(item.timestamp * 1000))
-        : ""
-      : item.plays === null
-        ? ""
-        : t(`${item.plays} plays`, `${item.plays} ครั้ง`);
-  const content = (
-    <>
-      <span className={styles.rank}>{String(index + 1).padStart(2, "0")}</span>
-      <Artwork
-        key={`${kind}-${item.image}-${item.name}`}
-        item={item}
-        variant={kind === "artist" ? "artist" : "track"}
-      />
-      <span className={styles.itemCopy}>
-        <strong title={item.name}>{item.name}</strong>
-        {kind !== "artist" && item.artist && (
-          <small title={item.artist}>{item.artist}</small>
-        )}
-      </span>
-      <span className={styles.itemMeta}>{metadata}</span>
-    </>
-  );
-
-  return (
-    <li>
-      {item.url ? (
-        <a href={item.url} target="_blank" rel="noreferrer">
-          {content}
-        </a>
-      ) : (
-        <div>{content}</div>
-      )}
-    </li>
-  );
-}
-
 function EmptyState({ children }: { children: ReactNode }) {
   return (
-    <div className={styles.emptyState} role="status">
-      <IconMusic size={20} aria-hidden="true" />
-      <p>{children}</p>
+    <p
+      role="status"
+      className="px-4 py-10 text-center text-sm text-muted-foreground"
+    >
+      {children}
+    </p>
+  );
+}
+function LoadingRows() {
+  return (
+    <div role="status" className="space-y-4 px-4 py-2">
+      <span className="sr-only">Loading listening activity</span>
+      {[0, 1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="flex animate-pulse items-center gap-3 motion-reduce:animate-none"
+          aria-hidden="true"
+        >
+          <div className="size-11 rounded-md bg-muted" />
+          <div className="flex-1 space-y-2">
+            <div className="h-3 w-3/4 rounded bg-muted" />
+            <div className="h-2 w-1/2 rounded bg-muted" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
-
 function ItemList({ items, kind }: { items: ListenItem[]; kind: ItemKind }) {
-  const { t } = useSiteSettings();
+  const { t, language } = useSiteSettings();
   if (!items.length)
     return (
       <EmptyState>
         {t("Nothing to show yet.", "ยังไม่มีข้อมูลในตอนนี้")}
       </EmptyState>
     );
-
   return (
-    <ol
-      className={`${styles.list} ${kind === "recent" ? styles.recentList : ""}`}
-    >
-      {items.map((item, index) => (
-        <ItemRow
-          key={`${item.url}-${item.timestamp ?? "ranked"}-${index}`}
-          item={item}
-          index={index}
-          kind={kind}
-        />
-      ))}
+    <ol className="divide-y divide-border/50">
+      {items.map((item, index) => {
+        const meta =
+          kind === "recent"
+            ? item.timestamp
+              ? new Intl.DateTimeFormat(language === "th" ? "th-TH" : "en", {
+                  month: "short",
+                  day: "numeric",
+                }).format(new Date(item.timestamp * 1000))
+              : ""
+            : item.plays == null
+              ? ""
+              : t(
+                  `${item.plays.toLocaleString()} plays`,
+                  `${item.plays.toLocaleString()} ครั้ง`,
+                );
+        const content = (
+          <>
+            <span className="w-5 shrink-0 text-center text-xs tabular-nums text-muted-foreground">
+              {index + 1}
+            </span>
+            <Artwork key={item.image} item={item} artist={kind === "artist"} />
+            <span className="min-w-0 flex-1">
+              <strong
+                className="block truncate text-sm font-medium"
+                title={item.name}
+              >
+                {item.name}
+              </strong>
+              {kind !== "artist" && (
+                <span
+                  className="block truncate text-xs text-muted-foreground"
+                  title={item.artist}
+                >
+                  {item.artist}
+                </span>
+              )}
+            </span>
+            <span className="shrink-0 text-right text-[10px] tabular-nums text-muted-foreground">
+              {meta}
+            </span>
+          </>
+        );
+        const rowClass =
+          "flex min-w-0 items-center gap-3 px-4 py-3 text-foreground no-underline transition-colors hover:bg-muted/40";
+        return (
+          <li key={`${item.url}-${item.timestamp}-${index}`}>
+            {item.url ? (
+              <a
+                className={rowClass}
+                href={item.url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {content}
+              </a>
+            ) : (
+              <div className={rowClass}>{content}</div>
+            )}
+          </li>
+        );
+      })}
     </ol>
   );
 }
-
-function SectionHeader({
-  number,
-  eyebrow,
+function ListeningPanel({
   title,
-  id,
+  subtitle,
+  children,
 }: {
-  number: string;
-  eyebrow: string;
   title: string;
-  id: string;
+  subtitle: string;
+  children: ReactNode;
 }) {
   return (
-    <header className={styles.sectionHeader}>
-      <span>
-        {number} / {eyebrow}
-      </span>
-      <h2 id={id}>{title}</h2>
-    </header>
-  );
-}
-
-function ListeningSkeleton() {
-  const { t } = useSiteSettings();
-  return (
-    <div
-      className={styles.skeleton}
-      role="status"
-      aria-label={t("Loading listening activity", "กำลังโหลดข้อมูลการฟัง")}
-    >
-      <div className={styles.skeletonPanels} aria-hidden="true">
-        {[0, 1, 2].map((panel) => (
-          <div className={styles.skeletonPanel} key={panel}>
-            <span
-              className={`${styles.skeletonBlock} ${styles.skeletonHeading}`}
-            />
-            {[0, 1, 2, 3].map((row) => (
-              <span
-                className={`${styles.skeletonBlock} ${styles.skeletonRow}`}
-                key={row}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
+    <Card className="min-w-0 gap-4" role="region" aria-label={title}>
+      <CardHeader className="border-b">
+        <CardTitle>
+          <h2 className="text-sm font-medium">{title}</h2>
+        </CardTitle>
+        <CardDescription className="text-xs">{subtitle}</CardDescription>
+      </CardHeader>
+      <CardContent className="px-0">{children}</CardContent>
+    </Card>
   );
 }
 
@@ -216,139 +214,64 @@ export default function ListenDashboard() {
   const [retryKey, setRetryKey] = useState(0);
   const [period, setPeriod] = useState<ListenPeriod>("7day");
   const [rankings, setRankings] = useState<RankingData | null>(null);
-  const [rankingsLoading, setRankingsLoading] = useState(false);
+  const [rankingsLoading, setRankingsLoading] = useState(true);
   const [rankingsError, setRankingsError] = useState(false);
-  const periodRef = useRef<ListenPeriod>("7day");
-  const rankingCache = useRef(new Map<ListenPeriod, RankingData>());
+  const refresh = () => {
+    clearListenSnapshots();
+    setRankingsLoading(true);
+    setRankingsError(false);
+    setRetryKey((key) => key + 1);
+  };
 
   useEffect(() => {
     let active = true;
-    let firstRequest = true;
-    let controller: AbortController | undefined;
-
-    const load = async () => {
-      controller?.abort();
-      controller = new AbortController();
-      try {
-        const endpoint = firstRequest
-          ? "/api/listen?period=7day"
-          : "/api/listen?view=activity";
-        const response = await fetch(endpoint, {
-          cache: "no-store",
-          signal: controller.signal,
-        });
-        if (!response.ok) throw new Error("Unavailable");
-        const result = (await response.json()) as ListenData;
+    void loadListenSnapshot("/api/listen?period=7day")
+      .then((result) => {
         if (!active) return;
-
-        if (firstRequest) {
-          const initialRankings = rankingData(result);
-          rankingCache.current.set("7day", initialRankings);
-          setData(result);
-          if (periodRef.current === "7day") setRankings(initialRankings);
-          firstRequest = false;
-        } else {
-          setData((previous) =>
-            previous
-              ? {
-                  ...previous,
-                  recent: result.unavailable.includes("recent")
-                    ? previous.recent
-                    : result.recent,
-                  profile: result.unavailable.includes("profile")
-                    ? previous.profile
-                    : result.profile,
-                  unavailable: [
-                    ...previous.unavailable.filter(
-                      (key) => key === "topTracks" || key === "topArtists",
-                    ),
-                    ...result.unavailable,
-                  ],
-                }
-              : result,
-          );
-        }
+        setData(result);
         setError(false);
-      } catch (loadError) {
-        if (
-          active &&
-          !(loadError instanceof Error && loadError.name === "AbortError")
-        )
-          setError(true);
-      }
-    };
-
-    const refresh = () => {
-      if (!document.hidden) void load();
-    };
-    refresh();
-    const timer = window.setInterval(refresh, 60_000);
-    document.addEventListener("visibilitychange", refresh);
+      })
+      .catch(() => {
+        if (active) setError(true);
+      });
     return () => {
       active = false;
-      controller?.abort();
-      window.clearInterval(timer);
-      document.removeEventListener("visibilitychange", refresh);
     };
   }, [retryKey]);
 
   useEffect(() => {
-    if (period === "7day") {
-      const cached = rankingCache.current.get(period);
-      if (cached) setRankings(cached);
-      setRankingsError(false);
-      setRankingsLoading(false);
-      return;
-    }
-
-    const cached = rankingCache.current.get(period);
-    if (cached) {
-      setRankings(cached);
-      setRankingsError(false);
-      setRankingsLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
     let active = true;
-    setRankings(null);
-    setRankingsLoading(true);
-    setRankingsError(false);
-    void fetch(`/api/listen?view=rankings&period=${period}`, {
-      cache: "no-store",
-      signal: controller.signal,
-    })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("Unavailable");
-        return (await response.json()) as ListenData;
-      })
+    const endpoint =
+      period === "7day"
+        ? "/api/listen?period=7day"
+        : `/api/listen?view=rankings&period=${period}`;
+    void loadListenSnapshot(endpoint)
       .then((result) => {
-        if (!active) return;
-        const nextRankings = rankingData(result);
-        rankingCache.current.set(period, nextRankings);
-        setRankings(nextRankings);
+        if (active) setRankings(rankingData(result));
       })
-      .catch((rankingError) => {
-        if (
-          active &&
-          !(rankingError instanceof Error && rankingError.name === "AbortError")
-        )
-          setRankingsError(true);
+      .catch(() => {
+        if (active) setRankingsError(true);
       })
       .finally(() => {
         if (active) setRankingsLoading(false);
       });
-
     return () => {
       active = false;
-      controller.abort();
     };
-  }, [period]);
+  }, [period, retryKey]);
 
   const choosePeriod = (value: string) => {
-    const nextPeriod = parseListenPeriod(value);
-    periodRef.current = nextPeriod;
-    setPeriod(nextPeriod);
+    const next = parseListenPeriod(value);
+    if (next === period) return;
+    const cached = readListenSnapshot(
+      next === "7day"
+        ? "/api/listen?period=7day"
+        : `/api/listen?view=rankings&period=${next}`,
+    );
+    if (cached) setRankings(rankingData(cached));
+    setRankingsLoading(!cached);
+    setRankingsError(false);
+    setPeriod(next);
   };
 
   const periodLabels: Record<ListenPeriod, string> = {
@@ -363,131 +286,145 @@ export default function ListenDashboard() {
   const playcount = data?.profile?.playcount;
 
   return (
-    <main className={styles.page}>
-      <header className={styles.pageHeader}>
+    <main
+      className="mx-auto w-[min(1100px,calc(100%-32px))] space-y-6 pb-28"
+      aria-label={t("Listening", "การฟังเพลง")}
+    >
+      <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <span className={styles.eyebrow}>
-            <IconHeadphones size={15} aria-hidden="true" />
-            {t("A LITTLE LISTENING LOG", "บันทึกเพลงที่ฟัง")}
-          </span>
-          <h1>
+          <p className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
+            <Headphones size={14} />
+            {t("On repeat", "ฟังวนไป")}
+          </p>
+          <h1 className="text-3xl font-medium tracking-tight">
             {t("My Listening", "เพลงที่เราฟัง")}
-            <span>.</span>
           </h1>
-          <p>
+          <p className="mt-2 text-sm text-muted-foreground">
             {t(
-              "A little peek at what I’ve been listening to.",
-              "แวะมาดูเพลงที่เราฟังกัน",
+              "Recent discoveries, familiar favorites, and everything in between.",
+              "เพลงใหม่ เพลงโปรด และทุกเพลงระหว่างนั้น",
             )}
           </p>
         </div>
-        {data?.profile?.url && (
+        <div className="flex gap-2">
+          {data?.profile?.url && (
+            <Button variant="outline" size="sm" asChild>
+              <a href={data.profile.url} target="_blank" rel="noreferrer">
+                Last.fm <ArrowUpRight size={14} />
+              </a>
+            </Button>
+          )}
           <Button
             variant="outline"
-            size="sm"
-            className={styles.profileLink}
-            asChild
+            size="icon-sm"
+            aria-label={t("Refresh listening activity", "รีเฟรชข้อมูลการฟัง")}
+            onClick={refresh}
           >
-            <a href={data.profile.url} target="_blank" rel="noreferrer">
-              Last.fm <IconArrowUpRight size={16} aria-hidden="true" />
-            </a>
+            <RefreshCw size={14} />
           </Button>
-        )}
+        </div>
       </header>
-
-      {error && data && (
-        <div className={styles.alert} role="status">
-          <span>
-            {t(
-              "Couldn’t refresh. Showing the last update.",
-              "อัปเดตไม่สำเร็จ กำลังแสดงข้อมูลล่าสุด",
-            )}
-          </span>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setRetryKey((key) => key + 1)}
-          >
-            <IconRefresh size={15} aria-hidden="true" />
-            {t("Retry", "ลองอีกครั้ง")}
-          </Button>
+      {error && (
+        <Card role="alert">
+          <CardContent className="flex flex-wrap items-center justify-between gap-3 text-sm">
+            <p>
+              {data
+                ? t(
+                    "Couldn’t refresh. Showing the last update.",
+                    "อัปเดตไม่สำเร็จ กำลังแสดงข้อมูลล่าสุด",
+                  )
+                : t(
+                    "Last.fm is unavailable right now.",
+                    "ยังเชื่อมต่อ Last.fm ไม่ได้ในตอนนี้",
+                  )}
+            </p>
+            <Button variant="outline" size="sm" onClick={refresh}>
+              {t("Try again", "ลองอีกครั้ง")}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+      {!data && !error && (
+        <div className="grid gap-4 lg:grid-cols-3">
+          {[0, 1, 2].map((i) => (
+            <Card key={i}>
+              <CardHeader>
+                <CardTitle>{t("Loading…", "กำลังโหลด…")}</CardTitle>
+              </CardHeader>
+              <CardContent className="px-0">
+                <LoadingRows />
+              </CardContent>
+            </Card>
+          ))}
         </div>
       )}
-
-      {!data && !error && <ListeningSkeleton />}
-
-      {!data && error && (
-        <section className={styles.unavailable} role="alert">
-          <IconMusic size={28} aria-hidden="true" />
-          <h2>{t("Listening is offline.", "ข้อมูลเพลงออฟไลน์อยู่")}</h2>
-          <p>
-            {t(
-              "Last.fm couldn’t be reached right now. Please try again in a moment.",
-              "ยังเชื่อมต่อ Last.fm ไม่ได้ในตอนนี้ กรุณาลองอีกครั้ง",
-            )}
-          </p>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setRetryKey((key) => key + 1)}
-          >
-            <IconRefresh size={16} aria-hidden="true" />
-            {t("Try again", "ลองอีกครั้ง")}
-          </Button>
-        </section>
-      )}
-
       {data && (
-        <div className={styles.dashboard}>
-          <div className={styles.dashboardToolbar}>
+        <>
+          <Card className="min-w-48 gap-3">
+            <CardHeader>
+              <CardDescription>
+                {t("Total scrobbles", "เพลงที่บันทึกไว้")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-medium tracking-tight tabular-nums">
+                {playcount?.toLocaleString(
+                  language === "th" ? "th-TH" : "en-US",
+                ) ?? "—"}
+              </p>
+            </CardContent>
+          </Card>
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <IconChartBar size={17} aria-hidden="true" />
-              <span>{t("Listening highlights", "ไฮไลต์การฟัง")}</span>
+              <h2 className="text-base font-medium">
+                {t("Listening highlights", "ไฮไลต์การฟัง")}
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t(
+                  "A closer look at what keeps coming back.",
+                  "มาดูเพลงที่เรากลับมาฟังบ่อย ๆ",
+                )}
+              </p>
             </div>
             <Select value={period} onValueChange={choosePeriod}>
               <SelectTrigger
                 aria-label={t("Listening period", "ช่วงเวลาการฟัง")}
-                className="h-9 w-full justify-between gap-3 border-(--listen-border) bg-[#252525] px-3 text-xs font-medium text-(--text) hover:bg-[#2a282a] min-[768px]:w-auto min-[768px]:min-w-52 dark:bg-[#252525] dark:hover:bg-[#2a282a]"
+                className="w-40"
               >
-                <span className="text-[10px] font-bold tracking-[0.08em] text-[#aaa6aa] uppercase">
-                  {t("Period", "ช่วงเวลา")}
-                </span>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent position="popper" align="end">
                 {LISTEN_PERIODS.map((option) => (
-                  <SelectItem value={option} key={option}>
+                  <SelectItem key={option} value={option}>
                     {periodLabels[option]}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-
           {rankingsError && (
-            <p className={styles.rankingsError} role="status">
+            <p
+              role="status"
+              className="rounded-lg border px-4 py-3 text-sm text-muted-foreground"
+            >
               {t(
                 "That period couldn’t be loaded. Try another range.",
                 "โหลดช่วงเวลานี้ไม่สำเร็จ ลองเลือกช่วงอื่น",
               )}
             </p>
           )}
-
           <div
-            className={`${styles.panelGrid} ${rankingsLoading ? styles.rankingsLoading : ""}`}
-            aria-busy={rankingsLoading}
+            className="grid items-start gap-4 lg:grid-cols-3"
             data-rankings
             data-period={period}
           >
-            <section className={`${styles.panel} ${styles.recentPanel}`}>
-              <SectionHeader
-                number="01"
-                eyebrow={t("THE LATEST", "ล่าสุด")}
-                title={t("Recently played", "เพลงที่ฟังล่าสุด")}
-                id="listen-recent"
-              />
+            <ListeningPanel
+              title={t("Recently played", "เพลงที่ฟังล่าสุด")}
+              subtitle={t(
+                "Your latest listening history",
+                "ประวัติการฟังล่าสุด",
+              )}
+            >
               {data.unavailable.includes("recent") ? (
                 <EmptyState>
                   {t(
@@ -501,63 +438,58 @@ export default function ListenDashboard() {
                   kind="recent"
                 />
               )}
-            </section>
-
-            <section className={styles.panel}>
-              <SectionHeader
-                number="02"
-                eyebrow={periodLabels[period].toUpperCase()}
+            </ListeningPanel>
+            <div className="min-w-0" aria-busy={rankingsLoading}>
+              <ListeningPanel
                 title={t("Top tracks", "เพลงยอดนิยม")}
-                id="listen-tracks"
-              />
-              {activeRankings?.unavailable.includes("topTracks") ? (
-                <EmptyState>
-                  {t(
-                    "Top tracks are unavailable right now.",
-                    "ยังไม่สามารถโหลดเพลงยอดนิยมได้",
-                  )}
-                </EmptyState>
-              ) : (
-                <ItemList
-                  items={activeRankings?.topTracks ?? []}
-                  kind="track"
-                />
-              )}
-            </section>
-
-            <section className={styles.panel}>
-              <SectionHeader
-                number="03"
-                eyebrow={periodLabels[period].toUpperCase()}
+                subtitle={periodLabels[period]}
+              >
+                {rankingsLoading ? (
+                  <LoadingRows />
+                ) : rankingsError ||
+                  activeRankings?.unavailable.includes("topTracks") ? (
+                  <EmptyState>
+                    {t(
+                      "Top tracks are unavailable right now.",
+                      "ยังไม่สามารถโหลดเพลงยอดนิยมได้",
+                    )}
+                  </EmptyState>
+                ) : (
+                  <ItemList
+                    items={activeRankings?.topTracks ?? []}
+                    kind="track"
+                  />
+                )}
+              </ListeningPanel>
+            </div>
+            <div className="min-w-0" aria-busy={rankingsLoading}>
+              <ListeningPanel
                 title={t("Top artists", "ศิลปินยอดนิยม")}
-                id="listen-artists"
-              />
-              {activeRankings?.unavailable.includes("topArtists") ? (
-                <EmptyState>
-                  {t(
-                    "Top artists are unavailable right now.",
-                    "ยังไม่สามารถโหลดศิลปินยอดนิยมได้",
-                  )}
-                </EmptyState>
-              ) : (
-                <ItemList
-                  items={activeRankings?.topArtists ?? []}
-                  kind="artist"
-                />
-              )}
-            </section>
+                subtitle={periodLabels[period]}
+              >
+                {rankingsLoading ? (
+                  <LoadingRows />
+                ) : rankingsError ||
+                  activeRankings?.unavailable.includes("topArtists") ? (
+                  <EmptyState>
+                    {t(
+                      "Top artists are unavailable right now.",
+                      "ยังไม่สามารถโหลดศิลปินยอดนิยมได้",
+                    )}
+                  </EmptyState>
+                ) : (
+                  <ItemList
+                    items={activeRankings?.topArtists ?? []}
+                    kind="artist"
+                  />
+                )}
+              </ListeningPanel>
+            </div>
           </div>
-        </div>
+        </>
       )}
-
-      <footer className={styles.dataFooter}>
-        {playcount != null && (
-          <>
-            {t("Total scrobbles", "เพลงที่บันทึกไว้")} ·{" "}
-            {playcount.toLocaleString(language === "th" ? "th-TH" : "en-US")}{" "}
-            ·{" "}
-          </>
-        )}
+      <footer className="flex items-center gap-2 border-t pt-4 text-xs text-muted-foreground">
+        <Music2 size={13} />
         {t("Listening data from Last.fm", "ข้อมูลการฟังจาก Last.fm")}
       </footer>
     </main>

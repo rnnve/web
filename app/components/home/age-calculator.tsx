@@ -4,6 +4,7 @@ import { useEffect, useId, useState } from "react";
 type AgeCalculatorProps = {
   birthDate: Date | string;
   className?: string;
+  initialNow?: number;
 };
 const AGE_UPDATE_INTERVAL = 250;
 function ageText(birthDate: Date | string, now = new Date()) {
@@ -33,8 +34,14 @@ function calculateAge(birthDate: Date, now: Date) {
 export default function AgeCalculator({
   birthDate,
   className = "",
+  initialNow,
 }: AgeCalculatorProps) {
-  const [age, setAge] = useState(() => ageText(birthDate));
+  const [age, setAge] = useState(() =>
+    ageText(
+      birthDate,
+      initialNow === undefined ? new Date() : new Date(initialNow),
+    ),
+  );
   const tooltipId = useId();
   useEffect(() => {
     const updateAge = () => {

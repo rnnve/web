@@ -1,3 +1,4 @@
+import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import { execFileSync } from "node:child_process";
 
@@ -72,4 +73,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default createMDX()(nextConfig);

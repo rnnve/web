@@ -1,17 +1,33 @@
 "use client";
 
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import Link from "next/link";
-
+import { Button } from "@/components/ui/button";
 import {
-  useEffect,
-  useRef,
-  useState,
-  type PointerEvent,
-  type CSSProperties,
-} from "react";
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import NativeApps, { type NativeAppId } from "./native-apps";
+import { clearListenSnapshots } from "../lib/listen-cache";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+  RefreshCw,
+  Power,
   Folder,
-  FileText,
   Terminal,
   Settings,
   X,
@@ -21,14 +37,23 @@ import {
   ArrowUpRight,
   Search,
   Monitor,
-  Check,
   ChevronRight,
-  Wifi,
-  Volume2,
+  Music2,
+  Code2,
+  Mail,
 } from "lucide-react";
+import LiveStatus from "../components/status/live-status";
 import styles from "./desktop.module.css";
 
-type AppId = "files" | "notes" | "terminal" | "settings";
+type AppId =
+  | "files"
+  | "terminal"
+  | "settings"
+  | "portfolio"
+  | "developing"
+  | "listening"
+  | "ask"
+  | "newtab";
 type WindowState = {
   id: AppId;
   x: number;
@@ -36,63 +61,102 @@ type WindowState = {
   minimized: boolean;
   maximized: boolean;
 };
-const apps = {
+const apps: Record<
+  AppId,
+  {
+    name: string;
+    icon: typeof Folder;
+    detail: string;
+    wide?: boolean;
+  }
+> = {
   files: {
     name: "Files",
     icon: Folder,
-    color: "#a9c6f4",
     detail: "A few places to explore",
-  },
-  notes: {
-    name: "Notes",
-    icon: FileText,
-    color: "#f4d493",
-    detail: "A little room to think",
   },
   terminal: {
     name: "Terminal",
     icon: Terminal,
-    color: "#b7dbbb",
     detail: "Make yourself at home",
   },
   settings: {
     name: "Settings",
     icon: Settings,
-    color: "#d0bee8",
     detail: "Make this space yours",
   },
+  portfolio: {
+    name: "Portfolio",
+    icon: Monitor,
+    detail: "Open Portfolio",
+    wide: true,
+  },
+  developing: {
+    name: "Developing",
+    icon: Code2,
+    detail: "Open Developing",
+    wide: true,
+  },
+  listening: {
+    name: "Listening",
+    icon: Music2,
+    detail: "Open Listening",
+    wide: true,
+  },
+  ask: {
+    name: "Ask",
+    icon: Mail,
+    detail: "Open Ask me",
+    wide: true,
+  },
+  newtab: {
+    name: "New tab",
+    icon: Monitor,
+    detail: "Open New tab",
+    wide: true,
+  },
 };
-const appIds = Object.keys(apps) as AppId[];
-const themes = { midnight: "Midnight", dusk: "Dusk", forest: "Forest" };
-type Theme = keyof typeof themes;
-const initialNote =
-  "A little space for your thoughts.\n\nWhat would you like to make today?";
+const DesktopWindow = motion.create(Card);
+
+const appIds: AppId[] = ["listening", "ask", "developing"];
+const pageIds: AppId[] = [
+  "files",
+  "terminal",
+  "settings",
+  "portfolio",
+  "newtab",
+];
 const places = [
   {
+    id: "portfolio" as AppId,
     name: "Portfolio",
     description: "A little about me",
     href: "/",
     type: "Website",
   },
   {
+    id: "developing" as AppId,
     name: "Developing",
     description: "Things I’ve been building",
     href: "/developing",
     type: "Projects",
   },
   {
+    id: "listening" as AppId,
     name: "Listening",
     description: "Currently in rotation",
     href: "/listen",
     type: "Music",
   },
   {
+    id: "ask" as AppId,
     name: "Ask me",
     description: "Leave a question",
     href: "/ask",
     type: "Inbox",
   },
   {
+    id: "newtab" as AppId,
     name: "New tab",
     description: "A quieter starting point",
     href: "/newtab",
@@ -100,21 +164,44 @@ const places = [
   },
 ];
 
+function windowBounds(id: AppId) {
+  const taskbar =
+    document.querySelector("[data-desktop-taskbar]")?.getBoundingClientRect()
+      .height ?? 56;
+  const width = Math.min(apps[id].wide ? 960 : 640, window.innerWidth - 32);
+  const height = Math.min(
+    apps[id].wide ? 680 : 460,
+    window.innerHeight - taskbar - 32,
+  );
+  return {
+    maxX: window.innerWidth - width - 16,
+    maxY: window.innerHeight - taskbar - height - 16,
+    taskbar,
+  };
+}
+
 export default function Desktop() {
-  const [windows, setWindows] = useState<WindowState[]>([
-    { id: "files", x: 200, y: 100, minimized: false, maximized: false },
-  ]);
+  const [windows, setWindows] = useState<WindowState[]>([]);
   const [launcher, setLauncher] = useState(false);
+  const [powerOpen, setPowerOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [clock, setClock] = useState<Date | null>(null);
-  const [note, setNote] = useState(initialNote);
   const [saved, setSaved] = useState(true);
-  const [theme, setTheme] = useState<Theme>("midnight");
+  const [animations, setAnimations] = useState(true);
   const [ready, setReady] = useState(false);
   const [command, setCommand] = useState("");
   const [history, setHistory] = useState([
     { command: "", output: "Welcome to Rynnie OS. Type help to look around." },
   ]);
+  const systemReducedMotion = useReducedMotion();
+  const reduceMotion = systemReducedMotion || !animations;
+  const [dragging, setDragging] = useState<AppId | null>(null);
+  const [appVersions, setAppVersions] = useState<
+    Partial<Record<AppId, number>>
+  >({});
+  const desktopSnapshot = useRef<Set<AppId> | null>(null);
+  const commandHistory = useRef<string[]>([]);
+  const historyIndex = useRef(0);
   const drag = useRef<{ id: AppId; dx: number; dy: number } | null>(null);
   const terminalEnd = useRef<HTMLDivElement>(null);
 
@@ -124,9 +211,9 @@ export default function Desktop() {
     const frame = requestAnimationFrame(() => {
       tick();
       try {
-        setNote(localStorage.getItem("rynnie-desktop-note") ?? initialNote);
-        const stored = localStorage.getItem("rynnie-desktop-theme");
-        if (stored && Object.hasOwn(themes, stored)) setTheme(stored as Theme);
+        setAnimations(
+          localStorage.getItem("rynnie-desktop-animations") !== "off",
+        );
       } catch {
         setSaved(false);
       }
@@ -134,25 +221,14 @@ export default function Desktop() {
     });
     const resize = () =>
       setWindows((previous) =>
-        previous.map((item) => ({
-          ...item,
-          x: Math.max(
-            12,
-            Math.min(
-              item.x,
-              window.innerWidth - Math.min(640, window.innerWidth - 32) - 16,
-            ),
-          ),
-          y: Math.max(
-            40,
-            Math.min(
-              item.y,
-              window.innerHeight -
-                Math.min(460, window.innerHeight - 140) -
-                100,
-            ),
-          ),
-        })),
+        previous.map((item) => {
+          const bounds = windowBounds(item.id);
+          return {
+            ...item,
+            x: Math.max(12, Math.min(item.x, bounds.maxX)),
+            y: Math.max(16, Math.min(item.y, bounds.maxY)),
+          };
+        }),
       );
     window.addEventListener("resize", resize);
     const positionFrame = requestAnimationFrame(resize);
@@ -196,6 +272,7 @@ export default function Desktop() {
     });
   }
   function open(id: AppId) {
+    desktopSnapshot.current = null;
     setWindows((previous) => {
       const item = previous.find((w) => w.id === id);
       if (item)
@@ -204,12 +281,13 @@ export default function Desktop() {
           { ...item, minimized: false },
         ];
       const offset = previous.length * 28;
+      const bounds = windowBounds(id);
       return [
         ...previous,
         {
           id,
-          x: Math.max(12, Math.min(200 + offset, window.innerWidth - 650)),
-          y: Math.max(48, Math.min(100 + offset, window.innerHeight - 520)),
+          x: Math.max(12, Math.min(200 + offset, bounds.maxX)),
+          y: Math.max(16, Math.min(100 + offset, bounds.maxY)),
           minimized: false,
           maximized: false,
         },
@@ -230,6 +308,8 @@ export default function Desktop() {
       (event.target as HTMLElement).closest("button")
     )
       return;
+    event.preventDefault();
+    setDragging(item.id);
     event.currentTarget.setPointerCapture(event.pointerId);
     drag.current = {
       id: item.id,
@@ -242,26 +322,40 @@ export default function Desktop() {
     update(drag.current.id, {
       x: Math.max(
         0,
-        Math.min(window.innerWidth - 160, event.clientX - drag.current.dx),
+        Math.min(
+          window.innerWidth -
+            (event.currentTarget.parentElement?.getBoundingClientRect().width ??
+              640),
+          event.clientX - drag.current.dx,
+        ),
       ),
       y: Math.max(
-        40,
-        Math.min(window.innerHeight - 140, event.clientY - drag.current.dy),
+        8,
+        Math.min(
+          window.innerHeight -
+            (event.currentTarget.parentElement?.getBoundingClientRect()
+              .height ?? 460) -
+            windowBounds(drag.current.id).taskbar -
+            8,
+          event.clientY - drag.current.dy,
+        ),
       ),
     });
   }
   function runCommand() {
     const input = command.trim();
     if (!input) return;
+    commandHistory.current.push(input);
+    historyIndex.current = commandHistory.current.length;
     const [cmd, arg] = input.split(/\s+/);
     let output = "";
     switch (cmd.toLowerCase()) {
       case "help":
         output =
-          "help              Available commands\nls                Explore this desktop\nopen <app>        files, notes, settings\ndate              Your local time\nwhoami            About this place\necho <text>       Say something\nclear             Start fresh";
+          "help              Available commands\nls                Explore this desktop\nopen <app>        Any desktop app or page\ndate              Your local time\nwhoami            About this place\necho <text>       Say something\nclear             Start fresh";
         break;
       case "ls":
-        output = "files/    notes.txt    settings/    portfolio.url";
+        output = [...appIds, ...pageIds].join("    ");
         break;
       case "date":
         output = new Date().toLocaleString();
@@ -274,10 +368,10 @@ export default function Desktop() {
         output = input.slice(5);
         break;
       case "open":
-        if (appIds.includes(arg as AppId)) {
+        if ([...appIds, ...pageIds].includes(arg as AppId)) {
           open(arg as AppId);
           output = `Opening ${arg}…`;
-        } else output = "Choose an app: files, notes, terminal, settings.";
+        } else output = `Choose an app: ${[...appIds, ...pageIds].join(", ")}.`;
         break;
       case "clear":
         setHistory([]);
@@ -289,53 +383,67 @@ export default function Desktop() {
     setHistory((previous) => [...previous, { command: input, output }]);
     setCommand("");
   }
+  function showDesktop() {
+    if (desktopSnapshot.current) {
+      const previous = desktopSnapshot.current;
+      setWindows((items) =>
+        items.map((item) =>
+          previous.has(item.id) ? { ...item, minimized: false } : item,
+        ),
+      );
+      desktopSnapshot.current = null;
+    } else {
+      desktopSnapshot.current = new Set(
+        windows.filter((item) => !item.minimized).map((item) => item.id),
+      );
+      setWindows((items) =>
+        items.map((item) => ({ ...item, minimized: true })),
+      );
+    }
+    setLauncher(false);
+  }
   const active = windows.filter((w) => !w.minimized).at(-1)?.id;
+
+  useEffect(() => {
+    if (!active || !ready || launcher || powerOpen) return;
+    const frame = requestAnimationFrame(() => {
+      const element = document.querySelector<HTMLElement>(
+        `[data-window-id="${active}"]`,
+      );
+      if (!element || element.contains(document.activeElement)) return;
+      (
+        element.querySelector<HTMLElement>("textarea:not(:disabled), input") ??
+        element
+      ).focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [active, ready, launcher, powerOpen]);
 
   return (
     <main
       className={styles.desktop}
-      data-theme={theme}
+      data-motion={reduceMotion ? "reduced" : "full"}
       aria-label="Rynnie desktop"
     >
       <div className={styles.wallpaper} aria-hidden="true" />
-      <header className={styles.menubar}>
-        <span className={styles.brand}>
-          <Monitor size={15} /> Rynnie <span>OS</span>
-        </span>
-        <span className={styles.currentApp}>
-          {active ? apps[active].name : "Desktop"}
-        </span>
-        <div className={styles.system}>
-          <Wifi size={14} aria-label="Web desktop" />
-          <Volume2 size={14} aria-hidden="true" />
-          <time>
-            {clock?.toLocaleDateString(undefined, {
-              month: "short",
-              day: "numeric",
-            })}{" "}
-            <span>
-              {clock?.toLocaleTimeString(undefined, {
-                hour: "2-digit",
-                minute: "2-digit",
-              }) ?? "—:—"}
-            </span>
-          </time>
-        </div>
-      </header>
+
+      <aside
+        className={styles.desktopStatus}
+        aria-label="Live Discord and Spotify status"
+      >
+        <LiveStatus />
+      </aside>
 
       <div className={styles.shortcuts} aria-label="Desktop apps">
         {appIds.map((id) => {
           const Icon = apps[id].icon;
           return (
-            <button key={id} onClick={() => open(id)}>
-              <span
-                className={styles.appIcon}
-                style={{ "--app-color": apps[id].color } as CSSProperties}
-              >
+            <Button variant="ghost" key={id} onClick={() => open(id)}>
+              <span className={styles.appIcon}>
                 <Icon size={27} strokeWidth={1.5} />
               </span>
               <span>{apps[id].name}</span>
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -345,318 +453,517 @@ export default function Desktop() {
         <p>A desktop for the internet.</p>
       </div>
 
-      {windows.map((item, index) => {
-        const Icon = apps[item.id].icon;
-        return (
-          <section
-            key={item.id}
-            aria-label={`${apps[item.id].name} window`}
-            hidden={item.minimized}
-            className={`${styles.window} ${item.maximized ? styles.maximized : ""}`}
-            style={{ left: item.x, top: item.y, zIndex: 10 + index }}
-            data-active={active === item.id}
-            onPointerDown={() => focus(item.id)}
-          >
-            <header
-              className={styles.titlebar}
-              onPointerDown={(event) => startDrag(event, item)}
-              onPointerMove={moveDrag}
-              onPointerUp={() => {
-                drag.current = null;
+      <AnimatePresence>
+        {windows.map((item, index) => {
+          const Icon = apps[item.id].icon;
+          return (
+            <DesktopWindow
+              role="region"
+              key={item.id}
+              initial={{ opacity: 0, scale: 0.96, y: 16 }}
+              animate={
+                item.minimized
+                  ? {
+                      opacity: 0,
+                      scale: 0.88,
+                      y: 56,
+                      transitionEnd: { visibility: "hidden" },
+                    }
+                  : { opacity: 1, scale: 1, y: 0, visibility: "visible" }
+              }
+              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              transition={{
+                duration: reduceMotion ? 0 : 0.2,
+                ease: [0.22, 1, 0.36, 1],
               }}
-              onPointerCancel={() => {
-                drag.current = null;
-              }}
-              onDoubleClick={(event) => {
-                if (!(event.target as HTMLElement).closest("button"))
-                  update(item.id, { maximized: !item.maximized });
-              }}
+              inert={item.minimized}
+              aria-hidden={item.minimized || undefined}
+              data-window-id={item.id}
+              data-dragging={dragging === item.id}
+              tabIndex={-1}
+              aria-label={`${apps[item.id].name} window`}
+              className={`${styles.window} ${apps[item.id].wide ? styles.pageWindow : ""} ${item.maximized ? styles.maximized : ""}`}
+              style={{ left: item.x, top: item.y, zIndex: 10 + index }}
+              data-active={active === item.id}
+              onPointerDown={() => focus(item.id)}
             >
-              <span>
-                <Icon size={15} />
-                {apps[item.id].name}
-              </span>
-              <div className={styles.controls}>
-                <button
-                  aria-label={`Minimize ${apps[item.id].name}`}
-                  onClick={() => update(item.id, { minimized: true })}
-                >
-                  <Minus size={14} />
-                </button>
-                <button
-                  aria-label={`${item.maximized ? "Restore" : "Maximize"} ${apps[item.id].name}`}
-                  onClick={() =>
-                    update(item.id, { maximized: !item.maximized })
-                  }
-                >
-                  <Maximize2 size={12} />
-                </button>
-                <button
-                  aria-label={`Close ${apps[item.id].name}`}
-                  onClick={() =>
-                    setWindows((previous) =>
-                      previous.filter((w) => w.id !== item.id),
-                    )
-                  }
-                >
-                  <X size={15} />
-                </button>
-              </div>
-            </header>
-            <div className={styles.windowBody}>
-              {item.id === "files" && (
-                <div className={styles.files}>
-                  <aside>
-                    <span>FAVORITES</span>
-                    <button aria-current="page">
-                      <Folder size={15} /> Home
-                    </button>
-                    <p>
-                      A few bookmarks
-                      <br />
-                      to my world.
-                    </p>
-                  </aside>
-                  <div className={styles.fileContent}>
-                    <div className={styles.breadcrumb}>
-                      <Folder size={14} /> Home <ChevronRight size={13} />{" "}
-                      <span>Rynnie</span>
+              <header
+                className={styles.titlebar}
+                onPointerDown={(event) => startDrag(event, item)}
+                onPointerMove={moveDrag}
+                onPointerUp={() => {
+                  drag.current = null;
+                  setDragging(null);
+                }}
+                onPointerCancel={() => {
+                  drag.current = null;
+                  setDragging(null);
+                }}
+                onDoubleClick={(event) => {
+                  if (!(event.target as HTMLElement).closest("button"))
+                    update(item.id, { maximized: !item.maximized });
+                }}
+              >
+                <span>
+                  <Icon size={15} />
+                  {apps[item.id].name}
+                </span>
+                <div className={styles.controls}>
+                  {(item.id === "listening" || item.id === "developing") && (
+                    <Button
+                      variant="ghost"
+                      aria-label={`Reload ${apps[item.id].name}`}
+                      onClick={() => {
+                        if (item.id === "listening") clearListenSnapshots();
+                        setAppVersions((previous) => ({
+                          ...previous,
+                          [item.id]: (previous[item.id] ?? 0) + 1,
+                        }));
+                      }}
+                    >
+                      <RefreshCw size={13} />
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    aria-label={`Minimize ${apps[item.id].name}`}
+                    onClick={() => update(item.id, { minimized: true })}
+                  >
+                    <Minus size={14} />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    aria-label={`${item.maximized ? "Restore" : "Maximize"} ${apps[item.id].name}`}
+                    onClick={() =>
+                      update(item.id, { maximized: !item.maximized })
+                    }
+                  >
+                    <Maximize2 size={12} />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    aria-label={`Close ${apps[item.id].name}`}
+                    onClick={() =>
+                      setWindows((previous) =>
+                        previous.filter((w) => w.id !== item.id),
+                      )
+                    }
+                  >
+                    <X size={15} />
+                  </Button>
+                </div>
+              </header>
+              <div className={styles.windowBody}>
+                {apps[item.id].wide && (
+                  <NativeApps
+                    key={`${item.id}-${appVersions[item.id] ?? 0}`}
+                    id={item.id as NativeAppId}
+                    onOpen={open}
+                  />
+                )}
+                {item.id === "files" && (
+                  <div className={styles.files}>
+                    <aside>
+                      <span>FAVORITES</span>
+                      <Button
+                        variant="ghost"
+                        aria-current="page"
+                        onClick={(event) =>
+                          event.currentTarget
+                            .closest("aside")
+                            ?.nextElementSibling?.scrollTo({
+                              top: 0,
+                              behavior: reduceMotion ? "instant" : "smooth",
+                            })
+                        }
+                      >
+                        <Folder size={15} /> Home
+                      </Button>
+                      <p>
+                        A few bookmarks
+                        <br />
+                        to my world.
+                      </p>
+                    </aside>
+                    <div className={styles.fileContent}>
+                      <div className={styles.breadcrumb}>
+                        <Folder size={14} /> Home <ChevronRight size={13} />{" "}
+                        <span>Rynnie</span>
+                      </div>
+                      <h2>Good to see you here.</h2>
+                      <p>Take a look around. Make yourself at home.</p>
+                      <div className={styles.fileList}>
+                        {places.map((place) => (
+                          <Button
+                            variant="ghost"
+                            key={place.href}
+                            onClick={() => open(place.id)}
+                          >
+                            <span className={styles.fileSymbol}>
+                              <Folder size={22} strokeWidth={1.5} />
+                            </span>
+                            <span>
+                              <strong>{place.name}</strong>
+                              <small>{place.description}</small>
+                            </span>
+                            <span className={styles.fileType}>
+                              {place.type}
+                            </span>
+                            <ArrowUpRight size={15} />
+                          </Button>
+                        ))}
+                      </div>
+                      <footer>
+                        {places.length} places{" "}
+                        <span>
+                          Opens a desktop app <ArrowUpRight size={11} />
+                        </span>
+                      </footer>
                     </div>
-                    <h2>Good to see you here.</h2>
-                    <p>Take a look around. Make yourself at home.</p>
-                    <div className={styles.fileList}>
-                      {places.map((place) => (
-                        <a
-                          key={place.href}
-                          href={place.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <span className={styles.fileSymbol}>
-                            <Folder size={22} strokeWidth={1.5} />
-                          </span>
-                          <span>
-                            <strong>{place.name}</strong>
-                            <small>{place.description}</small>
-                          </span>
-                          <span className={styles.fileType}>{place.type}</span>
-                          <ArrowUpRight size={15} />
-                        </a>
+                  </div>
+                )}
+                {item.id === "terminal" && (
+                  <div
+                    className={styles.terminal}
+                    onClick={(event) => {
+                      if (
+                        !(event.target as HTMLElement).closest("input") &&
+                        !window.getSelection()?.toString()
+                      )
+                        event.currentTarget.querySelector("input")?.focus();
+                    }}
+                  >
+                    <div className={styles.terminalIntro}>
+                      RYNNIE OS <span> / browser session</span>
+                    </div>
+                    <div
+                      className={styles.terminalOutput}
+                      role="log"
+                      aria-live="polite"
+                    >
+                      {history.map((entry, i) => (
+                        <div key={i}>
+                          {entry.command && (
+                            <p>
+                              <span>visitor ~ $</span> {entry.command}
+                            </p>
+                          )}
+                          <pre>{entry.output}</pre>
+                        </div>
                       ))}
                     </div>
-                    <footer>
-                      {places.length} places{" "}
-                      <span>
-                        Opens in a new tab <ArrowUpRight size={11} />
-                      </span>
-                    </footer>
-                  </div>
-                </div>
-              )}
-              {item.id === "notes" && (
-                <div className={styles.notes}>
-                  <div className={styles.noteToolbar}>
-                    <span>Untitled.txt</span>
-                    <span>
-                      <Check size={12} />
-                      {saved ? "Saved on this device" : "Storage unavailable"}
-                    </span>
-                  </div>
-                  <textarea
-                    aria-label="Your notes"
-                    value={note}
-                    disabled={!ready}
-                    onChange={(event) => {
-                      setNote(event.target.value);
-                      persist("rynnie-desktop-note", event.target.value);
-                    }}
-                    spellCheck={false}
-                  />
-                  <footer>
-                    {note.trim() ? note.trim().split(/\s+/).length : 0} words{" "}
-                    <span>Just for you.</span>
-                  </footer>
-                </div>
-              )}
-              {item.id === "terminal" && (
-                <div
-                  className={styles.terminal}
-                  onClick={(event) => {
-                    if (
-                      !(event.target as HTMLElement).closest("input") &&
-                      !window.getSelection()?.toString()
-                    )
-                      event.currentTarget.querySelector("input")?.focus();
-                  }}
-                >
-                  <div className={styles.terminalIntro}>
-                    RYNNIE OS <span> / browser session</span>
-                  </div>
-                  <div
-                    className={styles.terminalOutput}
-                    role="log"
-                    aria-live="polite"
-                  >
-                    {history.map((entry, i) => (
-                      <div key={i}>
-                        {entry.command && (
-                          <p>
-                            <span>visitor ~ $</span> {entry.command}
-                          </p>
-                        )}
-                        <pre>{entry.output}</pre>
-                      </div>
-                    ))}
-                  </div>
-                  <form
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      runCommand();
-                    }}
-                  >
-                    <label htmlFor="desktop-command">visitor ~ $</label>
-                    <input
-                      id="desktop-command"
-                      autoComplete="off"
-                      spellCheck={false}
-                      value={command}
-                      onChange={(event) => setCommand(event.target.value)}
-                    />
-                  </form>
-                  <div ref={terminalEnd} />
-                </div>
-              )}
-              {item.id === "settings" && (
-                <div className={styles.settings}>
-                  <span className={styles.eyebrow}>PERSONALIZE YOUR SPACE</span>
-                  <h2>A change of scenery.</h2>
-                  <p>Pick a mood for your desktop.</p>
-                  <div className={styles.themes}>
-                    {(Object.keys(themes) as Theme[]).map((key) => (
-                      <button
-                        key={key}
-                        aria-pressed={theme === key}
-                        disabled={!ready}
-                        onClick={() => {
-                          setTheme(key);
-                          persist("rynnie-desktop-theme", key);
+                    <form
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        runCommand();
+                      }}
+                    >
+                      <label htmlFor="desktop-command">visitor ~ $</label>
+                      <Input
+                        id="desktop-command"
+                        autoComplete="off"
+                        spellCheck={false}
+                        value={command}
+                        onKeyDown={(event) => {
+                          if (
+                            event.key !== "ArrowUp" &&
+                            event.key !== "ArrowDown"
+                          )
+                            return;
+                          event.preventDefault();
+                          historyIndex.current = Math.max(
+                            0,
+                            Math.min(
+                              commandHistory.current.length,
+                              historyIndex.current +
+                                (event.key === "ArrowUp" ? -1 : 1),
+                            ),
+                          );
+                          setCommand(
+                            commandHistory.current[historyIndex.current] ?? "",
+                          );
                         }}
-                      >
-                        <span className={styles.themePreview} data-theme={key}>
-                          {theme === key && <Check size={18} />}
-                        </span>
-                        {themes[key]}
-                      </button>
-                    ))}
+                        onChange={(event) => setCommand(event.target.value)}
+                      />
+                    </form>
+                    <div ref={terminalEnd} />
                   </div>
-                  <div className={styles.about}>
-                    <Monitor size={25} strokeWidth={1.5} />
-                    <div>
-                      <strong>Rynnie OS</strong>
-                      <p>A small desktop, right in your browser.</p>
-                      <small>Notes and appearance stay on this device.</small>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-        );
-      })}
+                )}
+                {item.id === "settings" && (
+                  <Card className={styles.settings}>
+                    <CardHeader>
+                      <CardDescription>PERSONALIZE YOUR SPACE</CardDescription>
+                      <CardTitle>
+                        <h2>Simple by design.</h2>
+                      </CardTitle>
+                      <CardDescription>
+                        A monochrome desktop with the same live accent as the
+                        site.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className={styles.accentSetting}>
+                        <span
+                          className={styles.accentSwatch}
+                          aria-hidden="true"
+                        />
+                        <div>
+                          <strong>Live site accent</strong>
+                          <p>
+                            Follows the current song’s artwork. Returns to white
+                            when playback stops.
+                          </p>
+                        </div>
+                      </div>
+                      <div className={styles.motionSetting}>
+                        <Label htmlFor="os-animations">
+                          <span>
+                            <strong>Window animations</strong>
+                            <small>
+                              {systemReducedMotion
+                                ? "Your device requests reduced motion."
+                                : "Animate windows and the app launcher."}
+                            </small>
+                          </span>
+                        </Label>
+                        <Switch
+                          id="os-animations"
+                          aria-label="Window animations"
+                          checked={animations}
+                          disabled={!ready}
+                          onCheckedChange={(value) => {
+                            setAnimations(value);
+                            persist(
+                              "rynnie-desktop-animations",
+                              value ? "on" : "off",
+                            );
+                          }}
+                        />
+                      </div>
+                      {!saved && (
+                        <p role="status">
+                          Your preference could not be saved on this device.
+                        </p>
+                      )}
+                      <div className={styles.about}>
+                        <Monitor size={25} strokeWidth={1.5} />
+                        <div>
+                          <strong>Rynnie OS</strong>
+                          <p>A small desktop, right in your browser.</p>
+                          <small>
+                            Listening, Ask, and Developing. Right here.
+                          </small>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            </DesktopWindow>
+          );
+        })}
+      </AnimatePresence>
 
       {launcher && (
-        <>
-          <button
-            className={styles.dismiss}
-            aria-label="Dismiss app launcher"
-            onClick={() => setLauncher(false)}
-          />
-          <section className={styles.launcher} aria-label="App launcher">
+        <Button
+          variant="ghost"
+          className={styles.dismiss}
+          aria-label="Dismiss app launcher"
+          onClick={() => setLauncher(false)}
+        />
+      )}
+      <AnimatePresence>
+        {launcher && (
+          <motion.section
+            key="launcher"
+            initial={{ opacity: 0, y: 12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 12, scale: 0.97 }}
+            transition={{ duration: reduceMotion ? 0 : 0.18 }}
+            className={styles.launcher}
+            aria-label="App launcher"
+          >
             <div className={styles.launcherHeading}>
               <span>Make yourself at home.</span>
               <small>RYNNIE OS</small>
             </div>
             <label className={styles.search}>
               <Search size={16} />
-              <input
+              <Input
                 autoFocus
                 aria-label="Search apps"
                 placeholder="Find an app…"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    const match = [...appIds, ...pageIds].find((id) =>
+                      apps[id].name.toLowerCase().includes(query.toLowerCase()),
+                    );
+                    if (match) open(match);
+                  }
+                }}
               />
             </label>
             <div className={styles.launcherApps}>
-              {appIds
+              {[...appIds, ...pageIds]
                 .filter((id) =>
                   apps[id].name.toLowerCase().includes(query.toLowerCase()),
                 )
                 .map((id) => {
                   const Icon = apps[id].icon;
                   return (
-                    <button key={id} onClick={() => open(id)}>
-                      <Icon size={23} color={apps[id].color} />
+                    <Button variant="ghost" key={id} onClick={() => open(id)}>
+                      <Icon size={23} />
                       <span>
                         <strong>{apps[id].name}</strong>
                         <small>{apps[id].detail}</small>
                       </span>
                       <ChevronRight size={14} />
-                    </button>
+                    </Button>
                   );
                 })}
-              {!appIds.some((id) =>
+              {![...appIds, ...pageIds].some((id) =>
                 apps[id].name.toLowerCase().includes(query.toLowerCase()),
               ) && <p>No apps found.</p>}
             </div>
-            <Link href="/">
-              Back to the portfolio <ArrowUpRight size={14} />
-            </Link>
-          </section>
-        </>
-      )}
-      <footer className={styles.taskbar}>
-        <button
+            <Button
+              variant="ghost"
+              className={styles.portfolioButton}
+              onClick={() => open("portfolio")}
+            >
+              Open portfolio <ArrowUpRight size={14} />
+            </Button>
+          </motion.section>
+        )}
+      </AnimatePresence>
+      <footer
+        className={styles.taskbar}
+        data-desktop-taskbar
+        aria-label="Desktop taskbar"
+      >
+        <Button
+          variant="ghost"
           className={styles.launchButton}
           aria-label="Open app launcher"
           aria-expanded={launcher}
           onClick={() => setLauncher(!launcher)}
         >
           <Grid2X2 size={21} />
-        </button>
-        <div className={styles.separator} />
-        {appIds.map((id) => {
-          const Icon = apps[id].icon;
-          const running = windows.find((w) => w.id === id);
-          return (
-            <button
-              key={id}
-              aria-label={`Open ${apps[id].name}`}
-              title={apps[id].name}
-              data-running={!!running}
-              data-active={active === id}
-              onClick={() => {
-                if (active === id) update(id, { minimized: true });
-                else open(id);
-              }}
-            >
-              <Icon size={22} strokeWidth={1.6} color={apps[id].color} />
-              <span />
-            </button>
-          );
-        })}
-        <div className={styles.separator} />
-        <button
-          aria-label="Show desktop"
-          title="Show desktop"
-          onClick={() => {
-            setWindows((previous) =>
-              previous.map((w) => ({ ...w, minimized: true })),
-            );
-            setLauncher(false);
+        </Button>
+        <DropdownMenu
+          open={powerOpen}
+          onOpenChange={(value) => {
+            setPowerOpen(value);
+            if (value) setLauncher(false);
           }}
         >
-          <Monitor size={19} />
-        </button>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              aria-label="Power menu"
+              title="Power"
+              aria-haspopup="menu"
+            >
+              <Power size={18} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className={styles.powerMenu}
+            data-motion={reduceMotion ? "reduced" : "full"}
+            side="top"
+            align="start"
+            sideOffset={8}
+            collisionPadding={8}
+          >
+            <DropdownMenuLabel className={styles.powerMenuLabel}>
+              RYNNIE OS
+            </DropdownMenuLabel>
+            <DropdownMenuItem className={styles.powerMenuItem} asChild>
+              <Link href="/">
+                <Power size={14} />
+                Return to site
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className={styles.powerMenuItem}
+              onSelect={() => {
+                setWindows([]);
+                setLauncher(false);
+                setQuery("");
+                setCommand("");
+                setAppVersions({});
+                setHistory([
+                  {
+                    command: "",
+                    output: "Welcome to Rynnie OS. Type help to look around.",
+                  },
+                ]);
+                commandHistory.current = [];
+                historyIndex.current = 0;
+                desktopSnapshot.current = null;
+              }}
+            >
+              <RefreshCw size={14} />
+              Restart desktop
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className={styles.powerMenuSeparator} />
+            <DropdownMenuItem className={styles.powerMenuItem}>
+              Cancel
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <div className={styles.separator} />
+        <div className={styles.taskApps} aria-label="Running and pinned apps">
+          {[
+            ...appIds,
+            ...pageIds.filter((id) => windows.some((w) => w.id === id)),
+          ].map((id) => {
+            const Icon = apps[id].icon;
+            const running = windows.find((w) => w.id === id);
+            return (
+              <Button
+                variant="ghost"
+                key={id}
+                className={styles.taskButton}
+                aria-label={`Open ${apps[id].name}`}
+                title={apps[id].name}
+                data-running={!!running}
+                data-active={active === id}
+                onClick={() => {
+                  if (active === id) update(id, { minimized: true });
+                  else open(id);
+                }}
+              >
+                <Icon size={20} strokeWidth={1.6} />
+                <span className={styles.taskLabel}>{apps[id].name}</span>
+                <i className={styles.runningIndicator} />
+              </Button>
+            );
+          })}
+        </div>
+        <time className={styles.trayClock} aria-label="Desktop clock">
+          <span>
+            {clock?.toLocaleTimeString(undefined, {
+              hour: "2-digit",
+              minute: "2-digit",
+            }) ?? "—:—"}
+          </span>
+          <small>
+            {clock?.toLocaleDateString(undefined, {
+              month: "short",
+              day: "numeric",
+            })}
+          </small>
+        </time>
+        <div className={styles.separator} />
+        <Button
+          variant="ghost"
+          className={styles.desktopToggle}
+          aria-label="Show desktop"
+          title="Show desktop"
+          onClick={showDesktop}
+        />
       </footer>
     </main>
   );

@@ -4,10 +4,10 @@ import { memo, useMemo } from "react";
 import {
   IconActivity,
   IconArrowUpRight,
-  IconBrandGithub,
   IconFolder,
   IconStar,
 } from "@tabler/icons-react";
+import { GithubLogo } from "@/components/logos/github";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,18 +24,20 @@ import styles from "../../developing/developing.module.css";
 
 type GitHubShowcaseProps = {
   repos: unknown;
-  events: unknown;
+  contributions: unknown;
   loading?: boolean;
 };
 
 function GitHubShowcase({
   repos: rawRepos,
-  events,
+  contributions,
   loading = false,
 }: GitHubShowcaseProps) {
   const { language, t } = useSiteSettings();
   const repos = useMemo(() => normalizeRepos(rawRepos), [rawRepos]);
-  const cells = useMemo(() => activityCells(events), [events]);
+  const cells = useMemo(() => activityCells(contributions), [contributions]);
+  const year = Number(cells.find((cell) => cell.inYear)?.key.slice(0, 4));
+  const unavailable = !loading && !Array.isArray(contributions);
   const total = cells.reduce((sum, cell) => sum + cell.count, 0);
   const dateFormatter = new Intl.DateTimeFormat(
     language === "th" ? "th-TH" : "en",
@@ -51,15 +53,20 @@ function GitHubShowcase({
             className="flex items-center gap-1.5 text-sm"
           >
             <IconActivity size={14} stroke={1.75} aria-hidden="true" />
-            {t("Recent activity", "กิจกรรมล่าสุด")}
+            {t("Contributions", "การมีส่วนร่วม")}
           </CardTitle>
           <CardDescription>
             {loading
               ? t("Loading…", "กำลังโหลด…")
-              : t(
-                  `${total} public contributions`,
-                  `มีส่วนร่วมสาธารณะ ${total} ครั้ง`,
-                )}
+              : unavailable
+                ? t(
+                    "Contribution data unavailable",
+                    "ไม่สามารถโหลดข้อมูลการมีส่วนร่วม",
+                  )
+                : t(
+                    `${total.toLocaleString()} contributions in ${year}`,
+                    `มีส่วนร่วม ${total.toLocaleString()} ครั้งในปี ${year}`,
+                  )}
           </CardDescription>
           <CardAction>
             <Button variant="outline" size="sm" asChild>
@@ -68,37 +75,50 @@ function GitHubShowcase({
                 target="_blank"
                 rel="noreferrer"
               >
-                <IconBrandGithub size={14} stroke={1.75} aria-hidden="true" />
+                <GithubLogo
+                  width={14}
+                  height={14}
+                  variant="mono"
+                  title=""
+                  aria-hidden="true"
+                />
                 GitHub
               </a>
             </Button>
           </CardAction>
         </CardHeader>
         <CardContent>
-          <div
-            className={styles.graph}
-            aria-label={t(
-              "42 weeks of public activity",
-              "กิจกรรมสาธารณะใน 42 สัปดาห์",
-            )}
-            aria-busy={loading}
-          >
-            {cells.map((cell) => (
-              <span
-                key={cell.key}
-                data-level={cell.level}
-                tabIndex={0}
-                aria-label={`${cell.count} contributions · ${dateFormatter.format(new Date(`${cell.key}T00:00:00Z`))}`}
-              >
-                <span role="tooltip">
-                  {cell.count} ·{" "}
-                  {dateFormatter.format(new Date(`${cell.key}T00:00:00Z`))}
+          <div className="overflow-x-auto pb-2 pt-5">
+            <div
+              className={styles.graph}
+              aria-label={t(
+                `${year} contribution calendar`,
+                `ปฏิทินการมีส่วนร่วมปี ${year}`,
+              )}
+              aria-busy={loading}
+            >
+              {cells.map((cell) => (
+                <span
+                  key={cell.key}
+                  data-level={cell.level}
+                  data-outside={!cell.inYear}
+                  data-future={cell.future}
+                  aria-hidden={!cell.inYear || undefined}
+                  tabIndex={
+                    cell.inYear && !cell.future && !unavailable ? 0 : undefined
+                  }
+                  aria-label={`${cell.count} contributions · ${dateFormatter.format(new Date(`${cell.key}T00:00:00Z`))}`}
+                >
+                  <span role="tooltip">
+                    {cell.count} ·{" "}
+                    {dateFormatter.format(new Date(`${cell.key}T00:00:00Z`))}
+                  </span>
                 </span>
-              </span>
-            ))}
+              ))}
+            </div>
           </div>
           <p className="mt-3 text-[11px] text-muted-foreground">
-            {t("Last 42 weeks", "42 สัปดาห์ที่ผ่านมา")}
+            {t(`January – December ${year}`, `มกราคม – ธันวาคม ${year}`)}
           </p>
         </CardContent>
       </Card>
@@ -135,9 +155,11 @@ function GitHubShowcase({
                 rel="noreferrer"
                 className="flex items-center gap-3 border-b px-3 py-3 text-foreground no-underline transition-colors last:border-b-0 hover:bg-muted/50"
               >
-                <IconBrandGithub
-                  size={15}
-                  stroke={1.75}
+                <GithubLogo
+                  width={15}
+                  height={15}
+                  variant="mono"
+                  title=""
                   className="shrink-0 text-muted-foreground"
                   aria-hidden="true"
                 />

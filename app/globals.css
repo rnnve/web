@@ -111,7 +111,8 @@
 }
 
 .font-app-ui {
-  --font-site: var(--font-app-ui), var(--font-geist-sans), system-ui, "Segoe UI",
+  --font-site:
+    var(--font-app-ui), var(--font-geist-sans), system-ui, "Segoe UI",
     sans-serif;
 }
 

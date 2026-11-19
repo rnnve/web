@@ -2,11 +2,9 @@ import { NO_STORE_HEADERS, statusCacheHeaders } from "@/app/lib/status-handler";
 
 const GITHUB_REPOS_URL =
   "https://api.github.com/users/rnnve/repos?sort=updated&direction=desc&per_page=100";
-const GITHUB_EVENTS_URL =
-  "https://api.github.com/users/rnnve/events/public?per_page=100";
 const GITHUB_TIMEOUT_MS = 5_000;
 const REPOSITORY_CACHE_SECONDS = 900;
-const EVENT_CACHE_SECONDS = 300;
+const CONTRIBUTION_CACHE_SECONDS = 300;
 const githubHeaders = {
   Accept: "application/vnd.github+json",
   "User-Agent": "rynni-profile-widget",
@@ -15,10 +13,14 @@ const githubHeaders = {
     : {}),
 };
 
-async function fetchGitHub(url: string, revalidate: number): Promise<unknown> {
+async function fetchGitHub(
+  url: string,
+  revalidate: number,
+  authenticated = true,
+): Promise<unknown> {
   const response = await fetch(url, {
     cache: "force-cache",
-    headers: githubHeaders,
+    headers: authenticated ? githubHeaders : { Accept: "application/json" },
     next: { revalidate },
     signal: AbortSignal.timeout(GITHUB_TIMEOUT_MS),
   });
@@ -28,20 +30,36 @@ async function fetchGitHub(url: string, revalidate: number): Promise<unknown> {
 }
 
 export async function GET() {
-  const [repos, events] = await Promise.allSettled([
+  const year = new Date().getUTCFullYear();
+  const [repos, contributions] = await Promise.allSettled([
     fetchGitHub(GITHUB_REPOS_URL, REPOSITORY_CACHE_SECONDS),
-    fetchGitHub(GITHUB_EVENTS_URL, EVENT_CACHE_SECONDS),
+    fetchGitHub(
+      `https://github-contributions-api.jogruber.de/v4/rnnve?y=${year}`,
+      CONTRIBUTION_CACHE_SECONDS,
+      false,
+    ).then((value) => {
+      if (
+        !value ||
+        typeof value !== "object" ||
+        !("contributions" in value) ||
+        !Array.isArray(value.contributions)
+      )
+        throw new Error("Invalid contribution calendar");
+      return value.contributions;
+    }),
   ]);
 
   return Response.json(
     {
       repos: repos.status === "fulfilled" ? repos.value : [],
-      events: events.status === "fulfilled" ? events.value : [],
+      contributions:
+        contributions.status === "fulfilled" ? contributions.value : null,
+      year,
       updatedAt: Date.now(),
     },
     {
       headers:
-        repos.status === "fulfilled" && events.status === "fulfilled"
+        repos.status === "fulfilled" && contributions.status === "fulfilled"
           ? statusCacheHeaders(60)
           : NO_STORE_HEADERS,
     },

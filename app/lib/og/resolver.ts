@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
-export const SITE_URL = "https://rynni.cc";
+// Canonical production origin; rynni.cc redirects to this host.
+export const SITE_URL = "https://myosotis.rynni.cc";
 export const SITE_NAME = "Rynnie";
 
 export type PageContent = {

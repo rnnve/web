@@ -8,13 +8,13 @@ import WidgetPreloads from "../components/status/widget-preloads";
 import { readWidgetSnapshot, requestWidget } from "../lib/widget-request";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
 
-type GitHubPayload = { repos: unknown; events: unknown };
+type GitHubPayload = { repos: unknown; contributions: unknown };
 
 export default function Developing() {
   const { t } = useSiteSettings();
   const [github, setGitHub] = useState<GitHubPayload>({
     repos: [],
-    events: [],
+    contributions: null,
   });
   const [githubLoading, setGitHubLoading] = useState(true);
   const loadGitHub = useCallback(async () => {
@@ -75,7 +75,7 @@ export default function Developing() {
       <WidgetPreloads />
       <GitHubShowcase
         repos={github.repos}
-        events={github.events}
+        contributions={github.contributions}
         loading={githubLoading}
       />
       <Stacks />

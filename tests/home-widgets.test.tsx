@@ -23,11 +23,32 @@ test("the age is calculated in the first render", () => {
   const document = createDocument(
     renderToStaticMarkup(<AgeCalculator birthDate={BIRTH_DATE} />),
   );
-  const integer = document.querySelector(".age-calculator__integer")?.textContent;
+  const integer = document.querySelector(
+    ".age-calculator__integer",
+  )?.textContent;
   const precise = document.querySelector("[role='tooltip']")?.textContent;
   assert.match(integer ?? "", /^[1-9]\d*$/);
   assert.match(precise ?? "", /^[1-9]\d*\.\d{8}$/);
   assert.equal(precise?.split(".")[0], integer);
+});
+
+test("the first age render uses the server timestamp rather than the client clock", () => {
+  const document = createDocument(
+    renderToStaticMarkup(
+      <AgeCalculator
+        birthDate="2000-01-01T00:00:00Z"
+        initialNow={Date.UTC(2020, 0, 1)}
+      />,
+    ),
+  );
+  assert.equal(
+    document.querySelector(".age-calculator__integer")?.textContent,
+    "20",
+  );
+  assert.equal(
+    document.querySelector("[role='tooltip']")?.textContent,
+    "20.00000000",
+  );
 });
 
 test("home removes duplicate social actions and shows Discord display name above username", (context) => {

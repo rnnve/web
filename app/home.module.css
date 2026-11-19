@@ -166,7 +166,14 @@
 
 :global(html:has(.home-page)),
 :global(body:has(.home-page)) {
-  min-height: 100dvh;
-  overflow-x: hidden;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
   overscroll-behavior: none;
+}
+
+:global(body:has(.home-page)) {
+  position: fixed;
+  inset: 0;
+  width: 100%;
 }

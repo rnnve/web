@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { LayoutGroup, motion, useReducedMotion } from "motion/react";
 import {
   IconHomeFilled,
@@ -11,8 +11,15 @@ import {
   IconLink,
   IconCode,
 } from "@tabler/icons-react";
-import Link from "next/link";
+import Link from "./intent-link";
 import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useSiteSettings } from "../settings/site-settings-provider";
 import { usePageReady } from "../../page-transition";
 import LanguageSwitcher from "../settings/language-switcher";
@@ -26,113 +33,179 @@ export default function PortfolioNavbar() {
   const layoutId = useId();
   const reducedMotion = useReducedMotion();
   const transition = {
-    duration: reducedMotion ? 0 : 0.5,
+    duration: reducedMotion ? 0 : 0.35,
     ease: [0.22, 1, 0.36, 1] as const,
   };
   const [languageVisible, setLanguageVisible] = useState(false);
+  const group = useRef<HTMLDivElement>(null);
+  const languageButton = useRef<HTMLButtonElement>(null);
   const pageReady = usePageReady();
   const pathname = usePathname();
+  useEffect(() => {
+    if (!languageVisible) return;
+    const dismiss = (event: PointerEvent) => {
+      if (!group.current?.contains(event.target as Node))
+        setLanguageVisible(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setLanguageVisible(false);
+        languageButton.current?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", dismiss);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", dismiss);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [languageVisible]);
   const navItems = [
     { name: t("Home", "หน้าแรก"), href: "/", icon: IconHomeFilled },
     { name: t("Developing", "งานพัฒนา"), href: "/developing", icon: IconCode },
-    {
-      name: t("Listening", "เพลงที่ฟัง"),
-      href: "/listen",
-      icon: IconMusic,
-    },
+    { name: t("Listening", "เพลงที่ฟัง"), href: "/listen", icon: IconMusic },
     { name: t("Birthday", "วันเกิด"), href: "/birthday", icon: IconCake },
     { name: t("Ask", "ถามเรา"), href: "/ask", icon: IconMailFilled },
   ];
   return (
-    <header
-      className={`portfolio-navbar-root ${styles.position}`}
-      inert={!pageReady || undefined}
-      aria-hidden={!pageReady || undefined}
-    >
-      <div className={styles.navigationGroup}>
-        <LayoutGroup id={layoutId}>
-          <motion.nav
-            layout
-            transition={transition}
-            className={styles.rail}
-            aria-label={t("Primary navigation", "เมนูหลัก")}
-          >
-            {navItems.map(({ name, href, icon: Icon }) => (
-              <AnimatedLink
-                layout
-                transition={transition}
-                key={href}
-                href={href}
-                className={styles.item}
-                aria-label={name}
-                aria-current={pathname === href ? "page" : undefined}
-              >
-                {pathname === href && (
-                  <motion.span
-                    layoutId="active-page"
-                    transition={transition}
-                    className={styles.activeHighlight}
-                    data-active-highlight
-                    aria-hidden="true"
-                  />
-                )}
-                <motion.span
-                  layout="position"
-                  transition={transition}
-                  className={styles.icon}
+    <TooltipProvider delayDuration={250}>
+      <header
+        className={`portfolio-navbar-root ${styles.position}`}
+        inert={!pageReady || undefined}
+        aria-hidden={!pageReady || undefined}
+      >
+        <div className={styles.navigationGroup} ref={group}>
+          <LayoutGroup id={layoutId}>
+            <motion.nav
+              layout
+              transition={transition}
+              className={styles.rail}
+              aria-label={t("Primary navigation", "เมนูหลัก")}
+            >
+              {navItems.map(({ name, href, icon: Icon }) => (
+                <Tooltip key={href}>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" asChild>
+                      <AnimatedLink
+                        layout
+                        transition={transition}
+                        href={href}
+                        className={`${styles.item} ${href !== "/" ? styles.labeled : ""}`}
+                        aria-label={name}
+                        aria-current={pathname === href ? "page" : undefined}
+                        onClick={() => setLanguageVisible(false)}
+                      >
+                        {pathname === href && (
+                          <motion.span
+                            layoutId="active-page"
+                            transition={transition}
+                            className={styles.activeHighlight}
+                            data-active-highlight
+                            aria-hidden="true"
+                          />
+                        )}
+                        <motion.span
+                          layout="position"
+                          transition={transition}
+                          className={styles.icon}
+                        >
+                          <Icon size={20} stroke={1.8} aria-hidden="true" />
+                        </motion.span>
+                        {href !== "/" && (
+                          <span className={styles.label} aria-hidden="true">
+                            {name}
+                          </span>
+                        )}
+                      </AnimatedLink>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    sideOffset={9}
+                    collisionPadding={8}
+                    className={styles.tooltipContent}
+                  >
+                    {name}
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+              <span
+                className={styles.separator}
+                role="separator"
+                aria-orientation="vertical"
+              />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={styles.item}
+                    asChild
+                  >
+                    <a
+                      href="https://haunt.gg/rnn"
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={t(
+                        "Socials (opens in a new tab)",
+                        "โซเชียล (เปิดในแท็บใหม่)",
+                      )}
+                    >
+                      <IconLink size={20} stroke={1.8} aria-hidden="true" />
+                    </a>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  sideOffset={9}
+                  collisionPadding={8}
+                  className={styles.tooltipContent}
                 >
-                  <Icon size={16} stroke={2} aria-hidden="true" />
-                </motion.span>
-                <span className={styles.tooltip} aria-hidden="true">
-                  {name}
-                </span>
-              </AnimatedLink>
-            ))}
-            <a
-              className={styles.item}
-              href="https://haunt.gg/rnn"
-              target="_blank"
-              rel="noreferrer"
-              aria-label={t(
-                "Socials (opens in a new tab)",
-                "โซเชียล (เปิดในแท็บใหม่)",
-              )}
-            >
-              <IconLink size={16} stroke={2} aria-hidden="true" />
-              <span className={styles.tooltip} aria-hidden="true">
-                {t("Socials", "โซเชียล")}
-              </span>
-            </a>
-            <button
-              type="button"
-              className={styles.item}
-              aria-label={
-                languageVisible
-                  ? t("Hide language switcher", "ซ่อนตัวเลือกภาษา")
-                  : t("Show language switcher", "แสดงตัวเลือกภาษา")
-              }
-              aria-expanded={languageVisible}
-              aria-controls="site-language-controls"
-              onClick={() => setLanguageVisible((visible) => !visible)}
-            >
-              <IconLanguage size={16} aria-hidden="true" />
-              <span className={styles.tooltip} aria-hidden="true">
-                {t("Language", "ภาษา")}
-              </span>
-            </button>
-          </motion.nav>
-        </LayoutGroup>
-        <div
-          id="site-language-controls"
-          hidden={!languageVisible}
-          className={styles.languagePanel}
-        >
-          <LanguageSwitcher />
+                  {t("Socials", "โซเชียล")}
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    ref={languageButton}
+                    variant="ghost"
+                    size="icon"
+                    className={styles.item}
+                    aria-label={
+                      languageVisible
+                        ? t("Hide language switcher", "ซ่อนตัวเลือกภาษา")
+                        : t("Show language switcher", "แสดงตัวเลือกภาษา")
+                    }
+                    aria-expanded={languageVisible}
+                    aria-controls="site-language-controls"
+                    onClick={() => setLanguageVisible((value) => !value)}
+                  >
+                    <IconLanguage size={20} stroke={1.8} aria-hidden="true" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  sideOffset={9}
+                  collisionPadding={8}
+                  className={styles.tooltipContent}
+                >
+                  {t("Language", "ภาษา")}
+                </TooltipContent>
+              </Tooltip>
+            </motion.nav>
+          </LayoutGroup>
+          <div
+            id="site-language-controls"
+            hidden={!languageVisible}
+            className={styles.languagePanel}
+          >
+            <LanguageSwitcher />
+          </div>
         </div>
-      </div>
-      <div className={styles.utilities}>
-        <SocialLinks />
-      </div>
-    </header>
+        <div className={styles.utilities}>
+          <SocialLinks />
+        </div>
+      </header>
+    </TooltipProvider>
   );
 }
