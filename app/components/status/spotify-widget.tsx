@@ -151,6 +151,11 @@ export default function SpotifyWidget({
     0,
     lines.findLastIndex((line) => line.time <= progress),
   );
+  const windowStart =
+    lines.length <= 3
+      ? 0
+      : Math.min(Math.max(0, previewIndex - 1), lines.length - 3);
+  const visibleLines = lines.slice(windowStart, windowStart + 3);
   const artist = spotify.primaryArtist || spotify.artist.split(/,\s+/)[0];
   const title = spotify.isPlaying
     ? spotify.title
@@ -219,22 +224,16 @@ export default function SpotifyWidget({
         </div>
       </div>
       {showLyrics && (
-        <div className={styles.preview} key={previewIndex}>
-          {[
-            lines[previewIndex - 1],
-            lines[previewIndex],
-            lines[previewIndex + 1],
-          ].map((line, slot) =>
-            line ? (
-              <LyricLine
-                key={`${previewIndex}-${slot}`}
-                text={line.text}
-                current={previewIndex + slot - 1 === index}
-                center={slot === 1}
-                gridRow={slot + 1}
-              />
-            ) : null,
-          )}
+        <div className={styles.preview} key={windowStart}>
+          {visibleLines.map((line, slot) => (
+            <LyricLine
+              key={`${windowStart}-${line.time}-${slot}`}
+              text={line.text}
+              current={windowStart + slot === index}
+              center={slot === 1}
+              gridRow={slot + 1}
+            />
+          ))}
         </div>
       )}
       {error && (

@@ -109,7 +109,7 @@ export default function PortfolioNavbar() {
                           transition={transition}
                           className={styles.icon}
                         >
-                          <Icon size={18} stroke={1.8} aria-hidden="true" />
+                          <Icon size={16} stroke={1.8} aria-hidden="true" />
                         </motion.span>
                       </AnimatedLink>
                     </Button>
@@ -146,7 +146,7 @@ export default function PortfolioNavbar() {
                         "โซเชียล (เปิดในแท็บใหม่)",
                       )}
                     >
-                      <IconLink size={18} stroke={1.8} aria-hidden="true" />
+                      <IconLink size={16} stroke={1.8} aria-hidden="true" />
                     </a>
                   </Button>
                 </TooltipTrigger>
@@ -175,7 +175,7 @@ export default function PortfolioNavbar() {
                     aria-controls="site-language-controls"
                     onClick={() => setLanguageVisible((value) => !value)}
                   >
-                    <IconLanguage size={18} stroke={1.8} aria-hidden="true" />
+                    <IconLanguage size={16} stroke={1.8} aria-hidden="true" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent

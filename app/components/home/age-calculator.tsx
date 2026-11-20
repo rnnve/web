@@ -1,19 +1,20 @@
 "use client";
 
+import { SlidingNumber } from "@animate-ui/react/primitives/texts/sliding-number";
 import { useEffect, useId, useState } from "react";
 type AgeCalculatorProps = {
   birthDate: Date | string;
   className?: string;
   initialNow?: number;
 };
-const AGE_UPDATE_INTERVAL = 250;
+const AGE_UPDATE_INTERVAL = 100;
 function ageText(birthDate: Date | string, now = new Date()) {
   const parsedBirthDate =
     birthDate instanceof Date
       ? new Date(birthDate.getTime())
       : new Date(birthDate);
-  if (Number.isNaN(parsedBirthDate.getTime())) return "0.00000000";
-  return calculateAge(parsedBirthDate, now).toFixed(8);
+  if (Number.isNaN(parsedBirthDate.getTime())) return "0.0000000000";
+  return calculateAge(parsedBirthDate, now).toFixed(10);
 }
 function calculateAge(birthDate: Date, now: Date) {
   let years = now.getFullYear() - birthDate.getFullYear();
@@ -63,11 +64,16 @@ export default function AgeCalculator({
         {integerAge}
       </span>
       <span
-        className="age-calculator__tooltip absolute [z-index:20] [left:50%] [bottom:calc(100%_+_9px)] [width:max-content] [padding:7px_9px] [border:1px_solid_color-mix(in_srgb,_var(--site-accent)_30%,_var(--border))] [border-radius:8px] [background:var(--surface-hover)] [color:var(--text)] [box-shadow:0_9px_24px_var(--shadow)] [backdrop-filter:none] [font-size:10px] [line-height:1] [letter-spacing:0.15px] [opacity:0] pointer-events-none [transform:translate(-50%,_5px)_scale(0.96)] [transform-origin:bottom_center] [transition:opacity_0.16s_ease,_transform_0.2s_var(--ease)] [-webkit-backdrop-filter:none] [border-color:var(--border)] [&::after]:[content:''] [&::after]:absolute [&::after]:[left:50%] [&::after]:[top:100%] [&::after]:[width:7px] [&::after]:[height:7px] [&::after]:[border-right:1px_solid_color-mix(in_srgb,_var(--site-accent)_30%,_var(--border))] [&::after]:[border-bottom:1px_solid_color-mix(in_srgb,_var(--site-accent)_30%,_var(--border))] [&::after]:[background:var(--surface-hover)] [&::after]:[transform:translate(-50%,_-4px)_rotate(45deg)] [&::after]:[border-color:var(--border)] [.age-calculator:hover_&]:[opacity:1] [.age-calculator:hover_&]:[transform:translate(-50%,_0)_scale(1)] [.age-calculator:focus-visible_&]:[opacity:1] [.age-calculator:focus-visible_&]:[transform:translate(-50%,_0)_scale(1)]"
+        className="age-calculator__tooltip absolute [z-index:40] [left:50%] [top:calc(100%_+_9px)] [width:max-content] [padding:7px_9px] [border:1px_solid_var(--border)] [border-radius:8px] [background:var(--popover)] [color:var(--popover-foreground)] [box-shadow:0_9px_24px_var(--shadow)] [backdrop-filter:none] [font-size:10px] [line-height:1] [letter-spacing:0.15px] [opacity:0] pointer-events-none [transform:translate(-50%,_-4px)_scale(0.96)] [transform-origin:top_center] [transition:opacity_0.16s_ease,_transform_0.2s_var(--ease)] [-webkit-backdrop-filter:none] [&::after]:[content:''] [&::after]:absolute [&::after]:[left:50%] [&::after]:[bottom:100%] [&::after]:[width:7px] [&::after]:[height:7px] [&::after]:[border-left:1px_solid_var(--border)] [&::after]:[border-top:1px_solid_var(--border)] [&::after]:[background:var(--popover)] [&::after]:[transform:translate(-50%,_4px)_rotate(45deg)] [.age-calculator:hover_&]:[opacity:1] [.age-calculator:hover_&]:[transform:translate(-50%,_0)_scale(1)] [.age-calculator:focus-visible_&]:[opacity:1] [.age-calculator:focus-visible_&]:[transform:translate(-50%,_0)_scale(1)]"
         id={tooltipId}
         role="tooltip"
       >
-        {age}
+        <SlidingNumber
+          number={Number(age)}
+          decimalPlaces={10}
+          initiallyStable
+          style={{ letterSpacing: 0 }}
+        />
       </span>
     </span>
   );

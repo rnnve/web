@@ -18,73 +18,77 @@
   animation: none;
 }
 
-::view-transition-old(.mode-to-desktop) {
-  animation: mode-slide-out-left 560ms cubic-bezier(0.4, 0, 0.2, 1) both;
+::view-transition-old(.mode-to-desktop),
+::view-transition-new(.mode-to-desktop),
+::view-transition-old(.mode-to-site),
+::view-transition-new(.mode-to-site) {
   mix-blend-mode: normal;
+}
+
+/* The site sinks out of focus. The desktop comes forward. */
+::view-transition-old(.mode-to-site) {
+  animation: mode-recede 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 ::view-transition-new(.mode-to-desktop) {
-  animation: mode-slide-in-right 560ms cubic-bezier(0.4, 0, 0.2, 1) both;
-  mix-blend-mode: normal;
+  animation: mode-approach 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-::view-transition-old(.mode-to-site) {
-  animation: mode-slide-out-right 560ms cubic-bezier(0.4, 0, 0.2, 1) both;
-  mix-blend-mode: normal;
+/* The desktop lifts away. The site comes back into focus. */
+::view-transition-old(.mode-to-desktop) {
+  animation: mode-depart 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 ::view-transition-new(.mode-to-site) {
-  animation: mode-slide-in-left 560ms cubic-bezier(0.4, 0, 0.2, 1) both;
-  mix-blend-mode: normal;
+  animation: mode-return 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Zoom out, move both workspaces together, then settle the new screen. */
-@keyframes mode-slide-out-left {
+@keyframes mode-recede {
   0% {
-    transform: translateX(0) scale(1);
-  }
-  20% {
-    transform: translateX(0) scale(0.94);
-  }
-  80%,
-  100% {
-    transform: translateX(-100vw) scale(0.94);
-  }
-}
-@keyframes mode-slide-in-right {
-  0%,
-  20% {
-    transform: translateX(100vw) scale(0.94);
-  }
-  80% {
-    transform: translateX(0) scale(0.94);
+    transform: scale(1);
+    filter: blur(0);
+    opacity: 1;
   }
   100% {
-    transform: translateX(0) scale(1);
+    transform: scale(0.9);
+    filter: blur(10px);
+    opacity: 0;
   }
 }
-@keyframes mode-slide-out-right {
+@keyframes mode-approach {
   0% {
-    transform: translateX(0) scale(1);
+    transform: scale(1.06);
+    filter: blur(12px);
+    opacity: 0;
   }
-  20% {
-    transform: translateX(0) scale(0.94);
-  }
-  80%,
   100% {
-    transform: translateX(100vw) scale(0.94);
+    transform: scale(1);
+    filter: blur(0);
+    opacity: 1;
   }
 }
-@keyframes mode-slide-in-left {
-  0%,
-  20% {
-    transform: translateX(-100vw) scale(0.94);
-  }
-  80% {
-    transform: translateX(0) scale(0.94);
+@keyframes mode-depart {
+  0% {
+    transform: scale(1);
+    filter: blur(0);
+    opacity: 1;
   }
   100% {
-    transform: translateX(0) scale(1);
+    transform: scale(1.08);
+    filter: blur(12px);
+    opacity: 0;
+  }
+}
+@keyframes mode-return {
+  0% {
+    transform: scale(0.92);
+    filter: blur(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    filter: blur(0);
+    opacity: 1;
   }
 }
 

@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import PageTransition from "../../page-transition";
-import SiteBackground from "./site-background";
+import SiteWakeBackground from "./site-wake-background";
 import PortfolioNavbar from "./portfolio-navbar";
 import SiteSettingsProvider from "../settings/site-settings-provider";
 import ExternalLinkConfirmation from "../feedback/external-link-confirmation";
@@ -15,7 +15,7 @@ export default function PortfolioShell({ children }: { children: ReactNode }) {
       <ExternalLinkConfirmation />
       <div className={styles.content}>
         <PageTransition
-          effects={<SiteBackground />}
+          effects={<SiteWakeBackground />}
           persistent={<PortfolioNavbar />}
         >
           {children}

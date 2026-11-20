@@ -51,7 +51,7 @@ export default function Home({
                           birthDate={BIRTH_DATE}
                           initialNow={initialNow}
                         />{" "}
-                        year old Semi-Full Stack Developer
+                        years old Semi-Full Stack Developer
                       </strong>
                       . I mainly build{" "}
                       <strong>Discord bots and websites</strong>, with a little

@@ -45,9 +45,9 @@ const links = [
     icon: IconBrandLastfm,
   },
   // shortcut: these destinations are unconfigured; enable when the owner supplies them.
-  { name: "Instagram", href: null, icon: InstagramIcon },
-  { name: "NameMC", href: null, icon: IconBrandMinecraft },
-  { name: "Mail", href: null, icon: IconMail },
+  { name: "Instagram", href: "https://instagram.com/xo.hanami_", icon: InstagramIcon },
+  { name: "NameMC", href: "https://namemc.com/profile/Assendancy", icon: IconBrandMinecraft },
+  { name: "Mail", href: "mailto:contact@rynni.cc", icon: IconMail },
 ];
 
 export default function SocialLinks() {
@@ -73,7 +73,7 @@ export default function SocialLinks() {
                   rel="noreferrer"
                   aria-label={`${name} ${t("(opens in a new tab)", "(เปิดในแท็บใหม่)")}`}
                 >
-                  <Icon width={18} height={18} aria-hidden="true" />
+                  <Icon width={16} height={16} aria-hidden="true" />
                 </a>
               </Button>
             </TooltipTrigger>
@@ -97,7 +97,7 @@ export default function SocialLinks() {
             aria-label={`${name} ${t("(link not configured)", "(ยังไม่ได้ตั้งค่าลิงก์)")}`}
             title={name}
           >
-            <Icon width={18} height={18} aria-hidden="true" />
+            <Icon width={16} height={16} aria-hidden="true" />
           </Button>
         ),
       )}

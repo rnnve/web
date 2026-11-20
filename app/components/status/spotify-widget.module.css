@@ -120,13 +120,8 @@
   animation: lyric-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .preview p[aria-current="true"] {
-  color: #000;
-  font-weight: 600;
-}
-
-:global([data-theme="dark"]) .preview p[aria-current="true"],
-:global(.dark) .preview p[aria-current="true"] {
   color: #fff;
+  font-weight: 600;
 }
 @keyframes lyric-enter {
   from {

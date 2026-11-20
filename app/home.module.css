@@ -2,7 +2,7 @@
   position: relative;
   width: min(600px, 100%);
   margin-inline: 0;
-  padding: 8px 24px 64px;
+  padding: 8px 24px 88px;
 }
 
 .content {
@@ -167,7 +167,7 @@
     z-index: 70;
     top: calc(12px + env(safe-area-inset-top, 0px));
     left: max(12px, env(safe-area-inset-left, 0px));
-    height: 36px;
+    height: 32px;
     min-width: 0;
     max-width: calc(100vw - 240px);
   }

@@ -26,9 +26,11 @@ test("the age is calculated in the first render", () => {
   const integer = document.querySelector(
     ".age-calculator__integer",
   )?.textContent;
-  const precise = document.querySelector("[role='tooltip']")?.textContent;
+  const precise = document.querySelector(
+    "[data-slot='sliding-number'] .sr-only",
+  )?.textContent;
   assert.match(integer ?? "", /^[1-9]\d*$/);
-  assert.match(precise ?? "", /^[1-9]\d*\.\d{8}$/);
+  assert.match(precise ?? "", /^[1-9]\d*\.\d{10}$/);
   assert.equal(precise?.split(".")[0], integer);
 });
 
@@ -46,8 +48,9 @@ test("the first age render uses the server timestamp rather than the client cloc
     "20",
   );
   assert.equal(
-    document.querySelector("[role='tooltip']")?.textContent,
-    "20.00000000",
+    document.querySelector("[data-slot='sliding-number'] .sr-only")
+      ?.textContent,
+    "20.0000000000",
   );
 });
 
@@ -175,8 +178,12 @@ test("lyrics preload and keep highlights for two seconds before clearing long ga
       ),
     );
   const before = widget(0);
-  assert.match(before.body.textContent!, /First line/);
-  assert.match(before.body.textContent!, /Second line/);
+  assert.deepEqual(
+    Array.from(before.querySelectorAll("p[title]")).map(
+      (line) => line.textContent,
+    ),
+    ["First line", "Second line", "Third line"],
+  );
   assert.ok(!before.querySelector('p[aria-current="true"]'));
   assert.doesNotMatch(before.body.textContent!, /Listening/);
   const track = before.getElementById("spotify-widget-title")!.parentElement!
