@@ -185,6 +185,43 @@
   white-space: nowrap;
 }
 
+.branched-menu__nest {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0 6px;
+}
+
+.branched-menu__nest::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 10px;
+  left: 14px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--bm-line);
+  opacity: 0.7;
+}
+
+.branched-menu__item--nest {
+  padding-left: calc(var(--bm-indent) + 4px);
+}
+
+.branched-menu__section--nest {
+  padding-left: calc(var(--bm-indent) - 8px);
+}
+
+.branched-menu__head--nest {
+  padding: 6px 0;
+  font-size: var(--bm-font);
+  font-weight: 500;
+}
+
+.branched-menu__section--nest .branched-menu__tree {
+  padding-left: 4px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .branched-menu__marker {
     transition: opacity 150ms ease;
