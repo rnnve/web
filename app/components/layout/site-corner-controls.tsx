@@ -38,7 +38,7 @@ export default function SiteCornerControls() {
 
   return (
     <div
-      className="pointer-events-none fixed right-4 bottom-4 z-50 flex flex-col gap-2 sm:right-5 sm:bottom-5"
+      className="pointer-events-none fixed right-4 bottom-4 z-[80] flex flex-col gap-2 sm:right-5 sm:bottom-5"
       style={{
         paddingBottom: "max(0px, env(safe-area-inset-bottom))",
         paddingRight: "max(0px, env(safe-area-inset-right))",
