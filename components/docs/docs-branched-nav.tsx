@@ -196,15 +196,14 @@ export default function DocsBranchedNav({ className = "" }: { className?: string
   const { root } = useTreeContext();
   const items = itemsFromTree(root);
   const active = resolveActive(items, pathname);
+  // Exact leaf match only — prefix matching would treat `/docs` as a parent of
+  // every docs URL and keep the wrong BranchedMenu section open.
   const defaultOpen = Math.max(
     0,
     items.findIndex(
       (item) =>
         "children" in item &&
-        item.children?.some(
-          (child) =>
-            child.value === active || pathname.startsWith(`${child.value}/`),
-        ),
+        item.children?.some((child) => child.value === active),
     ),
   );
 
