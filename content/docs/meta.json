@@ -1,4 +1,11 @@
 {
   "title": "Rynnie Docs",
-  "pages": ["index", "getting-started", "desktop", "customization"]
+  "pages": [
+    "index",
+    "introduction",
+    "getting-started",
+    "desktop",
+    "customization",
+    "development"
+  ]
 }
