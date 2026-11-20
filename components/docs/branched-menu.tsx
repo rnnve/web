@@ -90,7 +90,6 @@ export default function BranchedMenu({
   foldDuration = 300,
   className = "",
 }: BranchedMenuProps) {
-  const [open, setOpen] = useState(() => toSet(defaultOpen));
   const [activeState, setActive] = useState(() => {
     if (defaultActive) return defaultActive;
     const first = items.find(
@@ -99,6 +98,14 @@ export default function BranchedMenu({
     return isSection(first!) ? (first.children[0]?.value ?? "") : "";
   });
   const active = activeProp ?? activeState;
+  const [open, setOpen] = useState(() => {
+    const initial = toSet(defaultOpen);
+    const sectionIdx = items.findIndex(
+      (it) => isSection(it) && it.children.some((kid) => kid.value === active),
+    );
+    if (sectionIdx >= 0) initial.add(sectionIdx);
+    return initial;
+  });
   const navRef = useRef<HTMLElement>(null);
   const heads = useRef<(HTMLButtonElement | null)[]>([]);
   const markerRef = useRef<HTMLSpanElement>(null);
