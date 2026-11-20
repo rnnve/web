@@ -11,9 +11,11 @@ function HiddenTreeNode() {
 
 export default function DocsShell({
   tree,
+  githubInfo,
   children,
 }: {
   tree: PageTree.Root;
+  githubInfo?: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -29,9 +31,21 @@ export default function DocsShell({
           external: true,
           on: "nav",
         },
+        ...(githubInfo
+          ? [
+              {
+                type: "custom" as const,
+                children: githubInfo,
+                on: "menu" as const,
+              },
+            ]
+          : []),
       ]}
       sidebar={{
         banner: <DocsBranchedNav />,
+        footer: githubInfo ? (
+          <div className="mt-2 empty:hidden">{githubInfo}</div>
+        ) : undefined,
         components: {
           Item: HiddenTreeNode,
           Folder: HiddenTreeNode,

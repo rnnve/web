@@ -5,7 +5,9 @@ import { useTreeContext } from "fumadocs-ui/contexts/tree";
 import type * as PageTree from "fumadocs-core/page-tree";
 import {
   BookOpen01Icon,
+  CodeIcon,
   ComputerIcon,
+  InformationCircleIcon,
   PaintBoardIcon,
   Rocket01Icon,
 } from "@hugeicons/core-free-icons";
@@ -17,9 +19,11 @@ import BranchedMenu, {
 
 const PAGE_ICONS: Record<string, IconSvgElement> = {
   "/docs": BookOpen01Icon,
+  "/docs/introduction": InformationCircleIcon,
   "/docs/getting-started": Rocket01Icon,
   "/docs/desktop": ComputerIcon,
   "/docs/customization": PaintBoardIcon,
+  "/docs/development": CodeIcon,
 };
 
 function labelOf(node: PageTree.Node): string {

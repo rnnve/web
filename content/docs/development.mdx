@@ -1,0 +1,47 @@
+---
+title: Development
+description: Repository details, local scripts, and how to contribute changes.
+---
+
+## Repository
+
+This project is maintained on GitHub. Stars and forks below are loaded from the GitHub API.
+
+<GithubInfo owner="rnnve" repo="web" />
+
+Clone from `https://github.com/rnnve/web.git`. Issues and pull requests go to that repository.
+
+## Tooling
+
+| Tool | Notes |
+| ---- | ----- |
+| Bun `1.4.4` | Package manager and test runner (`package.json` `packageManager`) |
+| Next.js `16` | App Router; read `AGENTS.md` and `node_modules/next/dist/docs/` before changing framework code |
+| TypeScript | Prefer `bunx tsc --noEmit` for type checks |
+| ESLint / Prettier | `bun run lint` and `bun run format` |
+
+## Common scripts
+
+```bash
+bun install --frozen-lockfile
+bun run dev
+bun run lint
+bun test
+bun run build
+```
+
+Profile images under `public/pfp/` regenerate a manifest on `dev` and `build` via `scripts/generate-pfp-manifest.mjs`.
+
+## Documentation source
+
+MDX pages live in `content/docs`. Sidebar order is controlled by `content/docs/meta.json`. Search is served from `/api/search`.
+
+When you add a page:
+
+1. Create the `.mdx` file with `title` and `description` frontmatter.
+2. List it in `meta.json`.
+3. Link it from related pages when useful.
+
+## Optional GitHub token
+
+Set `GITHUB_TOKEN` in `.env.local` for higher GitHub API rate limits (status widgets, contribution data, and this repository card). A read-only token is enough. Restart the server after changing environment variables.
