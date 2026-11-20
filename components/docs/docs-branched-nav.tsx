@@ -19,7 +19,6 @@ import BranchedMenu, {
   type BranchedMenuBranch,
   type BranchedMenuItem,
   type BranchedMenuLeaf,
-  type BranchedMenuNode,
 } from "./branched-menu";
 
 const PAGE_ICONS: Record<string, IconSvgElement> = {
@@ -74,25 +73,26 @@ function folderHasSeparators(folder: PageTree.Folder): boolean {
 }
 
 /**
- * One top-level section (e.g. Components) with:
- *   Intro (catalog) + nested groups (UI, Layout, …) each holding pages.
+ * One top-level section (e.g. Components) with flat leaves:
+ *   Intro + UI + Layout + … (group overview pages, not every component).
  */
-function itemsFromSeparatedFolder(folder: PageTree.Folder): BranchedMenuItem[] {
-  const children: BranchedMenuNode[] = [];
+function itemsFromSeparatedFolder(
+  folder: PageTree.Folder,
+  aliases: Record<string, string>,
+): BranchedMenuItem[] {
+  const children: BranchedMenuLeaf[] = [];
   let groupLabel: string | null = null;
-  let groupPages: BranchedMenuLeaf[] = [];
+  let groupLeaf: BranchedMenuLeaf | null = null;
+  const pendingMembers: string[] = [];
 
   const flushGroup = () => {
-    if (groupPages.length === 0) {
-      groupLabel = null;
-      return;
+    if (groupLeaf) {
+      for (const url of pendingMembers) aliases[url] = groupLeaf.value;
+      children.push(groupLeaf);
     }
-    children.push({
-      label: groupLabel ?? "Group",
-      children: groupPages,
-    });
     groupLabel = null;
-    groupPages = [];
+    groupLeaf = null;
+    pendingMembers.length = 0;
   };
 
   let intro: BranchedMenuLeaf | null = null;
@@ -120,15 +120,34 @@ function itemsFromSeparatedFolder(folder: PageTree.Folder): BranchedMenuItem[] {
 
     if (node.type === "page") {
       if (intro && node.url === intro.value) continue;
-      if (!groupLabel) groupLabel = labelOf(folder);
-      groupPages.push(leafFromPage(node));
+
+      // First page after a separator is the group overview (ui, layout, …).
+      if (groupLabel && !groupLeaf) {
+        groupLeaf = {
+          value: node.url,
+          label: groupLabel,
+          icon: PAGE_ICONS[node.url],
+        };
+        continue;
+      }
+
+      if (groupLeaf) {
+        pendingMembers.push(node.url);
+        continue;
+      }
+
+      children.push(leafFromPage(node));
       continue;
     }
 
     if (node.type === "folder") {
       flushGroup();
-      const nested = itemsFromFolder(node);
-      children.push(...nested);
+      for (const item of itemsFromFolder(node, aliases)) {
+        if (!("children" in item) || !item.children) continue;
+        for (const child of item.children) {
+          if ("value" in child) children.push(child);
+        }
+      }
     }
   }
 
@@ -141,9 +160,12 @@ function itemsFromSeparatedFolder(folder: PageTree.Folder): BranchedMenuItem[] {
   return [section];
 }
 
-function itemsFromFolder(folder: PageTree.Folder): BranchedMenuItem[] {
+function itemsFromFolder(
+  folder: PageTree.Folder,
+  aliases: Record<string, string>,
+): BranchedMenuItem[] {
   if (folderHasSeparators(folder)) {
-    return itemsFromSeparatedFolder(folder);
+    return itemsFromSeparatedFolder(folder, aliases);
   }
 
   const children = pagesFromFolder(folder);
@@ -156,10 +178,12 @@ function itemsFromFolder(folder: PageTree.Folder): BranchedMenuItem[] {
   ];
 }
 
-function itemsFromTree(
-  tree: PageTree.Root | PageTree.Folder,
-): BranchedMenuItem[] {
+function itemsFromTree(tree: PageTree.Root | PageTree.Folder): {
+  items: BranchedMenuItem[];
+  aliases: Record<string, string>;
+} {
   const items: BranchedMenuItem[] = [];
+  const aliases: Record<string, string> = {};
   let sectionLabel: string | null = null;
   let sectionPages: BranchedMenuLeaf[] = [];
 
@@ -185,7 +209,7 @@ function itemsFromTree(
 
     if (node.type === "folder") {
       flushSection();
-      items.push(...itemsFromFolder(node));
+      items.push(...itemsFromFolder(node, aliases));
       continue;
     }
 
@@ -196,10 +220,15 @@ function itemsFromTree(
   }
 
   flushSection();
-  return items;
+  return { items, aliases };
 }
 
-function resolveActive(items: BranchedMenuItem[], pathname: string): string {
+function resolveActive(
+  items: BranchedMenuItem[],
+  pathname: string,
+  aliases: Record<string, string>,
+): string {
+  if (aliases[pathname]) return aliases[pathname];
   const leaves = collectLeaves(items);
   const exact = leaves.find((child) => child.value === pathname);
   if (exact) return exact.value;
@@ -214,8 +243,8 @@ export default function DocsBranchedNav({ className = "" }: { className?: string
   const router = useRouter();
   const pathname = usePathname();
   const { root } = useTreeContext();
-  const items = itemsFromTree(root);
-  const active = resolveActive(items, pathname);
+  const { items, aliases } = itemsFromTree(root);
+  const active = resolveActive(items, pathname, aliases);
   const defaultOpen = pathsToActive(items, active);
 
   if (items.length === 0) return null;
