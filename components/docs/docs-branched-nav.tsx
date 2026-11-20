@@ -20,30 +20,45 @@ import BranchedMenu, {
 const PAGE_ICONS: Record<string, IconSvgElement> = {
   "/docs": BookOpen01Icon,
   "/docs/introduction": InformationCircleIcon,
+  "/docs/introduction/development": CodeIcon,
   "/docs/getting-started": Rocket01Icon,
   "/docs/desktop": ComputerIcon,
   "/docs/customization": PaintBoardIcon,
-  "/docs/development": CodeIcon,
 };
 
 function labelOf(node: PageTree.Node): string {
   return typeof node.name === "string" ? node.name : "Page";
 }
 
+function leafFromPage(page: PageTree.Item): BranchedMenuLeaf {
+  return {
+    value: page.url,
+    label: labelOf(page),
+    icon: PAGE_ICONS[page.url],
+  };
+}
+
 function pagesFromNodes(nodes: PageTree.Node[]): BranchedMenuLeaf[] {
   const pages: BranchedMenuLeaf[] = [];
   for (const node of nodes) {
     if (node.type === "page") {
-      pages.push({
-        value: node.url,
-        label: labelOf(node),
-        icon: PAGE_ICONS[node.url],
-      });
+      pages.push(leafFromPage(node));
       continue;
     }
     if (node.type === "folder") {
-      pages.push(...pagesFromNodes(node.children));
+      pages.push(...pagesFromFolder(node));
     }
+  }
+  return pages;
+}
+
+function pagesFromFolder(folder: PageTree.Folder): BranchedMenuLeaf[] {
+  const pages = pagesFromNodes(folder.children);
+  if (
+    folder.index &&
+    !pages.some((page) => page.value === folder.index!.url)
+  ) {
+    pages.unshift(leafFromPage(folder.index));
   }
   return pages;
 }
@@ -51,34 +66,50 @@ function pagesFromNodes(nodes: PageTree.Node[]): BranchedMenuLeaf[] {
 function itemsFromTree(
   tree: PageTree.Root | PageTree.Folder,
 ): BranchedMenuItem[] {
-  const folders = tree.children.filter(
-    (node): node is PageTree.Folder => node.type === "folder",
-  );
-  const loosePages = tree.children.filter(
-    (node): node is PageTree.Item => node.type === "page",
-  );
+  const items: BranchedMenuItem[] = [];
+  let sectionLabel: string | null = null;
+  let sectionPages: BranchedMenuLeaf[] = [];
 
-  const items: BranchedMenuItem[] = folders.map((folder) => ({
-    label: labelOf(folder),
-    children: pagesFromNodes(folder.children),
-  }));
-
-  if (loosePages.length > 0) {
-    items.unshift({
-      label: typeof tree.name === "string" ? tree.name : "Docs",
-      children: loosePages.map((page) => ({
-        value: page.url,
-        label: labelOf(page),
-        icon: PAGE_ICONS[page.url],
-      })),
+  const flushSection = () => {
+    if (sectionPages.length === 0) {
+      sectionLabel = null;
+      return;
+    }
+    items.push({
+      label: sectionLabel ?? "Pages",
+      children: sectionPages,
     });
+    sectionLabel = null;
+    sectionPages = [];
+  };
+
+  for (const node of tree.children) {
+    if (node.type === "separator") {
+      flushSection();
+      sectionLabel = labelOf(node) || "Pages";
+      continue;
+    }
+
+    if (node.type === "folder") {
+      flushSection();
+      const children = pagesFromFolder(node);
+      if (children.length > 0) {
+        items.push({
+          label: labelOf(node),
+          children,
+        });
+      }
+      continue;
+    }
+
+    if (node.type === "page") {
+      if (!sectionLabel) sectionLabel = "Pages";
+      sectionPages.push(leafFromPage(node));
+    }
   }
 
-  return items.filter(
-    (item) =>
-      !("children" in item) ||
-      (Array.isArray(item.children) && item.children.length > 0),
-  );
+  flushSection();
+  return items;
 }
 
 function resolveActive(items: BranchedMenuItem[], pathname: string): string {
@@ -86,9 +117,9 @@ function resolveActive(items: BranchedMenuItem[], pathname: string): string {
     if (!("children" in item) || !item.children) continue;
     const exact = item.children.find((child) => child.value === pathname);
     if (exact) return exact.value;
-    const nested = item.children.find((child) =>
-      pathname.startsWith(`${child.value}/`),
-    );
+    const nested = [...item.children]
+      .sort((a, b) => b.value.length - a.value.length)
+      .find((child) => pathname.startsWith(`${child.value}/`));
     if (nested) return nested.value;
   }
   return pathname;
