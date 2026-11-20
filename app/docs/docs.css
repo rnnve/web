@@ -9,9 +9,3 @@
   background: var(--color-fd-background);
   color: var(--color-fd-foreground);
 }
-
-.docs-root #nd-sidebar .branched-menu {
-  width: 100%;
-  max-width: 100%;
-  margin-inline: 0.25rem;
-}
