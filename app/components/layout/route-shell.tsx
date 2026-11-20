@@ -15,6 +15,8 @@ export default function RouteShell({ children }: { children: ReactNode }) {
     desktop ||
     pathname === "/docs" ||
     pathname.startsWith("/docs/") ||
+    pathname === "/_nf" ||
+    pathname === "/nf" ||
     pathname === "/newtab" ||
     pathname === "/nt" ||
     pathname === "/redirect" ||
