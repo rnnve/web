@@ -1,26 +1,43 @@
 "use client";
 
 import {
-  IconBrandDiscordFilled,
-  IconBrandGithubFilled,
   IconBrandLastfm,
-  IconBrandInstagram,
   IconBrandMinecraft,
   IconMail,
 } from "@tabler/icons-react";
+import type { SVGProps } from "react";
+import { DiscordLogo } from "@/components/logos/discord";
+import { GithubLogo } from "@/components/logos/github";
+import { InstagramLogo } from "@/components/logos/instagram";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useSiteSettings } from "../settings/site-settings-provider";
 import styles from "./portfolio-navbar.module.css";
+
+const DiscordIcon = (props: Omit<SVGProps<SVGSVGElement>, "type" | "mode">) => (
+  <DiscordLogo variant="mono" title="" {...props} />
+);
+const GithubIcon = (props: Omit<SVGProps<SVGSVGElement>, "type" | "mode">) => (
+  <GithubLogo variant="mono" title="" {...props} />
+);
+const InstagramIcon = (
+  props: Omit<SVGProps<SVGSVGElement>, "type" | "mode">,
+) => <InstagramLogo variant="mono" title="" {...props} />;
 
 const links = [
   {
     name: "Discord",
     href: "https://discord.com/users/969088519161139270",
-    icon: IconBrandDiscordFilled,
+    icon: DiscordIcon,
   },
   {
     name: "GitHub",
     href: "https://github.com/rnnve",
-    icon: IconBrandGithubFilled,
+    icon: GithubIcon,
   },
   {
     name: "Last.fm",
@@ -28,7 +45,7 @@ const links = [
     icon: IconBrandLastfm,
   },
   // shortcut: these destinations are unconfigured; enable when the owner supplies them.
-  { name: "Instagram", href: null, icon: IconBrandInstagram },
+  { name: "Instagram", href: null, icon: InstagramIcon },
   { name: "NameMC", href: null, icon: IconBrandMinecraft },
   { name: "Mail", href: null, icon: IconMail },
 ];
@@ -42,30 +59,46 @@ export default function SocialLinks() {
     >
       {links.map(({ name, href, icon: Icon }) =>
         href ? (
-          <a
-            key={name}
-            href={href}
-            className={styles.item}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={`${name} ${t("(opens in a new tab)", "(เปิดในแท็บใหม่)")}`}
-          >
-            <Icon size={18} aria-hidden="true" />
-            <span className={styles.tooltip} aria-hidden="true">
+          <Tooltip key={name}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`${styles.item} ${styles.socialItem}`}
+                asChild
+              >
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${name} ${t("(opens in a new tab)", "(เปิดในแท็บใหม่)")}`}
+                >
+                  <Icon width={18} height={18} aria-hidden="true" />
+                </a>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="bottom"
+              sideOffset={9}
+              collisionPadding={8}
+              className={styles.tooltipContent}
+            >
               {name}
-            </span>
-          </a>
+            </TooltipContent>
+          </Tooltip>
         ) : (
-          <button
+          <Button
             key={name}
             type="button"
-            className={styles.item}
+            variant="ghost"
+            size="icon"
+            className={`${styles.item} ${styles.socialItem}`}
             disabled
             aria-label={`${name} ${t("(link not configured)", "(ยังไม่ได้ตั้งค่าลิงก์)")}`}
             title={name}
           >
-            <Icon size={18} aria-hidden="true" />
-          </button>
+            <Icon width={18} height={18} aria-hidden="true" />
+          </Button>
         ),
       )}
     </nav>

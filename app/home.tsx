@@ -1,18 +1,22 @@
 "use client";
 
+import LiveStatus from "./components/status/live-status";
 import AgeCalculator from "./components/home/age-calculator";
-import Image from "next/image";
-import Link from "next/link";
+import Link from "./components/layout/intent-link";
 import styles from "./home.module.css";
-import { StatusIcon } from "./components/status/status-icon";
-import SpotifyWidget from "./components/status/spotify-widget";
-import usePortfolioStatus from "./hooks/use-portfolio-status";
 import { BIRTH_DATE } from "./lib/birthday";
+import type { DiscordProfile } from "./lib/status-types";
 import { useSiteSettings } from "./components/settings/site-settings-provider";
-export default function Home() {
-  const { language, t } = useSiteSettings();
-  const { discord, payload, spotify, spotifyLoading, spotifySyncedAt } =
-    usePortfolioStatus();
+export default function Home({
+  initialNow,
+  initialDiscord = null,
+  discordUpdatedAt = 0,
+}: {
+  initialNow?: number;
+  initialDiscord?: DiscordProfile | null;
+  discordUpdatedAt?: number;
+}) {
+  const { language } = useSiteSettings();
   return (
     <main className="home-page" aria-label="Home">
       <section id="top" className={styles.hero}>
@@ -28,8 +32,11 @@ export default function Home() {
                     <>
                       เราอายุ{" "}
                       <strong>
-                        <AgeCalculator birthDate={BIRTH_DATE} /> ปี เป็นนักพัฒนา
-                        Semi-Full Stack
+                        <AgeCalculator
+                          birthDate={BIRTH_DATE}
+                          initialNow={initialNow}
+                        />{" "}
+                        ปี เป็นนักพัฒนา Semi-Full Stack
                       </strong>{" "}
                       ทำงานเกี่ยวกับ <strong>บอท Discord และเว็บไซต์</strong>{" "}
                       เป็นหลัก และออกแบบได้นิดหน่อย
@@ -40,8 +47,11 @@ export default function Home() {
                     <>
                       I&apos;m a{" "}
                       <strong>
-                        <AgeCalculator birthDate={BIRTH_DATE} /> year old
-                        Semi-Full Stack Developer
+                        <AgeCalculator
+                          birthDate={BIRTH_DATE}
+                          initialNow={initialNow}
+                        />{" "}
+                        year old Semi-Full Stack Developer
                       </strong>
                       . I mainly build{" "}
                       <strong>Discord bots and websites</strong>, with a little
@@ -51,49 +61,10 @@ export default function Home() {
                   )}
                 </p>
               </article>
-              <div className={styles.status}>
-                <div
-                  className={styles.profile}
-                  role="group"
-                  aria-label={t("Discord profile", "โปรไฟล์ Discord")}
-                >
-                  <span className={styles.avatar}>
-                    {discord?.avatar ? (
-                      <Image src={discord.avatar} alt="" fill sizes="32px" />
-                    ) : (
-                      <StatusIcon name="discord" size={18} />
-                    )}
-                    <span
-                      className={styles.presence}
-                      data-status={discord?.status ?? "offline"}
-                      role="img"
-                      aria-label={`Discord: ${discord?.status ?? "offline"}`}
-                    />
-                  </span>
-                  <span className={styles.profileText}>
-                    <strong>
-                      {discord?.displayName ||
-                        discord?.globalName ||
-                        discord?.username ||
-                        "Rynnie"}
-                    </strong>
-                    <span>@{discord?.username || "melrynni"}</span>
-                  </span>
-                </div>
-                {!spotifyLoading && spotify.isPlaying && (
-                  <div
-                    className={styles.nowPlaying}
-                    aria-label="Live Spotify status"
-                  >
-                    <SpotifyWidget
-                      compact
-                      spotify={spotify}
-                      error={payload.errors?.spotify}
-                      syncedAt={spotifySyncedAt}
-                    />
-                  </div>
-                )}
-              </div>
+              <LiveStatus
+                initialDiscord={initialDiscord}
+                discordUpdatedAt={discordUpdatedAt}
+              />
             </div>
           </div>
         </div>

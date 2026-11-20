@@ -1,0 +1,12 @@
+{
+  "title": "Rynnie Docs",
+  "pages": [
+    "introduction",
+    "---Pages---",
+    "index",
+    "getting-started",
+    "desktop",
+    "customization",
+    "components"
+  ]
+}

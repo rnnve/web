@@ -1,0 +1,17 @@
+{
+  "title": "Components",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "ui",
+    "layout",
+    "status",
+    "effects",
+    "home",
+    "settings",
+    "feedback",
+    "open-graph",
+    "docs",
+    "brand"
+  ]
+}

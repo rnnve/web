@@ -1,25 +1,43 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import ExternalLinkIcon from "../ui/external-link-icon";
+import {
+  IconActivity,
+  IconArrowUpRight,
+  IconFolder,
+  IconStar,
+} from "@tabler/icons-react";
+import { GithubLogo } from "@/components/logos/github";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useSiteSettings } from "../settings/site-settings-provider";
-import { normalizeRepos, activityCells } from "@/app/lib/github";
+import { activityCells, normalizeRepos } from "@/app/lib/github";
 import styles from "../../developing/developing.module.css";
 
 type GitHubShowcaseProps = {
   repos: unknown;
-  events: unknown;
+  contributions: unknown;
   loading?: boolean;
 };
 
 function GitHubShowcase({
   repos: rawRepos,
-  events,
+  contributions,
   loading = false,
 }: GitHubShowcaseProps) {
   const { language, t } = useSiteSettings();
   const repos = useMemo(() => normalizeRepos(rawRepos), [rawRepos]);
-  const cells = useMemo(() => activityCells(events), [events]);
+  const cells = useMemo(() => activityCells(contributions), [contributions]);
+  const year = Number(cells.find((cell) => cell.inYear)?.key.slice(0, 4));
+  const unavailable = !loading && !Array.isArray(contributions);
   const total = cells.reduce((sum, cell) => sum + cell.count, 0);
   const dateFormatter = new Intl.DateTimeFormat(
     language === "th" ? "th-TH" : "en",
@@ -27,114 +45,165 @@ function GitHubShowcase({
   );
 
   return (
-    <section aria-labelledby="github-showcase-title" className={styles.work}>
-      <div className={styles.sectionHeading}>
-        <div>
-          <p className={styles.eyebrow}>GitHub / rnnve</p>
-          <h2 id="github-showcase-title">
-            {t("Building in public", "ผลงานที่แบ่งปัน")}
-          </h2>
-        </div>
-        <a href="https://github.com/rnnve" target="_blank" rel="noreferrer">
-          {t("View GitHub", "ดู GitHub")} <ExternalLinkIcon size={16} />
-        </a>
-      </div>
-      <div className={styles.activity} aria-busy={loading}>
-        <div className={styles.activityHeading}>
-          <span>{t("Recent activity", "กิจกรรมล่าสุด")}</span>
-          <span>
+    <section aria-labelledby="github-showcase-title" className="grid gap-8">
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle
+            id="github-showcase-title"
+            className="flex items-center gap-1.5 text-sm"
+          >
+            <IconActivity size={14} stroke={1.75} aria-hidden="true" />
+            {t("Contributions", "การมีส่วนร่วม")}
+          </CardTitle>
+          <CardDescription>
             {loading
               ? t("Loading…", "กำลังโหลด…")
-              : t(
-                  `${total} public contributions`,
-                  `มีส่วนร่วมสาธารณะ ${total} ครั้ง`,
-                )}
-          </span>
-        </div>
-        <div
-          className={styles.graph}
-          aria-label={t(
-            "42 weeks of public activity",
-            "กิจกรรมสาธารณะใน 42 สัปดาห์",
-          )}
-        >
-          {cells.map((cell) => (
-            <span
-              key={cell.key}
-              data-level={cell.level}
-              tabIndex={0}
-              aria-label={`${cell.count} contributions · ${dateFormatter.format(new Date(`${cell.key}T00:00:00Z`))}`}
+              : unavailable
+                ? t(
+                    "Contribution data unavailable",
+                    "ไม่สามารถโหลดข้อมูลการมีส่วนร่วม",
+                  )
+                : t(
+                    `${total.toLocaleString()} contributions in ${year}`,
+                    `มีส่วนร่วม ${total.toLocaleString()} ครั้งในปี ${year}`,
+                  )}
+          </CardDescription>
+          <CardAction>
+            <Button variant="outline" size="sm" asChild>
+              <a
+                href="https://github.com/rnnve"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <GithubLogo
+                  width={14}
+                  height={14}
+                  variant="mono"
+                  title=""
+                  aria-hidden="true"
+                />
+                GitHub
+              </a>
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto pb-2 pt-5">
+            <div
+              className={styles.graph}
+              aria-label={t(
+                `${year} contribution calendar`,
+                `ปฏิทินการมีส่วนร่วมปี ${year}`,
+              )}
+              aria-busy={loading}
             >
-              <span role="tooltip">
-                {cell.count} ·{" "}
-                {dateFormatter.format(new Date(`${cell.key}T00:00:00Z`))}
-              </span>
-            </span>
-          ))}
-        </div>
-        <div className={styles.legend}>
-          <span>{t("Last 42 weeks", "42 สัปดาห์ที่ผ่านมา")}</span>
-          <span>
-            {t("Less", "น้อย")} <i />
-            <i />
-            <i />
-            <i />
-            <i /> {t("More", "มาก")}
-          </span>
-        </div>
-      </div>
-      <div className={styles.projectHeading}>
-        <h3>{t("Selected projects", "โปรเจกต์ที่เลือก")}</h3>
-        <span>
-          {t(
-            "Code, experiments & things I ship",
-            "โค้ด งานทดลอง และผลงานของเรา",
-          )}
-        </span>
-      </div>
-      <div className={styles.projects} aria-busy={loading}>
-        {loading ? (
-          Array.from({ length: 4 }, (_, i) => (
-            <div key={i} className={styles.skeleton} role="status">
-              <span className="sr-only">
-                {t("Loading project", "กำลังโหลดโปรเจกต์")}
-              </span>
+              {cells.map((cell) => (
+                <span
+                  key={cell.key}
+                  data-level={cell.level}
+                  data-outside={!cell.inYear}
+                  data-future={cell.future}
+                  aria-hidden={!cell.inYear || undefined}
+                  tabIndex={
+                    cell.inYear && !cell.future && !unavailable ? 0 : undefined
+                  }
+                  aria-label={`${cell.count} contributions · ${dateFormatter.format(new Date(`${cell.key}T00:00:00Z`))}`}
+                >
+                  <span role="tooltip">
+                    {cell.count} ·{" "}
+                    {dateFormatter.format(new Date(`${cell.key}T00:00:00Z`))}
+                  </span>
+                </span>
+              ))}
             </div>
-          ))
-        ) : repos.length ? (
-          repos.map((repo, i) => (
+          </div>
+          <p className="mt-3 text-[11px] text-muted-foreground">
+            {t(`January – December ${year}`, `มกราคม – ธันวาคม ${year}`)}
+          </p>
+        </CardContent>
+      </Card>
+
+      <div>
+        <h2 className="mb-3 flex items-center gap-1.5 text-sm font-medium">
+          <IconFolder size={14} stroke={1.75} aria-hidden="true" />
+          {t("Selected projects", "โปรเจกต์ที่เลือก")}
+        </h2>
+        <div
+          className="overflow-hidden rounded-xl ring-1 ring-foreground/10"
+          aria-busy={loading}
+        >
+          {loading ? (
+            Array.from({ length: 4 }, (_, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 border-b px-3 py-3 last:border-b-0"
+                role="status"
+              >
+                <span className="size-4 animate-pulse rounded bg-muted" />
+                <span className="h-3 w-40 animate-pulse rounded bg-muted" />
+                <span className="sr-only">
+                  {t("Loading project", "กำลังโหลดโปรเจกต์")}
+                </span>
+              </div>
+            ))
+          ) : repos.length ? (
+            repos.map((repo) => (
+              <a
+                key={repo.url}
+                href={repo.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 border-b px-3 py-3 text-foreground no-underline transition-colors last:border-b-0 hover:bg-muted/50"
+              >
+                <GithubLogo
+                  width={15}
+                  height={15}
+                  variant="mono"
+                  title=""
+                  className="shrink-0 text-muted-foreground"
+                  aria-hidden="true"
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm">{repo.name}</span>
+                  <span className="block truncate text-xs text-muted-foreground">
+                    {repo.description}
+                  </span>
+                </span>
+                {repo.language ? (
+                  <Badge variant="outline" className="hidden sm:inline-flex">
+                    {repo.language}
+                  </Badge>
+                ) : null}
+                <span className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
+                  <IconStar size={13} stroke={1.75} aria-hidden="true" />
+                  {repo.stars}
+                </span>
+                <IconArrowUpRight
+                  size={14}
+                  stroke={1.75}
+                  className="shrink-0 text-muted-foreground"
+                  aria-hidden="true"
+                />
+              </a>
+            ))
+          ) : (
             <a
-              key={repo.url}
-              href={repo.url}
+              className="flex items-center gap-2 px-3 py-4 text-sm text-muted-foreground no-underline hover:text-foreground"
+              href="https://github.com/rnnve?tab=repositories"
               target="_blank"
               rel="noreferrer"
-              className={styles.project}
             >
-              <div className={styles.projectTop}>
-                <span>{String(i + 1).padStart(2, "0")} / Repository</span>
-                <ExternalLinkIcon size={18} />
-              </div>
-              <h3>{repo.name}</h3>
-              <p>{repo.description}</p>
-              <div className={styles.projectMeta}>
-                <span>{repo.language || "Code"}</span>
-                <span>☆ {repo.stars}</span>
-              </div>
+              <IconFolder size={14} stroke={1.75} aria-hidden="true" />
+              {t(
+                "Explore my projects on GitHub",
+                "สำรวจโปรเจกต์ของเราบน GitHub",
+              )}
             </a>
-          ))
-        ) : (
-          <a
-            className={styles.empty}
-            href="https://github.com/rnnve?tab=repositories"
-            target="_blank"
-            rel="noreferrer"
-          >
-            {t("Explore my projects on GitHub", "สำรวจโปรเจกต์ของเราบน GitHub")}{" "}
-            <ExternalLinkIcon size={18} />
-          </a>
-        )}
+          )}
+        </div>
       </div>
     </section>
   );
 }
+
 export default memo(GitHubShowcase);

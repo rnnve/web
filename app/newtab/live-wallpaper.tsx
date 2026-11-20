@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import styles from "./new-tab.styles";
 const WALLPAPER_URL = "https://cdn.rynni.cc/assets/wallpapers/kanade.mp4";
 export default function LiveWallpaper() {
@@ -57,8 +58,9 @@ export default function LiveWallpaper() {
         onPause={() => setPlaying(false)}
       />
       <div className={styles.wallpaperShade} aria-hidden="true" />
-      <button
+      <Button
         type="button"
+        variant="ghost"
         className={styles.wallpaperToggle}
         onClick={() => {
           if (video.current?.paused) {
@@ -72,7 +74,7 @@ export default function LiveWallpaper() {
       >
         <span aria-hidden="true">{playing ? "Ⅱ" : "▷"}</span>
         {playing ? "Pause wallpaper" : "Play wallpaper"}
-      </button>
+      </Button>
     </>
   );
 }

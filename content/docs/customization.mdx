@@ -1,0 +1,32 @@
+---
+title: Customization
+description: Adjust the theme, logos, projects, and documentation.
+---
+
+## Theme and accent
+
+Shared design tokens live in `app/globals.css`. The site accent comes from the currently playing track's artwork and is used for active navigation and WebOS highlights. Missing, unreadable, near-black artwork and stopped playback restore the default white accent.
+
+The portfolio navbar uses shadcn Buttons and Tooltips. Its main navigation has a translucent blurred panel; social icons are presented without a surrounding background panel.
+
+## Brand logos
+
+The LogoForge registry is configured in `components.json`. Local components are stored under `components/logos`.
+
+```bash
+bunx --bun shadcn@latest add @logoforge/github
+```
+
+Navigation and status widgets use monochrome marks. The technology stack uses color marks. Brands not available in LogoForge retain their existing artwork.
+
+## Projects and live data
+
+Featured repositories are selected in `app/config/portfolio.ts`. Server routes under `app/api` fetch listening history, GitHub repositories, contribution data, and lyrics.
+
+Use your own service endpoints and webhook configuration when adapting the site for another profile. Review the README for configuration details.
+
+## Documentation
+
+Add `.mdx` files under `content/docs`. Each page needs `title` and `description` frontmatter. Headings generate the page table of contents. Update `content/docs/meta.json` to control sidebar order.
+
+Fumadocs provides the documentation layout and search endpoint at `/api/search`. Relative `.mdx` links resolve to documentation routes.

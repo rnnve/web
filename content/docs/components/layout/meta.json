@@ -1,0 +1,14 @@
+{
+  "title": "Layout",
+  "pages": [
+    "index",
+    "portfolio-navbar",
+    "portfolio-shell",
+    "route-shell",
+    "site-background",
+    "social-links",
+    "intent-link",
+    "deferred-fonts",
+    "spotify-accent"
+  ]
+}

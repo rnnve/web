@@ -1,0 +1,9 @@
+{
+  "title": "Settings",
+  "pages": [
+    "index",
+    "language-switcher",
+    "localized-text",
+    "site-settings-provider"
+  ]
+}

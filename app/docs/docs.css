@@ -1,0 +1,11 @@
+@import "tailwindcss" source(none);
+@import "fumadocs-ui/css/shadcn.css";
+@import "fumadocs-ui/css/preset.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+.docs-root {
+  min-height: 100dvh;
+  background: var(--color-fd-background);
+  color: var(--color-fd-foreground);
+}

@@ -1,0 +1,44 @@
+---
+title: Getting started
+description: Clone the repository and run it locally with Bun.
+---
+
+## Requirements
+
+Use Bun 1.4.4, as specified by the repository, and a current Node.js version compatible with Next.js 16. This project is developed with Node.js 24.
+
+## Install
+
+```bash
+git clone https://github.com/rnnve/web.git
+cd web
+bun install --frozen-lockfile
+bun run dev
+```
+
+Open `http://localhost:3000`. The documentation is available at `/docs`; WebOS is at `/-`.
+
+## Optional configuration
+
+Create `.env.local` for optional server configuration:
+
+| Variable                       | Purpose                                                 |
+| ------------------------------ | ------------------------------------------------------- |
+| `GITHUB_TOKEN`                 | Increase GitHub API rate limits with a read-only token. |
+| `SPICYLYRICS_API_KEY`          | Enable the Spicy Lyrics provider.                       |
+| `LRC_RED_CONTACT_EMAIL`        | Identify requests to lrc.red.                           |
+| `ASK_DISCORD_WEBHOOK_URL`      | Set the destination for anonymous questions.            |
+| `BIRTHDAY_DISCORD_WEBHOOK_URL` | Set the destination for birthday wishes.                |
+
+Restart the server after changing configuration. Keep credentials out of client code and Git. Configure your own webhook destinations when deploying a copy.
+
+## Validate changes
+
+```bash
+bun run lint
+bunx tsc --noEmit
+bun test
+bun run build
+```
+
+Read `AGENTS.md` before changing code. The version-specific Next.js guides are bundled in `node_modules/next/dist/docs/`.

@@ -1,10 +1,8 @@
 import type { MetadataRoute } from "next";
-import { PUBLIC_PAGES, SITE_URL } from "./lib/og/resolver";
+import { source } from "./lib/docs-source";
+import { buildSitemap } from "./lib/sitemap-entries";
 
+// Next.js serializes this metadata route to /sitemap.xml and caches it at build time.
 export default function sitemap(): MetadataRoute.Sitemap {
-  return PUBLIC_PAGES.flatMap(({ pattern, sitemap }) =>
-    sitemap && !pattern.includes("[")
-      ? [{ url: new URL(pattern, SITE_URL).href, ...sitemap }]
-      : [],
-  );
+  return buildSitemap(source.getPages().map((page) => page.url));
 }

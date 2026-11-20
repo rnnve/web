@@ -10,7 +10,7 @@ export default function SiteBackground() {
     const root = document.documentElement;
     const update = () =>
       setAccent(
-        getComputedStyle(root).getPropertyValue("--site-accent").trim() ||
+        root.style.getPropertyValue("--site-accent").trim() ||
           DEFAULT_SITE_ACCENT,
       );
     update();

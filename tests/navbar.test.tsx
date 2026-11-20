@@ -26,14 +26,8 @@ test("header preserves portfolio routes without language hashes and the active p
   assert.match(html, /aria-label="Primary navigation"/);
   assert.match(html, /aria-label="Developing"/);
   const active = createDocument(html).querySelector('a[aria-current="page"]');
-  assert.equal(
-    active?.querySelector("[data-current-page]")?.textContent,
-    "Developing",
-  );
-  assert.equal(
-    createDocument(html).querySelectorAll("[data-current-page]").length,
-    1,
-  );
+  assert.equal(active?.querySelector("[data-current-page]"), undefined);
+  assert.equal(active?.querySelector("svg")?.getAttribute("aria-hidden"), "true");
   const document = createDocument(html);
   assert.equal(document.querySelectorAll("[data-active-highlight]").length, 1);
   assert.equal(
@@ -80,7 +74,7 @@ test("shared buttons continue to support links", () => {
   assert.doesNotMatch(link, /<button/);
 });
 
-test("the top navigation shows the home page label on the root route", () => {
+test("the top navigation marks home without a visible label", () => {
   const html = renderToStaticMarkup(
     <PathnameContext.Provider value="/">
       <SiteSettingsProvider>
@@ -90,8 +84,7 @@ test("the top navigation shows the home page label on the root route", () => {
   );
   const active = createDocument(html).querySelector('a[aria-current="page"]');
   assert.equal(active?.getAttribute("href"), "/");
-  assert.equal(
-    active?.querySelector("[data-current-page]")?.textContent,
-    "Home",
-  );
+  assert.equal(active?.getAttribute("aria-label"), "Home");
+  assert.equal(active?.querySelector("[data-current-page]"), undefined);
+  assert.equal(active?.querySelector("svg")?.getAttribute("aria-hidden"), "true");
 });

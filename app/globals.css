@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
   --color-background: var(--background);
@@ -48,34 +48,36 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Shared theme for the portfolio's custom glass components. */
+/* Shared theme for the portfolio's custom glass components.
+   :root / light = shadcn light tokens + light glass surfaces.
+   [data-theme="dark"] = shadcn dark tokens + dark glass (site default). */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   --font-site: var(--font-geist-sans), system-ui, "Segoe UI", sans-serif;
   --page-background: var(--background);
-  --surface-sunken: rgb(0 0 0 / 18%);
-  --surface-panel: rgb(255 255 255 / 4%);
-  --surface-raised: rgb(255 255 255 / 6%);
-  --surface-hover: rgb(255 255 255 / 9%);
-  --surface-selected: rgb(255 255 255 / 10%);
-  --site-accent: #ededed;
+  --surface-sunken: rgb(0 0 0 / 6%);
+  --surface-panel: rgb(0 0 0 / 3%);
+  --surface-raised: rgb(0 0 0 / 4%);
+  --surface-hover: rgb(0 0 0 / 6%);
+  --surface-selected: rgb(0 0 0 / 8%);
+  --site-accent: #171717;
   --accent: oklch(0.97 0 0);
-  --on-accent: #151515;
-  --accent-subtle: rgb(255 255 255 / 8%);
+  --on-accent: #f5f5f5;
+  --accent-subtle: rgb(0 0 0 / 6%);
   --text: var(--foreground);
-  --text-secondary: #cecece;
+  --text-secondary: #525252;
   --text-muted: var(--muted-foreground);
-  --text-faint: #777;
+  --text-faint: #a3a3a3;
   --border: oklch(0.922 0 0);
   --glass-blur: 20px;
   --radius-xs: 4px;
   --ease-out: cubic-bezier(0.2, 0, 0.2, 1);
   --ease-standard: ease;
-  --shadow: rgb(0 0 0 / 25%);
-  --shadow-sm: 0 2px 8px rgb(0 0 0 / 12%);
-  --shadow-md: 0 12px 36px rgb(0 0 0 / 20%);
+  --shadow: rgb(0 0 0 / 12%);
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 8%);
+  --shadow-md: 0 12px 36px rgb(0 0 0 / 10%);
   --glass-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 5%), 0 12px 36px rgb(0 0 0 / 16%);
+    inset 0 1px 0 rgb(255 255 255 / 70%), 0 12px 36px rgb(0 0 0 / 8%);
   --max-width: 1240px;
   --ease: ease-out;
   --background: oklch(1 0 0);
@@ -111,7 +113,8 @@
 }
 
 .font-app-ui {
-  --font-site: var(--font-app-ui), var(--font-geist-sans), system-ui, "Segoe UI",
+  --font-site:
+    var(--font-app-ui), var(--font-geist-sans), system-ui, "Segoe UI",
     sans-serif;
 }
 
@@ -228,7 +231,25 @@
   }
 }
 
-.dark {
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-sunken: rgb(0 0 0 / 18%);
+  --surface-panel: rgb(255 255 255 / 4%);
+  --surface-raised: rgb(255 255 255 / 6%);
+  --surface-hover: rgb(255 255 255 / 9%);
+  --surface-selected: rgb(255 255 255 / 10%);
+  --site-accent: #ededed;
+  --accent: oklch(0.269 0 0);
+  --on-accent: #151515;
+  --accent-subtle: rgb(255 255 255 / 8%);
+  --text-secondary: #cecece;
+  --text-faint: #777;
+  --shadow: rgb(0 0 0 / 25%);
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 12%);
+  --shadow-md: 0 12px 36px rgb(0 0 0 / 20%);
+  --glass-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 5%), 0 12px 36px rgb(0 0 0 / 16%);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -241,7 +262,6 @@
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);

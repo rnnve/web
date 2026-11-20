@@ -51,11 +51,15 @@ export default function SpotifyAccent() {
         return;
       }
       const startedAt = performance.now();
+      let paintedAt = 0;
       const step = (now: number) => {
         if (!active) return;
         const progress = Math.min(1, (now - startedAt) / 2000);
         const eased = progress * progress * (3 - 2 * progress);
-        paint(interpolateAccent(from, color, eased));
+        if (now - paintedAt >= 1000 / 30 || progress === 1) {
+          paint(interpolateAccent(from, color, eased));
+          paintedAt = now;
+        }
         if (progress < 1) colorFrame = window.requestAnimationFrame(step);
         else {
           colorFrame = 0;

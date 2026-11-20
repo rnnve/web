@@ -4,8 +4,17 @@ import { useEffect, useId, useState } from "react";
 type AgeCalculatorProps = {
   birthDate: Date | string;
   className?: string;
+  initialNow?: number;
 };
 const AGE_UPDATE_INTERVAL = 250;
+function ageText(birthDate: Date | string, now = new Date()) {
+  const parsedBirthDate =
+    birthDate instanceof Date
+      ? new Date(birthDate.getTime())
+      : new Date(birthDate);
+  if (Number.isNaN(parsedBirthDate.getTime())) return "0.00000000";
+  return calculateAge(parsedBirthDate, now).toFixed(8);
+}
 function calculateAge(birthDate: Date, now: Date) {
   let years = now.getFullYear() - birthDate.getFullYear();
   let lastBirthday = new Date(birthDate);
@@ -25,30 +34,23 @@ function calculateAge(birthDate: Date, now: Date) {
 export default function AgeCalculator({
   birthDate,
   className = "",
+  initialNow,
 }: AgeCalculatorProps) {
-  const [age, setAge] = useState("0.00000000");
+  const [age, setAge] = useState(() =>
+    ageText(
+      birthDate,
+      initialNow === undefined ? new Date() : new Date(initialNow),
+    ),
+  );
   const tooltipId = useId();
   useEffect(() => {
-    const parsedBirthDate =
-      birthDate instanceof Date
-        ? new Date(birthDate.getTime())
-        : new Date(birthDate);
-    if (Number.isNaN(parsedBirthDate.getTime())) {
-      const invalidFrame = window.requestAnimationFrame(() =>
-        setAge("0.00000000"),
-      );
-      return () => window.cancelAnimationFrame(invalidFrame);
-    }
     const updateAge = () => {
-      const nextAge = calculateAge(parsedBirthDate, new Date()).toFixed(8);
+      const nextAge = ageText(birthDate);
       setAge((currentAge) => (currentAge === nextAge ? currentAge : nextAge));
     };
-    const initialFrame = window.requestAnimationFrame(updateAge);
+    updateAge();
     const interval = window.setInterval(updateAge, AGE_UPDATE_INTERVAL);
-    return () => {
-      window.cancelAnimationFrame(initialFrame);
-      window.clearInterval(interval);
-    };
+    return () => window.clearInterval(interval);
   }, [birthDate]);
   const integerAge = age.split(".")[0];
   return (

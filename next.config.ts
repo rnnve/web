@@ -1,3 +1,4 @@
+import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import { execFileSync } from "node:child_process";
 
@@ -36,6 +37,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.1.39", "100.73.17.117", "100.119.174.10"],
   async rewrites() {
     return [
+      { source: "/_nf", destination: "/nf" },
       { source: "/r/:path*", destination: "/redirect/:path*" },
       { source: "/hub/p.js", destination: "https://portus.sh/p.js" },
       { source: "/hub/e", destination: "https://portus.sh/api/e" },
@@ -72,4 +74,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default createMDX()(nextConfig);

@@ -174,21 +174,62 @@ test("Repository selection follows configured order, excluding forks and invalid
   assert.deepEqual(normalizeRepos(null), []);
 });
 
-test("Activity graph aggregates event weights into 42 weeks", () => {
-  const empty = activityCells(null);
-  const day = empty[100].key;
-  const cells = activityCells([
-    { created_at: `${day}T12:00:00Z`, type: "PushEvent", payload: { size: 3 } },
-    { created_at: `${day}T13:00:00Z`, type: "PushEvent", payload: { size: 0 } },
-    { created_at: `${day}T14:00:00Z`, type: "WatchEvent" },
-    null,
-    {},
-  ]);
-  assert.equal(cells.length, 42 * 7);
-  assert.deepEqual(cells[100], { key: day, count: 5, level: 3 });
+test("Contribution calendar uses the current UTC year with aligned week columns", () => {
+  const now = new Date("2026-11-19T00:00:00Z");
+  const cells = activityCells(
+    [
+      { date: "2026-01-01", count: 5, level: 3 },
+      { date: "2025-12-31", count: 100, level: 4 },
+      { date: "2026-12-31", count: 100, level: 4 },
+      { date: "2026-05-01", count: -2, level: 1 },
+      null,
+      {},
+    ],
+    now,
+  );
+  assert.equal(cells.length % 7, 0);
+  assert.equal(new Date(cells[0].key).getUTCDay(), 0);
+  assert.equal(cells.filter((cell) => cell.inYear).length, 365);
+  assert.equal(cells.find((cell) => cell.key === "2026-01-01")?.count, 5);
+  assert.equal(cells.find((cell) => cell.key === "2026-01-01")?.level, 4);
+  assert.equal(cells.find((cell) => cell.key === "2026-12-31")?.future, true);
   assert.equal(
     cells.reduce((sum, cell) => sum + cell.count, 0),
     5,
+  );
+});
+
+test("Contribution colors follow daily counts even when provider levels are identical", () => {
+  const cells = activityCells(
+    [1, 3, 5, 8].map((count, index) => ({
+      date: `2026-01-0${index + 1}`,
+      count,
+      level: 0,
+    })),
+    new Date("2026-11-19T00:00:00Z"),
+  );
+  assert.deepEqual(
+    cells.filter((cell) => cell.count > 0).map((cell) => cell.level),
+    [1, 2, 3, 4],
+  );
+  assert.ok(
+    cells.filter((cell) => cell.count === 0).every((cell) => cell.level === 0),
+  );
+});
+
+test("Contribution calendar handles leap years and New Year without carrying old data", () => {
+  const leap = activityCells(null, new Date("2024-12-31T23:59:59Z"));
+  assert.equal(leap.filter((cell) => cell.inYear).length, 366);
+  assert.ok(leap.some((cell) => cell.key === "2024-02-29"));
+  const next = activityCells(
+    [{ date: "2024-12-31", count: 10, level: 4 }],
+    new Date("2025-01-01T00:00:00Z"),
+  );
+  assert.equal(next.filter((cell) => cell.inYear).length, 365);
+  assert.equal(next.find((cell) => cell.inYear)?.key, "2025-01-01");
+  assert.equal(
+    next.reduce((sum, cell) => sum + cell.count, 0),
+    0,
   );
 });
 
