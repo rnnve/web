@@ -7,6 +7,7 @@ import {
   DocsTitle,
 } from "fumadocs-ui/layouts/docs/page";
 import defaultMdxComponents, { createRelativeLink } from "fumadocs-ui/mdx";
+import DocsGithubInfo from "../../../components/docs/docs-github-info";
 import { source } from "../../lib/docs-source";
 
 type Props = { params: Promise<{ slug?: string[] }> };
@@ -24,6 +25,7 @@ export default async function DocumentationPage({ params }: Props) {
           components={{
             ...defaultMdxComponents,
             a: createRelativeLink(source, page),
+            GithubInfo: DocsGithubInfo,
           }}
         />
       </DocsBody>
