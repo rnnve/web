@@ -5,7 +5,7 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
-} from "fumadocs-ui/layouts/docs/page";
+} from "fumadocs-ui/layouts/glass/page";
 import defaultMdxComponents, { createRelativeLink } from "fumadocs-ui/mdx";
 import { source } from "../../lib/docs-source";
 
