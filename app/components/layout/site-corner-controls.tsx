@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { useSyncExternalStore } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   BookOpen01Icon,
@@ -17,24 +16,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-function useIsClient() {
-  return useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
-  );
-}
-
 export default function SiteCornerControls() {
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
-  const isClient = useIsClient();
 
   if (pathname === "/-") return null;
 
   const onDocs = pathname === "/docs" || pathname.startsWith("/docs/");
-  // SSR / first paint assume dark (site default) until the client resolves theme.
-  const isDark = !isClient || resolvedTheme !== "light";
+  const isDark = resolvedTheme !== "light";
 
   return (
     <div
@@ -57,9 +46,16 @@ export default function SiteCornerControls() {
               onClick={() => setTheme(isDark ? "light" : "dark")}
             >
               <HugeiconsIcon
-                icon={isDark ? Sun01Icon : Moon01Icon}
+                icon={Sun01Icon}
                 size={18}
                 strokeWidth={1.8}
+                className="hidden dark:block"
+              />
+              <HugeiconsIcon
+                icon={Moon01Icon}
+                size={18}
+                strokeWidth={1.8}
+                className="dark:hidden"
               />
             </Button>
           </TooltipTrigger>
