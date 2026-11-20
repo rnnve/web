@@ -32,4 +32,4 @@ Before the final response, run one reporting pass. If candidates remain, from th
 ## Git workflow
 
 - Do not push unless the user explicitly asks you to push.
-- Commit each changed file separately. If a file contains unrelated changes, commit those changes separately as well.
+- Commit all changes together. Do not split commits by file.
