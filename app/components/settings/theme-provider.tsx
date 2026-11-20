@@ -8,7 +8,7 @@ export const THEME_STORAGE_KEY = "rynnie.theme";
 export default function ThemeProvider({ children }: { children: ReactNode }) {
   return (
     <NextThemesProvider
-      attribute="data-theme"
+      attribute={["data-theme", "class"]}
       defaultTheme="system"
       enableSystem
       enableColorScheme
