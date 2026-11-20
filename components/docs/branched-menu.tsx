@@ -17,22 +17,27 @@ export type BranchedMenuLeaf = {
   icon?: IconSvgElement | ReactElement;
 };
 
-export type BranchedMenuSection = {
+export type BranchedMenuBranch = {
   label: string;
   value?: string;
-  children?: BranchedMenuLeaf[];
+  children: BranchedMenuNode[];
 };
 
-export type BranchedMenuItem = BranchedMenuSection | BranchedMenuLeaf;
+export type BranchedMenuNode = BranchedMenuLeaf | BranchedMenuBranch;
+
+/** @deprecated Prefer BranchedMenuBranch — kept for existing call sites. */
+export type BranchedMenuSection = BranchedMenuBranch;
+
+export type BranchedMenuItem = BranchedMenuNode;
 
 export type BranchedMenuProps = {
   items?: BranchedMenuItem[];
-  defaultOpen?: number | number[];
+  defaultOpen?: number | number[] | string | string[];
   defaultActive?: string;
   /** When set, highlights this value instead of internal selection state. */
   active?: string;
   onSelect?: (value: string, item: BranchedMenuLeaf | BranchedMenuItem) => void;
-  onToggle?: (index: number, open: boolean) => void;
+  onToggle?: (path: string, open: boolean) => void;
   color?: string;
   accentColor?: string;
   lineColor?: string;
@@ -51,10 +56,14 @@ export type BranchedMenuProps = {
 const PAD = 6;
 const MARK = 16;
 
-function isSection(
-  item: BranchedMenuItem,
-): item is BranchedMenuSection & { children: BranchedMenuLeaf[] } {
-  return Array.isArray((item as BranchedMenuSection).children);
+export function isBranch(
+  item: BranchedMenuNode,
+): item is BranchedMenuBranch {
+  return Array.isArray((item as BranchedMenuBranch).children);
+}
+
+export function isLeaf(item: BranchedMenuNode): item is BranchedMenuLeaf {
+  return !isBranch(item);
 }
 
 function renderIcon(icon: IconSvgElement | ReactElement): ReactNode {
@@ -65,8 +74,250 @@ function renderIcon(icon: IconSvgElement | ReactElement): ReactNode {
   );
 }
 
-function toSet(open: number | number[]): Set<number> {
-  return new Set(Array.isArray(open) ? open : open >= 0 ? [open] : []);
+function toOpenSet(open: number | number[] | string | string[]): Set<string> {
+  if (Array.isArray(open)) {
+    return new Set(open.map(String));
+  }
+  if (typeof open === "number") {
+    return open >= 0 ? new Set([String(open)]) : new Set();
+  }
+  return open ? new Set([open]) : new Set();
+}
+
+function childPath(parent: string, index: number): string {
+  return parent ? `${parent}.${index}` : String(index);
+}
+
+export function collectLeaves(nodes: BranchedMenuNode[]): BranchedMenuLeaf[] {
+  const leaves: BranchedMenuLeaf[] = [];
+  for (const node of nodes) {
+    if (isLeaf(node)) leaves.push(node);
+    else leaves.push(...collectLeaves(node.children));
+  }
+  return leaves;
+}
+
+/** Paths of every branch that contains the active leaf, outermost first. */
+export function pathsToActive(
+  nodes: BranchedMenuNode[],
+  active: string,
+  parent = "",
+): string[] {
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i]!;
+    const path = childPath(parent, i);
+    if (isLeaf(node)) {
+      if (node.value === active) return [];
+      continue;
+    }
+    if (collectLeaves(node.children).some((leaf) => leaf.value === active)) {
+      return [path, ...pathsToActive(node.children, active, path)];
+    }
+  }
+  return [];
+}
+
+function allLeavesAreDirect(nodes: BranchedMenuNode[]): nodes is BranchedMenuLeaf[] {
+  return nodes.every(isLeaf);
+}
+
+type BranchViewProps = {
+  nodes: BranchedMenuNode[];
+  path: string;
+  active: string;
+  open: Set<string>;
+  depth: number;
+  rowHeight: number;
+  indent: number;
+  trunk: number;
+  radius: number;
+  onToggle: (path: string) => void;
+  onSelect: (value: string, item: BranchedMenuLeaf) => void;
+  heads: React.MutableRefObject<(HTMLButtonElement | null)[]>;
+  headIndex: number;
+};
+
+function LeafList({
+  leaves,
+  active,
+  open,
+  rowHeight,
+  indent,
+  trunk,
+  radius,
+  onSelect,
+}: {
+  leaves: BranchedMenuLeaf[];
+  active: string;
+  open: boolean;
+  rowHeight: number;
+  indent: number;
+  trunk: number;
+  radius: number;
+  onSelect: (value: string, item: BranchedMenuLeaf) => void;
+}) {
+  const r = Math.min(radius, rowHeight / 2 - 2);
+  const endX = indent - 8;
+  const rowY = (k: number) => PAD + k * rowHeight + rowHeight / 2;
+  const branch = (k: number) =>
+    `M ${trunk} ${rowY(k) - r} A ${r} ${r} 0 0 0 ${trunk + r} ${rowY(k)} H ${endX}`;
+  const reach = (k: number) =>
+    `M ${trunk} 0 V ${rowY(k) - r} A ${r} ${r} 0 0 0 ${trunk + r} ${rowY(k)} H ${endX}`;
+  const length = (k: number) =>
+    rowY(k) - r + (Math.PI * r) / 2 + (endX - trunk - r);
+  const bodyH = PAD * 2 + leaves.length * rowHeight;
+
+  return (
+    <div className="branched-menu__tree" style={{ height: bodyH }}>
+      <svg
+        className="branched-menu__lines"
+        width={indent}
+        height={bodyH}
+        aria-hidden="true"
+      >
+        <path
+          className="branched-menu__base"
+          d={`M ${trunk} 0 V ${rowY(leaves.length - 1) - r}`}
+        />
+        {leaves.map((kid, k) => (
+          <path key={kid.value} className="branched-menu__base" d={branch(k)} />
+        ))}
+        {leaves.map((kid, k) => (
+          <path
+            key={`${kid.value}-reach`}
+            className="branched-menu__reach"
+            d={reach(k)}
+            style={{
+              strokeDasharray: length(k),
+              strokeDashoffset: kid.value === active ? 0 : length(k),
+            }}
+          />
+        ))}
+      </svg>
+      {leaves.map((kid) => (
+        <button
+          key={kid.value}
+          type="button"
+          className="branched-menu__item"
+          aria-current={kid.value === active ? "true" : undefined}
+          data-active={kid.value === active ? "" : undefined}
+          tabIndex={open ? 0 : -1}
+          onClick={() => onSelect(kid.value, kid)}
+        >
+          {kid.icon ? (
+            <span className="branched-menu__icon" aria-hidden="true">
+              {renderIcon(kid.icon)}
+            </span>
+          ) : null}
+          <span className="branched-menu__label">{kid.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function BranchChildren(props: BranchViewProps) {
+  const {
+    nodes,
+    path,
+    active,
+    open,
+    depth,
+    rowHeight,
+    indent,
+    trunk,
+    radius,
+    onToggle,
+    onSelect,
+    heads,
+    headIndex,
+  } = props;
+
+  if (allLeavesAreDirect(nodes)) {
+    return (
+      <LeafList
+        leaves={nodes}
+        active={active}
+        open={path === "" || open.has(path) || depth === 0}
+        rowHeight={rowHeight}
+        indent={indent}
+        trunk={trunk}
+        radius={radius}
+        onSelect={onSelect}
+      />
+    );
+  }
+
+  return (
+    <div className="branched-menu__nest" data-depth={depth}>
+      {nodes.map((node, i) => {
+        const nodePath = childPath(path, i);
+        if (isLeaf(node)) {
+          return (
+            <button
+              key={node.value}
+              type="button"
+              className="branched-menu__item branched-menu__item--nest"
+              aria-current={node.value === active ? "true" : undefined}
+              data-active={node.value === active ? "" : undefined}
+              tabIndex={depth === 0 || open.has(path) ? 0 : -1}
+              onClick={() => onSelect(node.value, node)}
+            >
+              {node.icon ? (
+                <span className="branched-menu__icon" aria-hidden="true">
+                  {renderIcon(node.icon)}
+                </span>
+              ) : null}
+              <span className="branched-menu__label">{node.label}</span>
+            </button>
+          );
+        }
+
+        const isOpen = open.has(nodePath);
+        const containsActive = collectLeaves(node.children).some(
+          (leaf) => leaf.value === active,
+        );
+        return (
+          <div
+            key={nodePath}
+            className="branched-menu__section branched-menu__section--nest"
+            data-open={isOpen ? "" : undefined}
+            data-depth={depth + 1}
+          >
+            <button
+              type="button"
+              className="branched-menu__head branched-menu__head--nest"
+              aria-expanded={isOpen}
+              data-active={containsActive && isOpen ? "" : undefined}
+              tabIndex={depth === 0 || open.has(path) ? 0 : -1}
+              onClick={() => onToggle(nodePath)}
+            >
+              {node.label}
+            </button>
+            <div className="branched-menu__body">
+              <div className="branched-menu__fold">
+                <BranchChildren
+                  nodes={node.children}
+                  path={nodePath}
+                  active={active}
+                  open={open}
+                  depth={depth + 1}
+                  rowHeight={rowHeight}
+                  indent={indent}
+                  trunk={trunk}
+                  radius={radius}
+                  onToggle={onToggle}
+                  onSelect={onSelect}
+                  heads={heads}
+                  headIndex={headIndex}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function BranchedMenu({
@@ -92,42 +343,40 @@ export default function BranchedMenu({
 }: BranchedMenuProps) {
   const [activeState, setActive] = useState(() => {
     if (defaultActive) return defaultActive;
-    const first = items.find(
-      (it, i) => isSection(it) && toSet(defaultOpen).has(i),
-    );
-    return isSection(first!) ? (first.children[0]?.value ?? "") : "";
+    const leaves = collectLeaves(items);
+    return leaves[0]?.value ?? "";
   });
   const active = activeProp ?? activeState;
   const [open, setOpen] = useState(() => {
-    const initial = toSet(defaultOpen);
-    const sectionIdx = items.findIndex(
-      (it) => isSection(it) && it.children.some((kid) => kid.value === active),
-    );
-    if (sectionIdx >= 0) initial.add(sectionIdx);
+    const initial = toOpenSet(defaultOpen);
+    for (const path of pathsToActive(items, active)) initial.add(path);
     return initial;
   });
   const navRef = useRef<HTMLElement>(null);
   const heads = useRef<(HTMLButtonElement | null)[]>([]);
   const markerRef = useRef<HTMLSpanElement>(null);
 
-  const activeSection = items.findIndex(
-    (it) => isSection(it) && it.children.some((kid) => kid.value === active),
+  const activeTop = items.findIndex(
+    (it) =>
+      isBranch(it) &&
+      collectLeaves(it.children).some((leaf) => leaf.value === active),
   );
-  const [prevActiveSection, setPrevActiveSection] = useState(activeSection);
-  if (activeSection !== prevActiveSection) {
-    setPrevActiveSection(activeSection);
-    if (activeSection >= 0 && !open.has(activeSection)) {
+  const [prevActive, setPrevActive] = useState(active);
+  if (active !== prevActive) {
+    setPrevActive(active);
+    const needed = pathsToActive(items, active);
+    if (needed.some((path) => !open.has(path))) {
       const next = new Set(open);
-      next.add(activeSection);
+      for (const path of needed) next.add(path);
       setOpen(next);
     }
   }
-  const markerShown = activeSection >= 0 && open.has(activeSection);
+  const markerShown = activeTop >= 0 && open.has(String(activeTop));
 
   useLayoutEffect(() => {
     const place = (glide: boolean) => {
       const marker = markerRef.current;
-      const el = heads.current[activeSection];
+      const el = heads.current[activeTop];
       if (!marker) return;
       const on = markerShown && el;
       if (!glide) marker.style.transition = "none";
@@ -151,33 +400,23 @@ export default function BranchedMenu({
     });
     if (navRef.current) observer.observe(navRef.current);
     return () => observer.disconnect();
-  }, [activeSection, markerShown, items, fontSize, rowHeight]);
+  }, [activeTop, markerShown, items, fontSize, rowHeight, open]);
 
-  const select = (value: string, item: BranchedMenuLeaf | BranchedMenuItem) => {
+  const select = (value: string, item: BranchedMenuLeaf) => {
     setActive(value);
     onSelect?.(value, item);
   };
 
-  const toggle = (index: number) => {
+  const toggle = (path: string) => {
     setOpen((prev) => {
       const next = new Set(prev);
-      const isOpen = !next.has(index);
-      if (isOpen) next.add(index);
-      else next.delete(index);
-      onToggle?.(index, isOpen);
+      const isOpen = !next.has(path);
+      if (isOpen) next.add(path);
+      else next.delete(path);
+      onToggle?.(path, isOpen);
       return next;
     });
   };
-
-  const r = Math.min(radius, rowHeight / 2 - 2);
-  const endX = indent - 8;
-  const rowY = (k: number) => PAD + k * rowHeight + rowHeight / 2;
-  const branch = (k: number) =>
-    `M ${trunk} ${rowY(k) - r} A ${r} ${r} 0 0 0 ${trunk + r} ${rowY(k)} H ${endX}`;
-  const reach = (k: number) =>
-    `M ${trunk} 0 V ${rowY(k) - r} A ${r} ${r} 0 0 0 ${trunk + r} ${rowY(k)} H ${endX}`;
-  const length = (k: number) =>
-    rowY(k) - r + (Math.PI * r) / 2 + (endX - trunk - r);
 
   return (
     <nav
@@ -202,19 +441,34 @@ export default function BranchedMenu({
         aria-hidden="true"
       />
       {items.map((item, i) => {
-        const kids = isSection(item) ? item.children : undefined;
-        const isOpen = kids ? open.has(i) : false;
-        const leafValue =
-          "value" in item && item.value
-            ? item.value
-            : typeof item.label === "string"
-              ? item.label
-              : "";
-        const leafActive = !kids && leafValue === active;
-        const bodyH = kids ? PAD * 2 + kids.length * rowHeight : 0;
+        const path = String(i);
+        if (isLeaf(item)) {
+          const leafActive = item.value === active;
+          return (
+            <div key={item.value} className="branched-menu__section">
+              <button
+                ref={(el) => {
+                  heads.current[i] = el;
+                }}
+                type="button"
+                className="branched-menu__head"
+                aria-current={leafActive ? "true" : undefined}
+                data-active={leafActive ? "" : undefined}
+                onClick={() => select(item.value, item)}
+              >
+                {item.label}
+              </button>
+            </div>
+          );
+        }
+
+        const isOpen = open.has(path);
+        const containsActive = collectLeaves(item.children).some(
+          (leaf) => leaf.value === active,
+        );
         return (
           <div
-            key={"value" in item && item.value ? item.value : item.label}
+            key={item.value ?? item.label}
             className="branched-menu__section"
             data-open={isOpen ? "" : undefined}
           >
@@ -224,69 +478,31 @@ export default function BranchedMenu({
               }}
               type="button"
               className="branched-menu__head"
-              aria-expanded={kids ? isOpen : undefined}
-              aria-current={leafActive ? "true" : undefined}
-              data-active={leafActive ? "" : undefined}
-              onClick={() => (kids ? toggle(i) : select(leafValue, item))}
+              aria-expanded={isOpen}
+              data-active={containsActive && isOpen ? "" : undefined}
+              onClick={() => toggle(path)}
             >
               {item.label}
             </button>
-            {kids ? (
-              <div className="branched-menu__body">
-                <div className="branched-menu__fold">
-                  <div className="branched-menu__tree" style={{ height: bodyH }}>
-                    <svg
-                      className="branched-menu__lines"
-                      width={indent}
-                      height={bodyH}
-                      aria-hidden="true"
-                    >
-                      <path
-                        className="branched-menu__base"
-                        d={`M ${trunk} 0 V ${rowY(kids.length - 1) - r}`}
-                      />
-                      {kids.map((kid, k) => (
-                        <path
-                          key={kid.value}
-                          className="branched-menu__base"
-                          d={branch(k)}
-                        />
-                      ))}
-                      {kids.map((kid, k) => (
-                        <path
-                          key={`${kid.value}-reach`}
-                          className="branched-menu__reach"
-                          d={reach(k)}
-                          style={{
-                            strokeDasharray: length(k),
-                            strokeDashoffset:
-                              kid.value === active ? 0 : length(k),
-                          }}
-                        />
-                      ))}
-                    </svg>
-                    {kids.map((kid) => (
-                      <button
-                        key={kid.value}
-                        type="button"
-                        className="branched-menu__item"
-                        aria-current={kid.value === active ? "true" : undefined}
-                        data-active={kid.value === active ? "" : undefined}
-                        tabIndex={isOpen ? 0 : -1}
-                        onClick={() => select(kid.value, kid)}
-                      >
-                        {kid.icon ? (
-                          <span className="branched-menu__icon" aria-hidden="true">
-                            {renderIcon(kid.icon)}
-                          </span>
-                        ) : null}
-                        <span className="branched-menu__label">{kid.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+            <div className="branched-menu__body">
+              <div className="branched-menu__fold">
+                <BranchChildren
+                  nodes={item.children}
+                  path={path}
+                  active={active}
+                  open={open}
+                  depth={1}
+                  rowHeight={rowHeight}
+                  indent={indent}
+                  trunk={trunk}
+                  radius={radius}
+                  onToggle={toggle}
+                  onSelect={select}
+                  heads={heads}
+                  headIndex={i}
+                />
               </div>
-            ) : null}
+            </div>
           </div>
         );
       })}
