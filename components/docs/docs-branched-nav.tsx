@@ -8,6 +8,7 @@ import {
   CodeIcon,
   ComputerIcon,
   InformationCircleIcon,
+  Layers01Icon,
   PaintBoardIcon,
   Rocket01Icon,
 } from "@hugeicons/core-free-icons";
@@ -24,6 +25,7 @@ const PAGE_ICONS: Record<string, IconSvgElement> = {
   "/docs/getting-started": Rocket01Icon,
   "/docs/desktop": ComputerIcon,
   "/docs/customization": PaintBoardIcon,
+  "/docs/components": Layers01Icon,
 };
 
 function labelOf(node: PageTree.Node): string {
@@ -63,6 +65,75 @@ function pagesFromFolder(folder: PageTree.Folder): BranchedMenuLeaf[] {
   return pages;
 }
 
+function folderHasSeparators(folder: PageTree.Folder): boolean {
+  return folder.children.some((node) => node.type === "separator");
+}
+
+/** Expand a folder whose children use separators into multiple BranchedMenu sections. */
+function itemsFromSeparatedFolder(folder: PageTree.Folder): BranchedMenuItem[] {
+  const items: BranchedMenuItem[] = [];
+  let sectionLabel: string | null = null;
+  let sectionPages: BranchedMenuLeaf[] = [];
+
+  const flushSection = () => {
+    if (sectionPages.length === 0) {
+      sectionLabel = null;
+      return;
+    }
+    items.push({
+      label: sectionLabel ?? labelOf(folder),
+      children: sectionPages,
+    });
+    sectionLabel = null;
+    sectionPages = [];
+  };
+
+  if (folder.index) {
+    items.push({
+      label: labelOf(folder),
+      children: [leafFromPage(folder.index)],
+    });
+  }
+
+  for (const node of folder.children) {
+    if (node.type === "separator") {
+      flushSection();
+      sectionLabel = labelOf(node) || labelOf(folder);
+      continue;
+    }
+
+    if (node.type === "page") {
+      if (folder.index && node.url === folder.index.url) continue;
+      if (!sectionLabel) sectionLabel = labelOf(folder);
+      sectionPages.push(leafFromPage(node));
+      continue;
+    }
+
+    if (node.type === "folder") {
+      flushSection();
+      items.push(...itemsFromFolder(node));
+    }
+  }
+
+  flushSection();
+  return items;
+}
+
+function itemsFromFolder(folder: PageTree.Folder): BranchedMenuItem[] {
+  if (folderHasSeparators(folder)) {
+    return itemsFromSeparatedFolder(folder);
+  }
+
+  const children = pagesFromFolder(folder);
+  if (children.length === 0) return [];
+  return [
+    {
+      label: labelOf(folder),
+      children,
+    },
+  ];
+}
+
 function itemsFromTree(
   tree: PageTree.Root | PageTree.Folder,
 ): BranchedMenuItem[] {
@@ -92,13 +163,7 @@ function itemsFromTree(
 
     if (node.type === "folder") {
       flushSection();
-      const children = pagesFromFolder(node);
-      if (children.length > 0) {
-        items.push({
-          label: labelOf(node),
-          children,
-        });
-      }
+      items.push(...itemsFromFolder(node));
       continue;
     }
 
@@ -113,15 +178,15 @@ function itemsFromTree(
 }
 
 function resolveActive(items: BranchedMenuItem[], pathname: string): string {
-  for (const item of items) {
-    if (!("children" in item) || !item.children) continue;
-    const exact = item.children.find((child) => child.value === pathname);
-    if (exact) return exact.value;
-    const nested = [...item.children]
-      .sort((a, b) => b.value.length - a.value.length)
-      .find((child) => pathname.startsWith(`${child.value}/`));
-    if (nested) return nested.value;
-  }
+  const leaves = items.flatMap((item) =>
+    "children" in item && item.children ? item.children : [],
+  );
+  const exact = leaves.find((child) => child.value === pathname);
+  if (exact) return exact.value;
+  const nested = [...leaves]
+    .sort((a, b) => b.value.length - a.value.length)
+    .find((child) => pathname.startsWith(`${child.value}/`));
+  if (nested) return nested.value;
   return pathname;
 }
 
