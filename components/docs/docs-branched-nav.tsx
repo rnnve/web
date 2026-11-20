@@ -44,11 +44,13 @@ function pagesFromNodes(nodes: PageTree.Node[]): BranchedMenuLeaf[] {
   return pages;
 }
 
-function itemsFromTree(root: PageTree.Root): BranchedMenuItem[] {
-  const folders = root.children.filter(
+function itemsFromTree(
+  tree: PageTree.Root | PageTree.Folder,
+): BranchedMenuItem[] {
+  const folders = tree.children.filter(
     (node): node is PageTree.Folder => node.type === "folder",
   );
-  const loosePages = root.children.filter(
+  const loosePages = tree.children.filter(
     (node): node is PageTree.Item => node.type === "page",
   );
 
@@ -59,7 +61,7 @@ function itemsFromTree(root: PageTree.Root): BranchedMenuItem[] {
 
   if (loosePages.length > 0) {
     items.unshift({
-      label: typeof root.name === "string" ? root.name : "Docs",
+      label: typeof tree.name === "string" ? tree.name : "Docs",
       children: loosePages.map((page) => ({
         value: page.url,
         label: labelOf(page),
