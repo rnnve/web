@@ -1,0 +1,11 @@
+{
+  "title": "Status",
+  "pages": [
+    "index",
+    "spotify-widget",
+    "live-status",
+    "github-showcase",
+    "status-icon",
+    "widget-preloads"
+  ]
+}

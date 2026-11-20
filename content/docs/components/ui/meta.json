@@ -1,0 +1,20 @@
+{
+  "title": "UI",
+  "pages": [
+    "index",
+    "button",
+    "badge",
+    "card",
+    "dialog",
+    "dropdown-menu",
+    "input",
+    "label",
+    "select",
+    "switch",
+    "tabs",
+    "textarea",
+    "tooltip",
+    "counter",
+    "external-link-icon"
+  ]
+}
