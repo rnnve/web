@@ -14,8 +14,12 @@ import {
 } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
 import BranchedMenu, {
+  collectLeaves,
+  pathsToActive,
+  type BranchedMenuBranch,
   type BranchedMenuItem,
   type BranchedMenuLeaf,
+  type BranchedMenuNode,
 } from "./branched-menu";
 
 const PAGE_ICONS: Record<string, IconSvgElement> = {
@@ -69,54 +73,72 @@ function folderHasSeparators(folder: PageTree.Folder): boolean {
   return folder.children.some((node) => node.type === "separator");
 }
 
-/** Expand a folder whose children use separators into multiple BranchedMenu sections. */
+/**
+ * One top-level section (e.g. Components) with:
+ *   Intro (catalog) + nested groups (UI, Layout, …) each holding pages.
+ */
 function itemsFromSeparatedFolder(folder: PageTree.Folder): BranchedMenuItem[] {
-  const items: BranchedMenuItem[] = [];
-  let sectionLabel: string | null = null;
-  let sectionPages: BranchedMenuLeaf[] = [];
+  const children: BranchedMenuNode[] = [];
+  let groupLabel: string | null = null;
+  let groupPages: BranchedMenuLeaf[] = [];
 
-  const flushSection = () => {
-    if (sectionPages.length === 0) {
-      sectionLabel = null;
+  const flushGroup = () => {
+    if (groupPages.length === 0) {
+      groupLabel = null;
       return;
     }
-    items.push({
-      label: sectionLabel ?? labelOf(folder),
-      children: sectionPages,
+    children.push({
+      label: groupLabel ?? "Group",
+      children: groupPages,
     });
-    sectionLabel = null;
-    sectionPages = [];
+    groupLabel = null;
+    groupPages = [];
   };
 
+  let intro: BranchedMenuLeaf | null = null;
   if (folder.index) {
-    items.push({
-      label: labelOf(folder),
-      children: [leafFromPage(folder.index)],
-    });
+    intro = {
+      ...leafFromPage(folder.index),
+      label: "Intro",
+    };
+  } else {
+    const first = folder.children.find(
+      (node): node is PageTree.Item => node.type === "page",
+    );
+    if (first) {
+      intro = { ...leafFromPage(first), label: "Intro" };
+    }
   }
+  if (intro) children.push(intro);
 
   for (const node of folder.children) {
     if (node.type === "separator") {
-      flushSection();
-      sectionLabel = labelOf(node) || labelOf(folder);
+      flushGroup();
+      groupLabel = labelOf(node) || "Group";
       continue;
     }
 
     if (node.type === "page") {
-      if (folder.index && node.url === folder.index.url) continue;
-      if (!sectionLabel) sectionLabel = labelOf(folder);
-      sectionPages.push(leafFromPage(node));
+      if (intro && node.url === intro.value) continue;
+      if (!groupLabel) groupLabel = labelOf(folder);
+      groupPages.push(leafFromPage(node));
       continue;
     }
 
     if (node.type === "folder") {
-      flushSection();
-      items.push(...itemsFromFolder(node));
+      flushGroup();
+      const nested = itemsFromFolder(node);
+      children.push(...nested);
     }
   }
 
-  flushSection();
-  return items;
+  flushGroup();
+
+  const section: BranchedMenuBranch = {
+    label: labelOf(folder),
+    children,
+  };
+  return [section];
 }
 
 function itemsFromFolder(folder: PageTree.Folder): BranchedMenuItem[] {
@@ -178,9 +200,7 @@ function itemsFromTree(
 }
 
 function resolveActive(items: BranchedMenuItem[], pathname: string): string {
-  const leaves = items.flatMap((item) =>
-    "children" in item && item.children ? item.children : [],
-  );
+  const leaves = collectLeaves(items);
   const exact = leaves.find((child) => child.value === pathname);
   if (exact) return exact.value;
   const nested = [...leaves]
@@ -196,16 +216,7 @@ export default function DocsBranchedNav({ className = "" }: { className?: string
   const { root } = useTreeContext();
   const items = itemsFromTree(root);
   const active = resolveActive(items, pathname);
-  // Exact leaf match only — prefix matching would treat `/docs` as a parent of
-  // every docs URL and keep the wrong BranchedMenu section open.
-  const defaultOpen = Math.max(
-    0,
-    items.findIndex(
-      (item) =>
-        "children" in item &&
-        item.children?.some((child) => child.value === active),
-    ),
-  );
+  const defaultOpen = pathsToActive(items, active);
 
   if (items.length === 0) return null;
 
