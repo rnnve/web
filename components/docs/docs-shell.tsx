@@ -3,11 +3,6 @@
 import type { ReactNode } from "react";
 import type * as PageTree from "fumadocs-core/page-tree";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
-import DocsBranchedNav from "./docs-branched-nav";
-
-function HiddenTreeNode() {
-  return null;
-}
 
 export default function DocsShell({
   tree,
@@ -30,14 +25,6 @@ export default function DocsShell({
           on: "nav",
         },
       ]}
-      sidebar={{
-        banner: <DocsBranchedNav />,
-        components: {
-          Item: HiddenTreeNode,
-          Folder: HiddenTreeNode,
-          Separator: HiddenTreeNode,
-        },
-      }}
       containerProps={{ className: "docs-root" }}
     >
       {children}
