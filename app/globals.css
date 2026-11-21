@@ -48,7 +48,7 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Dark theme only. Tokens apply at the root so the portfolio, WebOS, and docs stay dark. */
+/* Dark theme only. Tokens apply at the root so the portfolio and docs stay dark. */
 :root {
   color-scheme: dark;
   --font-site: var(--font-geist-sans), system-ui, "Segoe UI", sans-serif;

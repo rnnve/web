@@ -7,7 +7,7 @@ import { generatePageMetadata } from "../app/lib/og/metadata";
 const origin = "https://rynni.cc";
 
 test("sitemap, robots, and page canonicals use the serving production host", async () => {
-  const entries = buildSitemap(["/docs", "/docs/desktop"]);
+  const entries = buildSitemap(["/docs", "/docs/customization"]);
   assert.deepEqual(
     entries.map(({ url }) => url),
     [
@@ -17,7 +17,7 @@ test("sitemap, robots, and page canonicals use the serving production host", asy
       `${origin}/listen`,
       `${origin}/ask`,
       `${origin}/docs`,
-      `${origin}/docs/desktop`,
+      `${origin}/docs/customization`,
     ],
   );
   assert.equal(robots().sitemap, `${origin}/sitemap.xml`);
@@ -30,8 +30,8 @@ test("sitemap, robots, and page canonicals use the serving production host", asy
 
 test("sitemap deduplicates documentation and rejects noncanonical locations", () => {
   const entries = buildSitemap([
-    "/docs/desktop/",
-    "/docs/desktop",
+    "/docs/customization/",
+    "/docs/customization",
     "/docs",
     "https://example.com/docs",
     "//example.com/docs",
@@ -39,15 +39,14 @@ test("sitemap deduplicates documentation and rejects noncanonical locations", ()
     "/docs?query=search",
     "/docs#section",
     "/api/search",
-    "/-",
     "/newtab",
   ]);
   const urls = entries.map(({ url }) => url);
   assert.equal(new Set(urls).size, urls.length);
   assert.deepEqual(
     urls.filter((url) => url.includes("/docs")),
-    [`${origin}/docs`, `${origin}/docs/desktop`],
+    [`${origin}/docs`, `${origin}/docs/customization`],
   );
   assert(entries.every(({ url }) => new URL(url).origin === origin));
-  assert(!urls.some((url) => /\?|#|\/api\/|\/newtab|\/-$/.test(url)));
+  assert(!urls.some((url) => /\?|#|\/api\/|\/newtab/.test(url)));
 });

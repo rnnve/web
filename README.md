@@ -14,20 +14,13 @@ Personal site: portfolio, live listening, synced lyrics, docs, and a browser sta
 | `/ask`      | Anonymous questions sent to Discord.                                                                    |
 | `/docs`     | Fumadocs guides with search and MDX.                                                                    |
 | `/newtab`   | Clock, search, shortcuts, and a video wallpaper.                                                        |
-| `/-`        | Rynnie OS, a browser desktop. Not indexed.                                                              |
 | `/redirect` | Named destinations, or any HTTP(S) URL via `?url=`.                                                     |
 
 `/nt` redirects to `/newtab`. `/listening`, `/songs`, and `/music` redirect to `/listen`. `/r/:path*` rewrites to `/redirect/:path*`. `/sitemap` and `/sm.xml` redirect to `/sitemap.xml`.
 
 English is the default. Add `#th` or `#en` (`#lang=th` and `#lang=en` also work) to pick a language. Navbar links keep that choice. There is no language button.
 
-The playing song’s cover sets the accent on portfolio pages. Missing, unreadable, or near-black artwork restores the default white accent. Navigation is an icon rail on the left on desktop and a bottom dock on mobile. A Desktop button on portfolio pages opens the browser desktop.
-
-## Browser desktop
-
-`/-` starts with no windows open. Listening, Ask, and Developing are on the desktop and the taskbar. Files, Terminal, Settings, Portfolio, and New tab are in the launcher. These are native desktop views that share the site’s APIs. Notes is not included.
-
-Windows can be dragged, focused, minimized, maximized, restored, and closed. Show Desktop hides and restores them. Search the launcher and press Enter to open the first result. The terminal is simulated and does not run shell commands. On mobile, apps fill the workspace. Moving between the site and the desktop uses a view transition when the browser supports it.
+The playing song’s cover sets the accent on portfolio pages. Missing, unreadable, or near-black artwork restores the default white accent. Navigation is an icon rail on the left on desktop and a bottom dock on mobile.
 
 ## Development
 

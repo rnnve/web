@@ -6,7 +6,6 @@ import RouteShell from "./components/layout/route-shell";
 import favicon from "./icon.webp";
 import DeferredFonts from "./components/layout/deferred-fonts";
 import { AnimateUIProvider } from "@animate-ui/react/provider";
-import SiteCornerControls from "./components/layout/site-corner-controls";
 import SiteCursor from "./components/layout/site-cursor";
 import "./font-faces.css";
 import "./globals.css";
@@ -48,7 +47,6 @@ export default function RootLayout({
           <DeferredFonts />
           <TooltipProvider>
             <RouteShell>{children}</RouteShell>
-            <SiteCornerControls />
             <SiteCursor />
           </TooltipProvider>
         </AnimateUIProvider>
