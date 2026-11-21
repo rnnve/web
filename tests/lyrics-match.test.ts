@@ -93,10 +93,9 @@ test("endpoint searches after missing or empty exact lyrics and keeps original T
       new Request(`https://example.com/api/lyrics?${params}`),
     );
     assert.equal(response.status, 200);
-    assert.equal(
-      (await response.json()).lyrics.syncedLyrics,
-      record.syncedLyrics,
-    );
+    const { lyrics } = await response.json();
+    assert.equal(lyrics.syncedLyrics, record.syncedLyrics);
+    assert.equal(lyrics.source, "lrclib");
   }
   assert.equal(urls.length, 4);
 });

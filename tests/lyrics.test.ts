@@ -120,6 +120,7 @@ test("Lyrics endpoint sends the track signature and identifies the client", asyn
   assert.deepEqual(await result.json(), {
     lyrics: {
       id: 1,
+      source: "lrclib",
       instrumental: false,
       plainLyrics: "Words",
       syncedLyrics: "[00:01.00]Words",
@@ -158,6 +159,7 @@ test("Lyrics endpoint handles missing, instrumental, throttled, and malformed re
   assert.deepEqual(await (await GET(request())).json(), {
     lyrics: {
       id: 2,
+      source: "lrclib",
       instrumental: true,
       plainLyrics: null,
       syncedLyrics: null,

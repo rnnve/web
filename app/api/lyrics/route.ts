@@ -145,6 +145,7 @@ export async function GET(request: Request) {
       {
         lyrics: {
           id: data.id,
+          source: "lrclib",
           instrumental: data.instrumental,
           plainLyrics:
             typeof data.plainLyrics === "string" ? data.plainLyrics : null,

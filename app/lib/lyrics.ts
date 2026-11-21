@@ -6,7 +6,7 @@ export type LyricsRecord = {
   lines?: LyricLine[];
   source?:
     | "lrclib"
-    | "lrc_red"
+    | "lrc.red"
     | "spicy_lyrics"
     | "apple_music"
     | "spotify"

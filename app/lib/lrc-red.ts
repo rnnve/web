@@ -115,7 +115,7 @@ export async function fetchLrcRedLyrics(
       instrumental: false,
       plainLyrics: lines.map((line) => line.text).join("\n"),
       syncedLyrics,
-      source: "lrc_red",
+      source: "lrc.red",
     };
   } catch {
     return null;

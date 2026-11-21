@@ -104,7 +104,7 @@ test("lookup order is Spicy Lyrics, lrc.red, then LRCLIB, with identified reques
     urls.length = 0;
     mode = "red";
     const red = await (await GET(request())).json();
-    assert.equal(red.lyrics.source, "lrc_red");
+    assert.equal(red.lyrics.source, "lrc.red");
     assert.equal(red.lyrics.id, isrc);
     assert.equal(
       red.lyrics.syncedLyrics,
@@ -140,10 +140,9 @@ test("lookup order is Spicy Lyrics, lrc.red, then LRCLIB, with identified reques
     ] as const) {
       mode = failure;
       urls.length = 0;
-      assert.equal(
-        (await (await GET(request())).json()).lyrics.plainLyrics,
-        "LRCLIB fallback",
-      );
+      const { lyrics } = await (await GET(request())).json();
+      assert.equal(lyrics.plainLyrics, "LRCLIB fallback");
+      assert.equal(lyrics.source, "lrclib");
       assert.equal(new URL(urls[0]).hostname, "api.spicylyrics.org");
       assert.equal(new URL(urls[1]).hostname, "lrc.red");
       assert.equal(new URL(urls.at(-1)!).hostname, "lrclib.net");
