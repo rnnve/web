@@ -23,7 +23,7 @@ const resolveElement = (value) =>
 const TargetCursor = ({
   targetSelector = ".cursor-target",
   cursorColor = "#ffffff",
-  cursorColorOnTarget,
+  cursorColorOnTarget = undefined,
   spinDuration = 2,
   hoverDuration = 0.2,
   parallaxOn = true,
@@ -37,7 +37,7 @@ const TargetCursor = ({
   blendMode = "difference",
   showLabel = true,
   clickEffect = true,
-  container,
+  container = null,
 }) => {
   const [host, setHost] = useState(null);
   const rootRef = useRef(null);
