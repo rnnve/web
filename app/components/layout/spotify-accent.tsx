@@ -10,7 +10,12 @@ import {
 import { normalizeSpotify } from "@/app/lib/spotify";
 import { spotifyStream } from "@/app/lib/status-stream";
 
-const properties = ["--site-accent", "--accent-subtle", "--surface-selected"];
+const properties = [
+  "--site-accent",
+  "--site-active-accent",
+  "--accent-subtle",
+  "--surface-selected",
+];
 
 export default function SpotifyAccent() {
   useEffect(() => {
@@ -28,6 +33,7 @@ export default function SpotifyAccent() {
         return;
       }
       root.style.setProperty("--site-accent", color);
+      root.style.setProperty("--site-active-accent", color);
       root.style.setProperty(
         "--accent-subtle",
         `color-mix(in srgb, ${color} 8%, transparent)`,

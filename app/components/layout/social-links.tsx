@@ -5,7 +5,7 @@ import {
   IconBrandMinecraft,
   IconMail,
 } from "@tabler/icons-react";
-import type { SVGProps } from "react";
+import type { CSSProperties, SVGProps } from "react";
 import { DiscordLogo } from "@/components/logos/discord";
 import { GithubLogo } from "@/components/logos/github";
 import { InstagramLogo } from "@/components/logos/instagram";
@@ -33,21 +33,39 @@ const links = [
     name: "Discord",
     href: "https://discord.com/users/969088519161139270",
     icon: DiscordIcon,
+    color: "#5865f2",
   },
   {
     name: "GitHub",
     href: "https://github.com/rnnve",
     icon: GithubIcon,
+    color: "#f0f6fc",
   },
   {
     name: "Last.fm",
     href: "https://www.last.fm/user/iqrfumi",
     icon: IconBrandLastfm,
+    color: "#d51007",
   },
   // shortcut: these destinations are unconfigured; enable when the owner supplies them.
-  { name: "Instagram", href: "https://instagram.com/xo.hanami_", icon: InstagramIcon },
-  { name: "NameMC", href: "https://namemc.com/profile/Assendancy", icon: IconBrandMinecraft },
-  { name: "Mail", href: "mailto:contact@rynni.cc", icon: IconMail },
+  {
+    name: "Instagram",
+    href: "https://instagram.com/xo.hanami_",
+    icon: InstagramIcon,
+    color: "#e4405f",
+  },
+  {
+    name: "NameMC",
+    href: "https://namemc.com/profile/Assendancy",
+    icon: IconBrandMinecraft,
+    color: "#62b47a",
+  },
+  {
+    name: "Mail",
+    href: "mailto:contact@rynni.cc",
+    icon: IconMail,
+    color: "#ededed",
+  },
 ];
 
 export default function SocialLinks() {
@@ -57,7 +75,7 @@ export default function SocialLinks() {
       className={styles.socials}
       aria-label={t("Social links", "ลิงก์โซเชียล")}
     >
-      {links.map(({ name, href, icon: Icon }) =>
+      {links.map(({ name, href, icon: Icon, color }) =>
         href ? (
           <Tooltip key={name}>
             <TooltipTrigger asChild>
@@ -69,6 +87,7 @@ export default function SocialLinks() {
               >
                 <a
                   href={href}
+                  style={{ "--social-brand-color": color } as CSSProperties}
                   target="_blank"
                   rel="noreferrer"
                   aria-label={`${name} ${t("(opens in a new tab)", "(เปิดในแท็บใหม่)")}`}
@@ -94,6 +113,7 @@ export default function SocialLinks() {
             size="icon"
             className={`${styles.item} ${styles.socialItem}`}
             disabled
+            style={{ "--social-brand-color": color } as CSSProperties}
             aria-label={`${name} ${t("(link not configured)", "(ยังไม่ได้ตั้งค่าลิงก์)")}`}
             title={name}
           >

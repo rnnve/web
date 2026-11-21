@@ -98,6 +98,13 @@
   flex-basis: 32px;
   width: 32px;
   height: 32px;
+  background: transparent;
+  transition: color 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.socialItem:hover,
+.socialItem:focus-visible {
+  color: var(--site-active-accent, var(--social-brand-color));
+  background: transparent;
 }
 .socialItem > svg {
   width: 16px;
