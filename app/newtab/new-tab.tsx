@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import LiveWallpaper from "./live-wallpaper";
+import SiteBackground from "../components/layout/site-background";
 import {
   DEFAULT_PREFERENCES,
   ENGINES,
@@ -202,7 +202,7 @@ export default function NewTab() {
   }
   return (
     <>
-      <LiveWallpaper />
+      <SiteBackground />
       <header className={styles.header}>
         <Link
           className={styles.brand}

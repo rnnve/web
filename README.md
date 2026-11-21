@@ -13,7 +13,7 @@ Personal site: portfolio, live listening, synced lyrics, docs, and a browser sta
 | `/birthday` | Bangkok-time countdown and anonymous wishes during the birthday window.                                 |
 | `/ask`      | Anonymous questions sent to Discord.                                                                    |
 | `/docs`     | Fumadocs guides with search and MDX.                                                                    |
-| `/newtab`   | Clock, search, shortcuts, and a video wallpaper.                                                        |
+| `/newtab`   | Clock, search, shortcuts, and an interactive ShapeGrid background.                                      |
 | `/redirect` | Named destinations, or any HTTP(S) URL via `?url=`.                                                     |
 
 `/nt` redirects to `/newtab`. `/listening`, `/songs`, and `/music` redirect to `/listen`. `/r/:path*` rewrites to `/redirect/:path*`. `/sitemap` and `/sm.xml` redirect to `/sitemap.xml`.

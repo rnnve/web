@@ -5,14 +5,13 @@ import { act } from "react";
 import SiteSettingsProvider from "../app/components/settings/site-settings-provider";
 import PortfolioNavbar from "../app/components/layout/portfolio-navbar";
 import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
-import Aurora from "../app/components/effects/aurora";
-import AeroShards from "../app/components/effects/AeroShards";
+import ShapeGrid from "../app/components/effects/ShapeGrid";
 import { createRequire } from "node:module";
 
 const { mock } = createRequire(import.meta.url)("bun:test");
 import { SETTINGS_KEY } from "../app/lib/site-settings";
 
-test("language controls, locale preferences, and accent-driven background work without WebGL", async (context) => {
+test("language controls, locale preferences, and ShapeGrid hover colors follow the site accent", async (context) => {
   const browser = createWindow(
     '<!doctype html><html><body><div id="root"></div></body></html>',
   );
@@ -86,13 +85,13 @@ test("language controls, locale preferences, and accent-driven background work w
   );
   for (const [key, value] of Object.entries(globals))
     Object.defineProperty(globalThis, key, { configurable: true, value });
-  const originalAeroShards = AeroShards;
+  const originalShapeGrid = ShapeGrid;
   const { createRoot } = await import("react-dom/client");
   const root = createRoot(browser.document.getElementById("root")!);
   context.after(async () => {
     await act(async () => root.unmount());
-    mock.module("../app/components/effects/AeroShards", () => ({
-      default: originalAeroShards,
+    mock.module("../app/components/effects/ShapeGrid", () => ({
+      default: originalShapeGrid,
     }));
     for (const [key, descriptor] of previous) {
       if (descriptor) Object.defineProperty(globalThis, key, descriptor);
@@ -105,7 +104,6 @@ test("language controls, locale preferences, and accent-driven background work w
         <PathnameContext.Provider value="/">
           <PortfolioNavbar />
         </PathnameContext.Provider>
-        <Aurora />
       </SiteSettingsProvider>,
     ),
   );
@@ -116,7 +114,6 @@ test("language controls, locale preferences, and accent-driven background work w
     false,
     "automatic selection must not become an explicit preference",
   );
-  assert.ok(browser.document.querySelector('canvas[aria-hidden="true"]'));
   const toggle = browser.document.querySelector<HTMLButtonElement>(
     'button[aria-controls="site-language-controls"]',
   )!;
@@ -159,20 +156,14 @@ test("language controls, locale preferences, and accent-driven background work w
   });
   assert.equal(browser.document.documentElement.lang, "th");
   assert.equal(url.hash, "#work", "section anchors are preserved");
-  mock.module("../app/components/effects/AeroShards", () => ({
+  mock.module("../app/components/effects/ShapeGrid", () => ({
     default: ({
-      shardColor,
-      accentColor,
-      onError,
+      hoverColor,
+      hoverFillColor,
     }: {
-      shardColor: string;
-      accentColor: string;
-      onError: () => void;
-    }) => (
-      <div data-palette={JSON.stringify([shardColor, accentColor])}>
-        <button onClick={onError}>Simulate WebGPU failure</button>
-      </div>
-    ),
+      hoverColor: string;
+      hoverFillColor: string;
+    }) => <div data-palette={JSON.stringify([hoverColor, hoverFillColor])} />,
   }));
   const { default: SiteBackground } =
     await import("../app/components/layout/site-background");
@@ -197,32 +188,6 @@ test("language controls, locale preferences, and accent-driven background work w
     accentChanged();
   });
   assert.deepEqual(palette(), ["#ededed", "#ededed"]);
-  await act(async () => {
-    (
-      browser.document.querySelector(
-        "[data-palette] button",
-      ) as HTMLButtonElement
-    ).click();
-  });
-  assert.ok(!browser.document.querySelector("[data-palette]"));
-  const fallback = () =>
-    browser.document.querySelector("[data-aero-shards-fallback]");
-  assert.ok(fallback(), "WebGPU failures keep a shard background visible");
-  assert.equal(fallback()!.getAttribute("fill"), "#ededed");
-  assert.ok(fallback()!.querySelectorAll("polygon").length > 0);
-  assert.ok(
-    !browser.document.querySelector("canvas"),
-    "the old star field is not rendered",
-  );
-  await act(async () => {
-    browser.document.documentElement.style.setProperty(
-      "--site-accent",
-      "#62b5e5",
-    );
-    accentChanged();
-  });
-  assert.equal(fallback()!.getAttribute("fill"), "#62b5e5");
-  assert.equal(fallback()!.getAttribute("stroke"), "#62b5e5");
   await act(async () => root.render(null));
   assert.equal(
     disconnected,
