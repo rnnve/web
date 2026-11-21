@@ -205,10 +205,24 @@ test("language controls, locale preferences, and accent-driven background work w
     ).click();
   });
   assert.ok(!browser.document.querySelector("[data-palette]"));
+  const fallback = () =>
+    browser.document.querySelector("[data-aero-shards-fallback]");
+  assert.ok(fallback(), "WebGPU failures keep a shard background visible");
+  assert.equal(fallback()!.getAttribute("fill"), "#ededed");
+  assert.ok(fallback()!.querySelectorAll("polygon").length > 0);
   assert.ok(
-    browser.document.querySelector('canvas[aria-hidden="true"]'),
-    "WebGPU failures restore the star-field background",
+    !browser.document.querySelector("canvas"),
+    "the old star field is not rendered",
   );
+  await act(async () => {
+    browser.document.documentElement.style.setProperty(
+      "--site-accent",
+      "#62b5e5",
+    );
+    accentChanged();
+  });
+  assert.equal(fallback()!.getAttribute("fill"), "#62b5e5");
+  assert.equal(fallback()!.getAttribute("stroke"), "#62b5e5");
   await act(async () => root.render(null));
   assert.equal(
     disconnected,
