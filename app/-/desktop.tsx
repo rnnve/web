@@ -41,6 +41,8 @@ import {
   Music2,
   Code2,
   Mail,
+  House,
+  ChevronUp,
 } from "lucide-react";
 import LiveStatus from "../components/status/live-status";
 import styles from "./desktop.module.css";
@@ -71,7 +73,7 @@ const apps: Record<
   }
 > = {
   files: {
-    name: "Files",
+    name: "File manager",
     icon: Folder,
     detail: "A few places to explore",
   },
@@ -81,7 +83,7 @@ const apps: Record<
     detail: "Make yourself at home",
   },
   settings: {
-    name: "Settings",
+    name: "System Settings",
     icon: Settings,
     detail: "Make this space yours",
   },
@@ -118,14 +120,15 @@ const apps: Record<
 };
 const DesktopWindow = motion.create(Card);
 
-const appIds: AppId[] = ["listening", "ask", "developing"];
-const pageIds: AppId[] = [
+const appIds: AppId[] = [
   "files",
-  "terminal",
-  "settings",
   "portfolio",
-  "newtab",
+  "listening",
+  "developing",
+  "ask",
+  "terminal",
 ];
+const pageIds: AppId[] = ["settings", "newtab"];
 const places = [
   {
     id: "portfolio" as AppId,
@@ -425,7 +428,24 @@ export default function Desktop() {
       data-motion={reduceMotion ? "reduced" : "full"}
       aria-label="Rynnie desktop"
     >
-      <div className={styles.wallpaper} aria-hidden="true" />
+      <div className={styles.wallpaper} aria-hidden="true">
+        <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+          <path className={styles.wallpaperBack} d="M0 0H1600V1000H0Z" />
+          <path
+            className={styles.wallpaperFold}
+            d="M530 0H1600V1000H1180L300 380Z"
+          />
+          <path
+            className={styles.wallpaperPlane}
+            d="M1600 0V1000H720L1220 300 830 0Z"
+          />
+          <path
+            className={styles.wallpaperEdge}
+            d="M0 740 1220 300 720 1000H0Z"
+          />
+          <path className={styles.wallpaperLight} d="m1220 300 380 700H720Z" />
+        </svg>
+      </div>
 
       <aside
         className={styles.desktopStatus}
@@ -435,12 +455,12 @@ export default function Desktop() {
       </aside>
 
       <div className={styles.shortcuts} aria-label="Desktop apps">
-        {appIds.map((id) => {
+        {(["files", "portfolio", "settings"] as const).map((id) => {
           const Icon = apps[id].icon;
           return (
             <Button variant="ghost" key={id} onClick={() => open(id)}>
               <span className={styles.appIcon}>
-                <Icon size={27} strokeWidth={1.5} />
+                <Icon className="size-7" strokeWidth={1.5} />
               </span>
               <span>{apps[id].name}</span>
             </Button>
@@ -448,9 +468,20 @@ export default function Desktop() {
         })}
       </div>
       <div className={styles.desktopLabel} aria-hidden="true">
-        <span>YOUR OWN LITTLE CORNER</span>
-        <h1>Stay curious.</h1>
-        <p>A desktop for the internet.</p>
+        <span>Rynnie OS</span>
+        <h1>
+          {clock?.toLocaleTimeString(undefined, {
+            hour: "2-digit",
+            minute: "2-digit",
+          }) ?? "—:—"}
+        </h1>
+        <p>
+          {clock?.toLocaleDateString(undefined, {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+          }) ?? "Your browser desktop"}
+        </p>
       </div>
 
       <AnimatePresence>
@@ -692,13 +723,13 @@ export default function Desktop() {
                 {item.id === "settings" && (
                   <Card className={styles.settings}>
                     <CardHeader>
-                      <CardDescription>PERSONALIZE YOUR SPACE</CardDescription>
+                      <CardDescription>Appearance</CardDescription>
                       <CardTitle>
-                        <h2>Simple by design.</h2>
+                        <h2>System Settings</h2>
                       </CardTitle>
                       <CardDescription>
-                        A monochrome desktop with the same live accent as the
-                        site.
+                        A Plasma inspired workspace, with the site’s live
+                        accent.
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -749,7 +780,7 @@ export default function Desktop() {
                         <Monitor size={25} strokeWidth={1.5} />
                         <div>
                           <strong>Rynnie OS</strong>
-                          <p>A small desktop, right in your browser.</p>
+                          <p>Your personal browser workspace.</p>
                           <small>
                             Listening, Ask, and Developing. Right here.
                           </small>
@@ -779,20 +810,33 @@ export default function Desktop() {
             initial={{ opacity: 0, y: 12, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.97 }}
-            transition={{ duration: reduceMotion ? 0 : 0.18 }}
+            transition={{
+              duration: reduceMotion ? 0 : 0.3,
+              ease: [0.22, 1, 0.36, 1],
+            }}
             className={styles.launcher}
             aria-label="App launcher"
           >
             <div className={styles.launcherHeading}>
-              <span>Make yourself at home.</span>
-              <small>RYNNIE OS</small>
+              <span className={styles.userAvatar}>R</span>
+              <div>
+                <strong>Rynnie</strong>
+                <small>Personal workspace</small>
+              </div>
+              <Button
+                variant="ghost"
+                aria-label="Open System Settings"
+                onClick={() => open("settings")}
+              >
+                <Settings size={20} />
+              </Button>
             </div>
             <label className={styles.search}>
               <Search size={16} />
               <Input
                 autoFocus
                 aria-label="Search apps"
-                placeholder="Find an app…"
+                placeholder="Search applications…"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={(event) => {
@@ -805,34 +849,54 @@ export default function Desktop() {
                 }}
               />
             </label>
-            <div className={styles.launcherApps}>
-              {[...appIds, ...pageIds]
-                .filter((id) =>
-                  apps[id].name.toLowerCase().includes(query.toLowerCase()),
-                )
-                .map((id) => {
-                  const Icon = apps[id].icon;
-                  return (
-                    <Button variant="ghost" key={id} onClick={() => open(id)}>
-                      <Icon size={23} />
-                      <span>
-                        <strong>{apps[id].name}</strong>
-                        <small>{apps[id].detail}</small>
-                      </span>
-                      <ChevronRight size={14} />
-                    </Button>
-                  );
-                })}
-              {![...appIds, ...pageIds].some((id) =>
-                apps[id].name.toLowerCase().includes(query.toLowerCase()),
-              ) && <p>No apps found.</p>}
+            <div className={styles.launcherContent}>
+              <nav className={styles.launcherPlaces} aria-label="Places">
+                <span>Places</span>
+                <Button variant="ghost" onClick={() => open("files")}>
+                  <House size={18} /> Home
+                </Button>
+                <Button variant="ghost" onClick={() => open("portfolio")}>
+                  <Monitor size={18} /> Portfolio
+                </Button>
+                <Button variant="ghost" onClick={() => open("settings")}>
+                  <Settings size={18} /> Settings
+                </Button>
+              </nav>
+              <div className={styles.launcherApplications}>
+                <p className={styles.launcherSection}>Applications</p>
+                <div className={styles.launcherApps}>
+                  {[...appIds, ...pageIds]
+                    .filter((id) =>
+                      apps[id].name.toLowerCase().includes(query.toLowerCase()),
+                    )
+                    .map((id) => {
+                      const Icon = apps[id].icon;
+                      return (
+                        <Button
+                          variant="ghost"
+                          key={id}
+                          onClick={() => open(id)}
+                        >
+                          <Icon className="size-8" />
+                          <span>
+                            <strong>{apps[id].name}</strong>
+                            <small>{apps[id].detail}</small>
+                          </span>
+                        </Button>
+                      );
+                    })}
+                  {![...appIds, ...pageIds].some((id) =>
+                    apps[id].name.toLowerCase().includes(query.toLowerCase()),
+                  ) && <p>No apps found.</p>}
+                </div>
+              </div>
             </div>
             <Button
               variant="ghost"
               className={styles.portfolioButton}
               onClick={() => open("portfolio")}
             >
-              Open portfolio <ArrowUpRight size={14} />
+              Explore portfolio <Monitor size={14} />
             </Button>
           </motion.section>
         )}
@@ -851,68 +915,7 @@ export default function Desktop() {
         >
           <Grid2X2 size={21} />
         </Button>
-        <DropdownMenu
-          open={powerOpen}
-          onOpenChange={(value) => {
-            setPowerOpen(value);
-            if (value) setLauncher(false);
-          }}
-        >
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              aria-label="Power menu"
-              title="Power"
-              aria-haspopup="menu"
-            >
-              <Power size={18} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className={styles.powerMenu}
-            data-motion={reduceMotion ? "reduced" : "full"}
-            side="top"
-            align="start"
-            sideOffset={8}
-            collisionPadding={8}
-          >
-            <DropdownMenuLabel className={styles.powerMenuLabel}>
-              RYNNIE OS
-            </DropdownMenuLabel>
-            <DropdownMenuItem className={styles.powerMenuItem} asChild>
-              <Link href="/">
-                <Power size={14} />
-                Return to site
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={styles.powerMenuItem}
-              onSelect={() => {
-                setWindows([]);
-                setLauncher(false);
-                setQuery("");
-                setCommand("");
-                setAppVersions({});
-                setHistory([
-                  {
-                    command: "",
-                    output: "Welcome to Rynnie OS. Type help to look around.",
-                  },
-                ]);
-                commandHistory.current = [];
-                historyIndex.current = 0;
-                desktopSnapshot.current = null;
-              }}
-            >
-              <RefreshCw size={14} />
-              Restart desktop
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className={styles.powerMenuSeparator} />
-            <DropdownMenuItem className={styles.powerMenuItem}>
-              Cancel
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
         <div className={styles.separator} />
         <div className={styles.taskApps} aria-label="Running and pinned apps">
           {[
@@ -935,12 +938,84 @@ export default function Desktop() {
                   else open(id);
                 }}
               >
-                <Icon size={20} strokeWidth={1.6} />
+                <Icon className="size-6" strokeWidth={1.6} />
                 <span className={styles.taskLabel}>{apps[id].name}</span>
                 <i className={styles.runningIndicator} />
               </Button>
             );
           })}
+        </div>
+        <div className={styles.systemTray}>
+          <Button
+            variant="ghost"
+            aria-label="Open System Settings"
+            title="System Settings"
+            onClick={() => open("settings")}
+          >
+            <ChevronUp size={18} />
+          </Button>
+          <DropdownMenu
+            open={powerOpen}
+            onOpenChange={(value) => {
+              setPowerOpen(value);
+              if (value) setLauncher(false);
+            }}
+          >
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                aria-label="Power menu"
+                title="Power"
+                aria-haspopup="menu"
+              >
+                <Power size={18} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className={styles.powerMenu}
+              data-motion={reduceMotion ? "reduced" : "full"}
+              side="top"
+              align="start"
+              sideOffset={8}
+              collisionPadding={8}
+            >
+              <DropdownMenuLabel className={styles.powerMenuLabel}>
+                RYNNIE OS
+              </DropdownMenuLabel>
+              <DropdownMenuItem className={styles.powerMenuItem} asChild>
+                <Link href="/">
+                  <Power size={14} />
+                  Return to site
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={styles.powerMenuItem}
+                onSelect={() => {
+                  setWindows([]);
+                  setLauncher(false);
+                  setQuery("");
+                  setCommand("");
+                  setAppVersions({});
+                  setHistory([
+                    {
+                      command: "",
+                      output: "Welcome to Rynnie OS. Type help to look around.",
+                    },
+                  ]);
+                  commandHistory.current = [];
+                  historyIndex.current = 0;
+                  desktopSnapshot.current = null;
+                }}
+              >
+                <RefreshCw size={14} />
+                Restart desktop
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className={styles.powerMenuSeparator} />
+              <DropdownMenuItem className={styles.powerMenuItem}>
+                Cancel
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <time className={styles.trayClock} aria-label="Desktop clock">
           <span>

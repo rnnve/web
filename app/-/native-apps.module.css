@@ -2,8 +2,8 @@
   display: flex;
   height: 100%;
   min-height: 0;
-  background: #111;
-  color: #ddd;
+  background: var(--background);
+  color: var(--foreground);
   font-size: 12px;
 }
 .workspace button,
@@ -27,14 +27,14 @@
   gap: 10px;
   margin: 0 10px 28px;
   color: var(--site-accent);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
 }
 .sectionLabel {
   display: block;
-  font-size: 8px;
-  letter-spacing: 1.5px;
-  color: #777;
+  font-size: 12px;
+  letter-spacing: normal;
+  color: var(--muted-foreground);
 }
 .sidebar > .sectionLabel {
   margin: 0 10px 10px;
@@ -49,8 +49,8 @@
   border-radius: 4px;
   text-align: left;
   background: transparent;
-  color: #999;
-  font-size: 11px;
+  color: var(--muted-foreground);
+  font-size: 14px;
 }
 .sidebar button > span {
   overflow: hidden;
@@ -61,7 +61,7 @@
 }
 .sidebar button:hover {
   background: #ffffff05;
-  color: #ddd;
+  color: var(--foreground);
 }
 .sidebar button[aria-pressed="true"],
 .selectedRow {
@@ -74,25 +74,25 @@
   gap: 9px;
   margin-top: auto;
   padding: 32px 10px 0;
-  color: #777;
+  color: var(--muted-foreground);
 }
 .sidebarFoot > span {
-  font-size: 8px;
-  letter-spacing: 1.5px;
+  font-size: 12px;
+  letter-spacing: normal;
 }
 .sidebarFoot strong {
   font-size: 22px;
   font-weight: 400;
-  color: #ccc;
+  color: var(--foreground);
 }
 .sidebarFoot small,
 .sidebarHint {
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.8;
 }
 .sidebarHint {
   padding: 0 10px;
-  color: #777;
+  color: var(--muted-foreground);
 }
 .main {
   display: flex;
@@ -102,7 +102,8 @@
   overflow: hidden;
 }
 .toolbar {
-  min-height: 47px;
+  min-height: 48px;
+  background: var(--card);
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -110,8 +111,8 @@
   gap: 12px;
   padding: 10px 24px;
   border-bottom: 1px solid #ffffff0b;
-  color: #bbb;
-  font-size: 10px;
+  color: var(--muted-foreground);
+  font-size: 12px;
 }
 .toolbar > span {
   min-width: 0;
@@ -133,7 +134,7 @@
   place-items: center;
   border: 0;
   background: transparent;
-  color: #aaa;
+  color: var(--muted-foreground);
   padding: 2px;
 }
 .toolbar button:hover,
@@ -143,7 +144,7 @@
 .toolbar select {
   border: 0;
   background: #171717;
-  color: #aaa;
+  color: var(--muted-foreground);
   font: inherit;
   padding: 2px 4px;
   border-radius: 3px;
@@ -164,16 +165,16 @@
 .heading h2,
 .start h2 {
   margin: 9px 0;
-  font-size: clamp(22px, 3vw, 31px);
-  line-height: 1.2;
+  font-size: 24px;
+  line-height: 32px;
   letter-spacing: -1.1px;
-  font-weight: 450;
+  font-weight: 500;
 }
 .heading p,
 .start p {
   margin: 0;
-  font-size: 11px;
-  color: #888;
+  font-size: 14px;
+  color: var(--muted-foreground);
   line-height: 1.8;
 }
 .headingIcon {
@@ -189,7 +190,7 @@
   border: 1px solid #ffffff10;
   border-radius: 4px;
   background: #ffffff03;
-  color: #777;
+  color: var(--muted-foreground);
   margin-bottom: 22px;
 }
 .search:focus-within {
@@ -201,8 +202,8 @@
   border: 0;
   outline: 0;
   background: transparent;
-  color: #ddd;
-  font-size: 11px;
+  color: var(--foreground);
+  font-size: 14px;
 }
 .tableHeading {
   display: flex;
@@ -210,9 +211,9 @@
   gap: 16px;
   padding: 0 0 12px;
   border-bottom: 1px solid #ffffff0b;
-  font-size: 8px;
-  letter-spacing: 1px;
-  color: #666;
+  font-size: 12px;
+  letter-spacing: normal;
+  color: var(--muted-foreground);
 }
 .tableHeading > span:nth-child(2) {
   flex: 1;
@@ -240,8 +241,8 @@
   width: 18px;
   flex-shrink: 0;
   text-align: center;
-  font-size: 9px;
-  color: #666;
+  font-size: 12px;
+  color: var(--muted-foreground);
   font-variant-numeric: tabular-nums;
 }
 .cover {
@@ -253,7 +254,7 @@
   overflow: hidden;
   border-radius: 3px;
   background: #ffffff06;
-  color: #888;
+  color: var(--muted-foreground);
 }
 .cover img {
   width: 100%;
@@ -272,18 +273,18 @@
   white-space: nowrap;
 }
 .trackCopy strong {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 500;
 }
 .trackCopy small {
   margin-top: 5px;
-  font-size: 10px;
-  color: #777;
+  font-size: 12px;
+  color: var(--muted-foreground);
 }
 .meta {
   flex-shrink: 0;
-  color: #777;
-  font-size: 9px;
+  color: var(--muted-foreground);
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 .statusbar {
@@ -291,14 +292,15 @@
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  padding: 10px 24px;
+  padding: 8px 24px;
+  background: var(--card);
   border-top: 1px solid #ffffff0b;
-  color: #666;
-  font-size: 9px;
+  color: var(--muted-foreground);
+  font-size: 12px;
 }
 .empty {
   margin: 32px 0;
-  color: #888;
+  color: var(--muted-foreground);
   text-align: center;
   line-height: 1.8;
 }
@@ -313,10 +315,10 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #888;
+  color: var(--muted-foreground);
 }
 .message p {
-  font-size: 11px;
+  font-size: 14px;
 }
 .message button,
 .empty button {
@@ -324,8 +326,8 @@
   border: 1px solid #ffffff20;
   border-radius: 4px;
   background: #ffffff06;
-  color: #ccc;
-  font-size: 11px;
+  color: var(--foreground);
+  font-size: 14px;
 }
 .repoInfo {
   display: flex;
@@ -333,8 +335,8 @@
   flex-wrap: wrap;
   gap: 16px;
   padding: 0 0 24px;
-  font-size: 10px;
-  color: #888;
+  font-size: 12px;
+  color: var(--muted-foreground);
 }
 .repoInfo > span {
   display: flex;
@@ -364,20 +366,20 @@
   margin-bottom: 20px;
 }
 .calendar header > span {
-  font-size: 8px;
-  letter-spacing: 1px;
-  color: #777;
+  font-size: 12px;
+  letter-spacing: normal;
+  color: var(--muted-foreground);
 }
 .calendar header > strong {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 400;
-  color: #aaa;
+  color: var(--muted-foreground);
 }
 .calendar small {
   display: block;
   margin-top: 14px;
-  color: #666;
-  font-size: 8px;
+  color: var(--muted-foreground);
+  font-size: 12px;
 }
 .calendarScroll {
   overflow-x: auto;
@@ -424,13 +426,13 @@
   padding: 7px 10px;
   border: 1px solid #ffffff10;
   border-radius: 3px;
-  color: #999;
-  font-size: 10px;
+  color: var(--muted-foreground);
+  font-size: 12px;
 }
 .privacy {
-  font-size: 8px;
-  letter-spacing: 1.3px;
-  color: #777;
+  font-size: 12px;
+  letter-spacing: normal;
+  color: var(--muted-foreground);
 }
 .composer {
   min-height: 0;
@@ -445,20 +447,20 @@
   gap: 18px;
   padding: 15px 0;
   border-bottom: 1px solid #ffffff0c;
-  font-size: 11px;
+  font-size: 14px;
 }
 .mailField > span {
   width: 35px;
-  color: #777;
+  color: var(--muted-foreground);
 }
 .mailField > strong {
   font-weight: 400;
-  color: #bbb;
+  color: var(--muted-foreground);
 }
 .composeLabel {
   margin: 26px 0 15px;
-  font-size: 10px;
-  color: #888;
+  font-size: 12px;
+  color: var(--muted-foreground);
 }
 .composer textarea {
   width: 100%;
@@ -469,8 +471,8 @@
   border: 0;
   outline: none;
   background: transparent;
-  color: #ddd;
-  font-size: 15px;
+  color: var(--foreground);
+  font-size: 16px;
   line-height: 1.9;
 }
 .composer textarea:focus-visible {
@@ -486,8 +488,8 @@
   border-top: 1px solid #ffffff0b;
 }
 .composer footer > span {
-  color: #666;
-  font-size: 10px;
+  color: var(--muted-foreground);
+  font-size: 12px;
 }
 .primary {
   display: flex;
@@ -498,7 +500,7 @@
   border-radius: 4px;
   background: var(--accent-subtle);
   color: var(--site-accent);
-  font-size: 11px;
+  font-size: 14px;
   cursor: pointer;
 }
 .primary:disabled {
@@ -506,8 +508,8 @@
   opacity: 0.35;
 }
 .deliveryError {
-  color: #bbb;
-  font-size: 11px;
+  color: var(--muted-foreground);
+  font-size: 14px;
   line-height: 1.7;
 }
 .sent {
@@ -536,20 +538,20 @@
   margin: 6px 0 0;
 }
 .sent p {
-  color: #999;
+  color: var(--muted-foreground);
   font-size: 12px;
   line-height: 1.8;
   margin: 0;
 }
 .sent small {
-  color: #666;
-  font-size: 10px;
+  color: var(--muted-foreground);
+  font-size: 12px;
 }
 .start {
   height: 100%;
   padding: clamp(24px, 5vw, 60px);
   overflow-y: auto;
-  background: #111;
+  background: var(--background);
 }
 .start > p {
   max-width: 440px;
@@ -574,7 +576,7 @@
   border-radius: 4px;
   background: #ffffff02;
   text-align: left;
-  color: #bbb;
+  color: var(--muted-foreground);
 }
 .startLinks button:hover {
   color: var(--site-accent);
@@ -585,8 +587,8 @@
   font-weight: 500;
 }
 .startLinks span {
-  font-size: 10px;
-  color: #777;
+  font-size: 12px;
+  color: var(--muted-foreground);
 }
 .startLinks button > svg:last-child {
   position: absolute;
@@ -615,7 +617,7 @@
   .sidebar button,
   .selectedRow {
     padding: 8px;
-    font-size: 10px;
+    font-size: 12px;
     gap: 6px;
   }
   .toolbar {
@@ -789,7 +791,7 @@
   .libraryTabs > button {
     flex: 1;
     white-space: nowrap;
-    font-size: 10px;
+    font-size: 12px;
     padding-inline: 8px;
   }
   .composerCard {

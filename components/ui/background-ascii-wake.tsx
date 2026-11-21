@@ -146,7 +146,8 @@ export function WakeGlyph({
       }
     };
 
-    const onPointerMove = (e: PointerEvent) => {
+    const onPointerMove: EventListener = (event) => {
+      const e = event as PointerEvent;
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -219,15 +220,14 @@ export function WakeGlyph({
     };
     window.addEventListener("resize", onResize);
 
-    // the site's theme toggle flips a `.dark` class on <html> live, with no
-    // remount — watch it so the glyph color updates without a page reload
+    // Follow theme and live accent updates without resetting the field.
     const themeObserver = new MutationObserver(() => {
       fg = getComputedStyle(canvas).color;
       if (reduced) draw();
     });
     themeObserver.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class"],
+      attributeFilter: ["class", "style"],
     });
 
     return () => {
@@ -244,7 +244,7 @@ export function WakeGlyph({
     <canvas
       ref={canvasRef}
       aria-hidden
-      className={`block h-full w-full text-foreground ${className}`}
+      className={`block h-full w-full text-[var(--site-accent)] ${className}`}
     />
   );
 }
