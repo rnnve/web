@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { StatusIcon } from "./status-icon";
 import SpotifyWidget from "./spotify-widget";
 import usePortfolioStatus from "../../hooks/use-portfolio-status";
@@ -18,6 +19,7 @@ export default function LiveStatus({
   className?: string;
 }) {
   const { t } = useSiteSettings();
+  const reducedMotion = useReducedMotion();
   const { discord, payload, spotify, spotifyLoading, spotifySyncedAt } =
     usePortfolioStatus({
       profile: initialDiscord,
@@ -53,16 +55,29 @@ export default function LiveStatus({
           <span>@{discord?.username || "melrynni"}</span>
         </span>
       </div>
-      {!spotifyLoading && spotify.isPlaying && (
-        <div className={styles.nowPlaying} aria-label="Live Spotify status">
-          <SpotifyWidget
-            compact
-            spotify={spotify}
-            error={payload.errors?.spotify}
-            syncedAt={spotifySyncedAt}
-          />
-        </div>
-      )}
+      <AnimatePresence>
+        {!spotifyLoading && spotify.isPlaying && (
+          <motion.div
+            key="now-playing"
+            className={styles.nowPlaying}
+            aria-label="Live Spotify status"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: reducedMotion ? 0 : 0.4,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            <SpotifyWidget
+              compact
+              spotify={spotify}
+              error={payload.errors?.spotify}
+              syncedAt={spotifySyncedAt}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

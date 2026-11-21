@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSiteSettings } from "../settings/site-settings-provider";
 import { StatusIcon } from "./status-icon";
@@ -110,7 +109,6 @@ export default function SpotifyWidget({
   syncedAt?: number;
 }) {
   const { t } = useSiteSettings();
-  const reducedMotion = useReducedMotion();
   const [clock, setClock] = useState(0);
   const [playback, setPlayback] = useState<LyricsPlayback | null>(null);
   useEffect(() => {
@@ -168,11 +166,7 @@ export default function SpotifyWidget({
     lines.length > 0;
 
   return (
-    <motion.section
-      initial={{ opacity: reducedMotion ? 1 : 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: reducedMotion ? 0 : 0.4, ease: "easeInOut" }}
+    <section
       className={`${styles.card} ${compact ? styles.compact : ""}`}
       aria-labelledby="spotify-widget-title"
     >
@@ -241,6 +235,6 @@ export default function SpotifyWidget({
           {error}
         </p>
       )}
-    </motion.section>
+    </section>
   );
 }

@@ -56,6 +56,8 @@ test("the first age render uses the server timestamp rather than the client cloc
 
 test("home removes duplicate social actions and shows Discord display name above username", (context) => {
   const original = usePortfolioStatus;
+  let isPlaying = true;
+  let spotifyLoading = false;
   let discord: DiscordProfile = {
     username: "handle",
     displayName: "Display Name",
@@ -65,11 +67,11 @@ test("home removes duplicate social actions and shows Discord display name above
     default: () => ({
       discord,
       spotify: normalizeSpotify({
-        isPlaying: true,
+        isPlaying,
         title: "Song",
         artist: "Artist",
       }),
-      spotifyLoading: false,
+      spotifyLoading,
       spotifySyncedAt: 0,
       payload: { errors: {} },
     }),
@@ -131,6 +133,14 @@ test("home removes duplicate social actions and shows Discord display name above
     page().querySelector('[aria-label="Discord profile"] strong')?.textContent,
     "handle",
   );
+  isPlaying = false;
+  assert.ok(!page().querySelector('[aria-label="Live Spotify status"]'));
+  assert.ok(page().querySelector('[aria-label="Discord profile"]'));
+  isPlaying = true;
+  spotifyLoading = true;
+  assert.ok(!page().querySelector('[aria-label="Live Spotify status"]'));
+  spotifyLoading = false;
+  assert.ok(page().querySelector('[aria-label="Live Spotify status"]'));
 });
 
 test("long lyrics shrink to stay on one line", () => {
