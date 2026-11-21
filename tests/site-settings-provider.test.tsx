@@ -6,6 +6,7 @@ import SiteSettingsProvider from "../app/components/settings/site-settings-provi
 import PortfolioNavbar from "../app/components/layout/portfolio-navbar";
 import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import Aurora from "../app/components/effects/aurora";
+import AeroShards from "../app/components/effects/AeroShards";
 import { createRequire } from "node:module";
 
 const { mock } = createRequire(import.meta.url)("bun:test");
@@ -85,13 +86,13 @@ test("language controls, locale preferences, and accent-driven background work w
   );
   for (const [key, value] of Object.entries(globals))
     Object.defineProperty(globalThis, key, { configurable: true, value });
-  const originalAurora = Aurora;
+  const originalAeroShards = AeroShards;
   const { createRoot } = await import("react-dom/client");
   const root = createRoot(browser.document.getElementById("root")!);
   context.after(async () => {
     await act(async () => root.unmount());
-    mock.module("../app/components/effects/aurora", () => ({
-      default: originalAurora,
+    mock.module("../app/components/effects/AeroShards", () => ({
+      default: originalAeroShards,
     }));
     for (const [key, descriptor] of previous) {
       if (descriptor) Object.defineProperty(globalThis, key, descriptor);
@@ -158,9 +159,19 @@ test("language controls, locale preferences, and accent-driven background work w
   });
   assert.equal(browser.document.documentElement.lang, "th");
   assert.equal(url.hash, "#work", "section anchors are preserved");
-  mock.module("../app/components/effects/aurora", () => ({
-    default: ({ colorStops }: { colorStops: string[] }) => (
-      <div data-palette={JSON.stringify(colorStops)} />
+  mock.module("../app/components/effects/AeroShards", () => ({
+    default: ({
+      shardColor,
+      accentColor,
+      onError,
+    }: {
+      shardColor: string;
+      accentColor: string;
+      onError: () => void;
+    }) => (
+      <div data-palette={JSON.stringify([shardColor, accentColor])}>
+        <button onClick={onError}>Simulate WebGPU failure</button>
+      </div>
     ),
   }));
   const { default: SiteBackground } =
@@ -172,7 +183,7 @@ test("language controls, locale preferences, and accent-driven background work w
         .querySelector("[data-palette]")!
         .getAttribute("data-palette")!,
     );
-  assert.deepEqual(palette(), ["#ffffff", "#9aa0ad", "#ffffff"]);
+  assert.deepEqual(palette(), ["#ededed", "#ededed"]);
   await act(async () => {
     browser.document.documentElement.style.setProperty(
       "--site-accent",
@@ -180,12 +191,24 @@ test("language controls, locale preferences, and accent-driven background work w
     );
     accentChanged();
   });
-  assert.deepEqual(palette(), ["#ff0000", "#a60000", "#ff0000"]);
+  assert.deepEqual(palette(), ["#ff0000", "#ff0000"]);
   await act(async () => {
     browser.document.documentElement.style.removeProperty("--site-accent");
     accentChanged();
   });
-  assert.deepEqual(palette(), ["#ffffff", "#9aa0ad", "#ffffff"]);
+  assert.deepEqual(palette(), ["#ededed", "#ededed"]);
+  await act(async () => {
+    (
+      browser.document.querySelector(
+        "[data-palette] button",
+      ) as HTMLButtonElement
+    ).click();
+  });
+  assert.ok(!browser.document.querySelector("[data-palette]"));
+  assert.ok(
+    browser.document.querySelector('canvas[aria-hidden="true"]'),
+    "WebGPU failures restore the star-field background",
+  );
   await act(async () => root.render(null));
   assert.equal(
     disconnected,

@@ -1,8 +1,4 @@
 {
   "title": "Effects",
-  "pages": [
-    "index",
-    "aurora",
-    "logo-loop"
-  ]
+  "pages": ["index", "aero-shards", "aurora", "logo-loop"]
 }

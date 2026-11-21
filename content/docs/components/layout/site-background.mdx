@@ -1,11 +1,11 @@
 ---
 title: Site Background
-description: Animated portfolio background and atmospheric layer.
+description: AeroShards background with live accent colors and a star field fallback.
 ---
 
 ## Purpose
 
-Animated portfolio background and atmospheric layer.
+AeroShards background with live accent colors and a star field fallback.
 
 ## Source
 
@@ -17,4 +17,6 @@ Layout
 
 ## Notes
 
-Keep public API stable when this component is shared across routes. Prefer composing existing primitives from `components/ui` before adding new ones.
+Both shard and accent colors follow `--site-accent`, including changes during playback and the default color when playback stops. The effect updates colors without recreating the GPU scene.
+
+Pointer movement, clicks, and holds interact with the shards while page links and controls remain usable. Reduced motion is respected. Browsers without WebGPU, or with a GPU initialization error, use the existing ASCII star field.
