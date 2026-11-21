@@ -146,7 +146,8 @@ export function WakeGlyph({
       }
     };
 
-    const onPointerMove = (e: PointerEvent) => {
+    const onPointerMove = (evt: Event) => {
+      const e = evt as PointerEvent;
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
