@@ -15,9 +15,17 @@ test("header preserves portfolio routes without language hashes and the active p
       </SiteSettingsProvider>
     </PathnameContext.Provider>,
   );
-  for (const path of ["/", "/developing", "/listen", "/birthday", "/ask"]) {
+  for (const path of [
+    "/",
+    "/developing",
+    "/listen",
+    "/birthday",
+    "/ask",
+    "/docs",
+  ]) {
     assert.ok(html.includes(`href="${path}"`));
   }
+  assert.match(html, /aria-label="Docs"/);
   assert.match(
     html,
     /aria-current="page"[^>]*href="\/developing"|href="\/developing"[^>]*aria-current="page"/,

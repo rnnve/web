@@ -10,6 +10,7 @@ import {
   IconLanguage,
   IconLink,
   IconCode,
+  IconBook,
 } from "@tabler/icons-react";
 import Link from "./intent-link";
 import { usePathname } from "next/navigation";
@@ -185,6 +186,36 @@ export default function PortfolioNavbar() {
                   className={styles.tooltipContent}
                 >
                   {t("Language", "ภาษา")}
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" asChild>
+                    <AnimatedLink
+                      layout
+                      transition={transition}
+                      href="/docs"
+                      className={styles.item}
+                      aria-label={t("Docs", "เอกสาร")}
+                      onClick={() => setLanguageVisible(false)}
+                    >
+                      <motion.span
+                        layout="position"
+                        transition={transition}
+                        className={styles.icon}
+                      >
+                        <IconBook size={16} stroke={1.8} aria-hidden="true" />
+                      </motion.span>
+                    </AnimatedLink>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  sideOffset={9}
+                  collisionPadding={8}
+                  className={styles.tooltipContent}
+                >
+                  {t("Docs", "เอกสาร")}
                 </TooltipContent>
               </Tooltip>
             </motion.nav>
