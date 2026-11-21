@@ -159,12 +159,12 @@ export function WakeGlyph({
         const dt = Math.max(1, now - pointer.t);
         const speed = dist / dt; // px/ms
 
-        // velocity-dependent stamp: fast = thin+quick-fading, slow = fat+lingering
+        // Keep fast strokes wide enough to reach cell centers between grid lines.
         const radiusCells = Math.max(
-          0.6,
+          1.25,
           Math.min(2.6, 2.4 / (1 + speed * 1.6)),
         );
-        const decayRate = Math.max(0.8, Math.min(4.5, 1.0 + speed * 3.2));
+        const decayRate = Math.max(0.8, Math.min(2.4, 1.0 + speed * 3.2));
 
         // sample along the path so a fast pass doesn't leave gaps between frames
         const steps = Math.max(1, Math.ceil(dist / (cellSize * 0.5)));
