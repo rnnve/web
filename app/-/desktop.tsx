@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { profileImages } from "../generated/pfp-images";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -41,7 +43,13 @@ import {
   Music2,
   Code2,
   Mail,
-  House,
+  Bookmark,
+  Globe,
+  BriefcaseBusiness,
+  Wrench,
+  Compass,
+  SlidersHorizontal,
+  Pin,
   ChevronUp,
 } from "lucide-react";
 import LiveStatus from "../components/status/live-status";
@@ -129,6 +137,21 @@ const appIds: AppId[] = [
   "terminal",
 ];
 const pageIds: AppId[] = ["settings", "newtab"];
+const launcherCategories = [
+  {
+    name: "Favorites",
+    icon: Bookmark,
+    ids: ["portfolio", "settings", "files", "listening"],
+  },
+  { name: "All Applications", icon: Grid2X2, ids: [...appIds, ...pageIds] },
+  { name: "Development", icon: Code2, ids: ["developing", "terminal"] },
+  { name: "Internet", icon: Globe, ids: ["portfolio", "newtab"] },
+  { name: "Multimedia", icon: Music2, ids: ["listening"] },
+  { name: "Office", icon: BriefcaseBusiness, ids: ["ask"] },
+  { name: "System", icon: Settings, ids: ["settings"] },
+  { name: "Utilities", icon: Wrench, ids: ["files", "terminal"] },
+] satisfies { name: string; icon: typeof Folder; ids: AppId[] }[];
+
 const places = [
   {
     id: "portfolio" as AppId,
@@ -187,6 +210,11 @@ export default function Desktop() {
   const [windows, setWindows] = useState<WindowState[]>([]);
   const [launcher, setLauncher] = useState(false);
   const [powerOpen, setPowerOpen] = useState(false);
+  const [launcherCategory, setLauncherCategory] = useState("Favorites");
+  const [launcherView, setLauncherView] = useState<"applications" | "places">(
+    "applications",
+  );
+  const [launcherPinned, setLauncherPinned] = useState(false);
   const [query, setQuery] = useState("");
   const [clock, setClock] = useState<Date | null>(null);
   const [saved, setSaved] = useState(true);
@@ -296,7 +324,7 @@ export default function Desktop() {
         },
       ];
     });
-    setLauncher(false);
+    setLauncher(launcherPinned);
     setQuery("");
   }
   function update(id: AppId, patch: Partial<WindowState>) {
@@ -405,6 +433,31 @@ export default function Desktop() {
     }
     setLauncher(false);
   }
+  function restartDesktop() {
+    setWindows([]);
+    setLauncher(false);
+    setQuery("");
+    setCommand("");
+    setAppVersions({});
+    setHistory([
+      {
+        command: "",
+        output: "Welcome to Rynnie OS. Type help to look around.",
+      },
+    ]);
+    commandHistory.current = [];
+    historyIndex.current = 0;
+    desktopSnapshot.current = null;
+  }
+  const launcherIds: AppId[] = query.trim()
+    ? [...appIds, ...pageIds].filter((id) =>
+        apps[id].name.toLowerCase().includes(query.trim().toLowerCase()),
+      )
+    : launcherView === "places"
+      ? ["files", ...places.map((place) => place.id)]
+      : launcherCategories.find(
+          (category) => category.name === launcherCategory,
+        )!.ids;
   const active = windows.filter((w) => !w.minimized).at(-1)?.id;
 
   useEffect(() => {
@@ -795,7 +848,7 @@ export default function Desktop() {
         })}
       </AnimatePresence>
 
-      {launcher && (
+      {launcher && !launcherPinned && (
         <Button
           variant="ghost"
           className={styles.dismiss}
@@ -817,87 +870,155 @@ export default function Desktop() {
             className={styles.launcher}
             aria-label="App launcher"
           >
-            <div className={styles.launcherHeading}>
-              <span className={styles.userAvatar}>R</span>
-              <div>
-                <strong>Rynnie</strong>
-                <small>Personal workspace</small>
+            <header className={styles.launcherHeading}>
+              <div className={styles.launcherUser}>
+                <Image
+                  src={profileImages[0]}
+                  alt=""
+                  width={32}
+                  height={32}
+                  className={styles.userAvatar}
+                />
+                <span>Ryn</span>
               </div>
+              <label className={styles.search}>
+                <Search size={16} />
+                <Input
+                  autoFocus
+                  aria-label="Search apps"
+                  placeholder="Search…"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && launcherIds[0])
+                      open(launcherIds[0]);
+                  }}
+                />
+              </label>
               <Button
                 variant="ghost"
                 aria-label="Open System Settings"
+                title="System Settings"
                 onClick={() => open("settings")}
               >
-                <Settings size={20} />
+                <SlidersHorizontal size={18} />
               </Button>
-            </div>
-            <label className={styles.search}>
-              <Search size={16} />
-              <Input
-                autoFocus
-                aria-label="Search apps"
-                placeholder="Search applications…"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    const match = [...appIds, ...pageIds].find((id) =>
-                      apps[id].name.toLowerCase().includes(query.toLowerCase()),
-                    );
-                    if (match) open(match);
-                  }
-                }}
-              />
-            </label>
+              <Button
+                variant="ghost"
+                aria-label="Keep launcher open"
+                title="Keep launcher open"
+                aria-pressed={launcherPinned}
+                onClick={() => setLauncherPinned(!launcherPinned)}
+              >
+                <Pin size={18} />
+              </Button>
+            </header>
             <div className={styles.launcherContent}>
-              <nav className={styles.launcherPlaces} aria-label="Places">
-                <span>Places</span>
-                <Button variant="ghost" onClick={() => open("files")}>
-                  <House size={18} /> Home
-                </Button>
-                <Button variant="ghost" onClick={() => open("portfolio")}>
-                  <Monitor size={18} /> Portfolio
-                </Button>
-                <Button variant="ghost" onClick={() => open("settings")}>
-                  <Settings size={18} /> Settings
-                </Button>
+              <nav
+                className={styles.launcherCategories}
+                aria-label="Application categories"
+              >
+                {launcherCategories.map((category) => {
+                  const Icon = category.icon;
+                  return (
+                    <Button
+                      variant="ghost"
+                      key={category.name}
+                      aria-pressed={
+                        launcherView === "applications" &&
+                        launcherCategory === category.name
+                      }
+                      onClick={() => {
+                        setLauncherCategory(category.name);
+                        setLauncherView("applications");
+                        setQuery("");
+                      }}
+                    >
+                      <Icon size={18} />
+                      {category.name}
+                    </Button>
+                  );
+                })}
               </nav>
               <div className={styles.launcherApplications}>
-                <p className={styles.launcherSection}>Applications</p>
-                <div className={styles.launcherApps}>
-                  {[...appIds, ...pageIds]
-                    .filter((id) =>
-                      apps[id].name.toLowerCase().includes(query.toLowerCase()),
-                    )
-                    .map((id) => {
-                      const Icon = apps[id].icon;
-                      return (
-                        <Button
-                          variant="ghost"
-                          key={id}
-                          onClick={() => open(id)}
-                        >
-                          <Icon className="size-8" />
-                          <span>
-                            <strong>{apps[id].name}</strong>
-                            <small>{apps[id].detail}</small>
-                          </span>
-                        </Button>
-                      );
-                    })}
-                  {![...appIds, ...pageIds].some((id) =>
-                    apps[id].name.toLowerCase().includes(query.toLowerCase()),
-                  ) && <p>No apps found.</p>}
+                <div
+                  className={styles.launcherApps}
+                  aria-label={
+                    query.trim()
+                      ? "Search results"
+                      : launcherView === "places"
+                        ? "Places"
+                        : launcherCategory
+                  }
+                >
+                  {launcherIds.map((id) => {
+                    const Icon = apps[id].icon;
+                    return (
+                      <Button
+                        variant="ghost"
+                        key={id}
+                        onClick={() => open(id)}
+                        title={apps[id].detail}
+                      >
+                        <span className={styles.launcherIcon} data-app={id}>
+                          <Icon className="size-8" strokeWidth={1.75} />
+                        </span>
+                        <span>{apps[id].name}</span>
+                      </Button>
+                    );
+                  })}
+                  {!launcherIds.length && <p>No apps found.</p>}
                 </div>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              className={styles.portfolioButton}
-              onClick={() => open("portfolio")}
-            >
-              Explore portfolio <Monitor size={14} />
-            </Button>
+            <footer className={styles.launcherFooter}>
+              <div className={styles.launcherTabs}>
+                <Button
+                  variant="ghost"
+                  aria-pressed={launcherView === "applications"}
+                  onClick={() => {
+                    setLauncherView("applications");
+                    setQuery("");
+                  }}
+                >
+                  <Grid2X2 size={18} />
+                  Applications
+                </Button>
+                <Button
+                  variant="ghost"
+                  aria-pressed={launcherView === "places"}
+                  onClick={() => {
+                    setLauncherView("places");
+                    setQuery("");
+                  }}
+                >
+                  <Compass size={18} />
+                  Places
+                </Button>
+              </div>
+              <div className={styles.launcherSession}>
+                <Button variant="ghost" onClick={restartDesktop}>
+                  <RefreshCw size={18} />
+                  Restart
+                </Button>
+                <Button variant="ghost" asChild>
+                  <Link href="/">
+                    <Power size={18} />
+                    Leave desktop
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setLauncher(false);
+                    setPowerOpen(true);
+                  }}
+                >
+                  <ChevronUp size={18} />
+                  Session
+                </Button>
+              </div>
+            </footer>
           </motion.section>
         )}
       </AnimatePresence>
@@ -990,22 +1111,7 @@ export default function Desktop() {
               </DropdownMenuItem>
               <DropdownMenuItem
                 className={styles.powerMenuItem}
-                onSelect={() => {
-                  setWindows([]);
-                  setLauncher(false);
-                  setQuery("");
-                  setCommand("");
-                  setAppVersions({});
-                  setHistory([
-                    {
-                      command: "",
-                      output: "Welcome to Rynnie OS. Type help to look around.",
-                    },
-                  ]);
-                  commandHistory.current = [];
-                  historyIndex.current = 0;
-                  desktopSnapshot.current = null;
-                }}
+                onSelect={restartDesktop}
               >
                 <RefreshCw size={14} />
                 Restart desktop
