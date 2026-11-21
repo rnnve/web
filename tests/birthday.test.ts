@@ -9,8 +9,15 @@ test("countdown targets the birth time in Bangkok regardless of the visitor time
   const countdown = getBirthdayCountdown(Date.parse("2026-12-30T06:12:00Z"));
   assert.equal(countdown.target, Date.parse("2026-12-31T13:12:00+07:00"));
   assert.deepEqual(
-    [countdown.days, countdown.hours, countdown.minutes, countdown.seconds],
-    [1, 0, 0, 0],
+    [
+      countdown.years,
+      countdown.months,
+      countdown.days,
+      countdown.hours,
+      countdown.minutes,
+      countdown.seconds,
+    ],
+    [0, 0, 1, 0, 0, 0],
   );
   assert.equal(countdown.age, 16);
   assert.equal(countdown.isBirthday, false);
@@ -31,8 +38,15 @@ test("birthday celebrates at zero through the rest of December 31 in Bangkok", (
     const countdown = getBirthdayCountdown(Date.parse(date));
     assert.equal(countdown.isBirthday, true);
     assert.deepEqual(
-      [countdown.days, countdown.hours, countdown.minutes, countdown.seconds],
-      [0, 0, 0, 0],
+      [
+        countdown.years,
+        countdown.months,
+        countdown.days,
+        countdown.hours,
+        countdown.minutes,
+        countdown.seconds,
+      ],
+      [0, 0, 0, 0, 0, 0],
     );
   }
 });
@@ -45,17 +59,39 @@ test("the next Bangkok year starts a new countdown even while UTC is December 31
   assert.equal(countdown.isBirthday, false);
   assert.equal(countdown.age, 17);
   assert.deepEqual(
-    [countdown.days, countdown.hours, countdown.minutes, countdown.seconds],
-    [364, 13, 12, 0],
+    [
+      countdown.years,
+      countdown.months,
+      countdown.days,
+      countdown.hours,
+      countdown.minutes,
+      countdown.seconds,
+    ],
+    [0, 11, 30, 13, 12, 0],
   );
 });
 
-test("countdown includes the extra day in a leap year", () => {
+test("countdown spans a leap year using calendar months", () => {
   const countdown = getBirthdayCountdown(
     Date.parse("2028-01-01T13:12:00+07:00"),
   );
-  assert.equal(countdown.days, 365);
+  assert.equal(countdown.months, 11);
+  assert.equal(countdown.days, 30);
   assert.equal(countdown.age, 18);
+});
+
+test("countdown uses calendar months and the remaining days", () => {
+  for (const [date, months, days] of [
+    ["2026-11-21T13:12:00+07:00", 1, 10],
+    ["2026-11-30T13:12:00+07:00", 1, 1],
+    ["2028-02-29T13:12:00+07:00", 10, 2],
+    ["2026-12-01T13:12:00+07:00", 0, 30],
+  ] as const) {
+    const countdown = getBirthdayCountdown(Date.parse(date));
+    assert.equal(countdown.years, 0);
+    assert.equal(countdown.months, months);
+    assert.equal(countdown.days, days);
+  }
 });
 
 test("wish window opens at countdown zero, lasts 48 hours across years, and repeats annually", () => {

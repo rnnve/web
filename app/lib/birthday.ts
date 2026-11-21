@@ -34,15 +34,27 @@ export function getBirthdayCountdown(now: number) {
     ? 0
     : Math.max(0, Math.ceil((target - now) / 1_000));
 
+  const current = new Date(target - remaining * 1_000 + BANGKOK_OFFSET);
+  const end = new Date(target + BANGKOK_OFFSET);
+  const months =
+    (end.getUTCFullYear() - current.getUTCFullYear()) * 12 +
+    end.getUTCMonth() -
+    current.getUTCMonth();
+  // The target is December 31, so every starting day fits in its month.
+  current.setUTCMonth(current.getUTCMonth() + months);
+  const remainder = (end.getTime() - current.getTime()) / 1_000;
+
   return {
     target,
     isBirthday,
     age:
       new Date(target + BANGKOK_OFFSET).getUTCFullYear() -
       Number(BIRTH_DATE.slice(0, 4)),
-    days: Math.floor(remaining / 86_400),
-    hours: Math.floor((remaining % 86_400) / 3_600),
-    minutes: Math.floor((remaining % 3_600) / 60),
-    seconds: remaining % 60,
+    years: Math.floor(months / 12),
+    months: months % 12,
+    days: Math.floor(remainder / 86_400),
+    hours: Math.floor((remainder % 86_400) / 3_600),
+    minutes: Math.floor((remainder % 3_600) / 60),
+    seconds: remainder % 60,
   };
 }
