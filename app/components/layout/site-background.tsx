@@ -28,7 +28,7 @@ export default function SiteBackground() {
       aria-hidden="true"
     >
       <ShapeGrid
-        shape="square"
+        shape="cross"
         direction="diagonal"
         lineColor="#2a2734"
         hoverColor={accent}
