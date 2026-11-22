@@ -1,20 +1,39 @@
 "use client";
 
+import { Suspense, use } from "react";
 import LiveStatus from "./components/status/live-status";
 import AgeCalculator from "./components/home/age-calculator";
 import Link from "./components/layout/intent-link";
 import styles from "./home.module.css";
 import { BIRTH_DATE } from "./lib/birthday";
+import type { loadDiscordProfile } from "./lib/discord-profile";
 import type { DiscordProfile } from "./lib/status-types";
 import { useSiteSettings } from "./components/settings/site-settings-provider";
+
+function ProfileStatus({
+  profile,
+}: {
+  profile: ReturnType<typeof loadDiscordProfile>;
+}) {
+  const discord = use(profile);
+  return (
+    <LiveStatus
+      initialDiscord={discord?.profile ?? null}
+      discordUpdatedAt={discord?.updatedAt ?? 0}
+    />
+  );
+}
+
 export default function Home({
   initialNow,
   initialDiscord = null,
   discordUpdatedAt = 0,
+  profile,
 }: {
   initialNow?: number;
   initialDiscord?: DiscordProfile | null;
   discordUpdatedAt?: number;
+  profile?: ReturnType<typeof loadDiscordProfile>;
 }) {
   const { language } = useSiteSettings();
   return (
@@ -61,10 +80,23 @@ export default function Home({
                   )}
                 </p>
               </article>
-              <LiveStatus
-                initialDiscord={initialDiscord}
-                discordUpdatedAt={discordUpdatedAt}
-              />
+              {profile ? (
+                <Suspense
+                  fallback={
+                    <LiveStatus
+                      initialDiscord={initialDiscord}
+                      discordUpdatedAt={discordUpdatedAt}
+                    />
+                  }
+                >
+                  <ProfileStatus profile={profile} />
+                </Suspense>
+              ) : (
+                <LiveStatus
+                  initialDiscord={initialDiscord}
+                  discordUpdatedAt={discordUpdatedAt}
+                />
+              )}
             </div>
           </div>
         </div>

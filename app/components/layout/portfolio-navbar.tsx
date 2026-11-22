@@ -34,7 +34,7 @@ export default function PortfolioNavbar() {
   const layoutId = useId();
   const reducedMotion = useReducedMotion();
   const transition = {
-    duration: reducedMotion ? 0 : 0.35,
+    duration: reducedMotion ? 0 : 0.16,
     ease: [0.22, 1, 0.36, 1] as const,
   };
   const [languageVisible, setLanguageVisible] = useState(false);
@@ -91,6 +91,7 @@ export default function PortfolioNavbar() {
                         layout
                         transition={transition}
                         href={href}
+                        prefetch
                         className={styles.item}
                         aria-label={name}
                         aria-current={pathname === href ? "page" : undefined}

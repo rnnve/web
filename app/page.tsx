@@ -6,15 +6,8 @@ export function generateMetadata() {
   return generatePageMetadata("/");
 }
 
-export default async function HomePage() {
-  const discord = await loadDiscordProfile();
+export default function HomePage() {
   // eslint-disable-next-line react-hooks/purity -- Serialize one server clock snapshot for deterministic client hydration.
   const initialNow = Date.now();
-  return (
-    <Home
-      initialNow={initialNow}
-      initialDiscord={discord?.profile ?? null}
-      discordUpdatedAt={discord?.updatedAt ?? 0}
-    />
-  );
+  return <Home initialNow={initialNow} profile={loadDiscordProfile()} />;
 }

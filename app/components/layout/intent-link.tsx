@@ -8,13 +8,14 @@ export default function IntentLink({
   onPointerEnter,
   onFocus,
   onTouchStart,
+  prefetch,
   ...props
-}: Omit<ComponentProps<typeof Link>, "prefetch">) {
+}: ComponentProps<typeof Link>) {
   const [intent, setIntent] = useState(false);
   return (
     <Link
       {...props}
-      prefetch={intent ? null : false}
+      prefetch={prefetch === undefined ? (intent ? null : false) : prefetch}
       onPointerEnter={(event) => {
         setIntent(true);
         onPointerEnter?.(event);
