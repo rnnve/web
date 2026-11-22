@@ -27,6 +27,51 @@
 }
 
 @font-face {
+  font-family: "Ekkamai Vibe";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100;
+  src: url("./webfonts/ekkamai-vibe/ekkamai-vibe-thin.woff2") format("woff2");
+  unicode-range: U+0E01-0E5B, U+25CC;
+}
+
+@font-face {
+  font-family: "Ekkamai Vibe";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300;
+  src: url("./webfonts/ekkamai-vibe/ekkamai-vibe-light.woff2") format("woff2");
+  unicode-range: U+0E01-0E5B, U+25CC;
+}
+
+@font-face {
+  font-family: "Ekkamai Vibe";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("./webfonts/ekkamai-vibe/ekkamai-vibe-regular.woff2") format("woff2");
+  unicode-range: U+0E01-0E5B, U+25CC;
+}
+
+@font-face {
+  font-family: "Ekkamai Vibe";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url("./webfonts/ekkamai-vibe/ekkamai-vibe-bold.woff2") format("woff2");
+  unicode-range: U+0E01-0E5B, U+25CC;
+}
+
+@font-face {
+  font-family: "Ekkamai Vibe";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 850;
+  src: url("./webfonts/ekkamai-vibe/ekkamai-vibe-heavy.woff2") format("woff2");
+  unicode-range: U+0E01-0E5B, U+25CC;
+}
+
+@font-face {
   font-family: "Noto Sans Thai Variable";
   font-style: normal;
   font-display: swap;
@@ -40,21 +85,27 @@
   font-family: inherit;
 }
 
-/* Keep Latin and Thai consistent. Use lang to prioritize CJK glyph forms. */
+/* Latin stays on Google Sans Flex. Thai uses Ekkamai Vibe, then Noto Sans Thai. */
 :where(.font-app-ui, .font-app-ui [lang]) {
   --font-app-cjk:
-    "Noto Sans JP Variable", "Noto Sans SC Variable", "Noto Sans TC Variable",
-    "Noto Sans KR Variable";
+    "Ekkamai Vibe", "Noto Sans JP Variable", "Noto Sans SC Variable",
+    "Noto Sans TC Variable", "Noto Sans KR Variable";
   --font-app-ui:
-    "Google Sans Flex Variable", "Noto Sans Thai Variable", var(--font-app-cjk),
-    system-ui, sans-serif;
+    "Google Sans Flex Variable", "Ekkamai Vibe", "Noto Sans Thai Variable",
+    var(--font-app-cjk), system-ui, sans-serif;
   font-family: var(--font-app-ui);
+}
+
+:where(.font-app-ui, .font-app-ui [lang]):where(:lang(ja)) {
+  --font-app-cjk:
+    "Ekkamai Vibe", "Noto Sans JP Variable", "Noto Sans SC Variable",
+    "Noto Sans TC Variable", "Noto Sans KR Variable";
 }
 
 :where(.font-app-ui, .font-app-ui [lang]):where(:lang(zh)) {
   --font-app-cjk:
-    "Noto Sans SC Variable", "Noto Sans JP Variable", "Noto Sans TC Variable",
-    "Noto Sans KR Variable";
+    "Ekkamai Vibe", "Noto Sans SC Variable", "Noto Sans JP Variable",
+    "Noto Sans TC Variable", "Noto Sans KR Variable";
 }
 
 :where(.font-app-ui, .font-app-ui [lang]):where(
@@ -64,12 +115,12 @@
   :lang(zh-MO)
 ) {
   --font-app-cjk:
-    "Noto Sans TC Variable", "Noto Sans JP Variable", "Noto Sans SC Variable",
-    "Noto Sans KR Variable";
+    "Ekkamai Vibe", "Noto Sans TC Variable", "Noto Sans JP Variable",
+    "Noto Sans SC Variable", "Noto Sans KR Variable";
 }
 
 :where(.font-app-ui, .font-app-ui [lang]):where(:lang(ko)) {
   --font-app-cjk:
-    "Noto Sans KR Variable", "Noto Sans JP Variable", "Noto Sans SC Variable",
-    "Noto Sans TC Variable";
+    "Ekkamai Vibe", "Noto Sans KR Variable", "Noto Sans JP Variable",
+    "Noto Sans SC Variable", "Noto Sans TC Variable";
 }
