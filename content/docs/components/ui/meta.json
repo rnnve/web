@@ -11,7 +11,6 @@
     "select",
     "textarea",
     "tooltip",
-    "counter",
-    "external-link-icon"
+    "counter"
   ]
 }
