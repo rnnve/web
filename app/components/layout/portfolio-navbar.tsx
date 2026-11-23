@@ -25,6 +25,7 @@ import { useSiteSettings } from "../settings/site-settings-provider";
 import { usePageReady } from "../../page-transition";
 import LanguageSwitcher from "../settings/language-switcher";
 import SocialLinks from "./social-links";
+import { rememberDocsReturn } from "../../lib/docs-return";
 import styles from "./portfolio-navbar.module.css";
 
 const AnimatedLink = motion.create(Link);
@@ -198,7 +199,12 @@ export default function PortfolioNavbar() {
                       href="/docs"
                       className={styles.item}
                       aria-label={t("Docs", "เอกสาร")}
-                      onClick={() => setLanguageVisible(false)}
+                      onClick={() => {
+                        rememberDocsReturn(
+                          `${pathname}${window.location.search}`,
+                        );
+                        setLanguageVisible(false);
+                      }}
                     >
                       <motion.span
                         layout="position"

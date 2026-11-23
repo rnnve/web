@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import DocsEntryLink from "@/components/docs/docs-entry-link";
 
 export default function NotFoundView({
   title = "Page not found",
@@ -29,7 +30,7 @@ export default function NotFoundView({
             <Link href="/">Go home</Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/docs">Open docs</Link>
+            <DocsEntryLink>Open docs</DocsEntryLink>
           </Button>
         </div>
       </div>
