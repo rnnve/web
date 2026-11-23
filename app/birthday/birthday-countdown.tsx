@@ -28,7 +28,13 @@ const SEEN_KEY = "ryn:countdown-entrance-seen";
 
 function readHasSeenEntrance() {
   try {
-    return sessionStorage.getItem(SEEN_KEY) === "1";
+    if (localStorage.getItem(SEEN_KEY) === "1") return true;
+    // Migrate the older per-tab flag so the intro does not replay after this change.
+    if (sessionStorage.getItem(SEEN_KEY) === "1") {
+      localStorage.setItem(SEEN_KEY, "1");
+      return true;
+    }
+    return false;
   } catch {
     return false;
   }
@@ -36,7 +42,7 @@ function readHasSeenEntrance() {
 
 function markEntranceSeen() {
   try {
-    sessionStorage.setItem(SEEN_KEY, "1");
+    localStorage.setItem(SEEN_KEY, "1");
   } catch {
     // Storage is optional.
   }
@@ -210,9 +216,10 @@ export default function BirthdayCountdown() {
                       minDigits={2}
                       format={{ useGrouping: false }}
                       direction="down"
-                      duration={animateEntrance ? 0.6 : 0}
-                      bounce={animateEntrance ? 0.15 : 0}
-                      stagger={animateEntrance ? 0.025 : 0}
+                      duration={0.6}
+                      bounce={0.15}
+                      stagger={0.025}
+                      intro={animateEntrance}
                       fontSize="1em"
                       fontWeight={600}
                     />
