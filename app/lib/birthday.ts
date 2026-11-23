@@ -18,33 +18,6 @@ function bangkokYear(now: number) {
   return new Date(now + BANGKOK_OFFSET).getUTCFullYear();
 }
 
-function splitCountdown(now: number, target: number, celebrating: boolean) {
-  const remainingMs = celebrating ? 0 : Math.max(0, target - now);
-  const remainingSec = Math.floor(remainingMs / 1_000);
-  const milliseconds = remainingMs % 1_000;
-
-  const current = new Date(target - remainingSec * 1_000 + BANGKOK_OFFSET);
-  const end = new Date(target + BANGKOK_OFFSET);
-  const months =
-    (end.getUTCFullYear() - current.getUTCFullYear()) * 12 +
-    end.getUTCMonth() -
-    current.getUTCMonth();
-  current.setUTCMonth(current.getUTCMonth() + months);
-  const remainder = (end.getTime() - current.getTime()) / 1_000;
-
-  return {
-    target,
-    remainingMs,
-    years: Math.floor(months / 12),
-    months: months % 12,
-    days: Math.floor(remainder / 86_400),
-    hours: Math.floor((remainder % 86_400) / 3_600),
-    minutes: Math.floor((remainder % 3_600) / 60),
-    seconds: Math.floor(remainder % 60),
-    milliseconds,
-  };
-}
-
 export function getBirthdayWishWindow(now: number) {
   const year = bangkokYear(now);
   const thisBirthday = bangkokMidnight(year, 12, 31);
@@ -70,35 +43,30 @@ export function getBirthdayCountdown(now: number) {
     : isBirthday
       ? birthdayStart
       : bangkokMidnight(year + 1, 12, 31);
-  const parts = splitCountdown(now, target, isBirthday);
+  const remaining = isBirthday
+    ? 0
+    : Math.max(0, Math.ceil((target - now) / 1_000));
+
+  const current = new Date(target - remaining * 1_000 + BANGKOK_OFFSET);
+  const end = new Date(target + BANGKOK_OFFSET);
+  const months =
+    (end.getUTCFullYear() - current.getUTCFullYear()) * 12 +
+    end.getUTCMonth() -
+    current.getUTCMonth();
+  current.setUTCMonth(current.getUTCMonth() + months);
+  const remainder = (end.getTime() - current.getTime()) / 1_000;
 
   return {
-    ...parts,
+    target,
     isBirthday,
     age:
       new Date(target + BANGKOK_OFFSET).getUTCFullYear() -
       Number(BIRTH_DATE.slice(0, 4)),
-  };
-}
-
-export function getNewYearCountdown(now: number) {
-  const year = bangkokYear(now);
-  const thisNewYear = bangkokMidnight(year, 1, 1);
-  const nextNewYear = bangkokMidnight(year + 1, 1, 1);
-  const isNewYear = now >= thisNewYear && now < thisNewYear + DAY;
-  const target = now < thisNewYear ? thisNewYear : nextNewYear;
-  const celebrating = isNewYear;
-  const parts = splitCountdown(
-    now,
-    celebrating ? thisNewYear : target,
-    celebrating,
-  );
-
-  return {
-    ...parts,
-    isNewYear,
-    year: new Date(
-      (celebrating ? thisNewYear : target) + BANGKOK_OFFSET,
-    ).getUTCFullYear(),
+    years: Math.floor(months / 12),
+    months: months % 12,
+    days: Math.floor(remainder / 86_400),
+    hours: Math.floor((remainder % 86_400) / 3_600),
+    minutes: Math.floor((remainder % 3_600) / 60),
+    seconds: remainder % 60,
   };
 }

@@ -3,7 +3,6 @@ import { test } from "node:test";
 import {
   getBirthdayCountdown,
   getBirthdayWishWindow,
-  getNewYearCountdown,
 } from "../app/lib/birthday";
 
 test("countdown targets Bangkok midnight on the birthday, not the birth clock time", () => {
@@ -27,8 +26,7 @@ test("countdown targets Bangkok midnight on the birthday, not the birth clock ti
 test("countdown keeps the final second until midnight arrives", () => {
   const target = Date.parse("2026-12-31T00:00:00+07:00");
   const countdown = getBirthdayCountdown(target - 1);
-  assert.equal(countdown.seconds, 0);
-  assert.equal(countdown.milliseconds, 1);
+  assert.equal(countdown.seconds, 1);
   assert.equal(countdown.isBirthday, false);
 });
 
@@ -48,9 +46,8 @@ test("birthday celebrates at zero through the rest of December 31 in Bangkok", (
         countdown.hours,
         countdown.minutes,
         countdown.seconds,
-        countdown.milliseconds,
       ],
-      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
     );
   }
 });
@@ -118,20 +115,4 @@ test("wish window opens at midnight, lasts 48 hours across years, and repeats an
   assert.equal(getBirthdayWishWindow(closesAt).isOpen, false);
   assert.equal(getBirthdayWishWindow(closesAt).opensAt, nextBirthday);
   assert.equal(getBirthdayWishWindow(nextBirthday).isOpen, true);
-});
-
-test("new year countdown targets the next Bangkok midnight on January 1", () => {
-  const countdown = getNewYearCountdown(Date.parse("2026-11-23T12:00:00+07:00"));
-  assert.equal(countdown.target, Date.parse("2027-01-01T00:00:00+07:00"));
-  assert.equal(countdown.isNewYear, false);
-  assert.equal(countdown.year, 2027);
-});
-
-test("new year celebrates through January 1 in Bangkok", () => {
-  const countdown = getNewYearCountdown(
-    Date.parse("2027-01-01T12:00:00+07:00"),
-  );
-  assert.equal(countdown.isNewYear, true);
-  assert.equal(countdown.milliseconds, 0);
-  assert.equal(countdown.year, 2027);
 });
