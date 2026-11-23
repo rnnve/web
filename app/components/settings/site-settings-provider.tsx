@@ -12,6 +12,7 @@ import {
   SETTINGS_KEY,
   languageFromHash,
   detectLanguage,
+  isThaiIdnHost,
   parseSettings,
   type Language,
   type SiteSettings,
@@ -21,6 +22,11 @@ const CHANGE_EVENT = "rynnie-settings-change";
 let snapshot: SiteSettings | undefined;
 function getSnapshot() {
   if (!snapshot) {
+    // Thai IDN hosts always open in Thai, ahead of saved prefs and browser locale.
+    if (isThaiIdnHost(window.location.hostname)) {
+      snapshot = { language: "th" };
+      return snapshot;
+    }
     const fallback = detectLanguage(
       navigator.languages.length ? navigator.languages : [navigator.language],
     );
