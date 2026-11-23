@@ -43,7 +43,7 @@ export default function BirthdayWishForm() {
     : null;
 
   return (
-    <Card className="h-full">
+    <Card className="h-full min-h-0 overflow-auto">
       <CardHeader>
         <CardTitle id="birthday-wishes-title">
           {locked

@@ -3,11 +3,12 @@ import { test } from "node:test";
 import {
   getBirthdayCountdown,
   getBirthdayWishWindow,
+  getNewYearCountdown,
 } from "../app/lib/birthday";
 
-test("countdown targets the birth time in Bangkok regardless of the visitor timezone", () => {
+test("countdown targets Bangkok midnight on the birthday, not the birth clock time", () => {
   const countdown = getBirthdayCountdown(Date.parse("2026-12-30T06:12:00Z"));
-  assert.equal(countdown.target, Date.parse("2026-12-31T13:12:00+07:00"));
+  assert.equal(countdown.target, Date.parse("2026-12-31T00:00:00+07:00"));
   assert.deepEqual(
     [
       countdown.years,
@@ -17,21 +18,23 @@ test("countdown targets the birth time in Bangkok regardless of the visitor time
       countdown.minutes,
       countdown.seconds,
     ],
-    [0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 10, 48, 0],
   );
   assert.equal(countdown.age, 16);
   assert.equal(countdown.isBirthday, false);
 });
 
-test("countdown keeps the final second until the birthday arrives", () => {
-  const target = Date.parse("2026-12-31T13:12:00+07:00");
+test("countdown keeps the final second until midnight arrives", () => {
+  const target = Date.parse("2026-12-31T00:00:00+07:00");
   const countdown = getBirthdayCountdown(target - 1);
-  assert.equal(countdown.seconds, 1);
+  assert.equal(countdown.seconds, 0);
+  assert.equal(countdown.milliseconds, 1);
   assert.equal(countdown.isBirthday, false);
 });
 
 test("birthday celebrates at zero through the rest of December 31 in Bangkok", () => {
   for (const date of [
+    "2026-12-31T00:00:00+07:00",
     "2026-12-31T13:12:00+07:00",
     "2026-12-31T23:59:59+07:00",
   ]) {
@@ -45,8 +48,9 @@ test("birthday celebrates at zero through the rest of December 31 in Bangkok", (
         countdown.hours,
         countdown.minutes,
         countdown.seconds,
+        countdown.milliseconds,
       ],
-      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
     );
   }
 });
@@ -55,7 +59,7 @@ test("the next Bangkok year starts a new countdown even while UTC is December 31
   const countdown = getBirthdayCountdown(
     Date.parse("2027-01-01T00:00:00+07:00"),
   );
-  assert.equal(countdown.target, Date.parse("2027-12-31T13:12:00+07:00"));
+  assert.equal(countdown.target, Date.parse("2027-12-31T00:00:00+07:00"));
   assert.equal(countdown.isBirthday, false);
   assert.equal(countdown.age, 17);
   assert.deepEqual(
@@ -67,13 +71,13 @@ test("the next Bangkok year starts a new countdown even while UTC is December 31
       countdown.minutes,
       countdown.seconds,
     ],
-    [0, 11, 30, 13, 12, 0],
+    [0, 11, 30, 0, 0, 0],
   );
 });
 
 test("countdown spans a leap year using calendar months", () => {
   const countdown = getBirthdayCountdown(
-    Date.parse("2028-01-01T13:12:00+07:00"),
+    Date.parse("2028-01-01T00:00:00+07:00"),
   );
   assert.equal(countdown.months, 11);
   assert.equal(countdown.days, 30);
@@ -82,10 +86,10 @@ test("countdown spans a leap year using calendar months", () => {
 
 test("countdown uses calendar months and the remaining days", () => {
   for (const [date, months, days] of [
-    ["2026-11-21T13:12:00+07:00", 1, 10],
-    ["2026-11-30T13:12:00+07:00", 1, 1],
-    ["2028-02-29T13:12:00+07:00", 10, 2],
-    ["2026-12-01T13:12:00+07:00", 0, 30],
+    ["2026-11-21T00:00:00+07:00", 1, 10],
+    ["2026-11-30T00:00:00+07:00", 1, 1],
+    ["2028-02-29T00:00:00+07:00", 10, 2],
+    ["2026-12-01T00:00:00+07:00", 0, 30],
   ] as const) {
     const countdown = getBirthdayCountdown(Date.parse(date));
     assert.equal(countdown.years, 0);
@@ -94,9 +98,9 @@ test("countdown uses calendar months and the remaining days", () => {
   }
 });
 
-test("wish window opens at countdown zero, lasts 48 hours across years, and repeats annually", () => {
-  const opensAt = Date.parse("2026-12-31T13:12:00+07:00");
-  const closesAt = Date.parse("2027-01-02T13:12:00+07:00");
+test("wish window opens at midnight, lasts 48 hours across years, and repeats annually", () => {
+  const opensAt = Date.parse("2026-12-31T00:00:00+07:00");
+  const closesAt = Date.parse("2027-01-02T00:00:00+07:00");
   assert.equal(getBirthdayWishWindow(opensAt - 1).isOpen, false);
   assert.equal(getBirthdayWishWindow(opensAt - 1).opensAt, opensAt);
   for (const now of [
@@ -110,8 +114,24 @@ test("wish window opens at countdown zero, lasts 48 hours across years, and repe
       closesAt,
     });
   }
-  const nextBirthday = Date.parse("2027-12-31T13:12:00+07:00");
+  const nextBirthday = Date.parse("2027-12-31T00:00:00+07:00");
   assert.equal(getBirthdayWishWindow(closesAt).isOpen, false);
   assert.equal(getBirthdayWishWindow(closesAt).opensAt, nextBirthday);
   assert.equal(getBirthdayWishWindow(nextBirthday).isOpen, true);
+});
+
+test("new year countdown targets the next Bangkok midnight on January 1", () => {
+  const countdown = getNewYearCountdown(Date.parse("2026-11-23T12:00:00+07:00"));
+  assert.equal(countdown.target, Date.parse("2027-01-01T00:00:00+07:00"));
+  assert.equal(countdown.isNewYear, false);
+  assert.equal(countdown.year, 2027);
+});
+
+test("new year celebrates through January 1 in Bangkok", () => {
+  const countdown = getNewYearCountdown(
+    Date.parse("2027-01-01T12:00:00+07:00"),
+  );
+  assert.equal(countdown.isNewYear, true);
+  assert.equal(countdown.milliseconds, 0);
+  assert.equal(countdown.year, 2027);
 });
