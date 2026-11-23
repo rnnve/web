@@ -157,13 +157,13 @@ const tools: Tool[] = [
 function Stacks() {
   const { t } = useSiteSettings();
   return (
-    <section id="developer" className="mt-8" aria-labelledby="stacks-title">
+    <section id="developer" aria-labelledby="stacks-title">
       <h2
         id="stacks-title"
         className="mb-3 flex items-center gap-1.5 text-sm font-medium"
       >
         <IconStack2 size={14} stroke={1.75} aria-hidden="true" />
-        {t("Tools I build with", "เครื่องมือที่เราใช้")}
+        {t("Most used stack", "สแต็กที่ใช้บ่อย")}
       </h2>
       <ul
         className="flex flex-wrap gap-2"

@@ -9,7 +9,10 @@ export function generateMetadata() {
 
 export default function AskPage() {
   return (
-    <main className="mx-auto grid w-[min(880px,calc(100%-48px))] items-start gap-8 pb-24 max-[767px]:w-[calc(100%-32px)] max-[767px]:gap-6 max-[767px]:pb-32 lg:min-h-[calc(100svh-5rem)] lg:w-[min(960px,calc(100%-64px))] lg:content-center lg:grid-cols-[minmax(16rem,22rem)_minmax(0,1fr)] lg:items-center lg:gap-12">
+    <main
+      data-no-scroll
+      className="mx-auto grid h-full w-[min(880px,calc(100%-48px))] items-center gap-8 overflow-hidden max-[767px]:w-[calc(100%-32px)] max-[767px]:gap-6 lg:w-[min(960px,calc(100%-64px))] lg:grid-cols-[minmax(16rem,22rem)_minmax(0,1fr)] lg:gap-12"
+    >
       <header className="max-w-sm lg:max-w-none">
         <p className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
           <IconMessageQuestion size={14} stroke={1.75} aria-hidden="true" />
