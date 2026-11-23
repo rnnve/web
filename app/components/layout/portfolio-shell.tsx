@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import PageTransition from "../../page-transition";
 import SiteBackground from "./site-background";
 import PortfolioNavbar from "./portfolio-navbar";
+import PortfolioPreloads from "./portfolio-preloads";
 import SiteSettingsProvider from "../settings/site-settings-provider";
 import ExternalLinkConfirmation from "../feedback/external-link-confirmation";
 import styles from "./portfolio-navbar.module.css";
@@ -13,6 +14,7 @@ export default function PortfolioShell({ children }: { children: ReactNode }) {
     <SiteSettingsProvider>
       <SpotifyAccent />
       <ExternalLinkConfirmation />
+      <PortfolioPreloads />
       <div className={styles.content}>
         <PageTransition
           effects={<SiteBackground />}
