@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { IconCode } from "@tabler/icons-react";
 import Stacks from "../components/home/stacks";
-import GitHubShowcase from "../components/status/github-showcase";
+import {
+  ContributionGraph,
+  SelectedProjects,
+} from "../components/status/github-showcase";
 import WidgetPreloads from "../components/status/widget-preloads";
 import { readWidgetSnapshot, requestWidget } from "../lib/widget-request";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
@@ -54,7 +57,7 @@ export default function Developing() {
 
   return (
     <main
-      className="mx-auto w-[min(720px,calc(100%-40px))] pb-24 max-[767px]:pb-32"
+      className="mx-auto w-[min(1100px,calc(100%-40px))] pb-24 max-[767px]:pb-32"
       aria-label={t("Developing", "งานพัฒนา")}
     >
       <header className="mb-8 max-w-xl">
@@ -73,12 +76,16 @@ export default function Developing() {
         </p>
       </header>
       <WidgetPreloads />
-      <GitHubShowcase
-        repos={github.repos}
-        contributions={github.contributions}
-        loading={githubLoading}
-      />
-      <Stacks />
+      <div className="grid gap-8">
+        <ContributionGraph
+          contributions={github.contributions}
+          loading={githubLoading}
+        />
+        <div className="grid gap-8 md:grid-cols-2 md:items-start">
+          <SelectedProjects repos={github.repos} loading={githubLoading} />
+          <Stacks />
+        </div>
+      </div>
     </main>
   );
 }
