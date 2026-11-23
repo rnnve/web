@@ -6,19 +6,14 @@ import {
   useRef,
   useState,
   type CSSProperties,
-  type ReactNode,
 } from "react";
-import { IconCake, IconSparkles } from "@tabler/icons-react";
+import { IconCake } from "@tabler/icons-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Counter from "../components/ui/counter";
-import {
-  getBirthdayCountdown,
-  getNewYearCountdown,
-} from "../lib/birthday";
+import { getBirthdayCountdown } from "../lib/birthday";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
 
-type BirthdayState = ReturnType<typeof getBirthdayCountdown>;
-type NewYearState = ReturnType<typeof getNewYearCountdown>;
+type Countdown = ReturnType<typeof getBirthdayCountdown>;
 
 const units = [
   "years",
@@ -83,24 +78,8 @@ function ConfettiBurst() {
   );
 }
 
-function CountdownCard({
-  label,
-  values,
-  animate,
-}: {
-  label: string;
-  values: {
-    years: number;
-    months: number;
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-    milliseconds: number;
-  } | null;
-  animate: boolean;
-}) {
-  const { t } = useSiteSettings();
+export default function BirthdayCountdown() {
+  const { language, t } = useSiteSettings();
   const unitLabels = {
     years: t("Years", "ปี"),
     months: t("Months", "เดือน"),
@@ -109,137 +88,10 @@ function CountdownCard({
     minutes: t("Minutes", "นาที"),
     seconds: t("Seconds", "วินาที"),
   };
-
-  return (
-    <Card
-      className="justify-center"
-      role="timer"
-      aria-label={label}
-      aria-busy={!values}
-    >
-      <CardContent className="flex items-start justify-center gap-1 px-2 py-4 sm:gap-2 sm:px-5 sm:py-5">
-        {units.map((unit, index) => (
-          <Fragment key={unit}>
-            {index > 0 && (
-              <span
-                className="text-lg text-muted-foreground sm:text-2xl"
-                aria-hidden="true"
-              >
-                :
-              </span>
-            )}
-            <div className="flex min-w-0 flex-col items-center gap-1.5 text-center">
-              <div className="text-lg font-semibold tracking-tight sm:text-2xl">
-                {values ? (
-                  <Counter
-                    value={values[unit]}
-                    minDigits={2}
-                    format={{ useGrouping: false }}
-                    direction="down"
-                    duration={animate ? 0.6 : 0}
-                    bounce={animate ? 0.15 : 0}
-                    stagger={animate ? 0.025 : 0}
-                    fontSize="1em"
-                    fontWeight={600}
-                  />
-                ) : (
-                  <span className="text-muted-foreground" aria-label="Loading">
-                    --
-                  </span>
-                )}
-              </div>
-              <span className="text-[10px] text-muted-foreground sm:text-xs">
-                {unitLabels[unit]}
-              </span>
-            </div>
-          </Fragment>
-        ))}
-        <span
-          className="self-start pt-1 text-lg text-muted-foreground sm:pt-1.5 sm:text-2xl"
-          aria-hidden="true"
-        >
-          .
-        </span>
-        <div className="flex min-w-0 flex-col items-center gap-1.5 text-center">
-          <div className="min-w-[3ch] text-sm font-semibold tracking-tight tabular-nums text-muted-foreground sm:text-base">
-            {values
-              ? String(values.milliseconds).padStart(3, "0")
-              : "---"}
-          </div>
-          <span className="text-[10px] text-muted-foreground sm:text-xs">
-            {t("ms", "มส")}
-          </span>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function CountdownBlock({
-  eyebrow,
-  title,
-  description,
-  dateLabel,
-  timerLabel,
-  values,
-  animate,
-}: {
-  eyebrow: ReactNode;
-  title: string;
-  description: string;
-  dateLabel: string;
-  timerLabel: string;
-  values: {
-    years: number;
-    months: number;
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-    milliseconds: number;
-  } | null;
-  animate: boolean;
-}) {
-  const { t } = useSiteSettings();
-  return (
-    <section className="flex min-h-0 flex-col gap-3">
-      <header className="max-w-xl">
-        <p className="mb-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
-          {eyebrow}
-        </p>
-        <h2
-          className="text-xl font-medium tracking-tight text-balance sm:text-2xl"
-          aria-live="polite"
-        >
-          {title}
-        </h2>
-        <p
-          className="mt-1.5 max-w-md text-sm leading-relaxed text-pretty text-muted-foreground"
-          aria-live="polite"
-        >
-          {description}
-        </p>
-        <p className="mt-2 text-xs text-pretty text-muted-foreground sm:text-sm">
-          {dateLabel}
-          <span aria-hidden="true"> · </span>
-          {t("Bangkok time", "เวลากรุงเทพฯ")}
-        </p>
-      </header>
-      <CountdownCard label={timerLabel} values={values} animate={animate} />
-    </section>
-  );
-}
-
-export default function BirthdayCountdown() {
-  const { language, t } = useSiteSettings();
-  const [birthday, setBirthday] = useState<BirthdayState | null>(null);
-  const [newYear, setNewYear] = useState<NewYearState | null>(null);
-  const [birthdayMs, setBirthdayMs] = useState(0);
-  const [newYearMs, setNewYearMs] = useState(0);
+  const [countdown, setCountdown] = useState<Countdown | null>(null);
   const [celebrating, setCelebrating] = useState(false);
   const [animateEntrance] = useState(() => !readHasSeenEntrance());
-  const previousBirthday = useRef<BirthdayState | null>(null);
-  const previousNewYear = useRef<NewYearState | null>(null);
+  const previousCountdown = useRef<Countdown | null>(null);
 
   useEffect(() => {
     markEntranceSeen();
@@ -247,166 +99,140 @@ export default function BirthdayCountdown() {
 
   useEffect(() => {
     let celebrationTimer: number | undefined;
-    let raf = 0;
-    let active = true;
-    const preferMotion = () =>
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const burst = () => {
-      if (!preferMotion()) return;
-      setCelebrating(true);
-      window.clearTimeout(celebrationTimer);
-      celebrationTimer = window.setTimeout(() => setCelebrating(false), 4000);
-    };
-
-    const tick = () => {
-      if (!active) return;
-      const now = Date.now();
-      const nextBirthday = getBirthdayCountdown(now);
-      const nextNewYear = getNewYearCountdown(now);
-      const prevBirthday = previousBirthday.current;
-      const prevNewYear = previousNewYear.current;
-
+    const update = () => {
+      const next = getBirthdayCountdown(Date.now());
+      const previous = previousCountdown.current;
       if (
-        prevBirthday &&
-        !prevBirthday.isBirthday &&
-        nextBirthday.isBirthday &&
-        prevBirthday.target === nextBirthday.target
+        previous &&
+        !previous.isBirthday &&
+        next.isBirthday &&
+        previous.target === next.target &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches
       ) {
-        burst();
+        setCelebrating(true);
+        celebrationTimer = window.setTimeout(() => setCelebrating(false), 4000);
       }
-      if (
-        prevNewYear &&
-        !prevNewYear.isNewYear &&
-        nextNewYear.isNewYear &&
-        prevNewYear.target === nextNewYear.target
-      ) {
-        burst();
-      }
-
-      const birthdaySecondChanged =
-        !prevBirthday ||
-        Math.floor(prevBirthday.remainingMs / 1_000) !==
-          Math.floor(nextBirthday.remainingMs / 1_000) ||
-        prevBirthday.isBirthday !== nextBirthday.isBirthday;
-      const newYearSecondChanged =
-        !prevNewYear ||
-        Math.floor(prevNewYear.remainingMs / 1_000) !==
-          Math.floor(nextNewYear.remainingMs / 1_000) ||
-        prevNewYear.isNewYear !== nextNewYear.isNewYear;
-
-      previousBirthday.current = nextBirthday;
-      previousNewYear.current = nextNewYear;
-      if (birthdaySecondChanged) setBirthday(nextBirthday);
-      if (newYearSecondChanged) setNewYear(nextNewYear);
-      setBirthdayMs(nextBirthday.milliseconds);
-      setNewYearMs(nextNewYear.milliseconds);
-      raf = window.requestAnimationFrame(tick);
+      previousCountdown.current = next;
+      setCountdown(next);
     };
-
-    raf = window.requestAnimationFrame(tick);
-    const onVisibility = () => {
-      if (document.hidden) return;
-      window.cancelAnimationFrame(raf);
-      raf = window.requestAnimationFrame(tick);
-    };
-    document.addEventListener("visibilitychange", onVisibility);
+    update();
+    const timer = window.setInterval(update, 1_000);
+    document.addEventListener("visibilitychange", update);
     return () => {
-      active = false;
-      window.cancelAnimationFrame(raf);
+      window.clearInterval(timer);
       window.clearTimeout(celebrationTimer);
-      document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener("visibilitychange", update);
     };
   }, []);
 
-  const formatDate = (timestamp: number) =>
-    new Intl.DateTimeFormat(
-      language === "th" ? "th-TH-u-ca-gregory" : "en-US",
-      {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-        timeZone: "Asia/Bangkok",
-      },
-    ).format(new Date(timestamp));
+  const dateLabel = countdown
+    ? new Intl.DateTimeFormat(
+        language === "th" ? "th-TH-u-ca-gregory" : "en-US",
+        {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+          timeZone: "Asia/Bangkok",
+        },
+      ).format(new Date(countdown.target))
+    : t("December 31", "31 ธันวาคม");
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-5 overflow-hidden">
+    <section className="flex h-full min-h-0 flex-col overflow-hidden" aria-labelledby="birthday-title">
       {celebrating ? <ConfettiBurst /> : null}
-      <CountdownBlock
-        eyebrow={
-          <>
-            <IconCake size={14} stroke={1.75} aria-hidden="true" />
-            {t("December 31, midnight Bangkok", "31 ธันวาคม เที่ยงคืน กรุงเทพฯ")}
-          </>
-        }
-        title={
-          birthday?.isBirthday
+      <header className="max-w-xl">
+        <p className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <IconCake size={14} stroke={1.75} aria-hidden="true" />
+          {t("December 31, midnight Bangkok", "31 ธันวาคม เที่ยงคืน กรุงเทพฯ")}
+        </p>
+        <h1
+          id="birthday-title"
+          className="text-3xl font-medium tracking-tight text-balance"
+          aria-live="polite"
+        >
+          {countdown?.isBirthday
             ? t("Happy birthday", "สุขสันต์วันเกิด")
-            : t("Until the next birthday", "นับถอยหลังถึงวันเกิด")
-        }
-        description={
-          birthday
-            ? birthday.isBirthday
+            : t("Until the next birthday", "นับถอยหลังถึงวันเกิด")}
+        </h1>
+        <p
+          className="mt-2 max-w-md text-sm leading-relaxed text-pretty text-muted-foreground"
+          aria-live="polite"
+        >
+          {countdown
+            ? countdown.isBirthday
               ? t(
-                  `${birthday.age} years of small moments. Another year starts today.`,
-                  `${birthday.age} ปีของช่วงเวลาเล็ก ๆ อีกปีเริ่มต้นวันนี้`,
+                  `${countdown.age} years of small moments. Another year starts today.`,
+                  `${countdown.age} ปีของช่วงเวลาเล็ก ๆ อีกปีเริ่มต้นวันนี้`,
                 )
               : t(
-                  `Counting down to year ${birthday.age}.`,
-                  `นับถอยหลังสู่ปีที่ ${birthday.age}`,
+                  `Counting down to year ${countdown.age}.`,
+                  `นับถอยหลังสู่ปีที่ ${countdown.age}`,
                 )
-            : t("The next year is on its way.", "ปีถัดไปกำลังจะมาถึง")
-        }
-        dateLabel={
-          birthday ? formatDate(birthday.target) : t("December 31", "31 ธันวาคม")
-        }
-        timerLabel={t(
+            : t("The next year is on its way.", "ปีถัดไปกำลังจะมาถึง")}
+        </p>
+        <p className="mt-3 text-sm text-pretty text-muted-foreground">
+          {countdown ? (
+            <time dateTime={new Date(countdown.target).toISOString()}>
+              {dateLabel}
+            </time>
+          ) : (
+            dateLabel
+          )}
+          <span aria-hidden="true"> · </span>
+          {t("Bangkok time", "เวลากรุงเทพฯ")}
+        </p>
+      </header>
+      <Card
+        className="mt-8 flex-1 justify-center"
+        role="timer"
+        aria-label={t(
           "Time until the next birthday",
           "เวลาที่เหลือก่อนวันเกิดครั้งถัดไป",
         )}
-        values={
-          birthday ? { ...birthday, milliseconds: birthdayMs } : null
-        }
-        animate={animateEntrance}
-      />
-      <CountdownBlock
-        eyebrow={
-          <>
-            <IconSparkles size={14} stroke={1.75} aria-hidden="true" />
-            {t("January 1, midnight Bangkok", "1 มกราคม เที่ยงคืน กรุงเทพฯ")}
-          </>
-        }
-        title={
-          newYear?.isNewYear
-            ? t("Happy New Year", "สวัสดีปีใหม่")
-            : t("Until the new year", "นับถอยหลังถึงปีใหม่")
-        }
-        description={
-          newYear
-            ? newYear.isNewYear
-              ? t(
-                  `Welcome to ${newYear.year}.`,
-                  `ยินดีต้อนรับสู่ปี ${newYear.year}`,
-                )
-              : t(
-                  `Counting down to ${newYear.year}.`,
-                  `นับถอยหลังสู่ปี ${newYear.year}`,
-                )
-            : t("The next year is on its way.", "ปีถัดไปกำลังจะมาถึง")
-        }
-        dateLabel={
-          newYear ? formatDate(newYear.target) : t("January 1", "1 มกราคม")
-        }
-        timerLabel={t(
-          "Time until the new year",
-          "เวลาที่เหลือก่อนปีใหม่",
-        )}
-        values={
-          newYear ? { ...newYear, milliseconds: newYearMs } : null
-        }
-        animate={animateEntrance}
-      />
-    </div>
+        aria-busy={!countdown}
+      >
+        <CardContent className="flex items-start justify-center gap-1 px-3 py-6 sm:gap-2 sm:px-6">
+          {units.map((unit, index) => (
+            <Fragment key={unit}>
+              {index > 0 && (
+                <span
+                  className="text-xl text-muted-foreground sm:text-3xl"
+                  aria-hidden="true"
+                >
+                  :
+                </span>
+              )}
+              <div className="flex min-w-0 flex-col items-center gap-2 text-center">
+                <div className="text-xl font-semibold tracking-tight sm:text-3xl">
+                  {countdown ? (
+                    <Counter
+                      value={countdown[unit]}
+                      minDigits={2}
+                      format={{ useGrouping: false }}
+                      direction="down"
+                      duration={animateEntrance ? 0.6 : 0}
+                      bounce={animateEntrance ? 0.15 : 0}
+                      stagger={animateEntrance ? 0.025 : 0}
+                      fontSize="1em"
+                      fontWeight={600}
+                    />
+                  ) : (
+                    <span
+                      className="text-muted-foreground"
+                      aria-label="Loading"
+                    >
+                      --
+                    </span>
+                  )}
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {unitLabels[unit]}
+                </span>
+              </div>
+            </Fragment>
+          ))}
+        </CardContent>
+      </Card>
+    </section>
   );
 }
