@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   DEFAULT_SETTINGS,
   detectLanguage,
+  isThaiIdnHost,
   languageFromHash,
   parseSettings,
 } from "../app/lib/site-settings";
@@ -56,6 +57,22 @@ test("browser locales select the first supported language and fall back to Engli
   assert.equal(detectLanguage(["ja-JP", "TH-th", "en"]), "th");
   assert.equal(detectLanguage(["ja-JP", "fr"]), "en");
   assert.equal(detectLanguage([]), "en");
+});
+
+test("Thai IDN hosts are recognized in punycode and Unicode forms", () => {
+  for (const host of [
+    "xn--12c9d9bs.xn--o3cw4h",
+    "XN--12C9D9BS.XN--O3CW4H",
+    "www.xn--12c9d9bs.xn--o3cw4h",
+    "ยูกิ.ไทย",
+    "www.ยูกิ.ไทย",
+    "xn--12c9d9bs.xn--o3cw4h.",
+  ]) {
+    assert.equal(isThaiIdnHost(host), true);
+  }
+  for (const host of ["rynnie.cc", "www.rynnie.cc", "localhost", "", "example.ไทย"]) {
+    assert.equal(isThaiIdnHost(host), false);
+  }
 });
 
 test("explicit choices override locale detection; missing or corrupt choices use the locale", () => {

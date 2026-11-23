@@ -6,6 +6,12 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   language: "en",
 };
 
+/** Punycode + Unicode hostnames that should open the site in Thai. */
+export const THAI_IDN_HOSTS = [
+  "xn--12c9d9bs.xn--o3cw4h",
+  "ยูกิ.ไทย",
+] as const;
+
 export function languageFromHash(hash: string): Language | null {
   try {
     const value = decodeURIComponent(hash.replace(/^#/, "")).toLowerCase();
@@ -14,6 +20,15 @@ export function languageFromHash(hash: string): Language | null {
   } catch {
     return null;
   }
+}
+
+export function isThaiIdnHost(hostname: string): boolean {
+  const host = hostname.trim().replace(/\.$/, "").toLowerCase();
+  if (!host) return false;
+  const bare = host.startsWith("www.") ? host.slice(4) : host;
+  return (THAI_IDN_HOSTS as readonly string[]).some(
+    (entry) => entry.toLowerCase() === bare,
+  );
 }
 
 export function detectLanguage(locales: readonly string[]): Language {
