@@ -43,7 +43,7 @@ export default function BirthdayWishForm() {
     : null;
 
   return (
-    <Card className="h-full min-h-0 overflow-auto">
+    <Card className="min-h-0 overflow-auto lg:h-full">
       <CardHeader>
         <CardTitle id="birthday-wishes-title">
           {locked
@@ -71,7 +71,7 @@ export default function BirthdayWishForm() {
         <CardContent className="flex flex-1">
           <div
             role="status"
-            className="flex flex-1 items-center gap-3 rounded-lg bg-muted/60 px-4 py-8 text-sm text-pretty text-muted-foreground"
+            className="flex flex-1 items-center gap-3 rounded-lg bg-muted/60 px-4 py-6 text-sm text-pretty text-muted-foreground sm:py-8"
           >
             <IconLock size={18} stroke={1.75} aria-hidden="true" />
             {date
