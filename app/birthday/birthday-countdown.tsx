@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import { IconCake } from "@tabler/icons-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -84,7 +85,11 @@ function ConfettiBurst() {
   );
 }
 
-export default function BirthdayCountdown() {
+export default function BirthdayCountdown({
+  wishes,
+}: {
+  wishes?: ReactNode;
+}) {
   const { language, t } = useSiteSettings();
   const unitLabels = {
     years: t("Years", "ปี"),
@@ -144,9 +149,9 @@ export default function BirthdayCountdown() {
     : t("December 31", "31 ธันวาคม");
 
   return (
-    <section className="flex h-full min-h-0 flex-col overflow-hidden" aria-labelledby="birthday-title">
+    <div className="flex h-full min-h-0 flex-col justify-center gap-6 overflow-hidden lg:gap-8">
       {celebrating ? <ConfettiBurst /> : null}
-      <header className="max-w-xl">
+      <header className="max-w-xl shrink-0">
         <p className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
           <IconCake size={14} stroke={1.75} aria-hidden="true" />
           {t("December 31, midnight Bangkok", "31 ธันวาคม เที่ยงคืน กรุงเทพฯ")}
@@ -188,58 +193,61 @@ export default function BirthdayCountdown() {
           {t("Bangkok time", "เวลากรุงเทพฯ")}
         </p>
       </header>
-      <Card
-        className="mt-8 flex-1 justify-center"
-        role="timer"
-        aria-label={t(
-          "Time until the next birthday",
-          "เวลาที่เหลือก่อนวันเกิดครั้งถัดไป",
-        )}
-        aria-busy={!countdown}
-      >
-        <CardContent className="flex items-start justify-center gap-1 px-3 py-6 sm:gap-2 sm:px-6">
-          {units.map((unit, index) => (
-            <Fragment key={unit}>
-              {index > 0 && (
-                <span
-                  className="text-xl text-muted-foreground sm:text-3xl"
-                  aria-hidden="true"
-                >
-                  :
-                </span>
-              )}
-              <div className="flex min-w-0 flex-col items-center gap-2 text-center">
-                <div className="text-xl font-semibold tracking-tight sm:text-3xl">
-                  {countdown ? (
-                    <Counter
-                      value={countdown[unit]}
-                      minDigits={2}
-                      format={{ useGrouping: false }}
-                      direction="down"
-                      duration={0.6}
-                      bounce={0.15}
-                      stagger={0.025}
-                      intro={animateEntrance}
-                      fontSize="1em"
-                      fontWeight={600}
-                    />
-                  ) : (
-                    <span
-                      className="text-muted-foreground"
-                      aria-label="Loading"
-                    >
-                      --
-                    </span>
-                  )}
+      <div className="grid min-h-0 shrink-0 gap-6 max-[767px]:min-h-0 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-stretch lg:gap-8">
+        <Card
+          className="justify-center lg:h-full"
+          role="timer"
+          aria-label={t(
+            "Time until the next birthday",
+            "เวลาที่เหลือก่อนวันเกิดครั้งถัดไป",
+          )}
+          aria-busy={!countdown}
+        >
+          <CardContent className="flex flex-1 items-center justify-center gap-1 px-3 py-6 sm:gap-2 sm:px-6 sm:py-8">
+            {units.map((unit, index) => (
+              <Fragment key={unit}>
+                {index > 0 && (
+                  <span
+                    className="text-xl text-muted-foreground sm:text-3xl"
+                    aria-hidden="true"
+                  >
+                    :
+                  </span>
+                )}
+                <div className="flex min-w-0 flex-col items-center gap-2 text-center">
+                  <div className="text-xl font-semibold tracking-tight sm:text-3xl">
+                    {countdown ? (
+                      <Counter
+                        value={countdown[unit]}
+                        minDigits={2}
+                        format={{ useGrouping: false }}
+                        direction="down"
+                        duration={0.6}
+                        bounce={0.15}
+                        stagger={0.025}
+                        intro={animateEntrance}
+                        fontSize="1em"
+                        fontWeight={600}
+                      />
+                    ) : (
+                      <span
+                        className="text-muted-foreground"
+                        aria-label="Loading"
+                      >
+                        --
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {unitLabels[unit]}
+                  </span>
                 </div>
-                <span className="text-xs text-muted-foreground">
-                  {unitLabels[unit]}
-                </span>
-              </div>
-            </Fragment>
-          ))}
-        </CardContent>
-      </Card>
-    </section>
+              </Fragment>
+            ))}
+          </CardContent>
+        </Card>
+        {wishes}
+      </div>
+    </div>
   );
 }
