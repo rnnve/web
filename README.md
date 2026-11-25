@@ -2,7 +2,7 @@
 
 Personal site: portfolio, live listening, synced lyrics, docs, and a browser start page. Built with Next.js 16, React 19, TypeScript, and Tailwind CSS 4.
 
-[Website](https://rynni.cc) · [New Tab](https://rynni.cc/newtab) · [Previous versions](https://git.rynni.cc/rinne/site-archived)
+[Website](https://yuki.in.th) · [New Tab](https://yuki.in.th/newtab) · [Previous versions](https://git.yuki.in.th/rinne/site-archived)
 
 ## Pages
 
