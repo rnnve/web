@@ -6,15 +6,16 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import { IconCake } from "@tabler/icons-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Counter from "../components/ui/counter";
 import { getBirthdayCountdown } from "../lib/birthday";
-import { usePageReady } from "../page-transition";
 import { useSiteSettings } from "../components/settings/site-settings-provider";
 
 type Countdown = ReturnType<typeof getBirthdayCountdown>;
+
 const units = [
   "years",
   "months",
@@ -24,7 +25,71 @@ const units = [
   "seconds",
 ] as const;
 
-export default function BirthdayCountdown() {
+const SEEN_KEY = "ryn:countdown-entrance-seen";
+
+function readHasSeenEntrance() {
+  try {
+    if (localStorage.getItem(SEEN_KEY) === "1") return true;
+    // Migrate the older per-tab flag so the intro does not replay after this change.
+    if (sessionStorage.getItem(SEEN_KEY) === "1") {
+      localStorage.setItem(SEEN_KEY, "1");
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+function markEntranceSeen() {
+  try {
+    localStorage.setItem(SEEN_KEY, "1");
+  } catch {
+    // Storage is optional.
+  }
+}
+
+function ConfettiBurst() {
+  return (
+    <div
+      className="pointer-events-none fixed inset-0 z-50 overflow-hidden"
+      aria-hidden="true"
+    >
+      {Array.from({ length: 48 }, (_, index) => (
+        <span
+          key={index}
+          className="absolute top-[48%] left-1/2 opacity-0 motion-reduce:hidden"
+          style={
+            {
+              width: index % 3 === 2 ? 10 : 9,
+              height: index % 3 === 2 ? 10 : 14,
+              borderRadius: index % 3 === 2 ? 999 : 2,
+              background: [
+                "#f6c7db",
+                "#d8c8ff",
+                "#ffe7a8",
+                "#b9e4f3",
+                "#ffffff",
+              ][index % 5],
+              animation: `birthday-confetti-burst 3.3s ${(index % 8) * 0.035}s cubic-bezier(0.22, 1, 0.36, 1) forwards`,
+              "--confetti-x": `${((index * 73) % 181) - 90}vw`,
+              "--confetti-mid-x": `${(((index * 73) % 181) - 90) * 0.65}vw`,
+              "--confetti-mid-y": `${-(30 + ((index * 41) % 45)) * 0.6}vh`,
+              "--confetti-rotate": `${(index % 2 ? 1 : -1) * (360 + ((index * 137) % 720))}deg`,
+              "--confetti-mid-rotate": `${(index % 2 ? 1 : -1) * (360 + ((index * 137) % 720)) * 0.45}deg`,
+            } as CSSProperties
+          }
+        />
+      ))}
+    </div>
+  );
+}
+
+export default function BirthdayCountdown({
+  wishes,
+}: {
+  wishes?: ReactNode;
+}) {
   const { language, t } = useSiteSettings();
   const unitLabels = {
     years: t("Years", "ปี"),
@@ -36,8 +101,12 @@ export default function BirthdayCountdown() {
   };
   const [countdown, setCountdown] = useState<Countdown | null>(null);
   const [celebrating, setCelebrating] = useState(false);
+  const [animateEntrance] = useState(() => !readHasSeenEntrance());
   const previousCountdown = useRef<Countdown | null>(null);
-  const pageReady = usePageReady();
+
+  useEffect(() => {
+    markEntranceSeen();
+  }, []);
 
   useEffect(() => {
     let celebrationTimer: number | undefined;
@@ -80,44 +149,12 @@ export default function BirthdayCountdown() {
     : t("December 31", "31 ธันวาคม");
 
   return (
-    <section className="flex h-full flex-col" aria-labelledby="birthday-title">
-      {celebrating && (
-        <div
-          className="pointer-events-none fixed inset-0 z-50 overflow-hidden"
-          aria-hidden="true"
-        >
-          {Array.from({ length: 48 }, (_, index) => (
-            <span
-              key={index}
-              className="absolute top-[48%] left-1/2 opacity-0 motion-reduce:hidden"
-              style={
-                {
-                  width: index % 3 === 2 ? 10 : 9,
-                  height: index % 3 === 2 ? 10 : 14,
-                  borderRadius: index % 3 === 2 ? 999 : 2,
-                  background: [
-                    "#f6c7db",
-                    "#d8c8ff",
-                    "#ffe7a8",
-                    "#b9e4f3",
-                    "#ffffff",
-                  ][index % 5],
-                  animation: `birthday-confetti-burst 3.3s ${(index % 8) * 0.035}s cubic-bezier(0.22, 1, 0.36, 1) forwards`,
-                  "--confetti-x": `${((index * 73) % 181) - 90}vw`,
-                  "--confetti-mid-x": `${(((index * 73) % 181) - 90) * 0.65}vw`,
-                  "--confetti-mid-y": `${-(30 + ((index * 41) % 45)) * 0.6}vh`,
-                  "--confetti-rotate": `${(index % 2 ? 1 : -1) * (360 + ((index * 137) % 720))}deg`,
-                  "--confetti-mid-rotate": `${(index % 2 ? 1 : -1) * (360 + ((index * 137) % 720)) * 0.45}deg`,
-                } as CSSProperties
-              }
-            />
-          ))}
-        </div>
-      )}
-      <header className="max-w-xl">
+    <div className="flex h-full min-h-0 flex-col justify-center gap-6 overflow-hidden lg:gap-8">
+      {celebrating ? <ConfettiBurst /> : null}
+      <header className="max-w-xl shrink-0">
         <p className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
           <IconCake size={14} stroke={1.75} aria-hidden="true" />
-          {t("December 31, 13:12 Bangkok", "31 ธันวาคม 13:12 กรุงเทพฯ")}
+          {t("December 31, midnight Bangkok", "31 ธันวาคม เที่ยงคืน กรุงเทพฯ")}
         </p>
         <h1
           id="birthday-title"
@@ -156,57 +193,61 @@ export default function BirthdayCountdown() {
           {t("Bangkok time", "เวลากรุงเทพฯ")}
         </p>
       </header>
-      <Card
-        className="mt-8 flex-1 justify-center"
-        role="timer"
-        aria-label={t(
-          "Time until the next birthday",
-          "เวลาที่เหลือก่อนวันเกิดครั้งถัดไป",
-        )}
-        aria-busy={!countdown}
-      >
-        <CardContent className="flex items-start justify-center gap-1 px-3 py-6 sm:gap-2 sm:px-6">
-          {units.map((unit, index) => (
-            <Fragment key={unit}>
-              {index > 0 && (
-                <span
-                  className="text-xl text-muted-foreground sm:text-3xl"
-                  aria-hidden="true"
-                >
-                  :
-                </span>
-              )}
-              <div className="flex min-w-0 flex-col items-center gap-2 text-center">
-                <div className="text-xl font-semibold tracking-tight sm:text-3xl">
-                  {countdown && pageReady ? (
-                    <Counter
-                      value={countdown[unit]}
-                      minDigits={2}
-                      format={{ useGrouping: false }}
-                      direction="down"
-                      duration={0.6}
-                      bounce={0.15}
-                      stagger={0.025}
-                      fontSize="1em"
-                      fontWeight={600}
-                    />
-                  ) : (
-                    <span
-                      className="text-muted-foreground"
-                      aria-label="Loading"
-                    >
-                      --
-                    </span>
-                  )}
+      <div className="grid min-h-0 shrink-0 gap-6 max-[767px]:min-h-0 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-stretch lg:gap-8">
+        <Card
+          className="justify-center lg:h-full"
+          role="timer"
+          aria-label={t(
+            "Time until the next birthday",
+            "เวลาที่เหลือก่อนวันเกิดครั้งถัดไป",
+          )}
+          aria-busy={!countdown}
+        >
+          <CardContent className="flex flex-1 items-center justify-center gap-1 px-3 py-6 sm:gap-2 sm:px-6 sm:py-8">
+            {units.map((unit, index) => (
+              <Fragment key={unit}>
+                {index > 0 && (
+                  <span
+                    className="text-xl text-muted-foreground sm:text-3xl"
+                    aria-hidden="true"
+                  >
+                    :
+                  </span>
+                )}
+                <div className="flex min-w-0 flex-col items-center gap-2 text-center">
+                  <div className="text-xl font-semibold tracking-tight sm:text-3xl">
+                    {countdown ? (
+                      <Counter
+                        value={countdown[unit]}
+                        minDigits={2}
+                        format={{ useGrouping: false }}
+                        direction="down"
+                        duration={0.6}
+                        bounce={0.15}
+                        stagger={0.025}
+                        intro={animateEntrance}
+                        fontSize="1em"
+                        fontWeight={600}
+                      />
+                    ) : (
+                      <span
+                        className="text-muted-foreground"
+                        aria-label="Loading"
+                      >
+                        --
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {unitLabels[unit]}
+                  </span>
                 </div>
-                <span className="text-xs text-muted-foreground">
-                  {unitLabels[unit]}
-                </span>
-              </div>
-            </Fragment>
-          ))}
-        </CardContent>
-      </Card>
-    </section>
+              </Fragment>
+            ))}
+          </CardContent>
+        </Card>
+        {wishes}
+      </div>
+    </div>
   );
 }

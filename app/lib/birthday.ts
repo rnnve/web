@@ -3,33 +3,46 @@ export const BIRTH_DATE = "2010-12-31T13:12:00+07:00";
 const BANGKOK_OFFSET = 7 * 60 * 60 * 1_000;
 const DAY = 24 * 60 * 60 * 1_000;
 
+/** Midnight Asia/Bangkok for a calendar day (month is 1–12). */
+export function bangkokMidnight(
+  year: number,
+  month: number,
+  day: number,
+): number {
+  const mm = String(month).padStart(2, "0");
+  const dd = String(day).padStart(2, "0");
+  return Date.parse(`${year}-${mm}-${dd}T00:00:00+07:00`);
+}
+
+function bangkokYear(now: number) {
+  return new Date(now + BANGKOK_OFFSET).getUTCFullYear();
+}
+
 export function getBirthdayWishWindow(now: number) {
-  const year = new Date(now + BANGKOK_OFFSET).getUTCFullYear();
-  const thisBirthday = Date.parse(`${year}${BIRTH_DATE.slice(4)}`);
+  const year = bangkokYear(now);
+  const thisBirthday = bangkokMidnight(year, 12, 31);
   const lastBirthday =
-    now >= thisBirthday
-      ? thisBirthday
-      : Date.parse(`${year - 1}${BIRTH_DATE.slice(4)}`);
+    now >= thisBirthday ? thisBirthday : bangkokMidnight(year - 1, 12, 31);
   const isOpen = now >= lastBirthday && now < lastBirthday + 2 * DAY;
   const opensAt = isOpen
     ? lastBirthday
     : now < thisBirthday
       ? thisBirthday
-      : Date.parse(`${year + 1}${BIRTH_DATE.slice(4)}`);
+      : bangkokMidnight(year + 1, 12, 31);
 
   return { isOpen, opensAt, closesAt: opensAt + 2 * DAY };
 }
 
 export function getBirthdayCountdown(now: number) {
-  const year = new Date(now + BANGKOK_OFFSET).getUTCFullYear();
-  const birthday = Date.parse(`${year}${BIRTH_DATE.slice(4)}`);
-  const birthdayEnd =
-    Math.floor((birthday + BANGKOK_OFFSET) / DAY) * DAY + DAY - BANGKOK_OFFSET;
-  const isBirthday = now >= birthday && now < birthdayEnd;
-  const target =
-    now < birthdayEnd
-      ? birthday
-      : Date.parse(`${year + 1}${BIRTH_DATE.slice(4)}`);
+  const year = bangkokYear(now);
+  const birthdayStart = bangkokMidnight(year, 12, 31);
+  const birthdayEnd = bangkokMidnight(year + 1, 1, 1);
+  const isBirthday = now >= birthdayStart && now < birthdayEnd;
+  const target = now < birthdayStart
+    ? birthdayStart
+    : isBirthday
+      ? birthdayStart
+      : bangkokMidnight(year + 1, 12, 31);
   const remaining = isBirthday
     ? 0
     : Math.max(0, Math.ceil((target - now) / 1_000));
@@ -40,7 +53,6 @@ export function getBirthdayCountdown(now: number) {
     (end.getUTCFullYear() - current.getUTCFullYear()) * 12 +
     end.getUTCMonth() -
     current.getUTCMonth();
-  // The target is December 31, so every starting day fits in its month.
   current.setUTCMonth(current.getUTCMonth() + months);
   const remainder = (end.getTime() - current.getTime()) / 1_000;
 
